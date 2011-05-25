@@ -40,8 +40,14 @@ namespace Terrafirma
             "Open World", "OpenWorld", typeof(MapCommands));
         public static readonly RoutedUICommand JumpToSpawn = new RoutedUICommand(
             "Jump To Spawn", "JumpToSpawn", typeof(MapCommands),
-            new InputGestureCollection(new InputGesture[]{ new KeyGesture(Key.F5) }));
+            new InputGestureCollection(new InputGesture[]{ new KeyGesture(Key.F6) }));
         public static readonly RoutedUICommand Lighting = new RoutedUICommand(
             "Lighting", "Lighting", typeof(MapCommands));
+        public static readonly RoutedUICommand Hilight = new RoutedUICommand(
+            "Hilight Block...", "Hilight", typeof(MapCommands),
+            new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F2) }));
+        public static readonly RoutedUICommand StopHilight = new RoutedUICommand(
+            "Stop Hilighting", "StopHilight", typeof(MapCommands),
+            new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F3) }));
     }
 }

@@ -16,8 +16,11 @@
                 <MenuItem Command="ApplicationCommands.Close" Header="_Close" />
             </MenuItem>
             <MenuItem Header="_View">
+                <MenuItem Command="Refresh" />
                 <MenuItem Command="w:MapCommands.JumpToSpawn" />
                 <MenuItem Command="w:MapCommands.Lighting" IsCheckable="True" Name="Lighting" />
+                <MenuItem Command="w:MapCommands.Hilight" />
+                <MenuItem Command="w:MapCommands.StopHilight" />
             </MenuItem>
         </Menu>
         <StatusBar Name="statusBar1" Height="23" VerticalAlignment="Bottom">
@@ -35,15 +38,24 @@
                         CanExecute="Close_CanExecute" />
         <CommandBinding Command="Save"
                         Executed="Save_Executed"
-                        CanExecute="Save_CanExecute" />
+                        CanExecute="MapLoaded" />
         <CommandBinding Command="w:MapCommands.OpenWorld"
                         Executed="OpenWorld"
                         CanExecute="OpenWorld_CanExecute" />
+        <CommandBinding Command="Refresh"
+                        Executed="Refresh_Executed"
+                        CanExecute="MapLoaded" />
         <CommandBinding Command="w:MapCommands.JumpToSpawn"
                         Executed="JumpToSpawn_Executed"
-                        CanExecute="JumpToSpawn_CanExecute" />
+                        CanExecute="MapLoaded" />
         <CommandBinding Command="w:MapCommands.Lighting"
                         Executed="Lighting_Executed"
-                        CanExecute="Lighting_CanExecute" />
+                        CanExecute="MapLoaded" />
+        <CommandBinding Command="w:MapCommands.Hilight"
+                        Executed="Hilight_Executed"
+                        CanExecute="MapLoaded" />
+        <CommandBinding Command="w:MapCommands.StopHilight"
+                        Executed="HilightStop_Executed"
+                        CanExecute="IsHilighting" />
     </Window.CommandBindings>
 </Window>

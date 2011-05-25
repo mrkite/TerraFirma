@@ -41,6 +41,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using System.Collections;
 
 namespace Terrafirma
 {
@@ -77,7 +78,7 @@ namespace Terrafirma
         double curX, curY, curScale;
         byte[] bits;
         WriteableBitmap mapbits;
-        DispatcherTimer resizeTimer;
+        DispatcherTimer resizeTimer,hiliteTimer;
         int curWidth, curHeight, newWidth, newHeight;
         bool loaded = false;
         Tile[] tiles;
@@ -85,10 +86,14 @@ namespace Terrafirma
         Int32 spawnX, spawnY;
         Int32 groundLevel;
         string[] worlds;
+        string currentWorld;
 
         TileInfo[] tileInfo;
         WallInfo[] wallInfo;
         UInt32 skyColor, earthColor, lavaColor, waterColor;
+        byte hilight=0;
+        int hilightTick = 0;
+        bool isHilight = false;
 
         public MainWindow()
         {
@@ -166,6 +171,14 @@ namespace Terrafirma
                     }
                 },
                 Dispatcher) {IsEnabled=false};
+            hiliteTimer = new DispatcherTimer(
+                TimeSpan.FromMilliseconds(50), DispatcherPriority.Normal,
+                delegate
+                {
+                    hilightTick++;
+                    hilightTick &= 31;
+                    RenderMap();
+                }, Dispatcher) { IsEnabled = false };
             curWidth = 496;
             curHeight = 400;
             newWidth = 496;
@@ -219,6 +232,7 @@ namespace Terrafirma
 
         private void Load(string world)
         {
+            currentWorld = world;
             using (BinaryReader b = new BinaryReader(File.OpenRead(world)))
             {
                 if (b.ReadUInt32() != MapVersion)
@@ -266,6 +280,33 @@ namespace Terrafirma
         }
         private void DrawMap(int width, int height, double startx, double starty, double scale, byte[] pixels)
         {
+            UInt32 hicolor=0;
+            if (isHilight)
+            {
+                uint hi=255;
+                hicolor = tileInfo[hilight].color;
+                uint r = (hicolor >> 16) & 0xff;
+                uint g = (hicolor >> 8) & 0xff;
+                uint b = hicolor & 0xff;
+
+                if (r > 128 && g > 128 ||
+                    (r > 128 && b > 128) ||
+                    (g > 128 && b > 128)) //if we're light, darken.
+                    hi = 0;
+
+                double alpha;
+                if (hilightTick > 15)
+                    alpha = (31 - hilightTick) / 15.0;
+                else
+                    alpha = hilightTick / 15.0;
+                r = (uint)(hi * alpha + r * (1 - alpha));
+                g = (uint)(hi * alpha + g * (1 - alpha));
+                b = (uint)(hi * alpha + b * (1 - alpha));
+
+                hicolor = (r << 16)|(g<<8)|b;
+            }
+
+
             bool light = Lighting.IsChecked;
             for (int y = 0; y < height; y++)
             {
@@ -287,7 +328,11 @@ namespace Terrafirma
                         if (tiles[offset].liquid>0)
                             c=tiles[offset].isLava?lavaColor:waterColor;
                         if (tiles[offset].isActive)
-                            c=tileInfo[tiles[offset].type].color;
+                        {
+                            c = tileInfo[tiles[offset].type].color;
+                            if (isHilight && hilight == tiles[offset].type)
+                                c = hicolor;
+                        }
                         if (light && !tiles[offset].hasLight)
                             c=0;
                     }
@@ -509,23 +554,43 @@ namespace Terrafirma
             curY = spawnY;
             RenderMap();
         }
-        private void JumpToSpawn_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = loaded;
-        }
-        private void Lighting_Click(object sender, RoutedEventArgs e)
-        {
-            RenderMap();
-        }
         private void Lighting_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             RenderMap();
         }
-        private void Lighting_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+
+        private void Refresh_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            e.CanExecute = loaded;
+            Loading load = new Loading();
+            load.Show();
+            Load(currentWorld);
+            load.Close();
         }
 
+        private void Hilight_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            ArrayList items = new ArrayList();
+            for (int i = 0; i < tileInfo.Length; i++)
+                items.Add(tileInfo[i].name);
+            HilightWin h = new HilightWin(items);
+            if (h.ShowDialog() == true)
+            {
+                hilight = (byte)(h.SelectedItem);
+                isHilight = true;
+                hiliteTimer.Start();
+            }
+        }
+
+        private void HilightStop_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            isHilight = false;
+            hiliteTimer.Stop();
+            RenderMap();
+        }
+        private void IsHilighting(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = isHilight;
+        }
         private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var dlg = new Microsoft.Win32.SaveFileDialog();
@@ -550,7 +615,7 @@ namespace Terrafirma
             }
 
         }
-        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void MapLoaded(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = loaded;
         }
