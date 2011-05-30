@@ -1,0 +1,8 @@
+﻿<Popup x:Class="Terrafirma.SignPopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        MouseDown="Popup_MouseDown" MouseLeave="Popup_MouseLeave" Placement="Mouse">
+    <Grid>
+        <TextBox Name="SignText" Background="Brown" Foreground="White" BorderThickness="1" BorderBrush="Black" Padding="5"/>
+    </Grid>
+</Popup>

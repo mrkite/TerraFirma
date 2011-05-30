@@ -56,7 +56,7 @@
   <tile num="53" name="Sand" color="#D3C66F" />
   <tile num="54" name="Glass" color="#C8F6FE" />
   <tile num="55" name="Sign" color="#7F5C45" hasExtra="1" />
-  <tile num="56" name="Obsnumian" color="#5751AD" />
+  <tile num="56" name="Obsidian" color="#5751AD" />
   <tile num="57" name="Ash" color="#44444C" />
   <tile num="58" name="Hellstone" color="#8E4242" />
   <tile num="59" name="Mud" color="#5C4449" />
@@ -73,9 +73,9 @@
   <tile num="70" name="Mushroom Grass" color="#5D7FFF" />
   <tile num="71" name="Mushroom" color="#B1AE83" hasExtra="1" />
   <tile num="72" name="Mushroom Tree" color="#968F6E" hasExtra="1" />
-  <tile num="73" name="Weeds" color="#0D6524" hasExtra="1" />
-  <tile num="74" name="Weeds" color="#28650D" hasExtra="1" />
-  <tile num="75" name="Obsnumian Brick" color="#665CC2" />
+  <tile num="73" name="Weeds #73" color="#0D6524" hasExtra="1" />
+  <tile num="74" name="Weeds #74" color="#28650D" hasExtra="1" />
+  <tile num="75" name="Obsidian Brick" color="#665CC2" />
   <tile num="76" name="Hellstone Brick" color="#8E4242" />
   <tile num="77" name="Hellforge" color="#EE6646" hasExtra="1" />
   <tile num="78" name="Clay Pot" color="#796E61" hasExtra="1" />
@@ -95,7 +95,9 @@
   <wall num="12" name="Copper Brick Wall" color="#4B200B" />
   <wall num="13" name="Hellstone Brick Wall" color="#301515" />
   <global id="sky" color="#84AAF8" />
-  <global id="earth" color="#000000" />
+  <global id="earth" color="#583D2E" />
+  <global id="rock" color="#4A433C" />
+  <global id="hell" color="#000000" />
   <global id="lava" color="#FF1E00" />
   <global id="water" color="#0A34AD" />
 </tiles>

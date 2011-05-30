@@ -65,6 +65,28 @@ namespace Terrafirma
         public byte liquid;
         public bool isLava;
     }
+    struct ChestItem
+    {
+        public byte stack;
+        public string name;
+    }
+    struct Chest
+    {
+        public Int32 x, y;
+        public ChestItem[] items;
+    }
+    struct Sign
+    {
+        public string text;
+        public Int32 x, y;
+    }
+    struct NPC
+    {
+        public string name;
+        public float x, y;
+        public bool isHomeless;
+        public Int32 homeX, homeY;
+    }
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -84,13 +106,16 @@ namespace Terrafirma
         Tile[] tiles;
         Int32 tilesWide, tilesHigh;
         Int32 spawnX, spawnY;
-        Int32 groundLevel;
+        Int32 groundLevel,rockLevel;
         string[] worlds;
         string currentWorld;
+        List<Chest> chests = new List<Chest>();
+        List<Sign> signs = new List<Sign>();
+        List<NPC> npcs = new List<NPC>();
 
         TileInfo[] tileInfo;
         WallInfo[] wallInfo;
-        UInt32 skyColor, earthColor, lavaColor, waterColor;
+        UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor;
         byte hilight=0;
         int hilightTick = 0;
         bool isHilight = false;
@@ -139,6 +164,12 @@ namespace Terrafirma
                     case "earth":
                         earthColor = color;
                         break;
+                    case "rock":
+                        rockColor = color;
+                        break;
+                    case "hell":
+                        hellColor = color;
+                        break;
                     case "water":
                         waterColor = color;
                         break;
@@ -176,7 +207,7 @@ namespace Terrafirma
                 delegate
                 {
                     hilightTick++;
-                    hilightTick &= 31;
+                    hilightTick &= 15;
                     RenderMap();
                 }, Dispatcher) { IsEnabled = false };
             curWidth = 496;
@@ -248,7 +279,8 @@ namespace Terrafirma
                 curX = spawnX * curScale;
                 curY = spawnY * curScale;
                 groundLevel = (int)b.ReadDouble();
-                b.BaseStream.Seek(56, SeekOrigin.Current); //skip flags and other settings
+                rockLevel = (int)b.ReadDouble();
+                b.BaseStream.Seek(48, SeekOrigin.Current); //skip flags and other settings
                 tiles = new Tile[tilesWide * tilesHigh];
                 for (int i = 0; i < tilesWide * tilesHigh; i++)
                 {
@@ -272,38 +304,107 @@ namespace Terrafirma
                     else
                         tiles[i].liquid = 0;
                 }
+                chests.Clear();
+                for (int i = 0; i < 1000; i++)
+                {
+                    if (b.ReadBoolean())
+                    {
+                        Chest chest = new Chest();
+                        chest.items = new ChestItem[20];
+                        chest.x = b.ReadInt32();
+                        chest.y = b.ReadInt32();
+                        for (int ii = 0; ii < 20; ii++)
+                        {
+                            chest.items[ii].stack = b.ReadByte();
+                            if (chest.items[ii].stack > 0)
+                                chest.items[ii].name = b.ReadString();
+                        }
+                        chests.Add(chest);
+                    }
+                }
+                signs.Clear();
+                for (int i = 0; i < 1000; i++)
+                {
+                    if (b.ReadBoolean())
+                    {
+                        Sign sign = new Sign();
+                        sign.text = b.ReadString();
+                        sign.x = b.ReadInt32();
+                        sign.y = b.ReadInt32();
+                        signs.Add(sign);
+                    }
+                }
+                npcs.Clear();
+                while (b.ReadBoolean())
+                {
+                    NPC npc = new NPC();
+                    npc.name = b.ReadString();
+                    npc.x = b.ReadSingle();
+                    npc.y = b.ReadSingle();
+                    npc.isHomeless = b.ReadBoolean();
+                    npc.homeX = b.ReadInt32();
+                    npc.homeY = b.ReadInt32();
+                    npcs.Add(npc);
+
+                    if (!npc.isHomeless)
+                    {
+                        MenuItem item = new MenuItem();
+                        item.Header = String.Format("Jump to {0}'s Home", npc.name);
+                        item.Click += new RoutedEventHandler(jumpNPC);
+                        item.Tag = npc;
+                        NPCs.Items.Add(item);
+                        NPCs.IsEnabled = true;
+                    }
+                }
             }
 
             //load info
             loaded = true;
             RenderMap();
         }
+
+        void jumpNPC(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+            NPC npc = (NPC)item.Tag;
+            curX = npc.homeX;
+            curY = npc.homeY;
+            RenderMap();
+        }
+        private UInt32 alphaBlend(UInt32 from, UInt32 to, double alpha)
+        {
+            uint fr = (from >> 16) & 0xff;
+            uint fg = (from >> 8) & 0xff;
+            uint fb = from & 0xff;
+            uint tr = (to >> 16) & 0xff;
+            uint tg = (to >> 8) & 0xff;
+            uint tb = to & 0xff;
+            fr = (uint)(tr * alpha + fr * (1 - alpha));
+            fg = (uint)(tg * alpha + fg * (1 - alpha));
+            fb = (uint)(tb * alpha + fb * (1 - alpha));
+            return (fr << 16) | (fg << 8) | fb;
+        }
+
         private void DrawMap(int width, int height, double startx, double starty, double scale, byte[] pixels)
         {
             UInt32 hicolor=0;
             if (isHilight)
             {
-                uint hi=255;
                 hicolor = tileInfo[hilight].color;
-                uint r = (hicolor >> 16) & 0xff;
-                uint g = (hicolor >> 8) & 0xff;
-                uint b = hicolor & 0xff;
 
-                if (r > 128 && g > 128 ||
-                    (r > 128 && b > 128) ||
-                    (g > 128 && b > 128)) //if we're light, darken.
-                    hi = 0;
+                int r = ((hicolor >> 16) & 0xff)>127?1:0;
+                int g = ((hicolor >> 8) & 0xff)>127?1:0;
+                int b = (hicolor & 0xff)>127?1:0;
+
+                UInt32 to = 0xffffff;
+                if ((r ^ g ^ b)==0) to = 0;
 
                 double alpha;
-                if (hilightTick > 15)
-                    alpha = (31 - hilightTick) / 15.0;
+                if (hilightTick > 7)
+                    alpha = (15 - hilightTick) / 7.0;
                 else
-                    alpha = hilightTick / 15.0;
-                r = (uint)(hi * alpha + r * (1 - alpha));
-                g = (uint)(hi * alpha + g * (1 - alpha));
-                b = (uint)(hi * alpha + b * (1 - alpha));
-
-                hicolor = (r << 16)|(g<<8)|b;
+                    alpha = hilightTick / 7.0;
+                hicolor = alphaBlend(hicolor, to, alpha);
             }
 
 
@@ -319,20 +420,26 @@ namespace Terrafirma
                     UInt32 c=0xffffff;
                     if (sx>=0 && sx<tilesWide && sy>=0 && sy<tilesHigh)
                     {
-                        if (sy<groundLevel)
-                            c=skyColor;
+                        if (sy < groundLevel)
+                            c = skyColor;
+                        else if (sy < rockLevel)
+                            c = earthColor;
                         else
-                            c=earthColor;
+                        {
+                            //fade between rockColor and hellColor...
+                            double alpha = (double)(sy - rockLevel) / (double)(tilesHigh - rockLevel);
+                            c = alphaBlend(rockColor, hellColor, alpha);
+                        }
                         if (tiles[offset].wall>0)
                             c=wallInfo[tiles[offset].wall].color;
-                        if (tiles[offset].liquid>0)
-                            c=tiles[offset].isLava?lavaColor:waterColor;
                         if (tiles[offset].isActive)
                         {
                             c = tileInfo[tiles[offset].type].color;
                             if (isHilight && hilight == tiles[offset].type)
                                 c = hicolor;
                         }
+                        if (tiles[offset].liquid > 0)
+                            c = alphaBlend(c, tiles[offset].isLava ? lavaColor : waterColor, 0.5);
                         if (light && !tiles[offset].hasLight)
                             c=0;
                     }
@@ -390,6 +497,10 @@ namespace Terrafirma
                 Vector v = start - curPos;
                 curX += v.X / curScale;
                 curY += v.Y / curScale;
+                if (curX < 0) curX = 0;
+                if (curY < 0) curY = 0;
+                if (curX > tilesWide) curX = tilesWide;
+                if (curY > tilesHigh) curY = tilesHigh;
                 start = curPos;
                 if (loaded)
                     RenderMap();
@@ -429,6 +540,38 @@ namespace Terrafirma
         private void Map_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Map.ReleaseMouseCapture();
+        }
+        private void Map_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Point curPos = e.GetPosition(Map);
+            double startx = curX - (curWidth / (2 * curScale));
+            double starty = curY - (curHeight / (2 * curScale));
+            int sy = (int)(curPos.Y / curScale + starty);
+            int sx = (int)(curPos.X / curScale + startx);
+            foreach (Chest c in chests)
+            {
+                //chests are 2x2, and their x/y is upper left corner
+                if ((c.x == sx || c.x + 1 == sx) && (c.y == sy || c.y + 1 == sy))
+                {
+                    ArrayList items = new ArrayList();
+                    for (int i = 0; i < c.items.Length; i++)
+                    {
+                        if (c.items[i].stack > 0)
+                            items.Add(String.Format("{0} {1}", c.items[i].stack, c.items[i].name));
+                    }
+                    ChestPopup pop = new ChestPopup(items);
+                    pop.IsOpen = true;
+                }
+            }
+            foreach (Sign s in signs)
+            {
+                //signs are 2x2, and their x/y is upper left corner
+                if ((s.x == sx || s.x + 1 == sx) && (s.y == sy || s.y + 1 == sy))
+                {
+                    SignPopup pop = new SignPopup(s.text);
+                    pop.IsOpen = true;
+                }
+            }
         }
 
         int moving = 0; //moving bitmask
@@ -470,14 +613,24 @@ namespace Terrafirma
             }
             if (moving != 0)
             {
+                double speed = 10.0;
+                if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                    speed *= 2;
+                if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+                    speed *= 10.0;
                 if ((moving & 1) != 0) //up
-                    curY -= 10.0 / curScale;
+                    curY -= speed / curScale;
                 if ((moving & 2) != 0) //down
-                    curY += 10.0 / curScale;
+                    curY += speed / curScale;
                 if ((moving & 4) != 0) //left
-                    curX -= 10.0 / curScale;
+                    curX -= speed / curScale;
                 if ((moving & 8) != 0) //right
-                    curX += 10.0 / curScale;
+                    curX += speed / curScale;
+
+                if (curX < 0) curX = 0;
+                if (curY < 0) curY = 0;
+                if (curX > tilesWide) curX = tilesWide;
+                if (curY > tilesHigh) curY = tilesHigh;
                 changed = true;
             }
             if (changed)
@@ -619,5 +772,7 @@ namespace Terrafirma
         {
             e.CanExecute = loaded;
         }
+
+       
     }
 }

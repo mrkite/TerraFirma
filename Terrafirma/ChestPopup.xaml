@@ -1,0 +1,8 @@
+﻿<Popup x:Class="Terrafirma.ChestPopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Placement="Mouse" MouseDown="Popup_MouseDown" MouseLeave="Popup_MouseLeave">
+    <Grid>
+        <ItemsControl Name="ChestList" Background="DarkSlateGray" Foreground="White" Padding="5" />
+    </Grid>
+</Popup>

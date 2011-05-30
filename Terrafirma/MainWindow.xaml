@@ -5,7 +5,7 @@
         Title="Terrafirma" Height="450" Width="525" KeyDown="Window_KeyDown" KeyUp="Window_KeyUp">
     <Grid>
         <Border Name="resizeProxy" Margin="0,23,0,23" SizeChanged="Map_SizeChanged">
-            <Image Name="Map" Width="500" Height="360" MouseWheel="Map_MouseWheel" MouseMove="Map_MouseMove" MouseLeftButtonDown="Map_MouseLeftButtonDown" MouseLeftButtonUp="Map_MouseLeftButtonUp" Focusable="False" />
+            <Image Name="Map" Width="500" Height="360" MouseWheel="Map_MouseWheel" MouseMove="Map_MouseMove" MouseLeftButtonDown="Map_MouseLeftButtonDown" MouseLeftButtonUp="Map_MouseLeftButtonUp" MouseRightButtonUp="Map_MouseRightButtonUp" Focusable="False" />
         </Border>
         <Menu Height="23" Name="menu1" VerticalAlignment="Top">
             <MenuItem Header="_File">
@@ -21,6 +21,7 @@
                 <MenuItem Command="w:MapCommands.Lighting" IsCheckable="True" Name="Lighting" />
                 <MenuItem Command="w:MapCommands.Hilight" />
                 <MenuItem Command="w:MapCommands.StopHilight" />
+                <MenuItem Header="NPCs" IsEnabled="False" Name="NPCs" />
             </MenuItem>
         </Menu>
         <StatusBar Name="statusBar1" Height="23" VerticalAlignment="Bottom">
