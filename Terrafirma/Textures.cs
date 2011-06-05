@@ -81,8 +81,20 @@ namespace Terrafirma
             textures = new Dictionary<int, Texture>();
             backgrounds = new Dictionary<int, Texture>();
             walls = new Dictionary<int, Texture>();
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-            path = Path.Combine(path, "Steam");
+
+            // find steam
+            string path="";
+            Microsoft.Win32.RegistryKey key;
+            key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\\Valve\\Steam");
+            if (key!=null)
+                path = key.GetValue("SteamPath") as string;
+
+            //no steam key, let's try the default
+            if (path.Equals("") || !Directory.Exists(path))
+            {
+                path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+                path = Path.Combine(path, "Steam");
+            }
             path = Path.Combine(path, "steamapps");
             path = Path.Combine(path, "common");
             path = Path.Combine(path, "terraria");
