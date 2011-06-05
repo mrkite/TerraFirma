@@ -41,6 +41,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using System.Windows.Interop;
 using System.Collections;
 
 namespace Terrafirma
@@ -64,6 +65,7 @@ namespace Terrafirma
         public byte wall;
         public byte liquid;
         public bool isLava;
+        public Int16 u, v, wallu, wallv;
     }
     struct ChestItem
     {
@@ -94,7 +96,7 @@ namespace Terrafirma
     public partial class MainWindow : Window
     {
         const UInt32 MapVersion=2;
-        const double MaxScale = 10.0;
+        const double MaxScale = 16.0;
         const double MinScale = 1.0;
 
         double curX, curY, curScale;
@@ -112,6 +114,7 @@ namespace Terrafirma
         List<Chest> chests = new List<Chest>();
         List<Sign> signs = new List<Sign>();
         List<NPC> npcs = new List<NPC>();
+        Render render;
 
         TileInfo[] tileInfo;
         WallInfo[] wallInfo;
@@ -126,7 +129,7 @@ namespace Terrafirma
 
             fetchWorlds();
 
-            
+           
 
             XmlDocument xml=new XmlDocument();
             string xmlData = string.Empty;
@@ -178,6 +181,8 @@ namespace Terrafirma
                         break;
                 }
             }
+
+            render = new Render(tileInfo,wallInfo,skyColor,earthColor,rockColor,hellColor,waterColor,lavaColor);
             //this resize timer is used so we don't get killed on the resize
             resizeTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal,
@@ -220,14 +225,16 @@ namespace Terrafirma
             curX = curY = 0;
             curScale = 1.0;
         }
-
         private void fetchWorlds()
         {
             string path=Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             path = Path.Combine(path, "My Games");
             path = Path.Combine(path, "Terraria");
             path = Path.Combine(path, "Worlds");
-            worlds = Directory.GetFiles(path, "*.wld");
+            if (Directory.Exists(path))
+                worlds = Directory.GetFiles(path, "*.wld");
+            else
+                worlds = new string[0];
             int max = worlds.Length;
             if (max > 9) max = 9;
             for (int i = 0; i < max; i++)
@@ -276,8 +283,6 @@ namespace Terrafirma
                 tilesWide = b.ReadInt32();
                 spawnX = b.ReadInt32();
                 spawnY = b.ReadInt32();
-                curX = spawnX * curScale;
-                curY = spawnY * curScale;
                 groundLevel = (int)b.ReadDouble();
                 rockLevel = (int)b.ReadDouble();
                 b.BaseStream.Seek(48, SeekOrigin.Current); //skip flags and other settings
@@ -289,11 +294,23 @@ namespace Terrafirma
                     {
                         tiles[i].type = b.ReadByte();
                         if (tileInfo[tiles[i].type].hasExtra)
-                            b.BaseStream.Seek(4, SeekOrigin.Current);  //skip extra data
+                        {
+                            tiles[i].u = b.ReadInt16();
+                            tiles[i].v = b.ReadInt16();
+                        }
+                        else
+                        {
+                            tiles[i].u = -1;
+                            tiles[i].v = -1;
+                        }
                     }
                     tiles[i].hasLight = b.ReadBoolean();
                     if (b.ReadBoolean())
+                    {
                         tiles[i].wall = b.ReadByte();
+                        tiles[i].wallu = -1;
+                        tiles[i].wallv = -1;
+                    }
                     else
                         tiles[i].wall = 0;
                     if (b.ReadBoolean())
@@ -358,9 +375,9 @@ namespace Terrafirma
                 }
             }
 
+            render.SetWorld(tiles, tilesWide, tilesHigh, groundLevel, rockLevel);
             //load info
             loaded = true;
-            RenderMap();
         }
 
         void jumpNPC(object sender, RoutedEventArgs e)
@@ -371,92 +388,18 @@ namespace Terrafirma
             curY = npc.homeY;
             RenderMap();
         }
-        private UInt32 alphaBlend(UInt32 from, UInt32 to, double alpha)
-        {
-            uint fr = (from >> 16) & 0xff;
-            uint fg = (from >> 8) & 0xff;
-            uint fb = from & 0xff;
-            uint tr = (to >> 16) & 0xff;
-            uint tg = (to >> 8) & 0xff;
-            uint tb = to & 0xff;
-            fr = (uint)(tr * alpha + fr * (1 - alpha));
-            fg = (uint)(tg * alpha + fg * (1 - alpha));
-            fb = (uint)(tb * alpha + fb * (1 - alpha));
-            return (fr << 16) | (fg << 8) | fb;
-        }
-
-        private void DrawMap(int width, int height, double startx, double starty, double scale, byte[] pixels)
-        {
-            UInt32 hicolor=0;
-            if (isHilight)
-            {
-                hicolor = tileInfo[hilight].color;
-
-                int r = ((hicolor >> 16) & 0xff)>127?1:0;
-                int g = ((hicolor >> 8) & 0xff)>127?1:0;
-                int b = (hicolor & 0xff)>127?1:0;
-
-                UInt32 to = 0xffffff;
-                if ((r ^ g ^ b)==0) to = 0;
-
-                double alpha;
-                if (hilightTick > 7)
-                    alpha = (15 - hilightTick) / 7.0;
-                else
-                    alpha = hilightTick / 7.0;
-                hicolor = alphaBlend(hicolor, to, alpha);
-            }
+        
 
 
-            bool light = Lighting.IsChecked;
-            for (int y = 0; y < height; y++)
-            {
-                int bofs = y * width * 4;
-                for (int x = 0; x < width; x++)
-                {
-                    int sy = (int)(y / scale + starty);
-                    int sx = (int)(x / scale + startx);
-                    int offset=sy+sx*tilesHigh;
-                    UInt32 c=0xffffff;
-                    if (sx>=0 && sx<tilesWide && sy>=0 && sy<tilesHigh)
-                    {
-                        if (sy < groundLevel)
-                            c = skyColor;
-                        else if (sy < rockLevel)
-                            c = earthColor;
-                        else
-                        {
-                            //fade between rockColor and hellColor...
-                            double alpha = (double)(sy - rockLevel) / (double)(tilesHigh - rockLevel);
-                            c = alphaBlend(rockColor, hellColor, alpha);
-                        }
-                        if (tiles[offset].wall>0)
-                            c=wallInfo[tiles[offset].wall].color;
-                        if (tiles[offset].isActive)
-                        {
-                            c = tileInfo[tiles[offset].type].color;
-                            if (isHilight && hilight == tiles[offset].type)
-                                c = hicolor;
-                        }
-                        if (tiles[offset].liquid > 0)
-                            c = alphaBlend(c, tiles[offset].isLava ? lavaColor : waterColor, 0.5);
-                        if (light && !tiles[offset].hasLight)
-                            c=0;
-                    }
-                    pixels[bofs++]=(byte)(c&0xff);
-                    pixels[bofs++]=(byte)((c>>8)&0xff);
-                    pixels[bofs++]=(byte)((c>>16)&0xff);
-                    pixels[bofs++]=0xff;
-                }
-            }
-        }
         private void RenderMap()
         {
             var rect = new Int32Rect(0, 0, curWidth, curHeight);
 
             double startx = curX - (curWidth / (2 * curScale));
             double starty = curY - (curHeight / (2 * curScale));
-            DrawMap(curWidth, curHeight, startx, starty, curScale, bits);
+            render.Draw(curWidth, curHeight, startx, starty, curScale, bits,
+                isHilight,hilight,hilightTick,Lighting.IsChecked,
+                UseTextures.IsChecked && curScale>2.0);
 
             //draw map here with curX,curY,curScale
             mapbits.WritePixels(rect, bits, curWidth * 4, 0);
@@ -508,6 +451,10 @@ namespace Terrafirma
             else
             {
                 Point curPos = e.GetPosition(Map);
+                Vector v = start - curPos;
+                if (v.X > 50 || v.Y > 50)
+                    CloseAllPops();
+
                 double startx = curX - (curWidth / (2 * curScale));
                 double starty = curY - (curHeight / (2 * curScale));
                 int sy = (int)(curPos.Y / curScale + starty);
@@ -532,6 +479,8 @@ namespace Terrafirma
         Point start;
         private void Map_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            CloseAllPops();
+
             Map.Focus();
             Map.CaptureMouse();
             start = e.GetPosition(Map);
@@ -541,9 +490,28 @@ namespace Terrafirma
         {
             Map.ReleaseMouseCapture();
         }
+        private SignPopup signPop=null;
+        private ChestPopup chestPop=null;
+
+        private void CloseAllPops()
+        {
+            if (signPop != null)
+            {
+                signPop.IsOpen = false;
+                signPop = null;
+            }
+            if (chestPop != null)
+            {
+                chestPop.IsOpen = false;
+                chestPop = null;
+            }
+        }
+
         private void Map_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
+            CloseAllPops();
             Point curPos = e.GetPosition(Map);
+            start = curPos;
             double startx = curX - (curWidth / (2 * curScale));
             double starty = curY - (curHeight / (2 * curScale));
             int sy = (int)(curPos.Y / curScale + starty);
@@ -559,8 +527,8 @@ namespace Terrafirma
                         if (c.items[i].stack > 0)
                             items.Add(String.Format("{0} {1}", c.items[i].stack, c.items[i].name));
                     }
-                    ChestPopup pop = new ChestPopup(items);
-                    pop.IsOpen = true;
+                    chestPop = new ChestPopup(items);
+                    chestPop.IsOpen = true;
                 }
             }
             foreach (Sign s in signs)
@@ -568,8 +536,8 @@ namespace Terrafirma
                 //signs are 2x2, and their x/y is upper left corner
                 if ((s.x == sx || s.x + 1 == sx) && (s.y == sy || s.y + 1 == sy))
                 {
-                    SignPopup pop = new SignPopup(s.text);
-                    pop.IsOpen = true;
+                    signPop = new SignPopup(s.text);
+                    signPop.IsOpen = true;
                 }
             }
         }
@@ -674,6 +642,9 @@ namespace Terrafirma
                 Loading load = new Loading();
                 load.Show();
                 Load(dlg.FileName);
+                curX = spawnX;
+                curY = spawnY;
+                RenderMap();
                 load.Close();
             }
         }
@@ -683,6 +654,9 @@ namespace Terrafirma
             Loading load = new Loading();
             load.Show();
             Load(worlds[id]);
+            curX = spawnX;
+            curY = spawnY;
+            RenderMap();
             load.Close();
         }
         private void Open_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -711,12 +685,21 @@ namespace Terrafirma
         {
             RenderMap();
         }
+        private void Texture_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (UseTextures.IsChecked)
+                UseTextures.IsChecked = false;
+            else
+                UseTextures.IsChecked = true;
+            RenderMap();
+        }
 
         private void Refresh_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             Loading load = new Loading();
             load.Show();
             Load(currentWorld);
+            RenderMap();
             load.Close();
         }
 
@@ -755,8 +738,8 @@ namespace Terrafirma
             {
                 byte[] pixels = new byte[tilesWide * tilesHigh * 4];
 
-                DrawMap(tilesWide, tilesHigh, 0, 0, 1.0, pixels);
-
+                render.Draw(tilesWide, tilesHigh, 0, 0, 1.0, pixels,
+                    false, 0, 0, false, false);
 
                 BitmapSource source = BitmapSource.Create(tilesWide, tilesHigh, 96.0, 96.0,
                     PixelFormats.Bgr32, null, pixels, tilesWide * 4);
@@ -771,6 +754,13 @@ namespace Terrafirma
         private void MapLoaded(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = loaded;
+        }
+
+        private void initWindow(object sender, EventArgs e)
+        {
+            HwndSource hwnd = HwndSource.FromVisual(Map) as HwndSource;
+
+            render.Textures = new Textures(hwnd.Handle);
         }
 
        

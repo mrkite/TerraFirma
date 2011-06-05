@@ -49,5 +49,8 @@ namespace Terrafirma
         public static readonly RoutedUICommand StopHilight = new RoutedUICommand(
             "Stop Hilighting", "StopHilight", typeof(MapCommands),
             new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F3) }));
+        public static readonly RoutedUICommand Textures = new RoutedUICommand(
+            "Use Textures", "Textures", typeof(MapCommands),
+            new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F1) }));
     }
 }
