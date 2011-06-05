@@ -15,6 +15,8 @@ namespace Terrafirma
         private Int32 tilesWide, tilesHigh;
         private int groundLevel, rockLevel;
 
+        Random rand;
+
         public Textures Textures { set; get; }
 
         public Render(TileInfo[] tileInfo, WallInfo[] wallInfo,
@@ -29,6 +31,7 @@ namespace Terrafirma
             this.hellColor = hellColor;
             this.waterColor = waterColor;
             this.lavaColor = lavaColor;
+            rand = new Random();
         }
 
         public void SetWorld(Tile[] tiles, Int32 tilesWide, Int32 tilesHigh,
@@ -48,24 +51,23 @@ namespace Terrafirma
             bool light,bool texture)
         {
             UInt32 blendcolor = 0;
-            UInt32 hicolor = 0;
+            UInt32 tocolor = 0xffffff;
             double hialpha = 0.0;
             if (isHilight)
             {
-                hicolor = tileInfo[hilight].color;
+                UInt32 hicolor = tileInfo[hilight].color;
 
                 int r = ((hicolor >> 16) & 0xff) > 127 ? 1 : 0;
                 int g = ((hicolor >> 8) & 0xff) > 127 ? 1 : 0;
                 int b = (hicolor & 0xff) > 127 ? 1 : 0;
 
-                UInt32 to = 0xffffff;
-                if ((r ^ g ^ b) == 0) to = 0;
+                if ((r ^ g ^ b) == 0) tocolor = 0;
 
                 if (hilightTick > 7)
                     hialpha = (15 - hilightTick) / 7.0;
                 else
                     hialpha = hilightTick / 7.0;
-                blendcolor = alphaBlend(hicolor, to, hialpha);
+                blendcolor = alphaBlend(hicolor, tocolor, hialpha);
             }
 
             if (texture)
@@ -77,6 +79,10 @@ namespace Terrafirma
                 double adjusty = ((height / scale) - blocksHigh) / 2;
                 startx += adjustx;
                 starty += adjusty;
+
+                int skipx = 0, skipy = 0;
+                if (startx < 0) skipx = (int)-startx;
+                if (starty < 0) skipy = (int)-starty;
 
                 double shiftx = (startx - Math.Floor(startx)) * scale;
                 double shifty = (starty - Math.Floor(starty)) * scale;
@@ -107,13 +113,13 @@ namespace Terrafirma
                 }
                 //draw walls
 
-                py = (int)-(scale / 2);
-                for (int y = 0; y < blocksHigh; y++)
+                py = skipy * (int)scale - (int)(scale / 2);
+                for (int y = skipy; y < blocksHigh; y++)
                 {
                     int sy = (int)(y + starty);
 
-                    px = (int)-(scale / 2);
-                    for (int x = 0; x < blocksWide; x++)
+                    px = skipx * (int)scale - (int)(scale / 2);
+                    for (int x = skipx; x < blocksWide; x++)
                     {
                         int sx = (int)(x + startx);
                         int offset = sy + sx * tilesHigh;
@@ -133,12 +139,12 @@ namespace Terrafirma
                     py += (int)scale;
                 }
                 //draw tiles
-                py = 0;
-                for (int y = 0; y < blocksHigh; y++)
+                py = skipy*(int)scale;
+                for (int y = skipy; y < blocksHigh; y++)
                 {
                     int sy = (int)(y + starty);
-                    px = 0;
-                    for (int x = 0; x < blocksWide; x++)
+                    px = skipx*(int)scale;
+                    for (int x = skipx; x < blocksWide; x++)
                     {
                         int sx = (int)(x + startx);
                         int offset = sy + sx * tilesHigh;
@@ -154,7 +160,7 @@ namespace Terrafirma
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                             if (isHilight && tiles[offset].type == hilight)
                             {
-                                drawOverlay(hicolor, hialpha, 16, pixels,
+                                drawOverlay(tocolor, hialpha, 16, pixels,
                                     (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                             }
                         }
@@ -257,11 +263,11 @@ namespace Terrafirma
         {
             int skipx = 0, skipy = 0;
             if (px < 0) skipx = -px;
-            int bw = (int)(zoom * 16 + 0.5);
+            int bw = (int)(zoom * 16);
             if (px + bw >= w) bw = w - px;
             if (bw <= 0) return;
             if (py < 0) skipy = -py;
-            int bh = (int)(zoom * 16 + 0.5);
+            int bh = (int)(zoom * 16);
             if (py + bh >= h) bh = h - py;
             if (bh <= 0) return;
             int bofs = py * w * 4 + px * 4;
@@ -309,30 +315,37 @@ namespace Terrafirma
                         0,0};       //1111 impossible
 
         Int16[] uvMap ={            //tblr
-                        162,54,     //0000
-                        162,0,      //0001
-                        216,0,      //0010
-                        108,72,     //0011
-                        108,0,      //0100
-                        0,54,       //0101
-                        18,54,      //0110
-                        18,0,       //0111
-                        108,54,     //1000
-                        0,72,       //1001
-                        18,72,      //1010
-                        18,36,      //1011
-                        90,0,       //1100
-                        0,0,        //1101
-                        72,0,       //1110
-                        18,18       //1111
+                        162,54, 180,54, 198,54,     //0000
+                        162,0,  162,18, 162,36,     //0001
+                        216,0,  216,18, 216,36,     //0010
+                        108,72, 126,72, 144,72,     //0011
+                        108,0,  126,0,  144,0,      //0100
+                        0,54,   36,54,  72,54,      //0101
+                        18,54,  54,54,  90,54,      //0110
+                        18,0,   36,0,   54,0,       //0111
+                        108,54, 126,54, 144,54,     //1000
+                        0,72,   36,72,  72,72,      //1001
+                        18,72,  54,72,  90,72,      //1010
+                        18,36,  36,36,  54,36,      //1011
+                        90,0,   90,18,  90,36,      //1100
+                        0,0,    0,18,   0,36,       //1101
+                        72,0,   72,18,  72,36,      //1110
+                        18,18,  36,18,  54,18       //1111
                   };
-
+        Int16[] uvCorners ={
+                        108,18, 126,18, 144,18, //top
+                        108,36, 126,36, 144,36, //bottom
+                        180,0,  180,18, 180,36, //left
+                        198,0,  198,18, 198,36, //right
+                        18,18,  36,18,  54,18   //all
+                          };
         private void fixTile(int x, int y)
         {
             int t = -1, l = -1, r = -1, b = -1;
             int tl = -1, tr = -1, bl = -1, br = -1;
             byte c = tiles[y + x * tilesHigh].type;
-            Int16 u, v;
+            Int16 u;
+            int set = rand.Next(0, 3) * 2;
 
             if (x > 0)
             {
@@ -380,7 +393,7 @@ namespace Terrafirma
             }
 
             int mask;
-            if (c == 49) //blue candle
+            if (c == 33 || c==49) //candles
             {
                 // these tiles don't have u/v, but are single tiles
                 tiles[y + x * tilesHigh].u = 0;
@@ -412,34 +425,32 @@ namespace Terrafirma
                 tiles[y + x * tilesHigh].v = uvPlatforms[mask * 2 + 1];
                 return;
             }
-            if (c == 2 || c == 23) //grasses
+            if (c == 2 || c == 23 || c == 60 || c == 70) //grasses
             {
-                if (t == 0) t = c;
-                if (l == 0) l = c;
-                if (b == 0) b = c;
-                if (r == 0) r = c;
-                if (tl == 0) tl = c;
-                if (tr == 0) tr = c;
-                if (bl == 0) bl = c;
-                if (br == 0) br = c;
+                //if it's mud or dirt, it's grass
+                if (t == 0 || t == 59) t = c;
+                if (l == 0 || l == 59) l = c;
+                if (b == 0 || b == 59) b = c;
+                if (r == 0 || r == 59) r = c;
+                if (tl == 0 || tl == 59) tl = c;
+                if (tr == 0 || tr == 59) tr = c;
+                if (bl == 0 || bl == 59) bl = c;
+                if (br == 0 || br == 59) br = c;
             }
-            if (c == 0) //dirt
+            if (c == 0 || c == 59) //dirt and mud
             {
                 //consider grass to be same as dirt
-                if (t == 2 || t == 23) t = c;
-                if (l == 2 || l == 23) l = c;
-                if (b == 2 || b == 23) b = c;
-                if (r == 2 || r == 23) r = c;
-                if (tl == 2 || tl == 23) tl = c;
-                if (tr == 2 || tr == 23) tr = c;
-                if (bl == 2 || bl == 23) bl = c;
-                if (br == 2 || br == 23) br = c;
+                if (t == 2 || t == 23 || t == 60 || t == 70) t = c;
+                if (l == 2 || l == 23 || l == 60 || l == 70) l = c;
+                if (b == 2 || b == 23 || b == 60 || b == 70) b = c;
+                if (r == 2 || r == 23 || r == 60 || r == 70) r = c;
+                if (tl == 2 || tl == 23 || tl == 60 || tl == 70) tl = c;
+                if (tr == 2 || tr == 23 || tr == 60 || tr == 70) tr = c;
+                if (bl == 2 || bl == 23 || bl == 60 || bl == 70) bl = c;
+                if (br == 2 || br == 23 || br == 60 || br == 70) br = c;
             }
-            /*if (c == 1) //stones
+            /*if (c == 1) //stones should be grouped together
             {
-                tiles[y + x * tilesHigh].u = 0;
-                tiles[y + x * tilesHigh].v = 0;
-                return;
             } */
 
             mask = 0;
@@ -449,38 +460,24 @@ namespace Terrafirma
             if (t == c) mask |= 8;
             if (mask == 0xf) //all on
             {
+                int num;
                 if (tl != c && tr != c)
-                {
-                    u = 108;
-                    v = 18;
-                }
+                    num = 0;
                 else if (bl != c && br != c)
-                {
-                    u = 108;
-                    v = 36;
-                }
+                    num = 1;
                 else if (tl != c && bl != c)
-                {
-                    u = 180;
-                    v = 0;
-                }
+                    num = 2;
                 else if (tr != c && br != c)
-                {
-                    u = 198;
-                    v = 0;
-                }
+                    num = 3;
                 else
-                {
-                    u = uvMap[mask * 2];
-                    v = uvMap[mask * 2 + 1];
-                }
-                tiles[y + x * tilesHigh].u = u;
-                tiles[y + x * tilesHigh].v = v;
+                    num = 4;
+                tiles[y + x * tilesHigh].u = uvCorners[num * 6 + set];
+                tiles[y + x * tilesHigh].v = uvCorners[num * 6 + 1 + set];
             }
             else
             {
-                tiles[y + x * tilesHigh].u = uvMap[mask * 2];
-                tiles[y + x * tilesHigh].v = uvMap[mask * 2 + 1];
+                tiles[y + x * tilesHigh].u = uvMap[mask * 6 + set];
+                tiles[y + x * tilesHigh].v = uvMap[mask * 6 + 1 + set];
             }
         }
         private void fixWall(int x, int y)
@@ -488,7 +485,7 @@ namespace Terrafirma
             byte t = 0, l = 0, r = 0, b = 0;
             byte tl = 0, tr = 0, bl = 0, br = 0;
             byte c = tiles[y + x * tilesHigh].wall;
-            Int16 u, v;
+            int set = rand.Next(0, 3) * 2;
 
             if (x > 0)
             {
@@ -520,38 +517,24 @@ namespace Terrafirma
             if (t == c) mask |= 8;
             if (mask == 0xf) //all on
             {
+                int num;
                 if (tl != c && tr != c)
-                {
-                    u = 108;
-                    v = 18;
-                }
+                    num = 0;
                 else if (bl != c && br != c)
-                {
-                    u = 108;
-                    v = 36;
-                }
+                    num = 1;
                 else if (tl != c && bl != c)
-                {
-                    u = 180;
-                    v = 0;
-                }
+                    num = 2;
                 else if (tr != c && br != c)
-                {
-                    u = 198;
-                    v = 0;
-                }
+                    num = 3;
                 else
-                {
-                    u = uvMap[mask * 2];
-                    v = uvMap[mask * 2 + 1];
-                }
-                tiles[y + x * tilesHigh].wallu = u;
-                tiles[y + x * tilesHigh].wallv = v;
+                    num = 4;
+                tiles[y + x * tilesHigh].wallu = uvCorners[num * 6 + set];
+                tiles[y + x * tilesHigh].wallv = uvCorners[num * 6 + 1 + set];
             }
             else
             {
-                tiles[y + x * tilesHigh].wallu = uvMap[mask * 2];
-                tiles[y + x * tilesHigh].wallv = uvMap[mask * 2 + 1];
+                tiles[y + x * tilesHigh].wallu = uvMap[mask * 6 + set];
+                tiles[y + x * tilesHigh].wallv = uvMap[mask * 6 + 1 + set];
             }
         }
         private UInt32 alphaBlend(UInt32 from, UInt32 to, double alpha)

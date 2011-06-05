@@ -234,7 +234,10 @@ namespace Terrafirma
             if (Directory.Exists(path))
                 worlds = Directory.GetFiles(path, "*.wld");
             else
+            {
                 worlds = new string[0];
+                Worlds.IsEnabled = false;
+            }
             int max = worlds.Length;
             if (max > 9) max = 9;
             for (int i = 0; i < max; i++)
@@ -398,7 +401,7 @@ namespace Terrafirma
             double startx = curX - (curWidth / (2 * curScale));
             double starty = curY - (curHeight / (2 * curScale));
             render.Draw(curWidth, curHeight, startx, starty, curScale, bits,
-                isHilight,hilight,hilightTick,Lighting.IsChecked,
+                isHilight,hilight,hilightTick,false,
                 UseTextures.IsChecked && curScale>2.0);
 
             //draw map here with curX,curY,curScale
@@ -455,10 +458,8 @@ namespace Terrafirma
                 if (v.X > 50 || v.Y > 50)
                     CloseAllPops();
 
-                double startx = curX - (curWidth / (2 * curScale));
-                double starty = curY - (curHeight / (2 * curScale));
-                int sy = (int)(curPos.Y / curScale + starty);
-                int sx = (int)(curPos.X / curScale + startx);
+                int sx, sy;
+                getMapXY(curPos, out sx, out sy);
                 if (sx >= 0 && sx < tilesWide && sy >= 0 && sy < tilesHigh)
                 {
                     int offset = sy + sx * tilesHigh;
@@ -507,15 +508,33 @@ namespace Terrafirma
             }
         }
 
+        private void getMapXY(Point p, out int sx, out int sy)
+        {
+            double startx = curX - (curWidth / (2 * curScale));
+            double starty = curY - (curHeight / (2 * curScale));
+            int blocksWide = (int)(curWidth / Math.Floor(curScale)) + 2;
+            int blocksHigh = (int)(curHeight / Math.Floor(curScale)) + 2;
+            double adjustx = ((curWidth / curScale) - blocksWide) / 2;
+            double adjusty = ((curHeight / curScale) - blocksHigh) / 2;
+            if (UseTextures.IsEnabled && curScale > 2.0)
+            {
+                sx = (int)(p.X / Math.Floor(curScale) + startx + adjustx);
+                sy = (int)(p.Y / Math.Floor(curScale) + starty + adjusty);
+            }
+            else
+            {
+                sx = (int)(p.X / curScale + startx);
+                sy = (int)(p.Y / curScale + starty);
+            }
+        }
+
         private void Map_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             CloseAllPops();
             Point curPos = e.GetPosition(Map);
             start = curPos;
-            double startx = curX - (curWidth / (2 * curScale));
-            double starty = curY - (curHeight / (2 * curScale));
-            int sy = (int)(curPos.Y / curScale + starty);
-            int sx = (int)(curPos.X / curScale + startx);
+            int sx, sy;
+            getMapXY(curPos, out sx, out sy);
             foreach (Chest c in chests)
             {
                 //chests are 2x2, and their x/y is upper left corner
@@ -566,14 +585,14 @@ namespace Terrafirma
                     break;
                 case Key.PageUp:
                 case Key.E:
-                    curScale += 0.5;
+                    curScale += 1.0;
                     if (curScale > MaxScale)
                         curScale = MaxScale;
                     changed = true;
                     break;
                 case Key.PageDown:
                 case Key.Q:
-                    curScale -= 0.5;
+                    curScale -= 1.0;
                     if (curScale < MinScale)
                         curScale = MinScale;
                     changed = true;
@@ -736,7 +755,10 @@ namespace Terrafirma
             var result = dlg.ShowDialog();
             if (result == true)
             {
+                Saving save = new Saving();
+                save.Show();
                 byte[] pixels = new byte[tilesWide * tilesHigh * 4];
+
 
                 render.Draw(tilesWide, tilesHigh, 0, 0, 1.0, pixels,
                     false, 0, 0, false, false);
@@ -748,6 +770,7 @@ namespace Terrafirma
                 encoder.Frames.Add(BitmapFrame.Create(source));
                 encoder.Save(stream);
                 stream.Close();
+                save.Close();
             }
 
         }
@@ -761,6 +784,9 @@ namespace Terrafirma
             HwndSource hwnd = HwndSource.FromVisual(Map) as HwndSource;
 
             render.Textures = new Textures(hwnd.Handle);
+
+            if (!render.Textures.Valid) //couldn't find textures?
+                UseTextures.IsEnabled = false;
         }
 
        

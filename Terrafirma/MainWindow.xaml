@@ -18,10 +18,11 @@
             <MenuItem Header="_View">
                 <MenuItem Command="w:MapCommands.Textures" Name="UseTextures"/>
                 <MenuItem Command="Refresh" />
-                <MenuItem Command="w:MapCommands.JumpToSpawn" />
-                <MenuItem Command="w:MapCommands.Lighting" IsCheckable="True" Name="Lighting" />
                 <MenuItem Command="w:MapCommands.Hilight" />
                 <MenuItem Command="w:MapCommands.StopHilight" />
+            </MenuItem>
+            <MenuItem Header="_Navigate">
+                <MenuItem Command="w:MapCommands.JumpToSpawn" />
                 <MenuItem Header="NPCs" IsEnabled="False" Name="NPCs" />
             </MenuItem>
         </Menu>
@@ -52,9 +53,6 @@
                         CanExecute="MapLoaded" />
         <CommandBinding Command="w:MapCommands.Textures"
                         Executed="Texture_Executed"
-                        CanExecute="MapLoaded" />
-        <CommandBinding Command="w:MapCommands.Lighting"
-                        Executed="Lighting_Executed"
                         CanExecute="MapLoaded" />
         <CommandBinding Command="w:MapCommands.Hilight"
                         Executed="Hilight_Executed"
