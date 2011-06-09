@@ -400,9 +400,16 @@ namespace Terrafirma
 
             double startx = curX - (curWidth / (2 * curScale));
             double starty = curY - (curHeight / (2 * curScale));
-            render.Draw(curWidth, curHeight, startx, starty, curScale, bits,
-                isHilight,hilight,hilightTick,false,
-                UseTextures.IsChecked && curScale>2.0);
+            try
+            {
+                render.Draw(curWidth, curHeight, startx, starty, curScale, bits,
+                    isHilight, hilight, hilightTick, false,
+                    UseTextures.IsChecked && curScale > 2.0);
+            }
+            catch (System.NotSupportedException e)
+            {
+                MessageBox.Show(e.ToString(), "Not supported");
+            }
 
             //draw map here with curX,curY,curScale
             mapbits.WritePixels(rect, bits, curWidth * 4, 0);
@@ -516,7 +523,8 @@ namespace Terrafirma
             int blocksHigh = (int)(curHeight / Math.Floor(curScale)) + 2;
             double adjustx = ((curWidth / curScale) - blocksWide) / 2;
             double adjusty = ((curHeight / curScale) - blocksHigh) / 2;
-            if (UseTextures.IsEnabled && curScale > 2.0)
+
+            if (UseTextures.IsChecked && curScale > 2.0)
             {
                 sx = (int)(p.X / Math.Floor(curScale) + startx + adjustx);
                 sy = (int)(p.Y / Math.Floor(curScale) + starty + adjusty);
@@ -706,6 +714,8 @@ namespace Terrafirma
         }
         private void Texture_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            if (!render.Textures.Valid)
+                return;
             if (UseTextures.IsChecked)
                 UseTextures.IsChecked = false;
             else
@@ -781,6 +791,8 @@ namespace Terrafirma
 
         private void initWindow(object sender, EventArgs e)
         {
+            checkVersion();
+
             HwndSource hwnd = HwndSource.FromVisual(Map) as HwndSource;
 
             render.Textures = new Textures(hwnd.Handle);
@@ -789,6 +801,57 @@ namespace Terrafirma
                 UseTextures.IsEnabled = false;
         }
 
-       
+        private void checkVersion()
+        {
+            Version newVersion = null;
+            string url = "";
+            XmlTextReader reader = null;
+            try
+            {
+                reader = new XmlTextReader("http://seancode.com/terrafirma/version.xml");
+                reader.MoveToContent();
+                string elementName = "";
+                if (reader.NodeType == XmlNodeType.Element && reader.Name == "terrafirma")
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.NodeType == XmlNodeType.Element)
+                            elementName = reader.Name;
+                        else
+                        {
+                            if (reader.NodeType == XmlNodeType.Text && reader.HasValue)
+                            {
+                                switch (elementName)
+                                {
+                                    case "version":
+                                        newVersion = new Version(reader.Value);
+                                        break;
+                                    case "url":
+                                        url = reader.Value;
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                if (reader!=null)
+                    reader.Close();
+            }
+            Version curVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            if (curVersion.CompareTo(newVersion) < 0)
+            {
+                if (MessageBox.Show(this, "Download the new version?", "New version detected",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question)==MessageBoxResult.Yes)
+                {
+                    System.Diagnostics.Process.Start(url);
+                }
+            }
+        }
     }
 }

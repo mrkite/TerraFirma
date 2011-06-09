@@ -31,10 +31,20 @@ namespace Terrafirma
                        parms.DeviceWindowHandle=handle;
                        parms.DepthStencilFormat=DepthFormat.Depth24Stencil8;
                        parms.IsFullScreen=false;
-                       graphicsDevice=new GraphicsDevice(
-                           GraphicsAdapter.DefaultAdapter,
-                           GraphicsProfile.HiDef,
-                           parms);
+                       if (GraphicsAdapter.DefaultAdapter.IsProfileSupported(GraphicsProfile.HiDef))
+                       {
+                           graphicsDevice = new GraphicsDevice(
+                               GraphicsAdapter.DefaultAdapter,
+                               GraphicsProfile.HiDef,
+                               parms);
+                       }
+                       else
+                       {
+                           graphicsDevice = new GraphicsDevice(
+                               GraphicsAdapter.DefaultAdapter,
+                               GraphicsProfile.Reach,
+                               parms);
+                       }
                        if (DeviceCreated!=null)
                            DeviceCreated(this,EventArgs.Empty);
                    }
