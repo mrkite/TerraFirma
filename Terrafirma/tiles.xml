@@ -22,10 +22,10 @@
   <tile num="19" name="Wooden Platform" color="#B18567" />
   <tile num="20" name="Sapling" color="#1E9648" hasExtra="1" />
   <tile num="21" name="Chest" color="#946B50" hasExtra="1" />
-  <tile num="22" name="Corrupted Stone" color="#625FA7" />
+  <tile num="22" name="Ebonstone" color="#625FA7" />
   <tile num="23" name="Corrupted Grass" color="#8D89DF" />
   <tile num="24" name="Corrupted Weeds" color="#6D6AAE" hasExtra="1" />
-  <tile num="25" name="Corrupted Stone" color="#7D7991" />
+  <tile num="25" name="Ebonstone" color="#7D7991" />
   <tile num="26" name="Demon Altar" color="#5E5561" hasExtra="1" />
   <tile num="27" name="Sunflower" color="#E3B903" hasExtra="1" />
   <tile num="28" name="Pot" color="#796E61" hasExtra="1" />

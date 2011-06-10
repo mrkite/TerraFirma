@@ -1,4 +1,31 @@
-﻿using System;
+﻿/*
+Copyright (c) 2011, Sean Kasun
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -155,8 +182,22 @@ namespace Terrafirma
                         if (tiles[offset].isActive)
                         {
                             if (tiles[offset].u == -1) fixTile(sx, sy);
+
+                            int texw=16;
+                            int texh=16;
+
+                            if (tiles[offset].type == 5) //tree
+                            {
+                                texw=20;
+                                drawLeaves(tiles[offset].u, tiles[offset].v, sx, sy,
+                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                            }
+                            if (tiles[offset].type == 72) //mushroom
+                                drawMushroom(tiles[offset].u, tiles[offset].v,
+                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+
                             Texture tex = Textures.GetTile(tiles[offset].type);
-                            drawTexture(tex, 16, 16, tiles[offset].v * tex.width * 4 + tiles[offset].u * 4,
+                            drawTexture(tex, texw, texh, tiles[offset].v * tex.width * 4 + tiles[offset].u * 4,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                             if (isHilight && tiles[offset].type == hilight)
                             {
@@ -217,6 +258,58 @@ namespace Terrafirma
                     }
                 }
             }
+        }
+
+        private int findCorruptGrass(int ofs)
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                if (tiles[ofs + i].type == 2) //normal grass
+                    return 0;
+                if (tiles[ofs + i].type == 23) //corrupt grass
+                    return 1;
+            }
+            return 0;
+        }
+
+        private void drawLeaves(int u, int v, int sx, int sy,
+            byte[] pixels, int px, int py,
+            int w, int h, double zoom)
+        {
+            if (u < 22 || v < 198) return; //not a leaf
+            int variant = 0;
+            if (v == 220) variant = 1;
+            else if (v == 242) variant = 2;
+
+            Texture tex;
+            switch (u)
+            {
+                case 22: //tree top
+                    tex = Textures.GetTreeTops(findCorruptGrass(sy + sx * tilesHigh));
+                    drawTexture(tex, 80, 80, variant * 82 * 4, pixels, px - (int)(30 * zoom), py - (int)(62 * zoom), w, h, zoom);
+                    break;
+                case 44: //left branch
+                    tex = Textures.GetTreeBranches(findCorruptGrass(sy + (sx + 1) * tilesHigh));
+                    drawTexture(tex, 40, 40, variant * 42 * tex.width * 4, pixels, px - (int)(22 * zoom), py - (int)(12 * zoom), w, h, zoom);
+                    break;
+                case 66: //right branch
+                    tex = Textures.GetTreeBranches(findCorruptGrass(sy + (sx - 1) * tilesHigh));
+                    drawTexture(tex, 40, 40, variant * 42 * tex.width * 4 + 42 * 4, pixels, px, py - (int)(12 * zoom), w, h, zoom);
+                    break;
+            }
+        }
+        private void drawMushroom(int u, int v,
+            byte[] pixels, int px, int py,
+            int w, int h, double zoom)
+        {
+            if (u < 36) return; //not mushroom top
+            int variant = 0;
+            if (v == 18)
+                variant = 1;
+            else if (v == 36)
+                variant = 2;
+            Texture tex = Textures.GetShroomTop(0);
+            drawTexture(tex, 60, 42, variant * 62 * 4, pixels, px - (int)(22 * zoom), py - (int)(26 * zoom), w, h, zoom);
         }
 
         void drawTexture(Texture tex, int bw, int bh, int tofs,

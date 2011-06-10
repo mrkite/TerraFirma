@@ -37,79 +37,62 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Collections;
 
 namespace Terrafirma
 {
     /// <summary>
-    /// Interaction logic for HilightWin.xaml
+    /// Interaction logic for SaveOptions.xaml
     /// </summary>
-    public partial class HilightWin : Window
+    public partial class SaveOptions : Window
     {
-        class HTile : IComparable
-        {
-            private string name;
-            private int num;
-            public HTile(string name, int num)
-            {
-                this.name = name;
-                this.num = num;
-            }
-            public int Num
-            {
-                get { return num; }
-            }
-            public override string ToString()
-            {
-                return name;
-            }
-            int IComparable.CompareTo(object obj)
-            {
-                HTile h = (HTile)obj;
-                int r = String.Compare(this.name, h.name);
-                if (r == 0)
-                {
-                    if (this.num < h.num) r = -1;
-                    else if (this.num > h.num) r = 1;
-                }
-                return r;
-            }
-        }
-        ArrayList theTiles;
-        public HilightWin(ArrayList tiles)
+        public SaveOptions()
         {
             InitializeComponent();
-
-            theTiles = new ArrayList();
-            int i=0;
-            foreach (string name in tiles)
-            {
-                theTiles.Add(new HTile(name,i++));
-            }
-            theTiles.Sort();
-            tileList.ItemsSource = theTiles;
-        }
-        public int SelectedItem {
-            get {
-                return (tileList.SelectedItem as HTile).Num;
-            }
         }
 
-
-        private void cancel_Click(object sender, RoutedEventArgs e)
+        public bool EntireMap
         {
-            DialogResult = false;
-            this.Close();
+            get;
+            set;
         }
-        private void hilight_Click(object sender, RoutedEventArgs e)
+        public bool UseTextures
+        {
+            get;
+            set;
+        }
+        public bool UseZoom
+        {
+            get;
+            set;
+        }
+
+        private void saveAll_Checked(object sender, RoutedEventArgs e)
+        {
+            if (currentOptions != null)
+                currentOptions.IsEnabled = false;
+            EntireMap = true;
+        }
+
+        private void saveCurrent_Checked(object sender, RoutedEventArgs e)
+        {
+            currentOptions.IsEnabled = true;
+            EntireMap = false;
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
             this.Close();
         }
 
-        private void tileList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void useTextures_Checked(object sender, RoutedEventArgs e)
         {
-            hilightbutton.IsEnabled = true;
+            UseTextures = useTextures.IsChecked == true;
+        }
+
+        private void useZoom_Checked(object sender, RoutedEventArgs e)
+        {
+            UseZoom = useZoom.IsChecked == true;
         }
     }
 }

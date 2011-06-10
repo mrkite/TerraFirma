@@ -762,25 +762,56 @@ namespace Terrafirma
             dlg.DefaultExt = ".png";
             dlg.Filter = "Png Image|*.png";
             dlg.Title = "Save Map Image";
-            var result = dlg.ShowDialog();
-            if (result == true)
+            if (dlg.ShowDialog() == true)
             {
-                Saving save = new Saving();
-                save.Show();
-                byte[] pixels = new byte[tilesWide * tilesHigh * 4];
+                var saveOpts = new SaveOptions();
+                if (saveOpts.ShowDialog() == true)
+                {
 
 
-                render.Draw(tilesWide, tilesHigh, 0, 0, 1.0, pixels,
-                    false, 0, 0, false, false);
+                    Saving save = new Saving();
+                    save.Show();
+                    byte[] pixels;
+                    int wd, ht;
+                    double sc, startx, starty;
 
-                BitmapSource source = BitmapSource.Create(tilesWide, tilesHigh, 96.0, 96.0,
-                    PixelFormats.Bgr32, null, pixels, tilesWide * 4);
-                FileStream stream = new FileStream(dlg.FileName, FileMode.Create);
-                PngBitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(source));
-                encoder.Save(stream);
-                stream.Close();
-                save.Close();
+                    if (saveOpts.EntireMap)
+                    {
+                        wd = tilesWide;
+                        ht = tilesHigh;
+                        sc = 1.0;
+                        startx = 0.0;
+                        starty = 0.0;
+                    }
+                    else
+                    {
+                        if (saveOpts.UseZoom)
+                            sc = curScale;
+                        else if (saveOpts.UseTextures)
+                            sc = 16.0;
+                        else
+                            sc = 1.0;
+
+                        wd = (int)((curWidth / curScale) * sc);
+                        ht = (int)((curHeight / curScale) * sc);
+                        startx = curX - (wd / (2 * sc));
+                        starty = curY - (ht / (2 * sc));
+                    }
+                    pixels = new byte[wd * ht * 4];
+
+                    render.Draw(wd, ht, startx, starty, sc,
+                        pixels, false, 0, 0, false,
+                        saveOpts.UseTextures && curScale > 2.0);
+
+                    BitmapSource source = BitmapSource.Create(wd, ht, 96.0, 96.0,
+                        PixelFormats.Bgr32, null, pixels, wd * 4);
+                    FileStream stream = new FileStream(dlg.FileName, FileMode.Create);
+                    PngBitmapEncoder encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(source));
+                    encoder.Save(stream);
+                    stream.Close();
+                    save.Close();
+                }
             }
 
         }

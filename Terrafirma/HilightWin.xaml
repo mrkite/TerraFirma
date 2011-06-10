@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Terrafirma.HilightWin"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="HilightWin" Height="300" Width="300">
+        Title="Hilight Block" Height="300" Width="300">
     <Grid>
         <ListBox Height="237" HorizontalAlignment="Left" Margin="12,12,0,0" Name="tileList" VerticalAlignment="Top" Width="173" SelectionChanged="tileList_SelectionChanged" />
         <Button Content="Hilight" Height="23" HorizontalAlignment="Left" Margin="191,226,0,0" Name="hilightbutton" VerticalAlignment="Top" Width="75" Click="hilight_Click" IsDefault="True" IsEnabled="False" />
