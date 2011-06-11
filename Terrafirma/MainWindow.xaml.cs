@@ -51,6 +51,8 @@ namespace Terrafirma
         public string name;
         public UInt32 color;
         public bool hasExtra;
+        public double light;
+        public bool transparent;
     }
     struct WallInfo
     {
@@ -66,6 +68,7 @@ namespace Terrafirma
         public byte liquid;
         public bool isLava;
         public Int16 u, v, wallu, wallv;
+        public double light;
     }
     struct ChestItem
     {
@@ -145,6 +148,11 @@ namespace Terrafirma
                 tileInfo[id].name = tileList[i].Attributes["name"].Value;
                 tileInfo[id].color = parseColor(tileList[i].Attributes["color"].Value);
                 tileInfo[id].hasExtra = tileList[i].Attributes["hasExtra"] != null;
+                if (tileList[i].Attributes["light"] != null)
+                    tileInfo[id].light = Double.Parse(tileList[i].Attributes["light"].Value);
+                else
+                    tileInfo[id].light = 0.0;
+                tileInfo[id].transparent = tileList[i].Attributes["letLight"] != null;
             }
             XmlNodeList wallList = xml.GetElementsByTagName("wall");
             wallInfo = new WallInfo[wallList.Count+1];
@@ -378,6 +386,8 @@ namespace Terrafirma
                 }
             }
 
+            calculateLight();
+
             render.SetWorld(tiles, tilesWide, tilesHigh, groundLevel, rockLevel);
             //load info
             loaded = true;
@@ -403,7 +413,7 @@ namespace Terrafirma
             try
             {
                 render.Draw(curWidth, curHeight, startx, starty, curScale, bits,
-                    isHilight, hilight, hilightTick, false,
+                    isHilight, hilight, hilightTick, Lighting.IsChecked,
                     UseTextures.IsChecked && curScale > 2.0);
             }
             catch (System.NotSupportedException e)
@@ -768,7 +778,6 @@ namespace Terrafirma
                 if (saveOpts.ShowDialog() == true)
                 {
 
-
                     Saving save = new Saving();
                     save.Show();
                     byte[] pixels;
@@ -800,7 +809,7 @@ namespace Terrafirma
                     pixels = new byte[wd * ht * 4];
 
                     render.Draw(wd, ht, startx, starty, sc,
-                        pixels, false, 0, 0, false,
+                        pixels, false, 0, 0, Lighting.IsChecked,
                         saveOpts.UseTextures && curScale > 2.0);
 
                     BitmapSource source = BitmapSource.Create(wd, ht, 96.0, 96.0,
@@ -830,6 +839,55 @@ namespace Terrafirma
 
             if (!render.Textures.Valid) //couldn't find textures?
                 UseTextures.IsEnabled = false;
+        }
+
+        private void calculateLight()
+        {
+            // turn off all light
+            for (int i = 0; i < tilesWide * tilesHigh; i++)
+                tiles[i].light = 0.0;
+            // light up light sources
+            for (int y = 0; y < tilesHigh; y++)
+            {
+                for (int x = 0; x < tilesWide; x++)
+                {
+                    int offset = x * tilesHigh + y;
+                    if ((!tiles[offset].isActive || tileInfo[tiles[offset].type].transparent) &&
+                        tiles[offset].wall == 0 && tiles[offset].liquid < 255 && y < groundLevel) //sunlight
+                        tiles[offset].light = 1.0;
+                    if (tiles[offset].type == 61 && tiles[offset].u == 144) //special case jungle light ball
+                        tiles[offset].light = Math.Max(tiles[offset].light, 0.75);
+                    tiles[offset].light = Math.Max(tiles[offset].light, tileInfo[tiles[offset].type].light);
+                }
+            }
+            // spread light
+            for (int y = 0; y < tilesHigh; y++)
+            {
+                for (int x = 0; x < tilesWide; x++)
+                {
+                    int offset = x * tilesHigh + y;
+                    double delta = 0.04;
+                    if (tiles[offset].isActive && !tileInfo[tiles[offset].type].transparent) delta = 0.16;
+                    if (y > 0 && tiles[offset - 1].light - delta > tiles[offset].light)
+                        tiles[offset].light = tiles[offset - 1].light - delta;
+                    if (x > 0 && tiles[offset - tilesHigh].light - delta > tiles[offset].light)
+                        tiles[offset].light = tiles[offset - tilesHigh].light - delta;
+                }
+            }
+            // spread light backwards
+            for (int y = tilesHigh - 1; y >= 0; y--)
+            {
+                for (int x = tilesWide - 1; x >= 0; x--)
+                {
+                    int offset = x * tilesHigh + y;
+                    double delta = 0.04;
+                    if (tiles[offset].isActive && !tileInfo[tiles[offset].type].transparent) delta = 0.16;
+                    if (y < tilesHigh - 1 && tiles[offset + 1].light - delta > tiles[offset].light)
+                        tiles[offset].light = tiles[offset + 1].light - delta;
+                    if (x < tilesWide - 1 && tiles[offset + tilesHigh].light - delta > tiles[offset].light)
+                        tiles[offset].light = tiles[offset + tilesHigh].light - delta;
+                }
+            }
         }
 
         private void checkVersion()

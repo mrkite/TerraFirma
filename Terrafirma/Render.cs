@@ -210,6 +210,9 @@ namespace Terrafirma
                             drawOverlay(tiles[offset].isLava ? lavaColor : waterColor, 0.5, tiles[offset].liquid,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                         }
+                        if (light)
+                            drawOverlay(0, 1.0 - tiles[offset].light, 255,
+                                pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                         px += (int)scale;
                     }
                     py += (int)scale;
@@ -248,8 +251,8 @@ namespace Terrafirma
                             }
                             if (tiles[offset].liquid > 0)
                                 c = alphaBlend(c, tiles[offset].isLava ? lavaColor : waterColor, 0.5);
-                            if (light && !tiles[offset].hasLight)
-                                c = 0;
+                            if (light)
+                                c = alphaBlend(0, c, tiles[offset].light);
                         }
                         pixels[bofs++] = (byte)(c & 0xff);
                         pixels[bofs++] = (byte)((c >> 8) & 0xff);
@@ -268,6 +271,8 @@ namespace Terrafirma
                     return 0;
                 if (tiles[ofs + i].type == 23) //corrupt grass
                     return 1;
+                if (tiles[ofs + i].type == 60) //jungle grass
+                    return 2;
             }
             return 0;
         }
@@ -282,18 +287,25 @@ namespace Terrafirma
             else if (v == 242) variant = 2;
 
             Texture tex;
+            int leafType;
             switch (u)
             {
                 case 22: //tree top
-                    tex = Textures.GetTreeTops(findCorruptGrass(sy + sx * tilesHigh));
-                    drawTexture(tex, 80, 80, variant * 82 * 4, pixels, px - (int)(30 * zoom), py - (int)(62 * zoom), w, h, zoom);
+                    leafType = findCorruptGrass(sy + sx * tilesHigh);
+                    tex = Textures.GetTreeTops(leafType);
+                    if (leafType == 2)
+                        drawTexture(tex, 114, 96, variant * 116 * 4, pixels, px - (int)(46 * zoom), py - (int)(80 * zoom), w, h, zoom);
+                    else
+                        drawTexture(tex, 80, 80, variant * 82 * 4, pixels, px - (int)(30 * zoom), py - (int)(62 * zoom), w, h, zoom);
                     break;
                 case 44: //left branch
-                    tex = Textures.GetTreeBranches(findCorruptGrass(sy + (sx + 1) * tilesHigh));
+                    leafType = findCorruptGrass(sy + (sx + 1) * tilesHigh);
+                    tex = Textures.GetTreeBranches(leafType);
                     drawTexture(tex, 40, 40, variant * 42 * tex.width * 4, pixels, px - (int)(22 * zoom), py - (int)(12 * zoom), w, h, zoom);
                     break;
                 case 66: //right branch
-                    tex = Textures.GetTreeBranches(findCorruptGrass(sy + (sx - 1) * tilesHigh));
+                    leafType = findCorruptGrass(sy + (sx - 1) * tilesHigh);
+                    tex = Textures.GetTreeBranches(leafType);
                     drawTexture(tex, 40, 40, variant * 42 * tex.width * 4 + 42 * 4, pixels, px, py - (int)(12 * zoom), w, h, zoom);
                     break;
             }
