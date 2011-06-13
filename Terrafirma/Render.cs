@@ -78,23 +78,16 @@ namespace Terrafirma
             bool light,bool texture)
         {
             UInt32 blendcolor = 0;
-            UInt32 tocolor = 0xffffff;
             double hialpha = 0.0;
             if (isHilight)
             {
                 UInt32 hicolor = tileInfo[hilight].color;
 
-                int r = ((hicolor >> 16) & 0xff) > 127 ? 1 : 0;
-                int g = ((hicolor >> 8) & 0xff) > 127 ? 1 : 0;
-                int b = (hicolor & 0xff) > 127 ? 1 : 0;
-
-                if ((r ^ g ^ b) == 0) tocolor = 0;
-
                 if (hilightTick > 7)
                     hialpha = (15 - hilightTick) / 7.0;
                 else
                     hialpha = hilightTick / 7.0;
-                blendcolor = alphaBlend(hicolor, tocolor, hialpha);
+                blendcolor = alphaBlend(hicolor, 0xffffff, hialpha);
             }
 
             if (texture)
@@ -201,7 +194,12 @@ namespace Terrafirma
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                             if (isHilight && tiles[offset].type == hilight)
                             {
-                                drawOverlay(tocolor, hialpha, 16, pixels,
+                                drawOverlay(0xffffff, hialpha, 255, pixels,
+                                    (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                            }
+                            else if (isHilight)
+                            {
+                                drawOverlay(0, 0.5, 255, pixels,
                                     (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                             }
                         }
@@ -248,6 +246,10 @@ namespace Terrafirma
                                 c = tileInfo[tiles[offset].type].color;
                                 if (isHilight && hilight == tiles[offset].type)
                                     c = blendcolor;
+                                else if (isHilight)
+                                {
+                                    c = alphaBlend(0, c, 0.5);
+                                }
                             }
                             if (tiles[offset].liquid > 0)
                                 c = alphaBlend(c, tiles[offset].isLava ? lavaColor : waterColor, 0.5);
@@ -373,6 +375,7 @@ namespace Terrafirma
             if (bw <= 0) return;
             if (py < 0) skipy = -py;
             int bh = (int)(zoom * 16);
+            skipy += bh-(amount * bh / 255);
             if (py + bh >= h) bh = h - py;
             if (bh <= 0) return;
             int bofs = py * w * 4 + px * 4;

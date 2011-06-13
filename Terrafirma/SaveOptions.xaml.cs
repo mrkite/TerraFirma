@@ -55,6 +55,13 @@ namespace Terrafirma
             get;
             set;
         }
+        public bool CanUseTexture
+        {
+            set
+            {
+                useTextures.IsEnabled=value;
+            }
+        }
         public bool UseTextures
         {
             get;

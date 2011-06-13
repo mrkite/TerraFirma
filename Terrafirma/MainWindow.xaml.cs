@@ -98,7 +98,7 @@ namespace Terrafirma
     /// </summary>
     public partial class MainWindow : Window
     {
-        const UInt32 MapVersion=2;
+        const UInt32 MapVersion=9;
         const double MaxScale = 16.0;
         const double MinScale = 1.0;
 
@@ -149,7 +149,7 @@ namespace Terrafirma
                 tileInfo[id].color = parseColor(tileList[i].Attributes["color"].Value);
                 tileInfo[id].hasExtra = tileList[i].Attributes["hasExtra"] != null;
                 if (tileList[i].Attributes["light"] != null)
-                    tileInfo[id].light = Double.Parse(tileList[i].Attributes["light"].Value);
+                    tileInfo[id].light = Double.Parse(tileList[i].Attributes["light"].Value,System.Globalization.CultureInfo.InvariantCulture);
                 else
                     tileInfo[id].light = 0.0;
                 tileInfo[id].transparent = tileList[i].Attributes["letLight"] != null;
@@ -246,20 +246,25 @@ namespace Terrafirma
                 worlds = new string[0];
                 Worlds.IsEnabled = false;
             }
-            int max = worlds.Length;
-            if (max > 9) max = 9;
-            for (int i = 0; i < max; i++)
+            int numItems = 0;
+            for (int i = 0; i < worlds.Length && numItems < 9; i++)
             {
                 MenuItem item = new MenuItem();
-                item.Header = Path.GetFileNameWithoutExtension(worlds[i]);
+
+                using (BinaryReader b = new BinaryReader(File.OpenRead(worlds[i])))
+                {
+                    b.ReadUInt32(); //skip map version
+                    item.Header = b.ReadString();
+                }
                 item.Command = MapCommands.OpenWorld;
                 item.CommandParameter = i;
                 CommandBindings.Add(new CommandBinding(MapCommands.OpenWorld, OpenWorld));
-                item.InputGestureText = String.Format("Ctrl+{0}", (i + 1));
-                InputBinding inp = new InputBinding(MapCommands.OpenWorld, new KeyGesture(Key.D1 + i, ModifierKeys.Control));
+                item.InputGestureText = String.Format("Ctrl+{0}", (numItems + 1));
+                InputBinding inp = new InputBinding(MapCommands.OpenWorld, new KeyGesture(Key.D1 + numItems, ModifierKeys.Control));
                 inp.CommandParameter = i;
                 InputBindings.Add(inp);
                 Worlds.Items.Add(item);
+                numItems++;
             }
         }
 
@@ -284,10 +289,7 @@ namespace Terrafirma
             currentWorld = world;
             using (BinaryReader b = new BinaryReader(File.OpenRead(world)))
             {
-                if (b.ReadUInt32() != MapVersion)
-                {
-                    //error
-                }
+                b.ReadUInt32(); //skip map version.. it changes too often to care.
                 Title = b.ReadString();
                 b.BaseStream.Seek(20, SeekOrigin.Current); //skip id and bounds
                 tilesHigh = b.ReadInt32();
@@ -775,6 +777,7 @@ namespace Terrafirma
             if (dlg.ShowDialog() == true)
             {
                 var saveOpts = new SaveOptions();
+                saveOpts.CanUseTexture = render.Textures.Valid;
                 if (saveOpts.ShowDialog() == true)
                 {
 
