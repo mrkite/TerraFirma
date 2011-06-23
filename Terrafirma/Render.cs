@@ -664,7 +664,26 @@ namespace Terrafirma
             }
         };
 
-        
+
+        UVRule[] cactusRules ={
+                new UVRule(0xbf,0x30, 90,0,   0,0, 0,0),
+                new UVRule(0xab,0x20, 72,0,   0,0, 0,0),
+                new UVRule(0x97,0x10, 18,0,   0,0, 0,0),
+                new UVRule(0x83,0x00, 0,0,    0,0, 0,0),
+                new UVRule(0x3f,0x30, 90,36,  0,0, 0,0),
+                new UVRule(0x2b,0x20, 72,36,  0,0, 0,0),
+                new UVRule(0x17,0x10, 18,36,  0,0, 0,0),
+                new UVRule(0x43,0x40, 0,36,   0,0, 0,0),
+                new UVRule(0x03,0x00, 0,18,   0,0, 0,0),
+                new UVRule(0xd3,0x11, 108,36, 0,0, 0,0),
+                new UVRule(0xd3,0x91, 54,36,  0,0, 0,0),
+                new UVRule(0x83,0x01, 54,0,   0,0, 0,0),
+                new UVRule(0x83,0x81, 54,18,  0,0, 0,0),
+                new UVRule(0xe3,0x22, 108,18, 0,0, 0,0),
+                new UVRule(0xe3,0xa2, 36,36,  0,0, 0,0),
+                new UVRule(0x83,0x02, 36,0,   0,0, 0,0),
+                new UVRule(0x83,0x82, 36,18,  0,0, 0,0)
+                             };
 
         Int16[] uvPlatforms ={      //LRlr
                         0,0,        //0000 impossible
@@ -756,6 +775,11 @@ namespace Terrafirma
                 }
                 tiles[y + x * tilesHigh].u = u;
                 tiles[y + x * tilesHigh].v = 0;
+                return 0;
+            }
+            if (c == 80) //cactus
+            {
+                fixCactus(x, y, t,b,l,r,bl,br);
                 return 0;
             }
             if (c == 19) //wooden platform
@@ -927,6 +951,59 @@ namespace Terrafirma
             }
             //again, impossible to be here.
         }
+
+        private void fixCactus(int x, int y, int t, int b, int l, int r, int bl, int br)
+        {
+            //find the base of the cactus
+            int basex = x;
+            int baseofs = y + x * tilesHigh;
+            while (tiles[baseofs].isActive &&
+                tiles[baseofs].type == 80)
+            {
+                baseofs++;
+                if (!tiles[baseofs].isActive || tiles[baseofs].type != 80)
+                {
+                    if (tiles[baseofs - tilesHigh].isActive &&
+                        tiles[baseofs - tilesHigh].type == 80 &&
+                        tiles[baseofs - tilesHigh - 1].isActive &&
+                        tiles[baseofs - tilesHigh - 1].type == 80 && basex >= x)
+                    {
+                        basex--;
+                        baseofs -= tilesHigh;
+                    }
+                    if (tiles[baseofs + tilesHigh].isActive &&
+                        tiles[baseofs + tilesHigh].type == 80 &&
+                        tiles[baseofs + tilesHigh - 1].isActive &&
+                        tiles[baseofs + tilesHigh - 1].type == 80 && basex <= x)
+                    {
+                        basex++;
+                        baseofs += tilesHigh;
+                    }
+                }
+            }
+
+            Int16 mask = 0;
+            if (x < basex) mask |= 1;
+            if (x > basex) mask |= 2;
+            if (br == 80) mask |= 4;
+            if (bl == 80) mask |= 8;
+            if (r == 80) mask |= 0x10;
+            if (l == 80) mask |= 0x20;
+            if (b == 80) mask |= 0x40;
+            if (t == 80) mask |= 0x80;
+
+            foreach (UVRule rule in cactusRules)
+            {
+                if ((mask & rule.mask) == rule.val)
+                {
+                    tiles[y + x * tilesHigh].u = rule.uvs[0];
+                    tiles[y + x * tilesHigh].v = rule.uvs[1];
+                    return;
+                }
+            }
+        }
+
+
         private UInt32 alphaBlend(UInt32 from, UInt32 to, double alpha)
         {
             uint fr = (from >> 16) & 0xff;

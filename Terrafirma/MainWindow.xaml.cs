@@ -373,6 +373,7 @@ namespace Terrafirma
                     }
                 }
                 npcs.Clear();
+                NPCs.Items.Clear();
                 while (b.ReadBoolean())
                 {
                     NPC npc = new NPC();

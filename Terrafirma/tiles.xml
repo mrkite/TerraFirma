@@ -80,6 +80,12 @@
   <tile num="77" name="Hellforge" color="#EE6646" hasExtra="1" light="0.8" />
   <tile num="78" name="Clay Pot" color="#796E61" hasExtra="1" letLight="1" />
   <tile num="79" name="Bed" color="#5C6298" hasExtra="1" letLight="1" />
+  <tile num="80" name="Cactus" color="#497811" letLight="1" />
+  <tile num="81" name="Coral" color="#e5533f" hasExtra="1" letLight="1" />
+  <tile num="82" name="Herb sprouts" color="#fe5402" hasExtra="1" letLight="1" />
+  <tile num="83" name="Herb stalks" color="#fe5402" hasExtra="1" letLight="1" />
+  <tile num="84" name="Herbs" color="#fe5402" hasExtra="1" letLight="1" />
+  <tile num="85" name="Tombstone" color="#c0c0c0" hasExtra="1" />
   
   <wall num="1" name="Stone Wall" color="#343434" />
   <wall num="2" name="Dirt Wall" color="#583D2E" />
