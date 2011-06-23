@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <tiles>
   <tile num="0" name="Dirt" color="#976B4B" />
-  <tile num="1" name="Stone" color="#808080" />
-  <tile num="2" name="Grass" color="#1CD85E" />
+  <tile num="1" name="Stone" color="#808080" isStone="1" blend="0" />
+  <tile num="2" name="Grass" color="#1CD85E" isGrass="1" blend="0" />
   <tile num="3" name="Weeds" color="#1E9648" hasExtra="1" letLight="1" />
   <tile num="4" name="Torch" color="#FDDD03" light="1.0" />
   <tile num="5" name="Tree" color="#976B4B" hasExtra="1" letLight="1"/>
-  <tile num="6" name="Iron Ore" color="#B5A495" />
-  <tile num="7" name="Copper Ore" color="#964316" />
-  <tile num="8" name="Gold Ore" color="#B9A417" />
-  <tile num="9" name="Silver Ore" color="#D9DFDF" />
+  <tile num="6" name="Iron Ore" color="#B5A495" blend="0" />
+  <tile num="7" name="Copper Ore" color="#964316" blend="0" />
+  <tile num="8" name="Gold Ore" color="#B9A417" blend="0" />
+  <tile num="9" name="Silver Ore" color="#D9DFDF" blend="0" />
   <tile num="10" name="Closed Door" color="#BF8F6F" hasExtra="1" />
   <tile num="11" name="Open Door" color="#946B50" hasExtra="1" letLight="1" />
   <tile num="12" name="Heartstone" color="#B61239" hasExtra="1" letLight="1" />
@@ -22,10 +22,10 @@
   <tile num="19" name="Wooden Platform" color="#B18567" />
   <tile num="20" name="Sapling" color="#1E9648" hasExtra="1" letLight="1" />
   <tile num="21" name="Chest" color="#946B50" hasExtra="1" letLight="1" />
-  <tile num="22" name="Ebonstone" color="#625FA7" />
-  <tile num="23" name="Corrupted Grass" color="#8D89DF" />
+  <tile num="22" name="Ebonstone" color="#625FA7" blend="0" />
+  <tile num="23" name="Corrupted Grass" color="#8D89DF" isGrass="1" blend="0" />
   <tile num="24" name="Corrupted Weeds" color="#6D6AAE" hasExtra="1" letLight="1" />
-  <tile num="25" name="Ebonstone" color="#7D7991" />
+  <tile num="25" name="Ebonstone" color="#7D7991" blend="0" />
   <tile num="26" name="Demon Altar" color="#5E5561" hasExtra="1" light="0.4" />
   <tile num="27" name="Sunflower" color="#E3B903" hasExtra="1" letLight="1" />
   <tile num="28" name="Pot" color="#796E61" hasExtra="1" letLight="1" />
@@ -37,10 +37,10 @@
   <tile num="34" name="Copper Chandelier" color="#B75819" hasExtra="1" light="1.0" />
   <tile num="35" name="Silver Chandelier" color="#C1CACB" hasExtra="1" light="1.0" />
   <tile num="36" name="Gold Chandelier" color="#B9A417" hasExtra="1" light="1.0" />
-  <tile num="37" name="Meteorite" color="#685654" light="0.6" />
+  <tile num="37" name="Meteorite" color="#685654" light="0.6" blend="0" />
   <tile num="38" name="Gray Brick" color="#8C8C8C" />
   <tile num="39" name="Clay Brick" color="#C37057" />
-  <tile num="40" name="Clay" color="#925144" />
+  <tile num="40" name="Clay" color="#925144" blend="0" />
   <tile num="41" name="Blue Brick" color="#6365C9" />
   <tile num="42" name="Light Globe" color="#F99851" hasExtra="1" light="0.75" />
   <tile num="43" name="Green Brick" color="#3FA931" />
@@ -53,24 +53,24 @@
   <tile num="50" name="Books" color="#3095AA" hasExtra="1" letLight="1" />
   <tile num="51" name="Cobwebs" color="#9EADAE" />
   <tile num="52" name="Vines" color="#1E9648" />
-  <tile num="53" name="Sand" color="#D3C66F" />
+  <tile num="53" name="Sand" color="#D3C66F" blend="0" />
   <tile num="54" name="Glass" color="#C8F6FE" />
   <tile num="55" name="Sign" color="#7F5C45" hasExtra="1" letLight="1" />
-  <tile num="56" name="Obsidian" color="#5751AD" />
+  <tile num="56" name="Obsidian" color="#5751AD" blend="0" />
   <tile num="57" name="Ash" color="#44444C" />
-  <tile num="58" name="Hellstone" color="#8E4242" light="0.6" />
-  <tile num="59" name="Mud" color="#5C4449" />
-  <tile num="60" name="Jungle Grass" color="#8FD71D" />
+  <tile num="58" name="Hellstone" color="#8E4242" light="0.6" blend="57"/>
+  <tile num="59" name="Mud" color="#5C4449" blend="0" />
+  <tile num="60" name="Jungle Grass" color="#8FD71D" isGrass="1" blend="59" />
   <tile num="61" name="Jungle Weeds" color="#63971F" hasExtra="1" letLight="1" />
   <tile num="62" name="Jungle Vines" color="#28650D" />
-  <tile num="63" name="Sapphire" color="#2A82FA" />
-  <tile num="64" name="Ruby" color="#FA2A51" />
-  <tile num="65" name="Emerald" color="#05C95D" />
-  <tile num="66" name="Topaz" color="#C78B09" />
-  <tile num="67" name="Amethyst" color="#A30BD5" />
-  <tile num="68" name="Diamond" color="#19D1E7" />
+  <tile num="63" name="Sapphire" color="#2A82FA" isStone="1" blend="0"/>
+  <tile num="64" name="Ruby" color="#FA2A51" isStone="1" blend="0"/>
+  <tile num="65" name="Emerald" color="#05C95D" isStone="1" blend="0"/>
+  <tile num="66" name="Topaz" color="#C78B09" isStone="1" blend="0"/>
+  <tile num="67" name="Amethyst" color="#A30BD5" isStone="1" blend="0" />
+  <tile num="68" name="Diamond" color="#19D1E7" isStone="1" blend="0" />
   <tile num="69" name="Jungle Thorn" color="#855141" letLight="1" />
-  <tile num="70" name="Mushroom Grass" color="#5D7FFF" light="0.52" />
+  <tile num="70" name="Mushroom Grass" color="#5D7FFF" light="0.52" isGrass="1" blend="59" />
   <tile num="71" name="Mushroom" color="#B1AE83" hasExtra="1" light="0.52" />
   <tile num="72" name="Mushroom Tree" color="#968F6E" hasExtra="1" light="0.52" />
   <tile num="73" name="Weeds #73" color="#0D6524" hasExtra="1" letLight="1" />

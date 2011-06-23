@@ -404,6 +404,268 @@ namespace Terrafirma
             }
         }
 
+        class UVRule
+        {
+            public UInt32 mask,val;
+            public Int16[] uvs;
+            public byte blend;
+            public UVRule(UInt32 m, UInt32 v, Int16 u1, Int16 v1, Int16 u2, Int16 v2,
+                Int16 u3, Int16 v3)
+            {
+                mask = m;
+                val = v;
+                blend = 0;
+                uvs = new Int16[] { u1, v1, u2, v2, u3, v3 };
+            }
+            public UVRule(UInt32 m, UInt32 v, Int16 u1, Int16 v1, Int16 u2, Int16 v2,
+                Int16 u3, Int16 v3, byte blendDirs)
+            {
+                mask = m;
+                val = v;
+                blend = blendDirs;
+                uvs = new Int16[] { u1, v1, u2, v2, u3, v3 };
+            }
+        };
+
+        UVRule[][] grassRules ={
+            new UVRule[] {}, //0000
+            new UVRule[] {}, //0001
+            new UVRule[] {}, //0010
+            new UVRule[] {}, //0011
+            new UVRule[] {}, //0100
+            new UVRule[] { //0101
+                new UVRule(0xf5100,0x50000, 90,270,  108,270, 126,270)
+            },
+            new UVRule[] { //0110
+                new UVRule(0xf6200,0x60000, 144,270, 162,270, 180,270)
+            },
+            new UVRule[] { //0111
+                new UVRule(0xf3000,0x72000, 0,198,   18,198,  36,198, 6), //down,left
+                new UVRule(0xf3000,0x71000, 54,198,  72,198,  90,198, 5), //down,right
+                new UVRule(0xf7300,0x70000, 144,216, 198,216, 252,216),
+                new UVRule(0xf3000,0x73000, 36,270,  54,270,  72,270, 7), //left,right,down
+                new UVRule(0xf7300,0x70200, 0,324,   18,324,   36,324),
+                new UVRule(0xf7300,0x70100, 54,324,  72,324,   90,324)
+            },
+            new UVRule[] {}, //1000
+            new UVRule[] { //1001
+                new UVRule(0xf9400,0x90000, 90,288,  108,288, 126,288)
+            },
+            new UVRule[] { //1010
+                new UVRule(0xfa800,0xa0000, 144,288, 162,288, 180,288)
+            },
+            new UVRule[] { //1011
+                new UVRule(0xf3000,0xb2000, 0,216,   18,216,  36,216, 10), //top,left
+                new UVRule(0xf3000,0xb1000, 54,216,  72,216,  90,216, 9), //top,right
+                new UVRule(0xfbc00,0xb0000, 144,252, 198,252, 252,252),
+                new UVRule(0xf3000,0xb3000, 36,288,  54,288,  72,288, 11), //top,left,right
+                new UVRule(0xfbc00,0xb0800, 0,342,   18,342,   36,342),
+                new UVRule(0xfbc00,0xb0400, 54,342,  72,342,   90,342)
+            },
+            new UVRule[] {}, //1100
+            new UVRule[] { //1101
+                new UVRule(0xfc000,0xd8000, 72,144,  72,162,  72,180, 9), //top,right
+                new UVRule(0xfc000,0xd4000, 72,90,   72,108,  72,126, 5), //bottom,right
+                new UVRule(0xfd500,0xd0000, 126,234, 180,234, 234,234),
+                new UVRule(0xfc000,0xdc000, 0,270,   0,288,   0,306, 13), //top,bottom,right
+                new UVRule(0xfd500,0xd0400, 54,360,  72,360,   90,360),
+                new UVRule(0xfd500,0xd0100, 0,360,   18,360,   36,360)
+            },
+            new UVRule[] { //1110
+                new UVRule(0xfc000,0xe8000, 90,144,  90,162,  90,180, 10), //top,left
+                new UVRule(0xfc000,0xe4000, 90,90,   90,108,  90,126, 6), //bottom,left
+                new UVRule(0xfea00,0xe0000, 162,234, 216,234, 270,234),
+                new UVRule(0xfc000,0xec000, 18,270,  18,288,  18,306, 14), //top,bottom,left
+                new UVRule(0xfea00,0xe0800, 0,378,   18,378,   36,378),
+                new UVRule(0xfea00,0xe0200, 54,378,  72,378,   90,378)
+            },
+            new UVRule[] { //1111
+                new UVRule(0xff0f1,0xf0001, 108,324, 126,324, 144,324),
+                new UVRule(0xff0f4,0xf0004, 108,342, 126,342, 144,342),
+                new UVRule(0xff0f2,0xf0002, 108,360, 126,360, 144,360),
+                new UVRule(0xff0f8,0xf0008, 108,378, 126,378, 144,378),
+                new UVRule(0xff0f0,0xf0000, 144,234, 198,234, 252,234),
+                new UVRule(0xff090,0xf0000, 36,306,  54,306,  72,306),
+                new UVRule(0xff060,0xf0000, 90,306,  108,306, 126,306),
+                new UVRule(0xff0f0,0xf0070, 54,108,  54,144,  54,180, 5), //bottom,right
+                new UVRule(0xff0f0,0xf00b0, 36,108,  36,144,  36,180, 6), //bottom,left
+                new UVRule(0xff0f0,0xf00d0, 54,90,   54,126,  54,162, 9), //top,right
+                new UVRule(0xff0f0,0xf00e0, 36,90,   36,126,  36,162, 10), //top,left
+                new UVRule(0xffc00,0xf4000, 108,18,  126,18,  144,18, 4), //bottom
+                new UVRule(0xff300,0xf8000, 108,36,  126,36,  144,36, 8), //top
+                new UVRule(0xffc00,0xf2000, 198,0,   198,18,  198,36, 2), //left
+                new UVRule(0xffa00,0xf1000, 180,0,   180,18,  180,36, 1), //right
+                new UVRule(0xff400,0xf4400, 54,108,  54,144,  54,180, 5), //bottom,right
+                new UVRule(0xff800,0xf4800, 36,108,  36,144,  36,180, 6), //bottom,left
+                new UVRule(0xff100,0xf8100, 54,90,   54,126,  54,162, 9), //top,right
+                new UVRule(0xff200,0xf8200, 36,90,   36,126,  36,162, 10), //top,left
+                new UVRule(0xff800,0xf1800, 54,90,   54,126,  54,162, 9), //top,right
+                new UVRule(0xff200,0xf1200, 54,108,  54,144,  54,180, 5), //bottom,right
+                new UVRule(0xff400,0xf2400, 36,90,   36,126,  36,162, 10), //top,left
+                new UVRule(0xff100,0xf2100, 36,108,  36,144,  36,180, 6), //bottom,left
+                new UVRule(0xfb000,0xf0000, 18,18,   36,18,   54,18, 15), //all
+                new UVRule(0xff000,0xf2000, 18,18,   36,18,   54,18, 15), //all
+                new UVRule(0xff000,0xf1000, 18,18,   36,18,   54,18, 15), //all
+                new UVRule(0xf0f00,0xf0700, 54,108,  54,144,  54,180, 5), //bottom,right
+                new UVRule(0xf0f00,0xf0b00, 36,108,  36,144,  36,180, 6), //bottom,left
+                new UVRule(0xf0f00,0xf0d00, 54,90,   54,126,  54,162, 9), //top,right
+                new UVRule(0xf0f00,0xf0e00, 36,90,   36,126,  36,162, 10), //top,left
+                new UVRule(0xff000,0xf7000, 198,288, 216,288, 234,288, 7), //left,right,bottom
+                new UVRule(0xff000,0xfb000, 198,270, 216,270, 234,270, 11), //left,right,top
+                new UVRule(0xff000,0xfd000, 198,306, 216,306, 234,306, 13), //top,bottom,right
+                new UVRule(0xff000,0xfe000, 144,306, 162,306, 180,306, 14), //top,bottom,left
+                new UVRule(0xf0f00,0xf0f00, 18,18,   36,18,    54,18, 15) //all
+            }
+        };
+        UVRule[][] blendRules ={
+            new UVRule[] {}, //0000
+            new UVRule[] {}, //0001
+            new UVRule[] {}, //0010
+            new UVRule[] {}, //0011
+            new UVRule[] {}, //0100
+            new UVRule[] {}, //0101
+            new UVRule[] {}, //0110
+            new UVRule[] { //0111
+                new UVRule(0xf7000,0x74000, 234,0,   252,0,   270,0, 4) //down
+            },
+            new UVRule[] {}, //1000
+            new UVRule[] {}, //1001
+            new UVRule[] {}, //1010
+            new UVRule[] { //1011
+                new UVRule(0xfb000,0xb8000, 234,18,  252,18,  270,18, 8) //up
+            },
+            new UVRule[] {}, //1100
+            new UVRule[] { //1101
+                new UVRule(0xfd000,0xd1000, 234,36,  252,36,  270,36, 1) //right
+            },
+            new UVRule[] { //1110
+                new UVRule(0xfe000,0xe2000, 234,54,  252,54,  270,54, 2) //left
+            },
+            new UVRule[] {} //1111
+        };
+        UVRule[][] blendGrassRules ={
+            new UVRule[] {}, //0000
+            new UVRule[] { //0001
+                new UVRule(0xf1000,0x11000, 54,234,  72,234,  90,234, 1) //right
+            },
+            new UVRule[] { //0010
+                new UVRule(0xf2000,0x22000, 0,234,   18,234,  36,234, 2) //left
+            },
+            new UVRule[] { //0011
+                new UVRule(0xf3000,0x33000, 162,198, 180,198, 198,198, 3), //left,right
+                new UVRule(0xf2000,0x32000, 0,252,   18,252,  36,252, 2), //left
+                new UVRule(0xf1000,0x31000, 54,252,  72,252,  90,252, 1) //right
+            },
+            new UVRule[] { //0100
+                new UVRule(0xf4000,0x44000, 108,90,  108,108, 108,126, 4) //down
+            },
+            new UVRule[] {}, //0101
+            new UVRule[] {}, //0110
+            new UVRule[] { //0111
+                new UVRule(0xf7000,0x72000, 0,198,   18,198,  36,198, 2), //left
+                new UVRule(0xf7000,0x71000, 54,198,  72,198,  90,198, 1) //right
+            },
+            new UVRule[] { //1000
+                new UVRule(0xf8000,0x88000, 108,144, 108,162, 108,180, 8) //up
+            },
+            new UVRule[] {}, //1001
+            new UVRule[] {}, //1010
+            new UVRule[] { //1011
+                new UVRule(0xfb000,0xb2000, 0,216,   18,216,  36,216, 2), //left
+                new UVRule(0xfb000,0xb1000, 54,216,  72,216,  90,216, 1) //right
+            },
+            new UVRule[] { //1100
+                new UVRule(0xfc000,0xcc000, 108,216, 108,234, 108,252, 12), //up,down
+                new UVRule(0xf8000,0xc8000, 126,144, 126,162, 126,180, 8), //up
+                new UVRule(0xf4000,0xc4000, 126,90,  126,108, 126,126, 4) //down
+            },
+            new UVRule[] { //1101
+                new UVRule(0xfd000,0xd8000, 72,144,  72,162,  72,180, 8), //up
+                new UVRule(0xfd000,0xd4000, 72,90,   72,108,  72,126, 4) //down
+            },
+            new UVRule[] { //1110
+                new UVRule(0xfe000,0xe8000, 90,144,  90,162,  90,180, 8), //up
+                new UVRule(0xfe000,0xe4000, 90,90,   90,108,  90,126, 4) //down
+            },
+            new UVRule[] { //1111
+                new UVRule(0xff000,0xf8000, 144,108, 162,108, 180,108, 8), //up
+                new UVRule(0xff000,0xf4000, 144,90,  162,90,  180,90, 4), //down
+                new UVRule(0xff000,0xf2000, 162,126, 162,144, 162,162, 2), //left
+                new UVRule(0xff000,0xf1000, 144,126, 144,144, 144,162, 1), //right
+                new UVRule(0xff000,0xfa000, 36,90,   36,126,  36,162,  10), //top,left
+                new UVRule(0xff000,0xf9000, 54,90,   54,126,  54,162, 9), //top,right
+                new UVRule(0xff000,0xf6000, 36,108,  36,144,  36,180, 6), //bottom,left
+                new UVRule(0xff000,0xf5000, 54,108,  54,144,  54,180, 5), //bottom,right
+                new UVRule(0xff000,0xf3000, 180,126, 180,144, 180,162, 3), //left,right
+                new UVRule(0xff000,0xfc000, 144,180, 162,180, 180,180, 12), //top,bottom
+                new UVRule(0xff000,0xfb000, 198,90,  198,108, 198,126, 11), //top,left,right
+                new UVRule(0xff000,0xf7000, 198,144, 198,162, 198,180, 7), //bottom,left,right
+                new UVRule(0xff000,0xfd000, 216,144, 216,162, 216,180, 13), //top,bottom,right
+                new UVRule(0xff000,0xfe000, 216,90,  216,108, 216,126, 14), //top,bottom,left
+                new UVRule(0xff000,0xff000, 108,198, 126,198, 144,198, 15), //all
+                new UVRule(0xff008,0xf0008, 18,108,  18,144,  18,180),
+                new UVRule(0xff004,0xf0004, 0,108,   0,144,   0,180),
+                new UVRule(0xff002,0xf0002, 18,90,   18,126,  18,162),
+                new UVRule(0xff001,0xf0001, 0,90,    0,126,   0,162)
+            }
+        };
+        UVRule[][] uvRules ={
+            new UVRule[] { //0000
+                new UVRule(0xf0000,0x00000, 162,54,  180,54,  198,54)
+            },
+            new UVRule[] { //0001
+                new UVRule(0xf0000,0x10000, 162,0,   162,18,  162,36, 1)
+            },
+            new UVRule[] { //0010
+                new UVRule(0xf0000,0x20000, 216,0,   216,18,  216,36, 2)
+            },
+            new UVRule[] { //0011
+                new UVRule(0xf0000,0x30000, 108,72,  126,72,  144,72, 3)
+            },
+            new UVRule[] { //0100
+                new UVRule(0xf0000,0x40000, 108,0,   126,0,   144,0, 4)
+            },
+            new UVRule[] { //0101
+                new UVRule(0xf0000,0x50000, 0,54,    36,54,   72,54, 5)
+            },
+            new UVRule[] { //0110
+                new UVRule(0xf0000,0x60000, 18,54,   54,54,   90,54, 6)
+            },
+            new UVRule[] { //0111
+                new UVRule(0xf0000,0x70000, 18,0,    36,0,    54,0, 7)
+            },
+            new UVRule[] { //1000
+                new UVRule(0xf0000,0x80000, 108,54,  126,54,  144,54, 8)
+            },
+            new UVRule[] { //1001
+                new UVRule(0xf0000,0x90000, 0,72,    36,72,   72,72, 9)
+            },
+            new UVRule[] { //1010
+                new UVRule(0xf0000,0xa0000, 18,72,   54,72,   90,72, 10)
+            },
+            new UVRule[] { //1011
+                new UVRule(0xf0000,0xb0000, 18,36,   36,36,   54,36, 11)
+            },
+            new UVRule[] { //1100
+                new UVRule(0xf0000,0xc0000, 90,0,    90,18,   90,36, 12)
+            },
+            new UVRule[] { //1101
+                new UVRule(0xf0000,0xd0000, 0,0,     0,18,    0,36, 13)
+            },
+            new UVRule[] { //1110
+                new UVRule(0xf0000,0xe0000, 72,0,    72,18,   72,36, 14)
+            },
+            new UVRule[] { //1111
+                new UVRule(0xf0c00,0xf0000, 108,18,  126,18,  144,18, 15),
+                new UVRule(0xf0300,0xf0000, 108,36,  126,36,  144,36, 15),
+                new UVRule(0xf0a00,0xf0000, 180,0,   180,18,  180,36, 15),
+                new UVRule(0xf0500,0xf0000, 198,0,   198,18,  198,36, 15),
+                new UVRule(0xf0000,0xf0000, 18,18,   36,18,   54,18, 15)
+            }
+        };
+
+        
+
         Int16[] uvPlatforms ={      //LRlr
                         0,0,        //0000 impossible
                         108,0,      //0001 mount left no right
@@ -422,32 +684,7 @@ namespace Terrafirma
                         0,0,        //1110 impossible
                         0,0};       //1111 impossible
 
-        Int16[] uvMap ={            //tblr
-                        162,54, 180,54, 198,54,     //0000
-                        162,0,  162,18, 162,36,     //0001
-                        216,0,  216,18, 216,36,     //0010
-                        108,72, 126,72, 144,72,     //0011
-                        108,0,  126,0,  144,0,      //0100
-                        0,54,   36,54,  72,54,      //0101
-                        18,54,  54,54,  90,54,      //0110
-                        18,0,   36,0,   54,0,       //0111
-                        108,54, 126,54, 144,54,     //1000
-                        0,72,   36,72,  72,72,      //1001
-                        18,72,  54,72,  90,72,      //1010
-                        18,36,  36,36,  54,36,      //1011
-                        90,0,   90,18,  90,36,      //1100
-                        0,0,    0,18,   0,36,       //1101
-                        72,0,   72,18,  72,36,      //1110
-                        18,18,  36,18,  54,18       //1111
-                  };
-        Int16[] uvCorners ={
-                        108,18, 126,18, 144,18, //top
-                        108,36, 126,36, 144,36, //bottom
-                        180,0,  180,18, 180,36, //left
-                        198,0,  198,18, 198,36, //right
-                        18,18,  36,18,  54,18   //all
-                          };
-        private void fixTile(int x, int y)
+        private byte fixTile(int x, int y)
         {
             int t = -1, l = -1, r = -1, b = -1;
             int tl = -1, tr = -1, bl = -1, br = -1;
@@ -501,12 +738,12 @@ namespace Terrafirma
             }
 
             int mask;
-            if (c == 33 || c==49) //candles
+            if (c == 33 || c == 49) //candles
             {
                 // these tiles don't have u/v, but are single tiles
                 tiles[y + x * tilesHigh].u = 0;
                 tiles[y + x * tilesHigh].v = 0;
-                return;
+                return 0;
             }
             if (c == 4) //torch
             {
@@ -519,7 +756,7 @@ namespace Terrafirma
                 }
                 tiles[y + x * tilesHigh].u = u;
                 tiles[y + x * tilesHigh].v = 0;
-                return;
+                return 0;
             }
             if (c == 19) //wooden platform
             {
@@ -531,62 +768,113 @@ namespace Terrafirma
                 if (r == -1) mask |= 1;
                 tiles[y + x * tilesHigh].u = uvPlatforms[mask * 2];
                 tiles[y + x * tilesHigh].v = uvPlatforms[mask * 2 + 1];
-                return;
+                return 0;
             }
-            if (c == 2 || c == 23 || c == 60 || c == 70) //grasses
-            {
-                //if it's mud or dirt, it's grass
-                if (t == 0 || t == 59) t = c;
-                if (l == 0 || l == 59) l = c;
-                if (b == 0 || b == 59) b = c;
-                if (r == 0 || r == 59) r = c;
-                if (tl == 0 || tl == 59) tl = c;
-                if (tr == 0 || tr == 59) tr = c;
-                if (bl == 0 || bl == 59) bl = c;
-                if (br == 0 || br == 59) br = c;
-            }
-            if (c == 0 || c == 59) //dirt and mud
-            {
-                //consider grass to be same as dirt
-                if (t == 2 || t == 23 || t == 60 || t == 70) t = c;
-                if (l == 2 || l == 23 || l == 60 || l == 70) l = c;
-                if (b == 2 || b == 23 || b == 60 || b == 70) b = c;
-                if (r == 2 || r == 23 || r == 60 || r == 70) r = c;
-                if (tl == 2 || tl == 23 || tl == 60 || tl == 70) tl = c;
-                if (tr == 2 || tr == 23 || tr == 60 || tr == 70) tr = c;
-                if (bl == 2 || bl == 23 || bl == 60 || bl == 70) bl = c;
-                if (br == 2 || br == 23 || br == 60 || br == 70) br = c;
-            }
-            /*if (c == 1) //stones should be grouped together
-            {
-            } */
 
             mask = 0;
-            if (r == c) mask |= 1;
-            if (l == c) mask |= 2;
-            if (b == c) mask |= 4;
-            if (t == c) mask |= 8;
-            if (mask == 0xf) //all on
+            //if tile is stone and next to stone, treat them as the same
+            if (tileInfo[c].isStone)
             {
-                int num;
-                if (tl != c && tr != c)
-                    num = 0;
-                else if (bl != c && br != c)
-                    num = 1;
-                else if (tl != c && bl != c)
-                    num = 2;
-                else if (tr != c && br != c)
-                    num = 3;
-                else
-                    num = 4;
-                tiles[y + x * tilesHigh].u = uvCorners[num * 6 + set];
-                tiles[y + x * tilesHigh].v = uvCorners[num * 6 + 1 + set];
+                if (t > -1 && tileInfo[t].isStone) mask |= 0x80000;
+                if (b > -1 && tileInfo[b].isStone) mask |= 0x40000;
+                if (l > -1 && tileInfo[l].isStone) mask |= 0x20000;
+                if (r > -1 && tileInfo[r].isStone) mask |= 0x10000;
+                if (tl > -1 && tileInfo[tl].isStone) mask |= 0x880;
+                if (tr > -1 && tileInfo[tr].isStone) mask |= 0x440;
+                if (bl > -1 && tileInfo[bl].isStone) mask |= 0x220;
+                if (br > -1 && tileInfo[br].isStone) mask |= 0x110;
             }
+
+            //if tile blends with current tile, treat as if it were current tile
+            if (t > -1 && (t == c || (tileInfo[t].blend == c && (fixTile(x, y - 1) & 4) == 4))) mask |= 0x80000;
+            if (b > -1 && (b == c || (tileInfo[b].blend == c && (fixTile(x, y + 1) & 8) == 8))) mask |= 0x40000;
+            if (l > -1 && (l == c || (tileInfo[l].blend == c && (fixTile(x - 1, y) & 1) == 1))) mask |= 0x20000;
+            if (r > -1 && (r == c || (tileInfo[r].blend == c && (fixTile(x + 1, y) & 2) == 2))) mask |= 0x10000;
+            if (tl > -1 && (tileInfo[tl].blend == c || tl == c)) mask |= 0x880;
+            if (tr > -1 && (tileInfo[tr].blend == c || tr == c)) mask |= 0x440;
+            if (bl > -1 && (tileInfo[bl].blend == c || bl == c)) mask |= 0x220;
+            if (br > -1 && (tileInfo[br].blend == c || br == c)) mask |= 0x110;
+
+            //if current tile can blend, set up the blend rules.
+            Int16 blend = tileInfo[c].blend;
+            if (blend > -1)
+            {
+                if (t == blend) mask |= 0x88000;
+                if (b == blend) mask |= 0x44000;
+                if (l == blend) mask |= 0x22000;
+                if (r == blend) mask |= 0x11000;
+                if (tl == blend) mask |= 0x808;
+                if (tr == blend) mask |= 0x404;
+                if (bl == blend) mask |= 0x202;
+                if (br == blend) mask |= 0x101;
+            }
+
+            if (c == 32 && b == 23) mask |= 0x40000; //corrupted vines above corrupted grass
+            if (c == 69 && b == 60) mask |= 0x40000; //jungle thorn above jungle grass
+            if (c == 51) //cobwebs blend with everything
+            {
+                if (t > -1) mask |= 0x80000;
+                if (b > -1) mask |= 0x40000;
+                if (l > -1) mask |= 0x20000;
+                if (r > -1) mask |= 0x10000;
+                if (tl > -1) mask |= 0x880;
+                if (tr > -1) mask |= 0x440;
+                if (bl > -1) mask |= 0x220;
+                if (br > -1) mask |= 0x110;
+            }
+
+            if (tileInfo[c].isGrass) //do grasses
+            {
+                foreach (UVRule rule in grassRules[mask >> 16])
+                {
+                    if ((mask & rule.mask) == rule.val)
+                    {
+                        tiles[y + x * tilesHigh].u = rule.uvs[set];
+                        tiles[y + x * tilesHigh].v = rule.uvs[set + 1];
+                        return rule.blend;
+                    }
+                }
+            }
+            if (tileInfo[c].blend > -1 && !tileInfo[c].isGrass) //do blend-onlys
+            {
+                foreach (UVRule rule in blendRules[mask >> 16])
+                {
+                    if ((mask & rule.mask) == rule.val)
+                    {
+                        tiles[y + x * tilesHigh].u = rule.uvs[set];
+                        tiles[y + x * tilesHigh].v = rule.uvs[set + 1];
+                        return rule.blend;
+                    }
+                }
+            }
+            if (tileInfo[c].blend > -1) //do blend and unmatched grasses
+            {
+                foreach (UVRule rule in blendGrassRules[mask >> 16])
+                {
+                    if ((mask & rule.mask) == rule.val)
+                    {
+                        tiles[y + x * tilesHigh].u = rule.uvs[set];
+                        tiles[y + x * tilesHigh].v = rule.uvs[set + 1];
+                        return rule.blend;
+                    }
+                }
+            }
+            // no match, delete blends
+            if (tileInfo[c].isGrass) //with grasses, blends are equal
+                mask &= 0xf0f00;
             else
+                mask = ((mask & 0xf0000) ^ ((mask & 0xf000) << 4)) | ((mask & 0xf0) << 4);
+            foreach (UVRule rule in uvRules[mask >> 16])
             {
-                tiles[y + x * tilesHigh].u = uvMap[mask * 6 + set];
-                tiles[y + x * tilesHigh].v = uvMap[mask * 6 + 1 + set];
+                if ((mask & rule.mask) == rule.val)
+                {
+                    tiles[y + x * tilesHigh].u = rule.uvs[set];
+                    tiles[y + x * tilesHigh].v = rule.uvs[set + 1];
+                    return rule.blend;
+                }
             }
+            //should be impossible to get here.
+            return 0;
         }
         private void fixWall(int x, int y)
         {
@@ -619,31 +907,25 @@ namespace Terrafirma
                 b = tiles[(y + 1) + x * tilesHigh].wall;
 
             int mask = 0;
-            if (r == c) mask |= 1;
-            if (l == c) mask |= 2;
-            if (b == c) mask |= 4;
-            if (t == c) mask |= 8;
-            if (mask == 0xf) //all on
+            if (t == c) mask |= 0x80000;
+            if (b == c) mask |= 0x40000;
+            if (l == c) mask |= 0x20000;
+            if (r == c) mask |= 0x10000;
+            if (tl == c) mask |= 0x880;
+            if (tr == c) mask |= 0x440;
+            if (bl == c) mask |= 0x220;
+            if (br == c) mask |= 0x110;
+
+            foreach (UVRule rule in uvRules[mask>>16])
             {
-                int num;
-                if (tl != c && tr != c)
-                    num = 0;
-                else if (bl != c && br != c)
-                    num = 1;
-                else if (tl != c && bl != c)
-                    num = 2;
-                else if (tr != c && br != c)
-                    num = 3;
-                else
-                    num = 4;
-                tiles[y + x * tilesHigh].wallu = uvCorners[num * 6 + set];
-                tiles[y + x * tilesHigh].wallv = uvCorners[num * 6 + 1 + set];
+                if ((mask & rule.mask) == rule.val)
+                {
+                    tiles[y + x * tilesHigh].wallu = rule.uvs[set];
+                    tiles[y + x * tilesHigh].wallv = rule.uvs[set + 1];
+                    return;
+                }
             }
-            else
-            {
-                tiles[y + x * tilesHigh].wallu = uvMap[mask * 6 + set];
-                tiles[y + x * tilesHigh].wallv = uvMap[mask * 6 + 1 + set];
-            }
+            //again, impossible to be here.
         }
         private UInt32 alphaBlend(UInt32 from, UInt32 to, double alpha)
         {

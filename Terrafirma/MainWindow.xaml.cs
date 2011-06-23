@@ -53,6 +53,8 @@ namespace Terrafirma
         public bool hasExtra;
         public double light;
         public bool transparent;
+        public bool isStone, isGrass;
+        public Int16 blend;
     }
     struct WallInfo
     {
@@ -153,6 +155,12 @@ namespace Terrafirma
                 else
                     tileInfo[id].light = 0.0;
                 tileInfo[id].transparent = tileList[i].Attributes["letLight"] != null;
+                tileInfo[id].isStone = tileList[i].Attributes["isStone"] != null;
+                tileInfo[id].isGrass = tileList[i].Attributes["isGrass"] != null;
+                if (tileList[i].Attributes["blend"] != null)
+                    tileInfo[id].blend = Int16.Parse(tileList[i].Attributes["blend"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                else
+                    tileInfo[id].blend = -1;
             }
             XmlNodeList wallList = xml.GetElementsByTagName("wall");
             wallInfo = new WallInfo[wallList.Count+1];
