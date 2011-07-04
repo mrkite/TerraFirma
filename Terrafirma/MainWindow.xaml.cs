@@ -93,6 +93,7 @@ namespace Terrafirma
         public float x, y;
         public bool isHomeless;
         public Int32 homeX, homeY;
+        public int sprite;
     }
 
     /// <summary>
@@ -383,6 +384,17 @@ namespace Terrafirma
                     npc.isHomeless = b.ReadBoolean();
                     npc.homeX = b.ReadInt32();
                     npc.homeY = b.ReadInt32();
+
+                    npc.sprite = 0;
+                    if (npc.name == "Merchant") npc.sprite = 17;
+                    if (npc.name == "Nurse") npc.sprite = 18;
+                    if (npc.name == "Arms Dealer") npc.sprite = 19;
+                    if (npc.name == "Dryad") npc.sprite = 20;
+                    if (npc.name == "Guide") npc.sprite = 22;
+                    if (npc.name == "Old Man") npc.sprite = 37;
+                    if (npc.name == "Demolitionist") npc.sprite = 38;
+                    if (npc.name == "Clothier") npc.sprite = 54;
+                    
                     npcs.Add(npc);
 
                     if (!npc.isHomeless)
@@ -399,7 +411,7 @@ namespace Terrafirma
 
             calculateLight();
 
-            render.SetWorld(tiles, tilesWide, tilesHigh, groundLevel, rockLevel);
+            render.SetWorld(tiles, tilesWide, tilesHigh, groundLevel, rockLevel,npcs);
             //load info
             loaded = true;
         }
@@ -692,6 +704,11 @@ namespace Terrafirma
                 Load(dlg.FileName);
                 curX = spawnX;
                 curY = spawnY;
+                if (render.Textures.Valid)
+                {
+                    UseTextures.IsChecked = true;
+                    curScale = 16.0;
+                }
                 RenderMap();
                 load.Close();
             }
@@ -704,6 +721,11 @@ namespace Terrafirma
             Load(worlds[id]);
             curX = spawnX;
             curY = spawnY;
+            if (render.Textures.Valid)
+            {
+                UseTextures.IsChecked = true;
+                curScale = 16.0;
+            }
             RenderMap();
             load.Close();
         }
@@ -867,6 +889,8 @@ namespace Terrafirma
                     if ((!tiles[offset].isActive || tileInfo[tiles[offset].type].transparent) &&
                         tiles[offset].wall == 0 && tiles[offset].liquid < 255 && y < groundLevel) //sunlight
                         tiles[offset].light = 1.0;
+                    if (tiles[offset].liquid > 0 && tiles[offset].isLava) //lava
+                        tiles[offset].light = Math.Max(tiles[offset].light, tiles[offset].liquid / 255);
                     if (tiles[offset].type == 61 && tiles[offset].u == 144) //special case jungle light ball
                         tiles[offset].light = Math.Max(tiles[offset].light, 0.75);
                     tiles[offset].light = Math.Max(tiles[offset].light, tileInfo[tiles[offset].type].light);

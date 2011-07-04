@@ -115,6 +115,7 @@ namespace Terrafirma
         Dictionary<int, Texture> treeTops;
         Dictionary<int, Texture> treeBranches;
         Dictionary<int, Texture> shrooms;
+        Dictionary<int, Texture> npcs;
         ContentManager cm=null;
         public Textures(IntPtr windowHandle)
         {
@@ -124,6 +125,7 @@ namespace Terrafirma
             treeTops = new Dictionary<int, Texture>();
             treeBranches = new Dictionary<int, Texture>();
             shrooms = new Dictionary<int, Texture>();
+            npcs = new Dictionary<int, Texture>();
 
             // find steam
             string path="";
@@ -204,6 +206,15 @@ namespace Terrafirma
                 shrooms[num] = loadTexture(name);
             }
             return shrooms[num];
+        }
+        public Texture GetNPC(int num)
+        {
+            if (!npcs.ContainsKey(num))
+            {
+                string name = String.Format("NPC_{0}", num);
+                npcs[num] = loadTexture(name);
+            }
+            return npcs[num];
         }
         private Texture loadTexture(string path)
         {

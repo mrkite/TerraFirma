@@ -41,6 +41,7 @@ namespace Terrafirma
         private UInt32 waterColor, lavaColor;
         private Int32 tilesWide, tilesHigh;
         private int groundLevel, rockLevel;
+        private List<NPC> npcs;
 
         Random rand;
 
@@ -62,13 +63,14 @@ namespace Terrafirma
         }
 
         public void SetWorld(Tile[] tiles, Int32 tilesWide, Int32 tilesHigh,
-            int groundLevel, int rockLevel)
+            int groundLevel, int rockLevel, List<NPC> npcs)
         {
             this.tiles=tiles;
             this.tilesWide = tilesWide;
             this.tilesHigh = tilesHigh;
             this.groundLevel = groundLevel;
             this.rockLevel = rockLevel;
+            this.npcs = npcs;
         }
 
         public void Draw(int width, int height,
@@ -203,17 +205,36 @@ namespace Terrafirma
                                     (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                             }
                         }
+                        // draw liquid
                         if (tiles[offset].liquid > 0)
                         {
-                            drawOverlay(tiles[offset].isLava ? lavaColor : waterColor, 0.5, tiles[offset].liquid,
+                            drawOverlay(tiles[offset].isLava ? lavaColor : waterColor, 0.85, tiles[offset].liquid,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                         }
+                        // draw lighting
                         if (light)
                             drawOverlay(0, 1.0 - tiles[offset].light, 255,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                         px += (int)scale;
                     }
                     py += (int)scale;
+                }
+
+                double minx = skipx + startx;
+                double maxx = minx + blocksWide;
+                double miny = skipy + starty;
+                double maxy = miny + blocksHigh;
+                // draw npcs at sx,sy
+                foreach (NPC npc in npcs)
+                {
+                    if (npc.sprite != 0 && (npc.x / 16) >= minx && (npc.x / 16) < maxx &&
+                        (npc.y / 16) >= miny && (npc.y / 16) < maxy) //npc on screen
+                    {
+                        Texture tex = Textures.GetNPC(npc.sprite);
+                        px = (int)(skipx + npc.x / 16 - (int)startx) * (int)scale - (int)(scale/4);
+                        py = (int)(skipy + npc.y / 16 - (int)starty) * (int)scale - (int)(scale/4);
+                        drawTexture(tex, 40, 56, 0, pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                    }
                 }
             }
             else

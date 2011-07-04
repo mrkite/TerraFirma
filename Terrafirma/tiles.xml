@@ -22,7 +22,7 @@
   <tile num="19" name="Wooden Platform" color="#B18567" />
   <tile num="20" name="Sapling" color="#1E9648" hasExtra="1" letLight="1" />
   <tile num="21" name="Chest" color="#946B50" hasExtra="1" letLight="1" />
-  <tile num="22" name="Ebonstone" color="#625FA7" blend="0" />
+  <tile num="22" name="Demonite Ore" color="#625FA7" blend="0" />
   <tile num="23" name="Corrupted Grass" color="#8D89DF" isGrass="1" blend="0" />
   <tile num="24" name="Corrupted Weeds" color="#6D6AAE" hasExtra="1" letLight="1" />
   <tile num="25" name="Ebonstone" color="#7D7991" blend="0" />
@@ -104,6 +104,6 @@
   <global id="earth" color="#583D2E" />
   <global id="rock" color="#4A433C" />
   <global id="hell" color="#000000" />
-  <global id="lava" color="#FF1E00" />
-  <global id="water" color="#0A34AD" />
+  <global id="lava" color="#fd2003" />
+  <global id="water" color="#093dbf" />
 </tiles>
