@@ -126,7 +126,6 @@ namespace Terrafirma
         WallInfo[] wallInfo;
         UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor;
         byte hilight=0;
-        int hilightTick = 0;
         bool isHilight = false;
 
         public MainWindow()
@@ -224,14 +223,6 @@ namespace Terrafirma
                     }
                 },
                 Dispatcher) {IsEnabled=false};
-            hiliteTimer = new DispatcherTimer(
-                TimeSpan.FromMilliseconds(50), DispatcherPriority.Normal,
-                delegate
-                {
-                    hilightTick++;
-                    hilightTick &= 15;
-                    RenderMap();
-                }, Dispatcher) { IsEnabled = false };
             curWidth = 496;
             curHeight = 400;
             newWidth = 496;
@@ -436,7 +427,7 @@ namespace Terrafirma
             try
             {
                 render.Draw(curWidth, curHeight, startx, starty, curScale, bits,
-                    isHilight, hilight, hilightTick, Lighting.IsChecked,
+                    isHilight, hilight, Lighting.IsChecked,
                     UseTextures.IsChecked && curScale > 2.0);
             }
             catch (System.NotSupportedException e)
@@ -785,14 +776,13 @@ namespace Terrafirma
             {
                 hilight = (byte)(h.SelectedItem);
                 isHilight = true;
-                hiliteTimer.Start();
+                RenderMap();
             }
         }
 
         private void HilightStop_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             isHilight = false;
-            hiliteTimer.Stop();
             RenderMap();
         }
         private void IsHilighting(object sender, CanExecuteRoutedEventArgs e)
@@ -843,7 +833,7 @@ namespace Terrafirma
                     pixels = new byte[wd * ht * 4];
 
                     render.Draw(wd, ht, startx, starty, sc,
-                        pixels, false, 0, 0, Lighting.IsChecked,
+                        pixels, false, 0, Lighting.IsChecked,
                         saveOpts.UseTextures && curScale > 2.0);
 
                     BitmapSource source = BitmapSource.Create(wd, ht, 96.0, 96.0,

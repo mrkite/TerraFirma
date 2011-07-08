@@ -76,22 +76,9 @@ namespace Terrafirma
         public void Draw(int width, int height,
             double startx, double starty,
             double scale, byte[] pixels,
-            bool isHilight,byte hilight,int hilightTick,
+            bool isHilight,byte hilight,
             bool light,bool texture)
         {
-            UInt32 blendcolor = 0;
-            double hialpha = 0.0;
-            if (isHilight)
-            {
-                UInt32 hicolor = tileInfo[hilight].color;
-
-                if (hilightTick > 7)
-                    hialpha = (15 - hilightTick) / 7.0;
-                else
-                    hialpha = hilightTick / 7.0;
-                blendcolor = alphaBlend(hicolor, 0xffffff, hialpha);
-            }
-
             if (texture)
             {
                 int blocksWide = (int)(width / Math.Floor(scale)) + 2; //scale=1.0 to 16.0
@@ -196,12 +183,7 @@ namespace Terrafirma
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                             if (isHilight && tiles[offset].type == hilight)
                             {
-                                drawOverlay(0xffffff, hialpha, 255, pixels,
-                                    (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
-                            }
-                            else if (isHilight)
-                            {
-                                drawOverlay(0, 0.5, 255, pixels,
+                                drawOverlay(0xff88ff, 0.9, 255, pixels,
                                     (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                             }
                         }
@@ -215,6 +197,12 @@ namespace Terrafirma
                         if (light)
                             drawOverlay(0, 1.0 - tiles[offset].light, 255,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+
+                        if (isHilight && (!tiles[offset].isActive || tiles[offset].type!=hilight))
+                        {
+                            drawOverlay(0, 0.7, 255, pixels,
+                                (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                        }
                         px += (int)scale;
                     }
                     py += (int)scale;
@@ -266,16 +254,14 @@ namespace Terrafirma
                             {
                                 c = tileInfo[tiles[offset].type].color;
                                 if (isHilight && hilight == tiles[offset].type)
-                                    c = blendcolor;
-                                else if (isHilight)
-                                {
-                                    c = alphaBlend(0, c, 0.5);
-                                }
+                                    c = alphaBlend(c,0xff88ff,0.9);
                             }
                             if (tiles[offset].liquid > 0)
                                 c = alphaBlend(c, tiles[offset].isLava ? lavaColor : waterColor, 0.5);
                             if (light)
                                 c = alphaBlend(0, c, tiles[offset].light);
+                            if (isHilight && (!tiles[offset].isActive || tiles[offset].type != hilight))
+                                c = alphaBlend(0, c, 0.3);
                         }
                         pixels[bofs++] = (byte)(c & 0xff);
                         pixels[bofs++] = (byte)((c >> 8) & 0xff);
