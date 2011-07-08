@@ -969,7 +969,7 @@ namespace Terrafirma
                     reader.Close();
             }
             Version curVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            if (curVersion.CompareTo(newVersion) < 0)
+            if (newVersion!=null && curVersion.CompareTo(newVersion) < 0)
             {
                 if (MessageBox.Show(this, "Download the new version?", "New version detected",
                     MessageBoxButton.YesNo, MessageBoxImage.Question)==MessageBoxResult.Yes)
