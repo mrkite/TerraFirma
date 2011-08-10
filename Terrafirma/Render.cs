@@ -356,6 +356,7 @@ namespace Terrafirma
                     continue;
                 }
                 int t = tofs + (int)(y / zoom) * tex.width * 4;
+                if (t >= tex.data.Length) continue;
                 int b = bofs;
                 for (int x = 0; x < tw; x++)
                 {
