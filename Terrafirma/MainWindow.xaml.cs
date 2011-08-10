@@ -43,6 +43,7 @@ using System.Windows.Navigation;
 using System.Windows.Threading;
 using System.Windows.Interop;
 using System.Collections;
+using System.Threading;
 
 namespace Terrafirma
 {
@@ -108,7 +109,7 @@ namespace Terrafirma
         double curX, curY, curScale;
         byte[] bits;
         WriteableBitmap mapbits;
-        DispatcherTimer resizeTimer,hiliteTimer;
+        DispatcherTimer resizeTimer;
         int curWidth, curHeight, newWidth, newHeight;
         bool loaded = false;
         Tile[] tiles;
@@ -921,52 +922,59 @@ namespace Terrafirma
             Version newVersion = null;
             string url = "";
             XmlTextReader reader = null;
-            try
+            ThreadStart start = delegate()
             {
-                reader = new XmlTextReader("http://seancode.com/terrafirma/version.xml");
-                reader.MoveToContent();
-                string elementName = "";
-                if (reader.NodeType == XmlNodeType.Element && reader.Name == "terrafirma")
+                try
                 {
-                    while (reader.Read())
+                    reader = new XmlTextReader("http://seancode.com/terrafirma/version.xml");
+                    reader.MoveToContent();
+                    string elementName = "";
+                    if (reader.NodeType == XmlNodeType.Element && reader.Name == "terrafirma")
                     {
-                        if (reader.NodeType == XmlNodeType.Element)
-                            elementName = reader.Name;
-                        else
+                        while (reader.Read())
                         {
-                            if (reader.NodeType == XmlNodeType.Text && reader.HasValue)
+                            if (reader.NodeType == XmlNodeType.Element)
+                                elementName = reader.Name;
+                            else
                             {
-                                switch (elementName)
+                                if (reader.NodeType == XmlNodeType.Text && reader.HasValue)
                                 {
-                                    case "version":
-                                        newVersion = new Version(reader.Value);
-                                        break;
-                                    case "url":
-                                        url = reader.Value;
-                                        break;
+                                    switch (elementName)
+                                    {
+                                        case "version":
+                                            newVersion = new Version(reader.Value);
+                                            break;
+                                        case "url":
+                                            url = reader.Value;
+                                            break;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-            catch (Exception)
-            {
-            }
-            finally
-            {
-                if (reader!=null)
-                    reader.Close();
-            }
-            Version curVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            if (newVersion!=null && curVersion.CompareTo(newVersion) < 0)
-            {
-                if (MessageBox.Show(this, "Download the new version?", "New version detected",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question)==MessageBoxResult.Yes)
+                catch (Exception)
                 {
-                    System.Diagnostics.Process.Start(url);
                 }
-            }
+                finally
+                {
+                    if (reader != null)
+                        reader.Close();
+                }
+                Version curVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                if (newVersion != null && curVersion.CompareTo(newVersion) < 0)
+                {
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                        {
+                            if (MessageBox.Show(this, "Download the new version?", "New version detected",
+                                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                            {
+                                System.Diagnostics.Process.Start(url);
+                            }
+                        }));
+                }
+            };
+            new Thread(start).Start();
         }
     }
 }

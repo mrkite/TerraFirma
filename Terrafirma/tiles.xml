@@ -58,7 +58,7 @@
   <tile num="55" name="Sign" color="#7F5C45" hasExtra="1" letLight="1" />
   <tile num="56" name="Obsidian" color="#5751AD" blend="0" />
   <tile num="57" name="Ash" color="#44444C" />
-  <tile num="58" name="Hellstone" color="#8E4242" light="0.6" blend="57"/>
+  <tile num="58" name="Hellstone" color="#8E4242" blend="57"/>
   <tile num="59" name="Mud" color="#5C4449" blend="0" />
   <tile num="60" name="Jungle Grass" color="#8FD71D" isGrass="1" blend="59" />
   <tile num="61" name="Jungle Weeds" color="#63971F" hasExtra="1" letLight="1" />
@@ -76,7 +76,7 @@
   <tile num="73" name="Weeds #73" color="#0D6524" hasExtra="1" letLight="1" />
   <tile num="74" name="Weeds #74" color="#28650D" hasExtra="1" letLight="2" />
   <tile num="75" name="Obsidian Brick" color="#665CC2" />
-  <tile num="76" name="Hellstone Brick" color="#8E4242" light="0.6" />
+  <tile num="76" name="Hellstone Brick" color="#8E4242" />
   <tile num="77" name="Hellforge" color="#EE6646" hasExtra="1" light="0.8" />
   <tile num="78" name="Clay Pot" color="#796E61" hasExtra="1" letLight="1" />
   <tile num="79" name="Bed" color="#5C6298" hasExtra="1" letLight="1" />
@@ -86,6 +86,26 @@
   <tile num="83" name="Herb stalks" color="#fe5402" hasExtra="1" letLight="1" />
   <tile num="84" name="Herbs" color="#fe5402" hasExtra="1" letLight="1" />
   <tile num="85" name="Tombstone" color="#c0c0c0" hasExtra="1" />
+  <tile num="86" name="Loom" color="#7F5C45" hasExtra="1" />
+  <tile num="87" name="Piano" color="#584430" hasExtra="1" />
+  <tile num="88" name="Dresser" color="#906850" hasExtra="1" />
+  <tile num="89" name="Bench" color="#B18567" hasExtra="1" />
+  <tile num="90" name="Bathtub" color="#606060" hasExtra="1" />
+  <tile num="91" name="Banner" color="#188008" hasExtra="1" />
+  <tile num="92" name="Lamp Post" color="#323232" hasExtra="1" light="1.0" />
+  <tile num="93" name="Tiki Torch" color="#503B2F" hasExtra="1" light="1.0" />
+  <tile num="94" name="Keg" color="#A87858" hasExtra="1" />
+  <tile num="95" name="Chinese Lantern" color="#F87800" hasExtra="1" light="1.0" />
+  <tile num="96" name="Cooking Pot" color="#606060" hasExtra="1" />
+  <tile num="97" name="Safe" color="#808080" hasExtra="1" />
+  <tile num="98" name="Skull Lantern" color="#B2B28A" hasExtra="1" />
+  <tile num="99" name="Trash Can" color="#808080" hasExtra="1" />
+  <tile num="100" name="Candelabra" color="#CCB548" hasExtra="1" light="1.0" />
+  <tile num="101" name="Bookcase" color="#B08460" hasExtra="1" />
+  <tile num="102" name="Throne" color="#780C08" hasExtra="1" />
+  <tile num="103" name="Bowl" color="#8D624D" hasExtra="1" />
+  <tile num="104" name="Grandfather Clock" color="#946B50" hasExtra="1" />
+  <tile num="105" name="Statue" color="#282828" hasExtra="1" />
   
   <wall num="1" name="Stone Wall" color="#343434" />
   <wall num="2" name="Dirt Wall" color="#583D2E" />
@@ -100,6 +120,13 @@
   <wall num="11" name="Silver Brick Wall" color="#576162" />
   <wall num="12" name="Copper Brick Wall" color="#4B200B" />
   <wall num="13" name="Hellstone Brick Wall" color="#301515" />
+  <wall num="14" name="Obsidian Wall" color="#332F60" />
+  <wall num="15" name="Mud Wall" color="#31282B" />
+  <wall num="16" name="Dirt Wall" color="#583D2E" />
+  <wall num="17" name="Dark Blue Brick Wall" color="#2A2D48" />
+  <wall num="18" name="Dark Green Brick Wall" color="#4F4F43" />
+  <wall num="19" name="Dark Pink Brick Wall" color="#543E40" />
+  <wall num="20" name="Dark Obsidian Wall" color="#332F60" />
   <global id="sky" color="#84AAF8" />
   <global id="earth" color="#583D2E" />
   <global id="rock" color="#4A433C" />
