@@ -178,6 +178,9 @@ namespace Terrafirma
                                 drawMushroom(tiles[offset].u, tiles[offset].v,
                                     pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
 
+                            if (tiles[offset].type == 103) //bowl
+                                if (tiles[offset].u == 18) texw = 14;
+
                             Texture tex = Textures.GetTile(tiles[offset].type);
                             drawTexture(tex, texw, texh, tiles[offset].v * tex.width * 4 + tiles[offset].u * 4,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
