@@ -106,6 +106,7 @@
   <tile num="103" name="Bowl" color="#8D624D" hasExtra="1" />
   <tile num="104" name="Grandfather Clock" color="#946B50" hasExtra="1" />
   <tile num="105" name="Statue" color="#282828" hasExtra="1" />
+  <tile num="106" name="Sawmill" color="#563E2C" hasExtra="1" />
   
   <wall num="1" name="Stone Wall" color="#343434" />
   <wall num="2" name="Dirt Wall" color="#583D2E" />
