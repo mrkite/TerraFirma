@@ -4,7 +4,7 @@
   <tile num="1" name="Stone" color="#808080" isStone="1" blend="0" />
   <tile num="2" name="Grass" color="#1CD85E" isGrass="1" blend="0" />
   <tile num="3" name="Weeds" color="#1E9648" hasExtra="1" letLight="1" />
-  <tile num="4" name="Torch" color="#FDDD03" light="1.0" />
+  <tile num="4" name="Torch" color="#FDDD03" light="1.0" hasExtra="1" />
   <tile num="5" name="Tree" color="#976B4B" hasExtra="1" letLight="1"/>
   <tile num="6" name="Iron Ore" color="#B5A495" blend="0" />
   <tile num="7" name="Copper Ore" color="#964316" blend="0" />
@@ -107,6 +107,45 @@
   <tile num="104" name="Grandfather Clock" color="#946B50" hasExtra="1" />
   <tile num="105" name="Statue" color="#282828" hasExtra="1" />
   <tile num="106" name="Sawmill" color="#563E2C" hasExtra="1" />
+  <tile num="107" name="Cobalt Ore" color="#0B508F" blend="0" />
+  <tile num="108" name="Mythril Ore" color="#5BA9A9" blend="0" />
+  <tile num="109" name="Blue Grass" color="#4EC1E3" isGrass="1" blend="0" />
+  <tile num="110" name="Weeds" color="#1E9648" hasExtra="1" letLight="1" />
+  <tile num="111" name="Adamantite Ore" color="#801A34" blend="0" />
+  <tile num="112" name="Ebonsand" color="#67627A" blend="0" />
+  <tile num="113" name="Weeds" color="#1E9648" hasExtra="1" letLight="1" />
+  <tile num="114" name="Tinkerer's Workshop" color="#7F5C45" hasExtra="1" />
+  <tile num="115" name="Vines" color="#327FA1" />
+  <tile num="116" name="Pearl Sand" color="#D5C4C5" blend="0" />
+  <tile num="117" name="Pearl Ore" color="#B5ACBE" blend="0" />
+  <tile num="118" name="Pearlstone Brick" color="#D5C4C5" />
+  <tile num="119" name="Iridescent Brick" color="#3F3F49" />
+  <tile num="120" name="Mudstone Brick" color="#967A7D" />
+  <tile num="121" name="Cobalt Brick" color="#2576AB" />
+  <tile num="122" name="Unknown Brick 122" color="#91BF75" />
+  <tile num="123" name="Silt" color="#595353" blend="0" />
+  <tile num="124" name="Tile 124" color="#5C4436" />
+  <tile num="125" name="Crystal Ball" color="#81A5FF" hasExtra="1" />
+  <tile num="126" name="Ball" color="#DBDBDB" hasExtra="1" />
+  <tile num="127" name="Glass" color="#68B3C8" />
+  <tile num="128" name="Armor Stand" color="#906850" hasExtra="1" />
+  <tile num="129" name="Spikes 129" color="#004979" hasExtra="1" />
+  <tile num="130" name="Unknown Stone 130" color="#A5A5A5" blend="0" />
+  <tile num="131" name="Unknown Stone 131" color="#1A1A1A" blend="0" />
+  <tile num="132" name="Lever" color="#C90303" hasExtra="1" />
+  <tile num="133" name="Fireplace" color="#891012" hasExtra="1" />
+  <tile num="134" name="Adamantium Anvil" color="#96AE87" hasExtra="1" />
+  <tile num="135" name="Pressure Plate" color="#FD7272" hasExtra="1" />
+  <tile num="136" name="Switch" color="#CCC0C0" hasExtra="1" />
+  <tile num="137" name="Skull" color="#8C8C8C" hasExtra="1" />
+  <tile num="138" name="Boulder" color="#636363" hasExtra="1" />
+  <tile num="139" name="Music" color="#996343" hasExtra="1" />
+  <tile num="140" name="Unknown Brick 140" color="#7875B3" />
+  <tile num="141" name="Unknown block 141" color="#AD2323" hasExtra="1" />
+  <tile num="142" name="Out block" color="#C90303" hasExtra="1" />
+  <tile num="143" name="In block" color="#C90303" hasExtra="1" />
+  <tile num="144" name="Timer" color="#C90303" hasExtra="1" />
+  
   
   <wall num="1" name="Stone Wall" color="#343434" />
   <wall num="2" name="Dirt Wall" color="#583D2E" />
@@ -128,6 +167,15 @@
   <wall num="18" name="Dark Green Brick Wall" color="#4F4F43" />
   <wall num="19" name="Dark Pink Brick Wall" color="#543E40" />
   <wall num="20" name="Dark Obsidian Wall" color="#332F60" />
+  <wall num="21" name="Glass Wall" color="#12242C" />
+  <wall num="22" name="Pearlstone Wall" color="#716363" />
+  <wall num="23" name="Unknown Wall" color="#4E4042" />
+  <wall num="24" name="Unknown Wall" color="#403033" />
+  <wall num="25" name="Cobalt Wall" color="#0B233E" />
+  <wall num="26" name="Mythril Wall" color="#3C5B3A" />
+  <wall num="27" name="Wood Panelling" color="#3A291D" />
+  <wall num="28" name="Unknown Wall" color="#515465" />
+  
   <global id="sky" color="#84AAF8" />
   <global id="earth" color="#583D2E" />
   <global id="rock" color="#4A433C" />

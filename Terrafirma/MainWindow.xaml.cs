@@ -66,12 +66,12 @@ namespace Terrafirma
     {
         public bool isActive;
         public byte type;
-        public bool hasLight;
         public byte wall;
         public byte liquid;
         public bool isLava;
         public Int16 u, v, wallu, wallv;
         public double light;
+        public bool hasWire;
     }
     struct ChestItem
     {
@@ -290,7 +290,7 @@ namespace Terrafirma
             currentWorld = world;
             using (BinaryReader b = new BinaryReader(File.OpenRead(world)))
             {
-                b.ReadUInt32(); //skip map version.. it changes too often to care.
+                uint version = b.ReadUInt32(); //now we care about the version
                 Title = b.ReadString();
                 b.BaseStream.Seek(20, SeekOrigin.Current); //skip id and bounds
                 tilesHigh = b.ReadInt32();
@@ -299,7 +299,16 @@ namespace Terrafirma
                 spawnY = b.ReadInt32();
                 groundLevel = (int)b.ReadDouble();
                 rockLevel = (int)b.ReadDouble();
-                b.BaseStream.Seek(48, SeekOrigin.Current); //skip flags and other settings
+                int flaglen = 48;
+                if (version >= 0x17)
+                    flaglen += 5;
+                if (version >= 0x1d)
+                    flaglen += 3;
+                if (version >= 0x20)
+                    flaglen++;
+                if (version >= 0x22)
+                    flaglen++;
+                b.BaseStream.Seek(flaglen, SeekOrigin.Current); //skip flags and other settings
                 tiles = new Tile[tilesWide * tilesHigh];
                 for (int i = 0; i < tilesWide * tilesHigh; i++)
                 {
@@ -307,10 +316,23 @@ namespace Terrafirma
                     if (tiles[i].isActive)
                     {
                         tiles[i].type = b.ReadByte();
+                        if (tiles[i].type == 0x7f)
+                            tiles[i].isActive = false;
                         if (tileInfo[tiles[i].type].hasExtra)
                         {
-                            tiles[i].u = b.ReadInt16();
-                            tiles[i].v = b.ReadInt16();
+                            // torches didn't have extra in older versions.
+                            if (version < 0x1c && tiles[i].type == 4)
+                            {
+                                tiles[i].u = 0;
+                                tiles[i].v = 0;
+                            }
+                            else
+                            {
+                                tiles[i].u = b.ReadInt16();
+                                tiles[i].v = b.ReadInt16();
+                                if (tiles[i].type == 144) //timer
+                                    tiles[i].v = 0;
+                            }
                         }
                         else
                         {
@@ -318,7 +340,8 @@ namespace Terrafirma
                             tiles[i].v = -1;
                         }
                     }
-                    tiles[i].hasLight = b.ReadBoolean();
+                    if (version <= 0x19)
+                        b.ReadBoolean(); //skip obsolete hasLight
                     if (b.ReadBoolean())
                     {
                         tiles[i].wall = b.ReadByte();
@@ -334,6 +357,17 @@ namespace Terrafirma
                     }
                     else
                         tiles[i].liquid = 0;
+                    if (version >= 0x21)
+                        tiles[i].hasWire = b.ReadBoolean();
+                    else
+                        tiles[i].hasWire = false;
+                    if (version >= 0x19) //RLE
+                    {
+                        int rle = b.ReadInt16();
+                        for (int r = 0; r < rle; r++)
+                            tiles[i + r + 1] = tiles[i];
+                        i += rle;
+                    }
                 }
                 chests.Clear();
                 for (int i = 0; i < 1000; i++)
@@ -348,7 +382,11 @@ namespace Terrafirma
                         {
                             chest.items[ii].stack = b.ReadByte();
                             if (chest.items[ii].stack > 0)
+                            {
                                 chest.items[ii].name = b.ReadString();
+                                if (version >= 0x24) //item prefixes
+                                    b.ReadByte(); //toss prefix
+                            }
                         }
                         chests.Add(chest);
                     }
@@ -386,6 +424,9 @@ namespace Terrafirma
                     if (npc.name == "Old Man") npc.sprite = 37;
                     if (npc.name == "Demolitionist") npc.sprite = 38;
                     if (npc.name == "Clothier") npc.sprite = 54;
+                    if (npc.name == "Tinkerer") npc.sprite = 107;
+                    if (npc.name == "Wizard") npc.sprite = 108;
+                    if (npc.name == "Mechanic") npc.sprite = 124;
                     
                     npcs.Add(npc);
 
@@ -399,6 +440,10 @@ namespace Terrafirma
                         NPCs.IsEnabled = true;
                     }
                 }
+                // if (version>=0x1f) read the names of the following npcs:
+                // merchant, nurse, arms dealer, dryad, guide, clothier, demolitionist,
+                // tinkerer and wizard
+                // if (version>=0x23) read the name of the mechanic
             }
 
             calculateLight();
