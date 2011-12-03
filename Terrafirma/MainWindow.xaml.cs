@@ -330,6 +330,8 @@ namespace Terrafirma
                             {
                                 tiles[i].u = b.ReadInt16();
                                 tiles[i].v = b.ReadInt16();
+                                if (tiles[i].type == 128) //armor stand
+                                    tiles[i].u %=100;
                                 if (tiles[i].type == 144) //timer
                                     tiles[i].v = 0;
                             }
@@ -424,7 +426,7 @@ namespace Terrafirma
                     if (npc.name == "Old Man") npc.sprite = 37;
                     if (npc.name == "Demolitionist") npc.sprite = 38;
                     if (npc.name == "Clothier") npc.sprite = 54;
-                    if (npc.name == "Tinkerer") npc.sprite = 107;
+                    if (npc.name == "Goblin Tinkerer") npc.sprite = 107;
                     if (npc.name == "Wizard") npc.sprite = 108;
                     if (npc.name == "Mechanic") npc.sprite = 124;
                     
