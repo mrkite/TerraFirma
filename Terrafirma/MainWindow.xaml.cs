@@ -441,6 +441,15 @@ namespace Terrafirma
                         NPCs.Items.Add(item);
                         NPCs.IsEnabled = true;
                     }
+                    else
+                    {
+                        MenuItem item = new MenuItem();
+                        item.Header = String.Format("Jump to {0}'s Location", npc.name);
+                        item.Click += new RoutedEventHandler(jumpNPC);
+                        item.Tag = npc;
+                        NPCs.Items.Add(item);
+                        NPCs.IsEnabled = true;
+                    }
                 }
                 // if (version>=0x1f) read the names of the following npcs:
                 // merchant, nurse, arms dealer, dryad, guide, clothier, demolitionist,
@@ -459,8 +468,16 @@ namespace Terrafirma
         {
             MenuItem item = sender as MenuItem;
             NPC npc = (NPC)item.Tag;
-            curX = npc.homeX;
-            curY = npc.homeY;
+            if (npc.isHomeless)
+            {
+                curX = npc.x/16;
+                curY = npc.y/16;
+            }
+            else
+            {
+                curX = npc.homeX;
+                curY = npc.homeY;
+            }
             RenderMap();
         }
         
