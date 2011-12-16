@@ -308,6 +308,8 @@ namespace Terrafirma
                     flaglen++;
                 if (version >= 0x22)
                     flaglen++;
+                if (version >= 0x25)
+                    flaglen++;
                 b.BaseStream.Seek(flaglen, SeekOrigin.Current); //skip flags and other settings
                 tiles = new Tile[tilesWide * tilesHigh];
                 for (int i = 0; i < tilesWide * tilesHigh; i++)
