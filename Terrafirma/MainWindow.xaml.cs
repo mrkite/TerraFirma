@@ -675,8 +675,8 @@ namespace Terrafirma
             try
             {
                 render.Draw(curWidth, curHeight, startx, starty, curScale, bits,
-                    isHilight, hilight, Lighting.IsChecked,
-                    UseTextures.IsChecked && curScale > 2.0);
+                    isHilight, hilight, Lighting1.IsChecked?1:Lighting2.IsChecked?2:0,
+                    UseTextures.IsChecked && curScale > 2.0,ShowHouses.IsChecked,ShowWires.IsChecked);
             }
             catch (System.NotSupportedException e)
             {
@@ -992,6 +992,21 @@ namespace Terrafirma
         }
         private void Lighting_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            if (e.Command == MapCommands.NoLight)
+            {
+                Lighting1.IsChecked = false;
+                Lighting2.IsChecked = false;
+            }
+            else if (e.Command == MapCommands.Lighting)
+            {
+                Lighting0.IsChecked = false;
+                Lighting2.IsChecked = false;
+            }
+            else
+            {
+                Lighting0.IsChecked = false;
+                Lighting1.IsChecked = false;
+            }
             RenderMap();
         }
         private void Texture_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -1002,6 +1017,14 @@ namespace Terrafirma
                 UseTextures.IsChecked = false;
             else
                 UseTextures.IsChecked = true;
+            RenderMap();
+        }
+        private void TexturesUsed(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = UseTextures.IsChecked;
+        }
+        private void Redraw(object sender, ExecutedRoutedEventArgs e)
+        {
             RenderMap();
         }
 
@@ -1081,8 +1104,8 @@ namespace Terrafirma
                     pixels = new byte[wd * ht * 4];
 
                     render.Draw(wd, ht, startx, starty, sc,
-                        pixels, false, 0, Lighting.IsChecked,
-                        saveOpts.UseTextures && curScale > 2.0);
+                        pixels, false, 0, Lighting1.IsChecked?1:Lighting2.IsChecked?2:0,
+                        saveOpts.UseTextures && curScale > 2.0,ShowHouses.IsChecked,ShowWires.IsChecked);
 
                     BitmapSource source = BitmapSource.Create(wd, ht, 96.0, 96.0,
                         PixelFormats.Bgr32, null, pixels, wd * 4);

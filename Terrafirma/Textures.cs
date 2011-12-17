@@ -119,6 +119,7 @@ namespace Terrafirma
         Dictionary<int, Texture> armorHeads;
         Dictionary<int, Texture> armorBodies;
         Dictionary<int, Texture> armorLegs;
+        Dictionary<int, Texture> wires;
         ContentManager cm=null;
         public Textures(IntPtr windowHandle)
         {
@@ -132,6 +133,7 @@ namespace Terrafirma
             armorHeads = new Dictionary<int, Texture>();
             armorBodies = new Dictionary<int, Texture>();
             armorLegs = new Dictionary<int, Texture>();
+            wires = new Dictionary<int, Texture>();
 
             // find steam
             string path="";
@@ -248,6 +250,15 @@ namespace Terrafirma
                 armorLegs[num] = loadTexture(name);
             }
             return armorLegs[num];
+        }
+        public Texture GetWire(int num)
+        {
+            if (!wires.ContainsKey(num))
+            {
+                string name = String.Format("Wires");
+                wires[num] = loadTexture(name);
+            }
+            return wires[num];
         }
         private Texture loadTexture(string path)
         {

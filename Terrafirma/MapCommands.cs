@@ -43,6 +43,10 @@ namespace Terrafirma
             new InputGestureCollection(new InputGesture[]{ new KeyGesture(Key.F6) }));
         public static readonly RoutedUICommand Lighting = new RoutedUICommand(
             "Lighting", "Lighting", typeof(MapCommands));
+        public static readonly RoutedUICommand NoLight = new RoutedUICommand(
+            "No Lighting", "NoLight", typeof(MapCommands));
+        public static readonly RoutedUICommand NewLight = new RoutedUICommand(
+            "Color Lighting", "NewLight", typeof(MapCommands));
         public static readonly RoutedUICommand Hilight = new RoutedUICommand(
             "Hilight Block...", "Hilight", typeof(MapCommands),
             new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F2) }));
@@ -52,5 +56,9 @@ namespace Terrafirma
         public static readonly RoutedUICommand Textures = new RoutedUICommand(
             "Use Textures", "Textures", typeof(MapCommands),
             new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F1) }));
+        public static readonly RoutedUICommand Houses = new RoutedUICommand(
+            "Show NPC Houses", "Houses", typeof(MapCommands));
+        public static readonly RoutedUICommand Wires = new RoutedUICommand(
+            "Show Wires", "Wires", typeof(MapCommands));
     }
 }

@@ -85,7 +85,7 @@ namespace Terrafirma
             double startx, double starty,
             double scale, byte[] pixels,
             bool isHilight,byte hilight,
-            bool light,bool texture)
+            int light,bool texture,bool houses,bool wires)
         {
             if (texture)
             {
@@ -234,8 +234,13 @@ namespace Terrafirma
                             drawOverlay(tiles[offset].isLava ? lavaColor : waterColor, 0.85, tiles[offset].liquid,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                         }
+                        // draw wires if necessary
+                        if (wires && tiles[offset].hasWire)
+                        {
+                            drawWire(sx, sy, pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                        }
                         // draw lighting
-                        if (light)
+                        if (light>0)
                             drawOverlay(0, 1.0 - tiles[offset].light, 255,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
 
@@ -340,7 +345,7 @@ namespace Terrafirma
                             }
                             if (tiles[offset].liquid > 0)
                                 c = alphaBlend(c, tiles[offset].isLava ? lavaColor : waterColor, 0.5);
-                            if (light)
+                            if (light>0)
                                 c = alphaBlend(0, c, tiles[offset].light);
                             if (isHilight && (!tiles[offset].isActive || tiles[offset].type != hilight))
                                 c = alphaBlend(0, c, 0.3);
@@ -370,6 +375,18 @@ namespace Terrafirma
                     return 4;
             }
             return 0;
+        }
+
+        private void drawWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom)
+        {
+            int mask = 0;
+            //udlr
+            if (sx < tilesWide - 1 && tiles[sy + (sx + 1) * tilesHigh].hasWire) mask |= 1; //right
+            if (sx > 0 && tiles[sy + (sx - 1) * tilesHigh].hasWire) mask |= 2; //left
+            if (sy < tilesHigh - 1 && tiles[sy + 1 + sx * tilesHigh].hasWire) mask |= 4; //down
+            if (sy > 0 && tiles[sy - 1 + sx * tilesHigh].hasWire) mask |= 8; //up
+            Texture tex = Textures.GetWire(0);
+            drawTexture(tex, 16, 16, uvWires[mask * 2 + 1] * tex.width * 4 + uvWires[mask * 2] * 4, pixels, px, py, w, h, zoom);
         }
 
         private void drawLeaves(int u, int v, int sx, int sy,
@@ -843,6 +860,25 @@ namespace Terrafirma
                         0,0,        //1101 impossible
                         0,0,        //1110 impossible
                         0,0};       //1111 impossible
+
+        Int16[] uvWires = {         //udlr
+                        0,54,       //0000
+                        72,36,      //0001
+                        54,36,      //0010
+                        18,0,       //0011
+                        18,36,      //0100
+                        0,36,       //0101
+                        72,18,      //0110
+                        72,0,       //0111
+                        36,36,      //1000
+                        36,18,      //1001
+                        54,18,      //1010
+                        0,18,       //1011
+                        0,0,        //1100
+                        36,0,       //1101
+                        54,0,       //1110
+                        18,18       //1111
+                          };
 
         private byte fixTile(int x, int y)
         {

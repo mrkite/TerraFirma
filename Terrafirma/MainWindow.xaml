@@ -12,13 +12,23 @@
                 <MenuItem Header="Open _World" Name="Worlds">
                 </MenuItem>
                 <MenuItem Command="ApplicationCommands.Open" Header="_Open" />
+                <MenuItem Command="Refresh" />
+                <Separator />
                 <MenuItem Command="ApplicationCommands.Save" Header="_Save PNG" />
+                <Separator />
                 <MenuItem Command="ApplicationCommands.Close" Header="_Close" />
             </MenuItem>
             <MenuItem Header="_View">
-                <MenuItem Command="w:MapCommands.Textures" Name="UseTextures"/>
-                <MenuItem Command="Refresh" />
-                <MenuItem Command="w:MapCommands.Lighting" Name="Lighting" IsCheckable="True" />
+                <MenuItem Command="w:MapCommands.Textures" Name="UseTextures" />
+                <MenuItem Command="w:MapCommands.Houses" Name="ShowHouses" IsCheckable="True" />
+                <MenuItem Command="w:MapCommands.Wires" Name="ShowWires" IsCheckable="True" />
+                <Separator />
+                <MenuItem Header="Lighting">
+                    <MenuItem Command="w:MapCommands.NoLight" Name="Lighting0" IsCheckable="True" IsChecked="True" />
+                    <MenuItem Command="w:MapCommands.Lighting" Name="Lighting1" IsCheckable="True" />
+                    <MenuItem Command="w:MapCommands.NewLight" Name="Lighting2" IsCheckable="True" />
+                </MenuItem>
+                <Separator />
                 <MenuItem Command="w:MapCommands.Hilight" />
                 <MenuItem Command="w:MapCommands.StopHilight" />
             </MenuItem>
@@ -64,5 +74,17 @@
         <CommandBinding Command="w:MapCommands.Lighting"
                         Executed="Lighting_Executed"
                         CanExecute="MapLoaded" />
+        <CommandBinding Command="w:MapCommands.NoLight"
+                        Executed="Lighting_Executed"
+                        CanExecute="MapLoaded" />
+        <CommandBinding Command="w:MapCommands.NewLight"
+                        Executed="Lighting_Executed"
+                        CanExecute="MapLoaded" />
+        <CommandBinding Command="w:MapCommands.Houses"
+                        Executed="Redraw"
+                        CanExecute="TexturesUsed" />
+        <CommandBinding Command="w:MapCommands.Wires"
+                        Executed="Redraw"
+                        CanExecute="TexturesUsed" />
     </Window.CommandBindings>
 </Window>
