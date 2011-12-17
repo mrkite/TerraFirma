@@ -116,6 +116,9 @@ namespace Terrafirma
         Dictionary<int, Texture> treeBranches;
         Dictionary<int, Texture> shrooms;
         Dictionary<int, Texture> npcs;
+        Dictionary<int, Texture> armorHeads;
+        Dictionary<int, Texture> armorBodies;
+        Dictionary<int, Texture> armorLegs;
         ContentManager cm=null;
         public Textures(IntPtr windowHandle)
         {
@@ -126,6 +129,9 @@ namespace Terrafirma
             treeBranches = new Dictionary<int, Texture>();
             shrooms = new Dictionary<int, Texture>();
             npcs = new Dictionary<int, Texture>();
+            armorHeads = new Dictionary<int, Texture>();
+            armorBodies = new Dictionary<int, Texture>();
+            armorLegs = new Dictionary<int, Texture>();
 
             // find steam
             string path="";
@@ -215,6 +221,33 @@ namespace Terrafirma
                 npcs[num] = loadTexture(name);
             }
             return npcs[num];
+        }
+        public Texture GetArmorHead(int num)
+        {
+            if (!armorHeads.ContainsKey(num))
+            {
+                string name=String.Format("Armor_Head_{0}",num);
+                armorHeads[num]=loadTexture(name);
+            }
+            return armorHeads[num];
+        }
+        public Texture GetArmorBody(int num)
+        {
+            if (!armorBodies.ContainsKey(num))
+            {
+                string name = String.Format("Armor_Body_{0}", num);
+                armorBodies[num] = loadTexture(name);
+            }
+            return armorBodies[num];
+        }
+        public Texture GetArmorLegs(int num)
+        {
+            if (!armorLegs.ContainsKey(num))
+            {
+                string name = String.Format("Armor_Legs_{0}", num);
+                armorLegs[num] = loadTexture(name);
+            }
+            return armorLegs[num];
         }
         private Texture loadTexture(string path)
         {

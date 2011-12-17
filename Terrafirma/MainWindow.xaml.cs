@@ -47,16 +47,124 @@ using System.Threading;
 
 namespace Terrafirma
 {
-    struct TileInfo
+    class TileInfo
     {
         public string name;
         public UInt32 color;
         public bool hasExtra;
         public double light;
+        public double lightR, lightG, lightB;
         public bool transparent;
         public bool isStone, isGrass;
         public Int16 blend;
+        public int u, v, minu, maxu, minv, maxv;
+        public List<TileInfo> variants;
     }
+    class TileInfos
+    {
+        public TileInfos(XmlNodeList nodes)
+        {
+            info = new TileInfo[nodes.Count];
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                int id = Convert.ToInt32(nodes[i].Attributes["num"].Value);
+                info[id] = new TileInfo();
+                loadInfo(info[id], nodes[i]);
+            }
+        }
+        public TileInfo this[int id] //no variantions
+        {
+            get { return info[id]; }
+        }
+        public TileInfo this[int id, Int16 u, Int16 v]
+        {
+            get { return find(info[id], u, v); }
+        }
+        private TileInfo find(TileInfo info, Int16 u, Int16 v)
+        {
+            foreach (TileInfo vars in info.variants)
+            {
+                // must match *all* restrictions... and we take the first match we find.
+                if ((vars.u < 0 || vars.u == u) &&
+                    (vars.v < 0 || vars.v == v) &&
+                    (vars.minu < 0 || vars.minu <= u) &&
+                    (vars.minv < 0 || vars.minv <= v) &&
+                    (vars.maxu < 0 || vars.maxu > u) &&
+                    (vars.maxv < 0 || vars.maxv > v))
+                    return find(vars, u, v); //check for sub-variants
+            }
+            // if we get here, there are no variants that match
+            return info;
+        }
+        private double parseDouble(string value)
+        {
+            return Double.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
+        }
+        private Int16 parseInt(string value)
+        {
+            return Int16.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
+        }
+        private UInt32 parseColor(string color)
+        {
+            UInt32 c = 0;
+            for (int j = 0; j < color.Length; j++)
+            {
+                c <<= 4;
+                if (color[j] >= '0' && color[j] <= '9')
+                    c |= (byte)(color[j] - '0');
+                else if (color[j] >= 'A' && color[j] <= 'F')
+                    c |= (byte)(10 + color[j] - 'A');
+                else if (color[j] >= 'a' && color[j] <= 'f')
+                    c |= (byte)(10 + color[j] - 'a');
+            }
+            return c;
+        }
+        private void loadInfo(TileInfo info, XmlNode node)
+        {
+            info.name = node.Attributes["name"].Value;
+            info.color = parseColor(node.Attributes["color"].Value);
+            info.hasExtra = node.Attributes["hasExtra"] != null;
+            info.light = (node.Attributes["light"] == null) ? 0.0 : parseDouble(node.Attributes["light"].Value);
+            info.lightR = (node.Attributes["lightr"] == null) ? 0.0 : parseDouble(node.Attributes["lightr"].Value);
+            info.lightG = (node.Attributes["lightg"] == null) ? 0.0 : parseDouble(node.Attributes["lightg"].Value);
+            info.lightB = (node.Attributes["lightb"] == null) ? 0.0 : parseDouble(node.Attributes["lightb"].Value);
+            info.transparent = node.Attributes["letLight"] != null;
+            info.isStone = node.Attributes["isStone"] != null;
+            info.isGrass = node.Attributes["isGrass"] != null;
+            if (node.Attributes["blend"] != null)
+                info.blend = parseInt(node.Attributes["blend"].Value);
+            else
+                info.blend = -1;
+            info.variants = new List<TileInfo>();
+            if (node.HasChildNodes)
+                for (int i = 0; i < node.ChildNodes.Count; i++)
+                    info.variants.Add(newVariant(info, node.ChildNodes[i]));
+        }
+        private TileInfo newVariant(TileInfo parent, XmlNode node)
+        {
+            TileInfo info = new TileInfo();
+            info.name = (node.Attributes["name"] == null) ? parent.name : node.Attributes["name"].Value;
+            info.color = (node.Attributes["color"] == null) ? parent.color : parseColor(node.Attributes["color"].Value);
+            info.transparent = (node.Attributes["letLight"] == null) ? parent.transparent : true;
+            info.light = (node.Attributes["light"] == null) ? parent.light : parseDouble(node.Attributes["light"].Value);
+            info.lightR = (node.Attributes["lightr"] == null) ? parent.lightR : parseDouble(node.Attributes["lightr"].Value);
+            info.lightG = (node.Attributes["lightg"] == null) ? parent.lightG : parseDouble(node.Attributes["lightg"].Value);
+            info.lightB = (node.Attributes["lightb"] == null) ? parent.lightB : parseDouble(node.Attributes["lightb"].Value);
+            info.u = (node.Attributes["u"] == null) ? -1 : parseInt(node.Attributes["u"].Value);
+            info.v = (node.Attributes["v"] == null) ? -1 : parseInt(node.Attributes["v"].Value);
+            info.minu = (node.Attributes["minu"] == null) ? -1 : parseInt(node.Attributes["minu"].Value);
+            info.maxu = (node.Attributes["maxu"] == null) ? -1 : parseInt(node.Attributes["maxu"].Value);
+            info.minv = (node.Attributes["minv"] == null) ? -1 : parseInt(node.Attributes["minv"].Value);
+            info.maxv = (node.Attributes["maxv"] == null) ? -1 : parseInt(node.Attributes["maxv"].Value);
+            info.variants = new List<TileInfo>();
+            if (node.HasChildNodes)
+                for (int i = 0; i < node.ChildNodes.Count; i++)
+                    info.variants.Add(newVariant(info, node.ChildNodes[i]));
+            return info;
+        }
+
+        private TileInfo[] info;
+    };
     struct WallInfo
     {
         public string name;
@@ -70,7 +178,7 @@ namespace Terrafirma
         public byte liquid;
         public bool isLava;
         public Int16 u, v, wallu, wallv;
-        public double light;
+        public double light,lightR,lightG,lightB;
         public bool hasWire;
     }
     struct ChestItem
@@ -123,7 +231,7 @@ namespace Terrafirma
         List<NPC> npcs = new List<NPC>();
         Render render;
 
-        TileInfo[] tileInfo;
+        TileInfos tileInfos;
         WallInfo[] wallInfo;
         UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor;
         byte hilight=0;
@@ -143,26 +251,7 @@ namespace Terrafirma
             {
                 xml.Load(stream);
             }
-            XmlNodeList tileList=xml.GetElementsByTagName("tile");
-            tileInfo = new TileInfo[tileList.Count];
-            for (int i = 0; i < tileList.Count; i++)
-            {
-                int id = Convert.ToInt32(tileList[i].Attributes["num"].Value);
-                tileInfo[id].name = tileList[i].Attributes["name"].Value;
-                tileInfo[id].color = parseColor(tileList[i].Attributes["color"].Value);
-                tileInfo[id].hasExtra = tileList[i].Attributes["hasExtra"] != null;
-                if (tileList[i].Attributes["light"] != null)
-                    tileInfo[id].light = Double.Parse(tileList[i].Attributes["light"].Value,System.Globalization.CultureInfo.InvariantCulture);
-                else
-                    tileInfo[id].light = 0.0;
-                tileInfo[id].transparent = tileList[i].Attributes["letLight"] != null;
-                tileInfo[id].isStone = tileList[i].Attributes["isStone"] != null;
-                tileInfo[id].isGrass = tileList[i].Attributes["isGrass"] != null;
-                if (tileList[i].Attributes["blend"] != null)
-                    tileInfo[id].blend = Int16.Parse(tileList[i].Attributes["blend"].Value, System.Globalization.CultureInfo.InvariantCulture);
-                else
-                    tileInfo[id].blend = -1;
-            }
+            tileInfos = new TileInfos(xml.GetElementsByTagName("tile"));
             XmlNodeList wallList = xml.GetElementsByTagName("wall");
             wallInfo = new WallInfo[wallList.Count+1];
             for (int i = 0; i < wallList.Count; i++)
@@ -199,7 +288,7 @@ namespace Terrafirma
                 }
             }
 
-            render = new Render(tileInfo,wallInfo,skyColor,earthColor,rockColor,hellColor,waterColor,lavaColor);
+            render = new Render(tileInfos,wallInfo,skyColor,earthColor,rockColor,hellColor,waterColor,lavaColor);
             //this resize timer is used so we don't get killed on the resize
             resizeTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal,
@@ -234,6 +323,10 @@ namespace Terrafirma
             curX = curY = 0;
             curScale = 1.0;
         }
+
+        
+       
+
         private void fetchWorlds()
         {
             string path=Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -268,7 +361,6 @@ namespace Terrafirma
                 numItems++;
             }
         }
-
         private UInt32 parseColor(string color)
         {
             UInt32 c = 0;
@@ -320,20 +412,18 @@ namespace Terrafirma
                         tiles[i].type = b.ReadByte();
                         if (tiles[i].type == 0x7f)
                             tiles[i].isActive = false;
-                        if (tileInfo[tiles[i].type].hasExtra)
+                        if (tileInfos[tiles[i].type].hasExtra)
                         {
                             // torches didn't have extra in older versions.
                             if (version < 0x1c && tiles[i].type == 4)
                             {
-                                tiles[i].u = 0;
-                                tiles[i].v = 0;
+                                tiles[i].u = -1;
+                                tiles[i].v = -1;
                             }
                             else
                             {
                                 tiles[i].u = b.ReadInt16();
                                 tiles[i].v = b.ReadInt16();
-                                if (tiles[i].type == 128) //armor stand
-                                    tiles[i].u %=100;
                                 if (tiles[i].type == 144) //timer
                                     tiles[i].v = 0;
                             }
@@ -387,9 +477,13 @@ namespace Terrafirma
                             chest.items[ii].stack = b.ReadByte();
                             if (chest.items[ii].stack > 0)
                             {
-                                chest.items[ii].name = b.ReadString();
+                                string name = b.ReadString();
+                                string prefix = "";
                                 if (version >= 0x24) //item prefixes
-                                    b.ReadByte(); //toss prefix
+                                    prefix = prefixes[b.ReadByte()];
+                                if (prefix != "")
+                                    prefix += " ";
+                                chest.items[ii].name = prefix + name;
                             }
                         }
                         chests.Add(chest);
@@ -431,6 +525,7 @@ namespace Terrafirma
                     if (npc.name == "Goblin Tinkerer") npc.sprite = 107;
                     if (npc.name == "Wizard") npc.sprite = 108;
                     if (npc.name == "Mechanic") npc.sprite = 124;
+                    if (npc.name == "Santa Claus") npc.sprite = 142;
                     
                     npcs.Add(npc);
 
@@ -465,6 +560,92 @@ namespace Terrafirma
             //load info
             loaded = true;
         }
+
+        private string[] prefixes ={
+                                       "",
+                                       "Large",
+                                       "Massive",
+                                       "Dangerous",
+                                       "Savage",
+                                       "Sharp",
+                                       "Pointy",
+                                       "Tiny",
+                                       "Terrible",
+                                       "Small",
+                                       "Dull",
+                                       "Unhappy",
+                                       "Bulky",
+                                       "Shameful",
+                                       "Heavy",
+                                       "Light",
+                                       "Sighted",
+                                       "Rapid",
+                                       "Hasty",
+                                       "Intimidating",
+                                       "Deadly",
+                                       "Staunch",
+                                       "Awful",
+                                       "Lethargic",
+                                       "Awkward",
+                                       "Powerful",
+                                       "Frenzying",
+                                       "Mystic",
+                                       "Adept",
+                                       "Masterful",
+                                       "Inept",
+                                       "Ignorant",
+                                       "Deranged",
+                                       "Intense",
+                                       "Taboo",
+                                       "Furious",
+                                       "Manic",
+                                       "Keen",
+                                       "Superior",
+                                       "Forceful",
+                                       "Hurtful",
+                                       "Strong",
+                                       "Unpleasant",
+                                       "Broken",
+                                       "Damaged",
+                                       "Weak",
+                                       "Shoddy",
+                                       "Ruthless",
+                                       "Quick",
+                                       "Deadly",
+                                       "Agile",
+                                       "Nimble",
+                                       "Murderous",
+                                       "Slow",
+                                       "Sluggish",
+                                       "Lazy",
+                                       "Annoying",
+                                       "Nasty",
+                                       "Godly",
+                                       "Demonic",
+                                       "Zealous",
+                                       "Hard",
+                                       "Guarding",
+                                       "Armored",
+                                       "Warding",
+                                       "Arcane",
+                                       "Precise",
+                                       "Lucky",
+                                       "Jagged",
+                                       "Spiked",
+                                       "Angry",
+                                       "Menacing",
+                                       "Brisk",
+                                       "Fleeting",
+                                       "Hasty",
+                                       "Quick",
+                                       "Wild",
+                                       "Rash",
+                                       "Intrepid",
+                                       "Violent",
+                                       "Legendary",
+                                       "Unreal",
+                                       "Mythical"
+                                  };
 
         void jumpNPC(object sender, RoutedEventArgs e)
         {
@@ -567,7 +748,7 @@ namespace Terrafirma
                     if (tiles[offset].liquid > 0)
                         label = tiles[offset].isLava ? "Lava" : "Water";
                     if (tiles[offset].isActive)
-                        label = tileInfo[tiles[offset].type].name;
+                        label = tileInfos[tiles[offset].type,tiles[offset].u,tiles[offset].v].name;
                     statusText.Text = String.Format("{0},{1} {2}", sx, sy, label);
                 }
                 else
@@ -836,8 +1017,8 @@ namespace Terrafirma
         private void Hilight_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             ArrayList items = new ArrayList();
-            for (int i = 0; i < tileInfo.Length; i++)
-                items.Add(tileInfo[i].name);
+          //  for (int i = 0; i < tileInfo.Length; i++)
+          //      items.Add(tileInfo[i].name);
             HilightWin h = new HilightWin(items);
             if (h.ShowDialog() == true)
             {
@@ -936,21 +1117,35 @@ namespace Terrafirma
         {
             // turn off all light
             for (int i = 0; i < tilesWide * tilesHigh; i++)
+            {
                 tiles[i].light = 0.0;
+                tiles[i].lightR = 0.0;
+                tiles[i].lightG = 0.0;
+                tiles[i].lightB = 0.0;
+            }
             // light up light sources
             for (int y = 0; y < tilesHigh; y++)
             {
                 for (int x = 0; x < tilesWide; x++)
                 {
                     int offset = x * tilesHigh + y;
-                    if ((!tiles[offset].isActive || tileInfo[tiles[offset].type].transparent) &&
+
+                    TileInfo inf = tileInfos[tiles[offset].type, tiles[offset].u, tiles[offset].v];
+                    if ((!tiles[offset].isActive || inf.transparent) &&
                         tiles[offset].wall == 0 && tiles[offset].liquid < 255 && y < groundLevel) //sunlight
                         tiles[offset].light = 1.0;
                     if (tiles[offset].liquid > 0 && tiles[offset].isLava) //lava
-                        tiles[offset].light = Math.Max(tiles[offset].light, tiles[offset].liquid / 255);
-                    if (tiles[offset].type == 61 && tiles[offset].u == 144) //special case jungle light ball
-                        tiles[offset].light = Math.Max(tiles[offset].light, 0.75);
-                    tiles[offset].light = Math.Max(tiles[offset].light, tileInfo[tiles[offset].type].light);
+                    {
+                        tiles[offset].light = Math.Max(tiles[offset].light, (tiles[offset].liquid / 255)*0.38+0.1275);
+                        // colored lava light's brightness is not affected by its level
+                        tiles[offset].lightR = Math.Max(tiles[offset].lightR, 0.66);
+                        tiles[offset].lightG = Math.Max(tiles[offset].lightG, 0.39);
+                        tiles[offset].lightB = Math.Max(tiles[offset].lightB, 0.13);
+                    }
+                    tiles[offset].light = Math.Max(tiles[offset].light, inf.light);
+                    tiles[offset].lightR = Math.Max(tiles[offset].lightR, inf.lightR);
+                    tiles[offset].lightG = Math.Max(tiles[offset].lightG, inf.lightG);
+                    tiles[offset].lightB = Math.Max(tiles[offset].lightB, inf.lightB);
                 }
             }
             // spread light
@@ -960,11 +1155,30 @@ namespace Terrafirma
                 {
                     int offset = x * tilesHigh + y;
                     double delta = 0.04;
-                    if (tiles[offset].isActive && !tileInfo[tiles[offset].type].transparent) delta = 0.16;
-                    if (y > 0 && tiles[offset - 1].light - delta > tiles[offset].light)
-                        tiles[offset].light = tiles[offset - 1].light - delta;
-                    if (x > 0 && tiles[offset - tilesHigh].light - delta > tiles[offset].light)
-                        tiles[offset].light = tiles[offset - tilesHigh].light - delta;
+                    TileInfo inf = tileInfos[tiles[offset].type, tiles[offset].u, tiles[offset].v];
+                    if (tiles[offset].isActive && !inf.transparent) delta = 0.16;
+                    if (y > 0)
+                    {
+                        if (tiles[offset - 1].light - delta > tiles[offset].light)
+                            tiles[offset].light = tiles[offset - 1].light - delta;
+                        if (tiles[offset - 1].lightR - delta > tiles[offset].lightR)
+                            tiles[offset].lightR = tiles[offset - 1].lightR - delta;
+                        if (tiles[offset - 1].lightG - delta > tiles[offset].lightG)
+                            tiles[offset].lightG = tiles[offset - 1].lightG - delta;
+                        if (tiles[offset - 1].lightB - delta > tiles[offset].lightB)
+                            tiles[offset].lightB = tiles[offset - 1].lightB - delta;
+                    }
+                    if (x > 0)
+                    {
+                        if (tiles[offset - tilesHigh].light - delta > tiles[offset].light)
+                            tiles[offset].light = tiles[offset - tilesHigh].light - delta;
+                        if (tiles[offset - tilesHigh].lightR - delta > tiles[offset].lightR)
+                            tiles[offset].lightR = tiles[offset - tilesHigh].lightR - delta;
+                        if (tiles[offset - tilesHigh].lightG - delta > tiles[offset].lightG)
+                            tiles[offset].lightG = tiles[offset - tilesHigh].lightG - delta;
+                        if (tiles[offset - tilesHigh].lightB - delta > tiles[offset].lightB)
+                            tiles[offset].lightB = tiles[offset - tilesHigh].lightB - delta;
+                    }
                 }
             }
             // spread light backwards
@@ -974,11 +1188,30 @@ namespace Terrafirma
                 {
                     int offset = x * tilesHigh + y;
                     double delta = 0.04;
-                    if (tiles[offset].isActive && !tileInfo[tiles[offset].type].transparent) delta = 0.16;
-                    if (y < tilesHigh - 1 && tiles[offset + 1].light - delta > tiles[offset].light)
-                        tiles[offset].light = tiles[offset + 1].light - delta;
-                    if (x < tilesWide - 1 && tiles[offset + tilesHigh].light - delta > tiles[offset].light)
-                        tiles[offset].light = tiles[offset + tilesHigh].light - delta;
+                    TileInfo inf = tileInfos[tiles[offset].type, tiles[offset].u, tiles[offset].v];
+                    if (tiles[offset].isActive && !inf.transparent) delta = 0.16;
+                    if (y < tilesHigh - 1)
+                    {
+                        if (tiles[offset + 1].light - delta > tiles[offset].light)
+                            tiles[offset].light = tiles[offset + 1].light - delta;
+                        if (tiles[offset + 1].lightR - delta > tiles[offset].lightR)
+                            tiles[offset].lightR = tiles[offset + 1].lightR - delta;
+                        if (tiles[offset + 1].lightG - delta > tiles[offset].lightG)
+                            tiles[offset].lightG = tiles[offset + 1].lightG - delta;
+                        if (tiles[offset + 1].lightB - delta > tiles[offset].lightB)
+                            tiles[offset].lightB = tiles[offset + 1].lightB - delta;
+                    }
+                    if (x < tilesWide - 1)
+                    {
+                        if (tiles[offset + tilesHigh].light - delta > tiles[offset].light)
+                            tiles[offset].light = tiles[offset + tilesHigh].light - delta;
+                        if (tiles[offset + tilesHigh].lightR - delta > tiles[offset].lightR)
+                            tiles[offset].lightR = tiles[offset + tilesHigh].lightR - delta;
+                        if (tiles[offset + tilesHigh].lightG - delta > tiles[offset].lightG)
+                            tiles[offset].lightG = tiles[offset + tilesHigh].lightG - delta;
+                        if (tiles[offset + tilesHigh].lightB - delta > tiles[offset].lightB)
+                            tiles[offset].lightB = tiles[offset + tilesHigh].lightB - delta;
+                    }
                 }
             }
         }

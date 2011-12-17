@@ -4,34 +4,34 @@
   <tile num="1" name="Stone" color="#808080" isStone="1" blend="0" />
   <tile num="2" name="Grass" color="#1CD85E" isGrass="1" blend="0" />
   <tile num="3" name="Weed" color="#1E9648" hasExtra="1" letLight="1">
-	<var u="144" name="Mushroom" color="#C36927" />
+    <var u="144" name="Mushroom" color="#C36927" />
   </tile>
   <tile num="4" name="Torch" color="#FDDD03" hasExtra="1">
-	<var maxu="66" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
-	<var v="22" name="Blue Torch" color="#2FA3FF">
-		<var maxu="66" lightr="0.0" lightg="0.1" lightb="1.3" light="1.0" />
-	</var>
-	<var v="44" name="Red Torch" color="#FC6C6F">
-		<var maxu="66" lightr="1.0" lightg="0.1" lightb="0.1" light="1.0"/>
-	</var>
-	<var v="66" name="Green Torch" color="#0EDC32">
-		<var maxu="66" lightr="0.0" lightg="1.0" lightb="0.1" light="1.0"/>
-	</var>
-	<var v="88" name="Purple Torch" color="#D261FF">
-		<var maxu="66" lightr="0.9" lightg="0.0" lightb="0.9" light="1.0"/>
-	</var>
-	<var v="110" name="White Torch" color="#EEF2F2">
-		<var maxu="66" lightr="1.3" lightg="1.3" lightb="1.3" light="1.0" />
-	</var>
-	<var v="132" name="Yellow Torch" color="#FFF179">
-		<var maxu="66" lightr="0.9" lightg="0.9" lightb="0.0" light="1.0" />
-	</var>
-	<var v="154" name="Demon Torch" color="#694ACA">
-		<var maxu="66" lightr="0.5" lightg="0.3" lightb="1.0" light="1.0" />
-	</var>
-	<var v="176" name="Cursed Torch" color="#60F802">
-		<var maxu="66" lightr="0.85" lightg="1.0" lightb="0.7" light="1.0" />
-	</var>
+    <var v="22" name="Blue Torch" color="#2FA3FF">
+      <var maxu="66" lightr="0.0" lightg="0.1" lightb="1.3" light="1.0" />
+    </var>
+    <var v="44" name="Red Torch" color="#FC6C6F">
+      <var maxu="66" lightr="1.0" lightg="0.1" lightb="0.1" light="1.0"/>
+    </var>
+    <var v="66" name="Green Torch" color="#0EDC32">
+      <var maxu="66" lightr="0.0" lightg="1.0" lightb="0.1" light="1.0"/>
+    </var>
+    <var v="88" name="Purple Torch" color="#D261FF">
+      <var maxu="66" lightr="0.9" lightg="0.0" lightb="0.9" light="1.0"/>
+    </var>
+    <var v="110" name="White Torch" color="#EEF2F2">
+      <var maxu="66" lightr="1.3" lightg="1.3" lightb="1.3" light="1.0" />
+    </var>
+    <var v="132" name="Yellow Torch" color="#FFF179">
+      <var maxu="66" lightr="0.9" lightg="0.9" lightb="0.0" light="1.0" />
+    </var>
+    <var v="154" name="Demon Torch" color="#694ACA">
+      <var maxu="66" lightr="0.5" lightg="0.3" lightb="1.0" light="1.0" />
+    </var>
+    <var v="176" name="Cursed Torch" color="#60F802">
+      <var maxu="66" lightr="0.85" lightg="1.0" lightb="0.7" light="1.0" />
+    </var>
+    <var maxu="66" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
   </tile>
   <tile num="5" name="Tree" color="#976B4B" hasExtra="1" letLight="1"/>
   <tile num="6" name="Iron Ore" color="#B5A495" blend="0" />
@@ -42,14 +42,14 @@
   <tile num="11" name="Open Door" color="#946B50" hasExtra="1" letLight="1" />
   <tile num="12" name="Heartstone" color="#B61239" hasExtra="1" letLight="1" />
   <tile num="13" name="Bottle" color="#4EC5FC" hasExtra="1" letLight="1">
-	<var u="18" name="Health Potion" color="#D80A36" />
-	<var u="36" name="Mana Potion" color="#4350FF" />
-	<var u="54" name="Pink Vase" color="#F0C4D0" />
-	<var u="72" name="Mug" color="#ACC0D7" />
+    <var u="18" name="Health Potion" color="#D80A36" />
+    <var u="36" name="Mana Potion" color="#4350FF" />
+    <var u="54" name="Pink Vase" color="#F0C4D0" />
+    <var u="72" name="Mug" color="#ACC0D7" />
   </tile>
   <tile num="14" name="Table" color="#7F5C45" hasExtra="1" letLight="1" />
   <tile num="15" name="Chair" color="#A2785C" hasExtra="1" letLight="1">
-	<var minv="40" name="Toilet" color="#808080" />
+    <var minv="40" name="Toilet" color="#808080" />
   </tile>
   <tile num="16" name="Anvil" color="#505050" hasExtra="1" letLight="1" />
   <tile num="17" name="Furnace" color="#636363" hasExtra="1" lightr="0.83" lightg="0.6" lightb="0.5" light="0.75" />
@@ -57,12 +57,12 @@
   <tile num="19" name="Wooden Platform" color="#B18567" />
   <tile num="20" name="Sapling" color="#1E9648" hasExtra="1" letLight="1" />
   <tile num="21" name="Chest" color="#946B50" hasExtra="1" letLight="1">
-	<var minu="36" name="Gold Chest" color="#CCB548" />
-	<var minu="72" name="Locked Gold Chest" color="#CCB548" />
-	<var minu="108" name="Shadow Chest" color="#6258B0" />
-	<var minu="144" name="Locked Shadow Chest" color="#6258B0" />
-	<var minu="180" name="Barrel" color="#604438" />
-	<var minu="216" name="Trash Can" color="#606060" />
+    <var minu="216" name="Trash Can" color="#606060" />
+    <var minu="180" name="Barrel" color="#604438" />
+    <var minu="144" name="Locked Shadow Chest" color="#6258B0" />
+    <var minu="108" name="Shadow Chest" color="#6258B0" />
+    <var minu="72" name="Locked Gold Chest" color="#CCB548" />
+    <var minu="36" name="Gold Chest" color="#CCB548" />
   </tile>
   <tile num="22" name="Demonite Ore" color="#625FA7" blend="0" lightr="0.12" lightg="0.07" lightb="0.32" light="0.2" />
   <tile num="23" name="Corrupted Grass" color="#8D89DF" isGrass="1" blend="0" />
@@ -76,16 +76,16 @@
   <tile num="31" name="Shadow Orb" color="#674D62" hasExtra="1" lightr="0.325" lightg="0.115" lightb="0.47" light="0.46" />
   <tile num="32" name="Corrupted Vines" color="#7A618F" />
   <tile num="33" name="Candle" color="#FDDD03" hasExtra="1">
-	<var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
   </tile>
   <tile num="34" name="Copper Chandelier" color="#B75819" hasExtra="1">
-	<var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
   </tile>
   <tile num="35" name="Silver Chandelier" color="#C1CACB" hasExtra="1">
-	<var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
   </tile>
   <tile num="36" name="Gold Chandelier" color="#B9A417" hasExtra="1">
-	<var maxu="54" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
   </tile>
   <tile num="37" name="Meteorite" color="#685654" lightr="0.56" lightg="0.43" lightb="0.15" light="0.5" blend="0" />
   <tile num="38" name="Gray Brick" color="#8C8C8C" />
@@ -93,7 +93,7 @@
   <tile num="40" name="Clay" color="#925144" blend="0" />
   <tile num="41" name="Blue Brick" color="#6365C9" />
   <tile num="42" name="Chain Lantern" color="#F99851" hasExtra="1">
-	<var u="0" lightr="0.65" lightg="0.8" lightb="0.54" light="0.75" />
+    <var u="0" lightr="0.65" lightg="0.8" lightb="0.54" light="0.75" />
   </tile>
   <tile num="43" name="Green Brick" color="#3FA931" />
   <tile num="44" name="Pink Brick" color="#A93175" />
@@ -114,7 +114,7 @@
   <tile num="59" name="Mud" color="#5C4449" blend="0" />
   <tile num="60" name="Jungle Grass" color="#8FD71D" isGrass="1" blend="59" />
   <tile num="61" name="Jungle Weeds" color="#63971F" hasExtra="1" letLight="1">
-	<var u="144" lightr="0.42" lightg="0.81" lightb="0.54" light="0.75" />
+    <var u="144" lightr="0.42" lightg="0.81" lightb="0.54" light="0.75" />
   </tile>
   <tile num="62" name="Jungle Vines" color="#28650D" />
   <tile num="63" name="Sapphire" color="#2A82FA" isStone="1" blend="0"/>
@@ -137,28 +137,28 @@
   <tile num="80" name="Cactus" color="#497811" letLight="1" />
   <tile num="81" name="Coral" color="#e5533f" hasExtra="1" letLight="1" />
   <tile num="82" name="Herb sprout" color="#fe5402" hasExtra="1" letLight="1">
-	<var u="0" name="Daybloom sprout" color="#1E9648" />
-	<var u="18" name="Moonglow sprout" color="#487C1A" />
-	<var u="36" name="Blinkroot sprout" color="#47533E" />
-	<var u="54" name="Deathweed sprout" color="#6D6AAE" />
-	<var u="72" name="Waterleaf sprout" color="#0D6524" />
-	<var u="90" name="Fireblossom sprout" color="#FE5402" />
+    <var u="0" name="Daybloom sprout" color="#1E9648" />
+    <var u="18" name="Moonglow sprout" color="#487C1A" />
+    <var u="36" name="Blinkroot sprout" color="#47533E" />
+    <var u="54" name="Deathweed sprout" color="#6D6AAE" />
+    <var u="72" name="Waterleaf sprout" color="#0D6524" />
+    <var u="90" name="Fireblossom sprout" color="#FE5402" />
   </tile>
   <tile num="83" name="Herb" color="#fe5402" hasExtra="1" letLight="1">
-	<var u="0" name="Daybloom" color="#1E9648" />
-	<var u="18" name="Moonglow" color="#487C1A" lightr="0.1" lightg="0.4" lightb="0.6" />
-	<var u="36" name="Blinkroot" color="#47533E" />
-	<var u="54" name="Deathweed" color="#6D6AAE" />
-	<var u="72" name="Waterleaf" color="#0D6524" />
-	<var u="90" name="Fireblossom" color="#FE5402" />
+    <var u="0" name="Daybloom" color="#1E9648" />
+    <var u="18" name="Moonglow" color="#487C1A" lightr="0.1" lightg="0.4" lightb="0.6" />
+    <var u="36" name="Blinkroot" color="#47533E" />
+    <var u="54" name="Deathweed" color="#6D6AAE" />
+    <var u="72" name="Waterleaf" color="#0D6524" />
+    <var u="90" name="Fireblossom" color="#FE5402" />
   </tile>
   <tile num="84" name="Herb blossom" color="#fe5402" hasExtra="1" letLight="1">
-	<var u="0" name="Daybloom blossom" color="#F6C51A" />
-	<var u="18" name="Moonglow blossom" color="#98C4F2" />
-	<var u="36" name="Blinkroot blossom" color="#FEC102" lightr="0.083" lightg="0.118" lightb="0.0118" light="0.19" />
-	<var u="54" name="Deathweed blossom" color="#9AC123" />
-	<var u="72" name="Waterleaf blossom" color="#66B5F9" />
-	<var u="90" name="Fireblossom blossom" color="#FE5502" lightr="0.9" lightg="0.72" lightb="0.18" light="0.7" />
+    <var u="0" name="Daybloom blossom" color="#F6C51A" />
+    <var u="18" name="Moonglow blossom" color="#98C4F2" />
+    <var u="36" name="Blinkroot blossom" color="#FEC102" lightr="0.083" lightg="0.118" lightb="0.0118" light="0.19" />
+    <var u="54" name="Deathweed blossom" color="#9AC123" />
+    <var u="72" name="Waterleaf blossom" color="#66B5F9" />
+    <var u="90" name="Fireblossom blossom" color="#FE5502" lightr="0.9" lightg="0.72" lightb="0.18" light="0.7" />
   </tile>
   <tile num="85" name="Tombstone" color="#c0c0c0" hasExtra="1" />
   <tile num="86" name="Loom" color="#7F5C45" hasExtra="1" />
@@ -167,78 +167,78 @@
   <tile num="89" name="Bench" color="#B18567" hasExtra="1" />
   <tile num="90" name="Bathtub" color="#606060" hasExtra="1" />
   <tile num="91" name="Banner" color="#188008" hasExtra="1">
-	<var u="0" name="Red Banner" color="#790C0E" />
-	<var u="18" name="Green Banner" color="#187808" />
-	<var u="36" name="Blue Banner" color="#0C5379" />
-	<var u="54" name="Yellow Banner" color="#786C08" />
+    <var u="0" name="Red Banner" color="#790C0E" />
+    <var u="18" name="Green Banner" color="#187808" />
+    <var u="36" name="Blue Banner" color="#0C5379" />
+    <var u="54" name="Yellow Banner" color="#786C08" />
   </tile>
   <tile num="92" name="Lamp Post" color="#323232" hasExtra="1">
-	<var u="0" maxv="36" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    <var u="0" maxv="36" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
   </tile>
   <tile num="93" name="Tiki Torch" color="#503B2F" hasExtra="1">
-	<var u="0" v="0" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+    <var u="0" v="0" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
   </tile>
   <tile num="94" name="Keg" color="#A87858" hasExtra="1" />
   <tile num="95" name="Chinese Lantern" color="#F87800" hasExtra="1">
-	<var maxu="36" lightr="1.0" lightg="0.97" lightb="0.8" light="0.9" />
+    <var maxu="36" lightr="1.0" lightg="0.97" lightb="0.8" light="0.9" />
   </tile>
   <tile num="96" name="Cooking Pot" color="#606060" hasExtra="1" />
   <tile num="97" name="Safe" color="#808080" hasExtra="1" />
   <tile num="98" name="Skull Lantern" color="#B2B28A" hasExtra="1">
-	<var v="0" lightr="1.0" lightg="097" lightb="0.85" light="1.0" />
+    <var v="0" lightr="1.0" lightg="097" lightb="0.85" light="1.0" />
   </tile>
   <tile num="99" name="Trash Can" color="#808080" hasExtra="1" />
   <tile num="100" name="Candelabra" color="#CCB548" hasExtra="1">
-	<var maxu="36" lightr="1.0" lightg="0.97" lightb="0.65" light="1.0" />
+    <var maxu="36" lightr="1.0" lightg="0.97" lightb="0.65" light="1.0" />
   </tile>
   <tile num="101" name="Bookcase" color="#B08460" hasExtra="1" />
   <tile num="102" name="Throne" color="#780C08" hasExtra="1" />
   <tile num="103" name="Bowl" color="#8D624D" hasExtra="1" />
   <tile num="104" name="Grandfather Clock" color="#946B50" hasExtra="1" />
   <tile num="105" name="Statue" color="#282828" hasExtra="1">
-	<var minu="0" name="Armor Statue" />
-	<var minu="36" name="Angel Statue" />
-	<var minu="72" name="Star Statue" />
-	<var minu="108" name="Sword Statue" />
-	<var minu="144" name="Slime Statue" />
-	<var minu="180" name="Goblin Statue" />
-	<var minu="216" name="Shield Statue" />
-	<var minu="252" name="Bat Statue" />
-	<var minu="288" name="Fish Statue" />
-	<var minu="324" name="Bunny Statue" />
-	<var minu="360" name="Skeleton Statue" />
-	<var minu="396" name="Reaper Statue" />
-	<var minu="432" name="Woman Statue" />
-	<var minu="468" name="Imp Statue" />
-	<var minu="504" name="Gargoyle Statue" />
-	<var minu="540" name="Gloom Statue" />
-	<var minu="576" name="Hornet Statue" />
-	<var minu="612" name="Bomb Statue" />
-	<var minu="648" name="Crab Statue" />
-	<var minu="684" name="Hammer Statue" />
-	<var minu="720" name="Potion Statue" />
-	<var minu="756" name="Spear Statue" />
-	<var minu="792" name="Cross Statue" />
-	<var minu="828" name="Jellyfish Statue" />
-	<var minu="864" name="Bow Statue" />
-	<var minu="900" name="Boomerang Statue" />
-	<var minu="936" name="Boot Statue" />
-	<var minu="972" name="Chest Statue" />
-	<var minu="1008" name="Bird Statue" />
-	<var minu="1044" name="Axe Statue" />
-	<var minu="1080" name="Corrupt Statue" />
-	<var minu="1116" name="Tree Statue" />
-	<var minu="1152" name="Anvil Statue" />
-	<var minu="1188" name="Pickaxe Statue" />
-	<var minu="1224" name="Mushroom Statue" />
-	<var minu="1260" name="Eyeball Statue" />
-	<var minu="1296" name="Pillar Statue" />
-	<var minu="1332" name="Heart Statue" />
-	<var minu="1368" name="Pot Statue" />
-	<var minu="1404" name="Sunflower Statue" />
-	<var minu="1440" name="King Statue" />
-	<var minu="1476" name="Queen Statue" />
-	<var minu="1512" name="Pirahna Statue" />
+    <var minu="1512" name="Pirahna Statue" />
+    <var minu="1476" name="Queen Statue" />
+    <var minu="1440" name="King Statue" />
+    <var minu="1404" name="Sunflower Statue" />
+    <var minu="1368" name="Pot Statue" />
+    <var minu="1332" name="Heart Statue" />
+    <var minu="1296" name="Pillar Statue" />
+    <var minu="1260" name="Eyeball Statue" />
+    <var minu="1224" name="Mushroom Statue" />
+    <var minu="1188" name="Pickaxe Statue" />
+    <var minu="1152" name="Anvil Statue" />
+    <var minu="1116" name="Tree Statue" />
+    <var minu="1080" name="Corrupt Statue" />
+    <var minu="1044" name="Axe Statue" />
+    <var minu="1008" name="Bird Statue" />
+    <var minu="972" name="Chest Statue" />
+    <var minu="936" name="Boot Statue" />
+    <var minu="900" name="Boomerang Statue" />
+    <var minu="864" name="Bow Statue" />
+    <var minu="828" name="Jellyfish Statue" />
+    <var minu="792" name="Cross Statue" />
+    <var minu="756" name="Spear Statue" />
+    <var minu="720" name="Potion Statue" />
+    <var minu="684" name="Hammer Statue" />
+    <var minu="648" name="Crab Statue" />
+    <var minu="612" name="Bomb Statue" />
+    <var minu="576" name="Hornet Statue" />
+    <var minu="540" name="Gloom Statue" />
+    <var minu="504" name="Gargoyle Statue" />
+    <var minu="468" name="Imp Statue" />
+    <var minu="432" name="Woman Statue" />
+    <var minu="396" name="Reaper Statue" />
+    <var minu="360" name="Skeleton Statue" />
+    <var minu="324" name="Bunny Statue" />
+    <var minu="288" name="Fish Statue" />
+    <var minu="252" name="Bat Statue" />
+    <var minu="216" name="Shield Statue" />
+    <var minu="180" name="Goblin Statue" />
+    <var minu="144" name="Slime Statue" />
+    <var minu="108" name="Sword Statue" />
+    <var minu="72" name="Star Statue" />
+    <var minu="36" name="Angel Statue" />
+    <var minu="0" name="Armor Statue" />
   </tile>
   <tile num="106" name="Sawmill" color="#563E2C" hasExtra="1" />
   <tile num="107" name="Cobalt Ore" color="#0B508F" blend="0" />
@@ -261,17 +261,17 @@
   <tile num="124" name="Wooden Beam" color="#5C4436" />
   <tile num="125" name="Crystal Ball" color="#81A5FF" hasExtra="1" lightr="0.0" lightg="0.053" lightb="0.16" light="0.12" />
   <tile num="126" name="Disco Ball" color="#DBDBDB" hasExtra="1">
-	<var maxu="36" lightr="1.0" lightg="0.0" lightb="0.0" light="0.3" />
+    <var maxu="36" lightr="1.0" lightg="0.0" lightb="0.0" light="0.3" />
   </tile>
   <tile num="127" name="Glass" color="#68B3C8" />
   <tile num="128" name="Mannequin" color="#906850" hasExtra="1" />
   <tile num="129" name="Crystal Shard" color="#004979" hasExtra="1" lightr="0.2" lightg="0.1" lightb="0.0" light="0.08">
-	<var u="0" lightr="0.05" lightg="0.25" lightb="0.0" />
-	<var u="18" lightr="0.2" lightg="0.15" lightb="0.0" />
-	<var u="54" lightr="0.05" lightg="0.25" lightb="0.0" />
-	<var u="72" lightr="0.2" lightg="0.15" lightb="0.0" />
-	<var u="108" lightr="0.05" lightg="0.25" lightb="0.0" />
-	<var u="126" lightr="0.2" lightg="0.15" lightb="0.0" />
+    <var u="0" lightr="0.05" lightg="0.25" lightb="0.0" />
+    <var u="18" lightr="0.2" lightg="0.15" lightb="0.0" />
+    <var u="54" lightr="0.05" lightg="0.25" lightb="0.0" />
+    <var u="72" lightr="0.2" lightg="0.15" lightb="0.0" />
+    <var u="108" lightr="0.05" lightg="0.25" lightb="0.0" />
+    <var u="126" lightr="0.2" lightg="0.15" lightb="0.0" />
   </tile>
   <tile num="130" name="Active Stone" color="#A5A5A5" blend="0" />
   <tile num="131" name="Inactive Stone" color="#1A1A1A" blend="0" />
@@ -279,46 +279,46 @@
   <tile num="133" name="Adamantite Forge" color="#891012" hasExtra="1" lightr="0.83" lightg="0.6" lightb="0.5" light="0.75" />
   <tile num="134" name="Mythril Anvil" color="#96AE87" hasExtra="1" />
   <tile num="135" name="Pressure Plate" color="#FD7272" hasExtra="1">
-	<var v="0" name="Red Pressure Plate" color="#C90303" />
-	<var v="18" name="Green Pressure Plate" color="#1E9648" />
-	<var v="36" name="Gray Pressure Plate" color="#808080" />
-	<var v="54" name="Brown Pressure Plate" color="#976B4B" />
+    <var v="0" name="Red Pressure Plate" color="#C90303" />
+    <var v="18" name="Green Pressure Plate" color="#1E9648" />
+    <var v="36" name="Gray Pressure Plate" color="#808080" />
+    <var v="54" name="Brown Pressure Plate" color="#976B4B" />
   </tile>
   <tile num="136" name="Switch" color="#CCC0C0" hasExtra="1" />
   <tile num="137" name="Dart Trap" color="#8C8C8C" hasExtra="1" />
   <tile num="138" name="Boulder" color="#636363" hasExtra="1" />
   <tile num="139" name="Music Box" color="#996343" hasExtra="1">
-	<var minv="0" name="Music Box (Overworld Day)" />
-	<var minv="36" name="Music Box (Eerie)" />
-	<var minv="72" name="Music Box (Night)" />
-	<var minv="108" name="Music Box (Title)" />
-	<var minv="144" name="Music Box (Underground)" />
-	<var minv="180" name="Music Box (Boss 1)" />
-	<var minv="216" name="Music Box (Jungle)" />
-	<var minv="252" name="Music Box (Corruption)" />
-	<var minv="288" name="Music Box (Underground Corruption)" />
-	<var minv="324" name="Music Box (The Hallow)" />
-	<var minv="360" name="Music Box (Boss 2)" />
-	<var minv="396" name="Music Box (Underground Hallow)" />
-	<var minv="432" name="Music Box (Boss 3)" />
+    <var minv="432" name="Music Box (Boss 3)" />
+    <var minv="396" name="Music Box (Underground Hallow)" />
+    <var minv="360" name="Music Box (Boss 2)" />
+    <var minv="324" name="Music Box (The Hallow)" />
+    <var minv="288" name="Music Box (Underground Corruption)" />
+    <var minv="252" name="Music Box (Corruption)" />
+    <var minv="216" name="Music Box (Jungle)" />
+    <var minv="180" name="Music Box (Boss 1)" />
+    <var minv="144" name="Music Box (Underground)" />
+    <var minv="108" name="Music Box (Title)" />
+    <var minv="72" name="Music Box (Night)" />
+    <var minv="36" name="Music Box (Eerie)" />
+    <var minv="0" name="Music Box (Overworld Day)" />
   </tile>
   <tile num="140" name="Demonite Brick" color="#7875B3" lightr="0.12" lightg="0.07" lightb="0.32" light="0.2" />
   <tile num="141" name="Explosives" color="#AD2323" hasExtra="1" />
   <tile num="142" name="Inlet Pump" color="#C90303" hasExtra="1" />
   <tile num="143" name="Outlet Pump" color="#C90303" hasExtra="1" />
   <tile num="144" name="Timer" color="#C90303" hasExtra="1">
-	<var u="0" name="1 Second Timer" />
-	<var u="18" name="3 Second Timer" />
-	<var u="36" name="5 Second Timer" />
+    <var u="0" name="1 Second Timer" />
+    <var u="18" name="3 Second Timer" />
+    <var u="36" name="5 Second Timer" />
   </tile>
   <tile num="145" name="Candy Cane Block" color="#ff0000" blend="0" />
   <tile num="146" name="Green Candy Cane Block" color="#00ff00" blend="0" />
   <tile num="147" name="Snow Block" color="#ffffff" blend="0" />
   <tile num="148" name="Snow Brick" color="#ffffff" blend="0" />
   <tile num="149" name="Lights" color="#ffffff" hasExtra="1">
-	<var u="0" name="Blue Light" lightr="0.1" lightg="0.2" lightb="0.5" light="0.4" />
-	<var u="18" name="Red Light" lightr="0.5" lightg="0.1" lightb="0.1" light="0.4" />
-	<var u="36" name="Green Light" lightr="0.2" lightg="0.5" lightb="0.1" light="0.4" />
+    <var u="0" name="Blue Light" lightr="0.1" lightg="0.2" lightb="0.5" light="0.4" />
+    <var u="18" name="Red Light" lightr="0.5" lightg="0.1" lightb="0.1" light="0.4" />
+    <var u="36" name="Green Light" lightr="0.2" lightg="0.5" lightb="0.1" light="0.4" />
   </tile>
   
   <wall num="1" name="Stone Wall" color="#343434" />
