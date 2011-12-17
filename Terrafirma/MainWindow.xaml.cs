@@ -54,7 +54,7 @@ namespace Terrafirma
         public bool hasExtra;
         public double light;
         public double lightR, lightG, lightB;
-        public bool transparent;
+        public bool transparent,solid;
         public bool isStone, isGrass;
         public Int16 blend;
         public int u, v, minu, maxu, minv, maxv;
@@ -129,6 +129,7 @@ namespace Terrafirma
             info.lightG = (node.Attributes["lightg"] == null) ? 0.0 : parseDouble(node.Attributes["lightg"].Value);
             info.lightB = (node.Attributes["lightb"] == null) ? 0.0 : parseDouble(node.Attributes["lightb"].Value);
             info.transparent = node.Attributes["letLight"] != null;
+            info.solid = node.Attributes["solid"] != null;
             info.isStone = node.Attributes["isStone"] != null;
             info.isGrass = node.Attributes["isGrass"] != null;
             if (node.Attributes["blend"] != null)
@@ -146,6 +147,7 @@ namespace Terrafirma
             info.name = (node.Attributes["name"] == null) ? parent.name : node.Attributes["name"].Value;
             info.color = (node.Attributes["color"] == null) ? parent.color : parseColor(node.Attributes["color"].Value);
             info.transparent = (node.Attributes["letLight"] == null) ? parent.transparent : true;
+            info.solid = (node.Attributes["solid"] == null) ? parent.solid : true;
             info.light = (node.Attributes["light"] == null) ? parent.light : parseDouble(node.Attributes["light"].Value);
             info.lightR = (node.Attributes["lightr"] == null) ? parent.lightR : parseDouble(node.Attributes["lightr"].Value);
             info.lightG = (node.Attributes["lightg"] == null) ? parent.lightG : parseDouble(node.Attributes["lightg"].Value);
@@ -203,6 +205,7 @@ namespace Terrafirma
         public bool isHomeless;
         public Int32 homeX, homeY;
         public int sprite;
+        public int num;
     }
 
     /// <summary>
@@ -480,7 +483,11 @@ namespace Terrafirma
                                 string name = b.ReadString();
                                 string prefix = "";
                                 if (version >= 0x24) //item prefixes
-                                    prefix = prefixes[b.ReadByte()];
+                                {
+                                    int pfx = b.ReadByte();
+                                    if (pfx<prefixes.Length)
+                                        prefix = prefixes[pfx];
+                                }
                                 if (prefix != "")
                                     prefix += " ";
                                 chest.items[ii].name = prefix + name;
@@ -514,18 +521,18 @@ namespace Terrafirma
                     npc.homeY = b.ReadInt32();
 
                     npc.sprite = 0;
-                    if (npc.name == "Merchant") npc.sprite = 17;
-                    if (npc.name == "Nurse") npc.sprite = 18;
-                    if (npc.name == "Arms Dealer") npc.sprite = 19;
-                    if (npc.name == "Dryad") npc.sprite = 20;
-                    if (npc.name == "Guide") npc.sprite = 22;
-                    if (npc.name == "Old Man") npc.sprite = 37;
-                    if (npc.name == "Demolitionist") npc.sprite = 38;
-                    if (npc.name == "Clothier") npc.sprite = 54;
-                    if (npc.name == "Goblin Tinkerer") npc.sprite = 107;
-                    if (npc.name == "Wizard") npc.sprite = 108;
-                    if (npc.name == "Mechanic") npc.sprite = 124;
-                    if (npc.name == "Santa Claus") npc.sprite = 142;
+                    if (npc.name == "Merchant") { npc.sprite = 17; npc.num = 2; }
+                    if (npc.name == "Nurse") { npc.sprite = 18; npc.num = 3; }
+                    if (npc.name == "Arms Dealer") { npc.sprite = 19; npc.num = 6; }
+                    if (npc.name == "Dryad") { npc.sprite = 20; npc.num = 5; }
+                    if (npc.name == "Guide") { npc.sprite = 22; npc.num = 1; }
+                    if (npc.name == "Old Man") { npc.sprite = 37; npc.num = 0; }
+                    if (npc.name == "Demolitionist") { npc.sprite = 38; npc.num = 4; }
+                    if (npc.name == "Clothier") { npc.sprite = 54; npc.num = 7; }
+                    if (npc.name == "Goblin Tinkerer") { npc.sprite = 107; npc.num = 9; }
+                    if (npc.name == "Wizard") { npc.sprite = 108; npc.num = 10; }
+                    if (npc.name == "Mechanic") { npc.sprite = 124; npc.num = 8; }
+                    if (npc.name == "Santa Claus") { npc.sprite = 142; npc.num = 11; }
                     
                     npcs.Add(npc);
 
@@ -563,88 +570,89 @@ namespace Terrafirma
 
         private string[] prefixes ={
                                        "",
-                                       "Large",
-                                       "Massive",
-                                       "Dangerous",
-                                       "Savage",
-                                       "Sharp",
-                                       "Pointy",
-                                       "Tiny",
-                                       "Terrible",
-                                       "Small",
-                                       "Dull",
-                                       "Unhappy",
-                                       "Bulky",
-                                       "Shameful",
-                                       "Heavy",
-                                       "Light",
-                                       "Sighted",
-                                       "Rapid",
-                                       "Hasty",
-                                       "Intimidating",
-                                       "Deadly",
-                                       "Staunch",
-                                       "Awful",
-                                       "Lethargic",
-                                       "Awkward",
-                                       "Powerful",
-                                       "Frenzying",
-                                       "Mystic",
-                                       "Adept",
-                                       "Masterful",
-                                       "Inept",
-                                       "Ignorant",
-                                       "Deranged",
-                                       "Intense",
-                                       "Taboo",
-                                       "Furious",
-                                       "Manic",
-                                       "Keen",
-                                       "Superior",
-                                       "Forceful",
-                                       "Hurtful",
-                                       "Strong",
-                                       "Unpleasant",
-                                       "Broken",
-                                       "Damaged",
-                                       "Weak",
-                                       "Shoddy",
-                                       "Ruthless",
-                                       "Quick",
-                                       "Deadly",
-                                       "Agile",
-                                       "Nimble",
-                                       "Murderous",
-                                       "Slow",
-                                       "Sluggish",
-                                       "Lazy",
-                                       "Annoying",
-                                       "Nasty",
-                                       "Godly",
-                                       "Demonic",
-                                       "Zealous",
-                                       "Hard",
-                                       "Guarding",
-                                       "Armored",
-                                       "Warding",
-                                       "Arcane",
-                                       "Precise",
-                                       "Lucky",
-                                       "Jagged",
-                                       "Spiked",
-                                       "Angry",
-                                       "Menacing",
-                                       "Brisk",
-                                       "Fleeting",
-                                       "Hasty",
-                                       "Quick",
-                                       "Wild",
-                                       "Rash",
-                                       "Intrepid",
-                                       "Violent",
-                                       "Legendary",
-                                       "Unreal",
-                                       "Mythical"
+                                       "Large",         //1
+                                       "Massive",       //2
+                                       "Dangerous",     //3
+                                       "Savage",        //4
+                                       "Sharp",         //5
+                                       "Pointy",        //6
+                                       "Tiny",          //7
+                                       "Terrible",      //8
+                                       "Small",         //9
+                                       "Dull",          //10
+                                       "Unhappy",       //11
+                                       "Bulky",         //12
+                                       "Shameful",      //13
+                                       "Heavy",         //14
+                                       "Light",         //15
+                                       "Sighted",       //16
+                                       "Rapid",         //17
+                                       "Hasty",         //18
+                                       "Intimidating",  //19
+                                       "Deadly",        //20
+                                       "Staunch",       //21
+                                       "Awful",         //22
+                                       "Lethargic",     //23
+                                       "Awkward",       //24
+                                       "Powerful",      //25
+                                       "Mystic",        //26
+                                       "Adept",         //27
+                                       "Masterful",     //28
+                                       "Inept",         //29
+                                       "Ignorant",      //30
+                                       "Deranged",      //31
+                                       "Intense",       //32
+                                       "Taboo",         //33
+                                       "",              //34
+                                       "Furious",       //35
+                                       "Keen",          //36
+                                       "Superior",      //37
+                                       "Forceful",      //38
+                                       "Broken",        //39
+                                       "Damaged",       //40
+                                       "Shoddy",        //41
+                                       "Quick",         //42
+                                       "Deadly",        //43
+                                       "Agile",         //44
+                                       "Nimble",        //45
+                                       "Murderous",     //46
+                                       "Slow",          //47
+                                       "Sluggish",      //48
+                                       "Lazy",          //49
+                                       "Annoying",      //50
+                                       "Nasty",         //51
+                                       "Manic",         //52
+                                       "Hurtful",       //53
+                                       "Strong",        //54
+                                       "Unpleasant",    //55
+                                       "Weak",          //56
+                                       "Ruthless",      //57
+                                       "Frenzying",     //58
+                                       "Godly",         //59
+                                       "Demonic",       //60
+                                       "Zealous",       //61
+                                       "Hard",          //62
+                                       "Guarding",      //63
+                                       "Armored",       //64
+                                       "Warding",       //65
+                                       "Arcane",        //66
+                                       "Precise",       //67
+                                       "Lucky",         //68
+                                       "Jagged",        //69
+                                       "Spiked",        //70
+                                       "Angry",         //71
+                                       "Menacing",      //72
+                                       "Brisk",         //73
+                                       "Fleeting",      //74
+                                       "Hasty",         //75
+                                       "Quick",         //76
+                                       "Wild",          //77
+                                       "Rash",          //78
+                                       "Intrepid",      //79
+                                       "Violent",       //80
+                                       "Legendary",     //81
+                                       "Unreal",        //82
+                                       "Mythical"       //83
                                   };
 
         void jumpNPC(object sender, RoutedEventArgs e)

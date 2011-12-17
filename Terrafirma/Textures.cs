@@ -116,6 +116,8 @@ namespace Terrafirma
         Dictionary<int, Texture> treeBranches;
         Dictionary<int, Texture> shrooms;
         Dictionary<int, Texture> npcs;
+        Dictionary<int, Texture> npcHeads;
+        Dictionary<int, Texture> banners;
         Dictionary<int, Texture> armorHeads;
         Dictionary<int, Texture> armorBodies;
         Dictionary<int, Texture> armorLegs;
@@ -130,6 +132,8 @@ namespace Terrafirma
             treeBranches = new Dictionary<int, Texture>();
             shrooms = new Dictionary<int, Texture>();
             npcs = new Dictionary<int, Texture>();
+            npcHeads = new Dictionary<int, Texture>();
+            banners = new Dictionary<int, Texture>();
             armorHeads = new Dictionary<int, Texture>();
             armorBodies = new Dictionary<int, Texture>();
             armorLegs = new Dictionary<int, Texture>();
@@ -223,6 +227,24 @@ namespace Terrafirma
                 npcs[num] = loadTexture(name);
             }
             return npcs[num];
+        }
+        public Texture GetNPCHead(int num)
+        {
+            if (!npcHeads.ContainsKey(num))
+            {
+                string name = String.Format("NPC_Head_{0}", num);
+                npcHeads[num] = loadTexture(name);
+            }
+            return npcHeads[num];
+        }
+        public Texture GetBanner(int num)
+        {
+            if (!banners.ContainsKey(num))
+            {
+                string name = String.Format("House_Banner_{0}", num);
+                banners[num] = loadTexture(name);
+            }
+            return banners[num];
         }
         public Texture GetArmorHead(int num)
         {
