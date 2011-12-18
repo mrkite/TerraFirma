@@ -103,31 +103,81 @@ namespace Terrafirma
 
                 double shiftx = (startx - Math.Floor(startx)) * scale;
                 double shifty = (starty - Math.Floor(starty)) * scale;
-                int py = (int)-(scale / 2), px;
+                int py, px;
+                
+                double lightR, lightG, lightB;
 
-                //draw background
-                int bofs = 0;
-                for (int y = 0; y < blocksHigh; y++)
+                // draw backgrounds
+
+                int hellLevel = ((tilesHigh - 230)-groundLevel)/6; //rounded
+                hellLevel = hellLevel * 6 + groundLevel - 5;
+
+                py = skipy * (int)scale;
+                for (int y = skipy; y < blocksHigh; y++)
                 {
                     int sy = (int)(y + starty);
-                    UInt32 c;
+                    px = skipx * (int)scale;
+
+                    int bg = 0;
+                    int v = sy;
                     if (sy < groundLevel)
-                        c = skyColor;
+                        bg = 0;
+                    else if (sy == groundLevel)
+                    {
+                        bg = 1;
+                        v = sy - groundLevel;
+                    }
                     else if (sy < rockLevel)
-                        c = earthColor;
+                    {
+                        bg = 2;
+                        v = sy - groundLevel;
+                    }
+                    else if (sy == rockLevel)
+                    {
+                        bg = 4;
+                        v = sy - rockLevel;
+                    }
+                    else if (sy < hellLevel)
+                    {
+                        bg = 3;
+                        v = sy - rockLevel;
+                    }
                     else
                     {
-                        double alpha = (double)(sy - rockLevel) / (double)(tilesHigh - rockLevel);
-                        c = alphaBlend(rockColor, hellColor, alpha);
+                        bg = 5;
+                        v = sy - hellLevel;
                     }
-                    for (int x = 0; x < width * Math.Floor(scale) && bofs < pixels.Length; x++)
+
+                    Texture tex = Textures.GetBackground(bg);
+
+                    for (int x = skipx; x < blocksWide; x++)
                     {
-                        pixels[bofs++] = (byte)(c & 0xff);
-                        pixels[bofs++] = (byte)((c >> 8) & 0xff);
-                        pixels[bofs++] = (byte)((c >> 16) & 0xff);
-                        pixels[bofs++] = 0xff;
+                        int sx = (int)(x + startx);
+                        int offset = sy + sx * tilesHigh;
+                        if (sx < 0 || sx >= tilesWide || sy < 0 || sy >= tilesHigh)
+                            continue;
+                        if (light == 1)
+                            lightR = lightG = lightB = tiles[offset].light;
+                        else if (light == 2)
+                        {
+                            lightR = tiles[offset].lightR;
+                            lightG = tiles[offset].lightG;
+                            lightB = tiles[offset].lightB;
+                        }
+                        else
+                            lightR = lightG = lightB = 1.0;
+                        int u = (sx % (tex.width / 16)) * 16;
+                        int vv = (v % (tex.height / 16)) * 16;
+                        if (bg == 0) //sky
+                            vv = sy * tex.height / groundLevel;
+                        drawTexture(tex, 16, 16, vv * tex.width * 4 + u * 4,
+                            pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+
+                        px += (int)scale;
                     }
+                    py += (int)scale;
                 }
+
                 //draw walls
 
                 py = skipy * (int)scale - (int)(scale / 2);
@@ -148,9 +198,20 @@ namespace Terrafirma
                         {
                             if (tiles[offset].wallu == -1) fixWall(sx, sy);
                             Texture tex = Textures.GetWall(tiles[offset].wall);
+                            if (light == 1)
+                                lightR = lightG = lightB = tiles[offset].light;
+                            else if (light == 2)
+                            {
+                                lightR = tiles[offset].lightR;
+                                lightG = tiles[offset].lightG;
+                                lightB = tiles[offset].lightB;
+                            }
+                            else
+                                lightR = lightG = lightB = 1.0;
                             drawTexture(tex, 32, 32, tiles[offset].wallv * tex.width * 4 * 2 + tiles[offset].wallu * 4 * 2,
-                                pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                                pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                         }
+
                         px += (int)scale;
                     }
                     py += (int)scale;
@@ -172,18 +233,29 @@ namespace Terrafirma
                         if (sx < 0 || sx >= tilesWide || sy < 0 || sy >= tilesHigh)
                             continue;
 
+                        if (light == 1)
+                            lightR = lightG = lightB = tiles[offset].light;
+                        else if (light == 2)
+                        {
+                            lightR = tiles[offset].lightR;
+                            lightG = tiles[offset].lightG;
+                            lightB = tiles[offset].lightB;
+                        }
+                        else
+                            lightR = lightG = lightB = 1.0;
+
                         if (tiles[offset].isActive)
                         {
                             if (tiles[offset].u == -1) fixTile(sx, sy);
 
                             int texw = 16;
                             int texh = 16;
-
+                            
                             if (tiles[offset].type == 5) //tree
                                 texw = 20;
                             if (tiles[offset].type == 72) //mushroom
                                 drawMushroom(tiles[offset].u, tiles[offset].v,
-                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
 
                             if (tiles[offset].type == 103) //bowl
                                 if (tiles[offset].u == 18) texw = 14;
@@ -204,7 +276,7 @@ namespace Terrafirma
                                 //draw armor stand
                                 Texture tex = Textures.GetTile(tiles[offset].type);
                                 drawTexture(tex, texw, texh, tiles[offset].v * tex.width * 4 + au * 4,
-                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                                 //draw armor
                                 int armor = tiles[offset].u / 100;
                                 if (armor > 0)
@@ -220,7 +292,7 @@ namespace Terrafirma
                             {
                                 Texture tex = Textures.GetTile(tiles[offset].type);
                                 drawTexture(tex, texw, texh, tiles[offset].v * tex.width * 4 + tiles[offset].u * 4,
-                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                             }
                             if (isHilight && tiles[offset].type == hilight)
                             {
@@ -231,18 +303,24 @@ namespace Terrafirma
                         // draw liquid
                         if (tiles[offset].liquid > 0)
                         {
-                            drawOverlay(tiles[offset].isLava ? lavaColor : waterColor, 0.85, tiles[offset].liquid,
+                            UInt32 c = tiles[offset].isLava ? lavaColor : waterColor;
+                            uint r = (uint)((c >> 16)*lightR);
+                            uint g = (uint)(((c >> 8) & 0xff)*lightG);
+                            uint b = (uint)((c & 0xff)*lightB);
+                            c = (r << 16) | (g << 8) | b;
+                            drawOverlay(c, tiles[offset].isLava?0.85:0.5, tiles[offset].liquid,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                         }
                         // draw wires if necessary
                         if (wires && tiles[offset].hasWire)
                         {
-                            drawWire(sx, sy, pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                            drawWire(sx, sy, pixels,
+                                (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0,lightR,lightG,lightB);
                         }
                         // draw lighting
-                        if (light > 0)
+                       /* if (light > 0)
                             drawOverlay(0, 1.0 - tiles[offset].light, 255,
-                                pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                                pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);*/
 
                         if (isHilight && (!tiles[offset].isActive || tiles[offset].type != hilight))
                         {
@@ -259,6 +337,16 @@ namespace Terrafirma
                 {
                     Texture tex;
                     int texw = 16, texh = 16;
+                    if (light == 1)
+                        lightR = lightG = lightB = tiles[delay.offset].light;
+                    else if (light == 2)
+                    {
+                        lightR = tiles[delay.offset].lightR;
+                        lightG = tiles[delay.offset].lightG;
+                        lightB = tiles[delay.offset].lightB;
+                    }
+                    else
+                        lightR = lightG = lightB = 1.0;
                     if (tiles[delay.offset].type == 128) //armor
                     {
                         int au = tiles[delay.offset].u % 100;
@@ -283,15 +371,15 @@ namespace Terrafirma
                         }
                         if (au >= 36) //reverse
                             drawTextureFlip(tex, texw, texh, tiles[delay.offset].v * tex.width * 4 + au * 4,
-                                pixels, delay.px, delay.py - 8, width, height, scale / 16.0);
+                                pixels, delay.px, delay.py - 8, width, height, scale / 16.0, lightR, lightG, lightB);
                         else
                             drawTexture(tex, texw, texh, tiles[delay.offset].v * tex.width * 4 + au * 4,
-                                pixels, delay.px, delay.py - 8, width, height, scale / 16.0);
+                                pixels, delay.px, delay.py - 8, width, height, scale / 16.0, lightR, lightG, lightB);
                     }
                     else if (tiles[delay.offset].type == 5) //tree leaves
                     {
                         drawLeaves(tiles[delay.offset].u, tiles[delay.offset].v, delay.sx, delay.sy,
-                                   pixels, delay.px, delay.py, width, height, scale / 16.0);
+                                   pixels, delay.px, delay.py, width, height, scale / 16.0, lightR, lightG, lightB);
                     }
                 }
 
@@ -305,10 +393,22 @@ namespace Terrafirma
                     if (npc.sprite != 0 && (npc.x / 16) >= minx && (npc.x / 16) < maxx &&
                         (npc.y / 16) >= miny && (npc.y / 16) < maxy) //npc on screen
                     {
+                        Tile t=tiles[(int)(npc.y/16)+((int)(npc.x/16))*tilesHigh];
+                        if (light == 1)
+                            lightR = lightG = lightB = t.light;
+                        else if (light == 2)
+                        {
+                            lightR = t.lightR;
+                            lightG = t.lightG;
+                            lightB = t.lightB;
+                        }
+                        else
+                            lightR = lightG = lightB = 1.0;
                         Texture tex = Textures.GetNPC(npc.sprite);
                         px = (int)(skipx + npc.x / 16 - (int)startx) * (int)scale - (int)(scale / 4);
                         py = (int)(skipy + npc.y / 16 - (int)starty) * (int)scale - (int)(scale / 4);
-                        drawTexture(tex, 40, 56, 0, pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                        drawTexture(tex, 40, 56, 0, pixels,
+                            (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0,lightR,lightG,lightB);
                     }
                     if (houses && npc.num != 0)
                     {
@@ -323,6 +423,17 @@ namespace Terrafirma
                         hy++;
                         if (hx >= minx && hx < maxx && hy >= miny && hy < maxy) //banner on screen
                         {
+                            Tile t = tiles[hy + hx * tilesHigh];
+                            if (light == 1)
+                                lightR = lightG = lightB = t.light;
+                            else if (light == 2)
+                            {
+                                lightR = t.lightR;
+                                lightG = t.lightG;
+                                lightB = t.lightB;
+                            }
+                            else
+                                lightR = lightG = lightB = 1.0;
                             int dy = 18;
                             if (tiles[hy - 1 + hx * tilesHigh].type == 19) //platform
                                 dy -= 8;
@@ -331,11 +442,13 @@ namespace Terrafirma
                             Texture tex = Textures.GetBanner(1); //house banner
                             int npx = (int)(px - tex.width * scale / 32.0);
                             int npy = (int)(py - tex.height * scale / 32.0);
-                            drawTexture(tex, 32, 40, 0, pixels, (int)(npx - shiftx), (int)(npy - shifty), width, height, scale / 16.0);
+                            drawTexture(tex, 32, 40, 0, pixels,
+                                (int)(npx - shiftx), (int)(npy - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                             tex = Textures.GetNPCHead(npc.num);
                             npx = (int)(px - tex.width * scale / 32.0);
                             npy = (int)(py - tex.height * scale / 32.0);
-                            drawTexture(tex, tex.width, tex.height, 0, pixels, (int)(npx - shiftx), (int)(npy - shifty), width, height, scale / 16.0);
+                            drawTexture(tex, tex.width, tex.height, 0, pixels,
+                                (int)(npx - shiftx), (int)(npy - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                         }
                     }
                 }
@@ -364,7 +477,9 @@ namespace Terrafirma
                                 c = alphaBlend(rockColor, hellColor, alpha);
                             }
                             if (tiles[offset].wall > 0)
+                            {
                                 c = wallInfo[tiles[offset].wall].color;
+                            }
                             if (tiles[offset].isActive)
                             {
                                 c = tileInfos[tiles[offset].type, tiles[offset].u, tiles[offset].v].color;
@@ -373,8 +488,16 @@ namespace Terrafirma
                             }
                             if (tiles[offset].liquid > 0)
                                 c = alphaBlend(c, tiles[offset].isLava ? lavaColor : waterColor, 0.5);
-                            if (light > 0)
+                            if (light==1)
                                 c = alphaBlend(0, c, tiles[offset].light);
+                            else if (light == 2)
+                            {
+                                uint r, g, b;
+                                r = (uint)((c >> 16) * tiles[offset].lightR);
+                                g = (uint)(((c >> 8) & 0xff) * tiles[offset].lightG);
+                                b = (uint)((c & 0xff) * tiles[offset].lightB);
+                                c = (r << 16) | (g << 8) | b;
+                            }
                             if (isHilight && (!tiles[offset].isActive || tiles[offset].type != hilight))
                                 c = alphaBlend(0, c, 0.3);
                         }
@@ -405,7 +528,7 @@ namespace Terrafirma
             return 0;
         }
 
-        private void drawWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom)
+        private void drawWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom, double lightR, double lightG, double lightB)
         {
             int mask = 0;
             //udlr
@@ -414,12 +537,13 @@ namespace Terrafirma
             if (sy < tilesHigh - 1 && tiles[sy + 1 + sx * tilesHigh].hasWire) mask |= 4; //down
             if (sy > 0 && tiles[sy - 1 + sx * tilesHigh].hasWire) mask |= 8; //up
             Texture tex = Textures.GetWire(0);
-            drawTexture(tex, 16, 16, uvWires[mask * 2 + 1] * tex.width * 4 + uvWires[mask * 2] * 4, pixels, px, py, w, h, zoom);
+            drawTexture(tex, 16, 16, uvWires[mask * 2 + 1] * tex.width * 4 + uvWires[mask * 2] * 4, pixels,
+                px, py, w, h, zoom, lightR, lightG, lightB);
         }
 
         private void drawLeaves(int u, int v, int sx, int sy,
             byte[] pixels, int px, int py,
-            int w, int h, double zoom)
+            int w, int h, double zoom, double lightR, double lightG, double lightB)
         {
             if (u < 22 || v < 198) return; //not a leaf
             int variant = 0;
@@ -436,29 +560,33 @@ namespace Terrafirma
                     if (leafType == 3) //hallowed
                         variant += (sx % 3) * 3;
                     if (leafType == 2)
-                        drawTexture(tex, 114, 96, variant * 116 * 4, pixels, px - (int)(46 * zoom), py - (int)(80 * zoom), w, h, zoom);
+                        drawTexture(tex, 114, 96, variant * 116 * 4, pixels,
+                            px - (int)(46 * zoom), py - (int)(80 * zoom), w, h, zoom, lightR, lightG, lightB);
                     else
-                        drawTexture(tex, 80, 80, variant * 82 * 4, pixels, px - (int)(30 * zoom), py - (int)(62 * zoom), w, h, zoom);
+                        drawTexture(tex, 80, 80, variant * 82 * 4, pixels,
+                            px - (int)(30 * zoom), py - (int)(62 * zoom), w, h, zoom, lightR, lightG, lightB);
                     break;
                 case 44: //left branch
                     leafType = findCorruptGrass(sy + (sx + 1) * tilesHigh);
                     tex = Textures.GetTreeBranches(leafType);
                     if (leafType == 3) //hallowed
                         variant += (sx % 3) * 3;
-                    drawTexture(tex, 40, 40, variant * 42 * tex.width * 4, pixels, px - (int)(22 * zoom), py - (int)(12 * zoom), w, h, zoom);
+                    drawTexture(tex, 40, 40, variant * 42 * tex.width * 4, pixels,
+                        px - (int)(22 * zoom), py - (int)(12 * zoom), w, h, zoom, lightR, lightG, lightB);
                     break;
                 case 66: //right branch
                     leafType = findCorruptGrass(sy + (sx - 1) * tilesHigh);
                     tex = Textures.GetTreeBranches(leafType);
                     if (leafType == 3) //hallowed
                         variant += (sx % 3) * 3;
-                    drawTexture(tex, 40, 40, variant * 42 * tex.width * 4 + 42 * 4, pixels, px, py - (int)(12 * zoom), w, h, zoom);
+                    drawTexture(tex, 40, 40, variant * 42 * tex.width * 4 + 42 * 4, pixels,
+                        px, py - (int)(12 * zoom), w, h, zoom, lightR, lightG, lightB);
                     break;
             }
         }
         private void drawMushroom(int u, int v,
             byte[] pixels, int px, int py,
-            int w, int h, double zoom)
+            int w, int h, double zoom, double lightR, double lightG, double lightB)
         {
             if (u < 36) return; //not mushroom top
             int variant = 0;
@@ -467,12 +595,13 @@ namespace Terrafirma
             else if (v == 36)
                 variant = 2;
             Texture tex = Textures.GetShroomTop(0);
-            drawTexture(tex, 60, 42, variant * 62 * 4, pixels, px - (int)(22 * zoom), py - (int)(26 * zoom), w, h, zoom);
+            drawTexture(tex, 60, 42, variant * 62 * 4, pixels,
+                px - (int)(22 * zoom), py - (int)(26 * zoom), w, h, zoom, lightR, lightG, lightB);
         }
 
         void drawTexture(Texture tex, int bw, int bh, int tofs,
             byte[] pixels, int px, int py,
-            int w, int h, double zoom)
+            int w, int h, double zoom, double lightR,double lightG,double lightB)
         {
             int tw = (int)(bw * zoom);
             int th = (int)(bh * zoom);
@@ -503,9 +632,9 @@ namespace Terrafirma
                         b += 4;
                         continue;
                     }
-                    pixels[b++] = tex.data[tx++];
-                    pixels[b++] = tex.data[tx++];
-                    pixels[b++] = tex.data[tx++];
+                    pixels[b++] = (byte)(tex.data[tx++]*lightB);
+                    pixels[b++] = (byte)(tex.data[tx++]*lightG);
+                    pixels[b++] = (byte)(tex.data[tx++]*lightR);
                     pixels[b++] = tex.data[tx++];
                 }
                 bofs += w * 4;
@@ -513,7 +642,7 @@ namespace Terrafirma
         }
         void drawTextureFlip(Texture tex, int bw, int bh, int tofs,
             byte[] pixels, int px, int py,
-            int w, int h, double zoom)
+            int w, int h, double zoom,double lightR,double lightG,double lightB)
         {
             int tw = (int)(bw * zoom);
             int th = (int)(bh * zoom);
@@ -544,9 +673,9 @@ namespace Terrafirma
                         b += 4;
                         continue;
                     }
-                    pixels[b++] = tex.data[tx++];
-                    pixels[b++] = tex.data[tx++];
-                    pixels[b++] = tex.data[tx++];
+                    pixels[b++] = (byte)(tex.data[tx++]*lightB);
+                    pixels[b++] = (byte)(tex.data[tx++]*lightG);
+                    pixels[b++] = (byte)(tex.data[tx++]*lightR);
                     pixels[b++] = tex.data[tx++];
                 }
                 bofs += w * 4;

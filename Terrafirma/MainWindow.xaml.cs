@@ -1163,8 +1163,13 @@ namespace Terrafirma
 
                     TileInfo inf = tileInfos[tiles[offset].type, tiles[offset].u, tiles[offset].v];
                     if ((!tiles[offset].isActive || inf.transparent) &&
-                        tiles[offset].wall == 0 && tiles[offset].liquid < 255 && y < groundLevel) //sunlight
+                        (tiles[offset].wall == 0 || tiles[offset].wall==21) && tiles[offset].liquid < 255 && y < groundLevel) //sunlight
+                    {
                         tiles[offset].light = 1.0;
+                        tiles[offset].lightR = 1.0;
+                        tiles[offset].lightG = 1.0;
+                        tiles[offset].lightB = 1.0;
+                    }
                     if (tiles[offset].liquid > 0 && tiles[offset].isLava) //lava
                     {
                         tiles[offset].light = Math.Max(tiles[offset].light, (tiles[offset].liquid / 255)*0.38+0.1275);
