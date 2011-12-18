@@ -49,15 +49,15 @@ namespace Terrafirma
         class HTile : IComparable
         {
             private string name;
-            private int num;
-            public HTile(string name, int num)
+            private TileInfo info;
+            public HTile(string name, TileInfo info)
             {
                 this.name = name;
-                this.num = num;
+                this.info = info;
             }
-            public int Num
+            public TileInfo Info
             {
-                get { return num; }
+                get { return info; }
             }
             public override string ToString()
             {
@@ -67,11 +67,6 @@ namespace Terrafirma
             {
                 HTile h = (HTile)obj;
                 int r = String.Compare(this.name, h.name);
-                if (r == 0)
-                {
-                    if (this.num < h.num) r = -1;
-                    else if (this.num > h.num) r = 1;
-                }
                 return r;
             }
         }
@@ -81,17 +76,30 @@ namespace Terrafirma
             InitializeComponent();
 
             theTiles = new ArrayList();
-            int i=0;
-            foreach (string name in tiles)
+            foreach (TileInfo info in tiles)
             {
-                theTiles.Add(new HTile(name,i++));
+                info.isHilighting = false;
+                theTiles.Add(new HTile(info.name,info));
+                AddVariants(theTiles, info);
             }
             theTiles.Sort();
             tileList.ItemsSource = theTiles;
         }
-        public int SelectedItem {
+        private void AddVariants(ArrayList tiles, TileInfo info)
+        {
+            foreach (TileInfo v in info.variants)
+            {
+                if (v.name != info.name)
+                {
+                    v.isHilighting = false;
+                    tiles.Add(new HTile(v.name, v));
+                }
+                AddVariants(tiles, v);
+            }
+        }
+        public TileInfo SelectedItem {
             get {
-                return (tileList.SelectedItem as HTile).Num;
+                return (tileList.SelectedItem as HTile).Info;
             }
         }
 

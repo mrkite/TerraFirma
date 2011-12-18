@@ -47,7 +47,7 @@ using System.Threading;
 
 namespace Terrafirma
 {
-    class TileInfo
+    public class TileInfo
     {
         public string name;
         public UInt32 color;
@@ -58,6 +58,7 @@ namespace Terrafirma
         public bool isStone, isGrass;
         public Int16 blend;
         public int u, v, minu, maxu, minv, maxv;
+        public bool isHilighting;
         public List<TileInfo> variants;
     }
     class TileInfos
@@ -80,6 +81,14 @@ namespace Terrafirma
         {
             get { return find(info[id], u, v); }
         }
+        public ArrayList Items()
+        {
+            ArrayList items = new ArrayList();
+            for (int i = 0; i < info.Length; i++)
+                items.Add(info[i]);
+            return items;
+        }
+
         private TileInfo find(TileInfo info, Int16 u, Int16 v)
         {
             foreach (TileInfo vars in info.variants)
@@ -237,7 +246,6 @@ namespace Terrafirma
         TileInfos tileInfos;
         WallInfo[] wallInfo;
         UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor;
-        byte hilight=0;
         bool isHilight = false;
 
         public MainWindow()
@@ -386,6 +394,12 @@ namespace Terrafirma
             using (BinaryReader b = new BinaryReader(File.OpenRead(world)))
             {
                 uint version = b.ReadUInt32(); //now we care about the version
+                if (version > 0x25) // new map format
+                {
+                    MessageBox.Show("Unsupported Map Version");
+                    loaded = false;
+                    return;
+                }
                 Title = b.ReadString();
                 b.BaseStream.Seek(20, SeekOrigin.Current); //skip id and bounds
                 tilesHigh = b.ReadInt32();
@@ -683,7 +697,7 @@ namespace Terrafirma
             try
             {
                 render.Draw(curWidth, curHeight, startx, starty, curScale, bits,
-                    isHilight, hilight, Lighting1.IsChecked?1:Lighting2.IsChecked?2:0,
+                    isHilight, Lighting1.IsChecked?1:Lighting2.IsChecked?2:0,
                     UseTextures.IsChecked && curScale > 2.0,ShowHouses.IsChecked,ShowWires.IsChecked);
             }
             catch (System.NotSupportedException e)
@@ -949,6 +963,11 @@ namespace Terrafirma
                 Loading load = new Loading();
                 load.Show();
                 Load(dlg.FileName);
+                if (!loaded)
+                {
+                    load.Close();
+                    return;
+                }
                 curX = spawnX;
                 curY = spawnY;
                 if (render.Textures.Valid)
@@ -966,6 +985,11 @@ namespace Terrafirma
             Loading load = new Loading();
             load.Show();
             Load(worlds[id]);
+            if (!loaded)
+            {
+                load.Close();
+                return;
+            }
             curX = spawnX;
             curY = spawnY;
             if (render.Textures.Valid)
@@ -1041,19 +1065,18 @@ namespace Terrafirma
             Loading load = new Loading();
             load.Show();
             Load(currentWorld);
-            RenderMap();
+            if (loaded)
+                RenderMap();
             load.Close();
         }
 
         private void Hilight_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            ArrayList items = new ArrayList();
-          //  for (int i = 0; i < tileInfo.Length; i++)
-          //      items.Add(tileInfo[i].name);
+            ArrayList items = tileInfos.Items();
             HilightWin h = new HilightWin(items);
             if (h.ShowDialog() == true)
             {
-                hilight = (byte)(h.SelectedItem);
+                h.SelectedItem.isHilighting = true;
                 isHilight = true;
                 RenderMap();
             }
@@ -1112,7 +1135,7 @@ namespace Terrafirma
                     pixels = new byte[wd * ht * 4];
 
                     render.Draw(wd, ht, startx, starty, sc,
-                        pixels, false, 0, Lighting1.IsChecked?1:Lighting2.IsChecked?2:0,
+                        pixels, false, Lighting1.IsChecked?1:Lighting2.IsChecked?2:0,
                         saveOpts.UseTextures && curScale > 2.0,ShowHouses.IsChecked,ShowWires.IsChecked);
 
                     BitmapSource source = BitmapSource.Create(wd, ht, 96.0, 96.0,

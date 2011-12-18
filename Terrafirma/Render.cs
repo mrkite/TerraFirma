@@ -84,7 +84,7 @@ namespace Terrafirma
         public void Draw(int width, int height,
             double startx, double starty,
             double scale, byte[] pixels,
-            bool isHilight,byte hilight,
+            bool isHilight,
             int light,bool texture,bool houses,bool wires)
         {
             if (texture)
@@ -166,6 +166,15 @@ namespace Terrafirma
                         }
                         else
                             lightR = lightG = lightB = 1.0;
+
+                        if (isHilight)
+                        {
+                            lightR *= 0.3;
+                            lightG *= 0.3;
+                            lightB *= 0.3;
+                        }
+
+
                         int u = (sx % (tex.width / 16)) * 16;
                         int vv = (v % (tex.height / 16)) * 16;
                         if (bg == 0) //sky
@@ -208,6 +217,14 @@ namespace Terrafirma
                             }
                             else
                                 lightR = lightG = lightB = 1.0;
+
+                            if (isHilight)
+                            {
+                                lightR *= 0.3;
+                                lightG *= 0.3;
+                                lightB *= 0.3;
+                            }
+
                             drawTexture(tex, 32, 32, tiles[offset].wallv * tex.width * 4 * 2 + tiles[offset].wallu * 4 * 2,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                         }
@@ -244,13 +261,20 @@ namespace Terrafirma
                         else
                             lightR = lightG = lightB = 1.0;
 
+                        if (isHilight && (!tiles[offset].isActive || !tileInfos[tiles[offset].type, tiles[offset].u, tiles[offset].v].isHilighting))
+                        {
+                            lightR *= 0.3;
+                            lightG *= 0.3;
+                            lightB *= 0.3;
+                        }
+
                         if (tiles[offset].isActive)
                         {
                             if (tiles[offset].u == -1) fixTile(sx, sy);
 
                             int texw = 16;
                             int texh = 16;
-                            
+                                                        
                             if (tiles[offset].type == 5) //tree
                                 texw = 20;
                             if (tiles[offset].type == 72) //mushroom
@@ -294,11 +318,6 @@ namespace Terrafirma
                                 drawTexture(tex, texw, texh, tiles[offset].v * tex.width * 4 + tiles[offset].u * 4,
                                     pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                             }
-                            if (isHilight && tiles[offset].type == hilight)
-                            {
-                                drawOverlay(0xff88ff, 0.9, 255, pixels,
-                                    (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
-                            }
                         }
                         // draw liquid
                         if (tiles[offset].liquid > 0)
@@ -316,16 +335,6 @@ namespace Terrafirma
                         {
                             drawWire(sx, sy, pixels,
                                 (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0,lightR,lightG,lightB);
-                        }
-                        // draw lighting
-                       /* if (light > 0)
-                            drawOverlay(0, 1.0 - tiles[offset].light, 255,
-                                pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);*/
-
-                        if (isHilight && (!tiles[offset].isActive || tiles[offset].type != hilight))
-                        {
-                            drawOverlay(0, 0.7, 255, pixels,
-                                (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                         }
                         px += (int)scale;
                     }
@@ -347,6 +356,14 @@ namespace Terrafirma
                     }
                     else
                         lightR = lightG = lightB = 1.0;
+
+                    if (isHilight && !tileInfos[tiles[delay.offset].type, tiles[delay.offset].u, tiles[delay.offset].v].isHilighting)
+                    {
+                        lightR *= 0.3;
+                        lightG *= 0.3;
+                        lightB *= 0.3;
+                    }
+
                     if (tiles[delay.offset].type == 128) //armor
                     {
                         int au = tiles[delay.offset].u % 100;
@@ -404,6 +421,12 @@ namespace Terrafirma
                         }
                         else
                             lightR = lightG = lightB = 1.0;
+                        if (isHilight)
+                        {
+                            lightR*=0.3;
+                            lightG*=0.3;
+                            lightB*=0.3;
+                        }
                         Texture tex = Textures.GetNPC(npc.sprite);
                         px = (int)(skipx + npc.x / 16 - (int)startx) * (int)scale - (int)(scale / 4);
                         py = (int)(skipy + npc.y / 16 - (int)starty) * (int)scale - (int)(scale / 4);
@@ -434,6 +457,13 @@ namespace Terrafirma
                             }
                             else
                                 lightR = lightG = lightB = 1.0;
+                            if (isHilight)
+                            {
+                                lightR*=0.3;
+                                lightG*=0.3;
+                                lightB*=0.3;
+                            }
+
                             int dy = 18;
                             if (tiles[hy - 1 + hx * tilesHigh].type == 19) //platform
                                 dy -= 8;
@@ -483,7 +513,7 @@ namespace Terrafirma
                             if (tiles[offset].isActive)
                             {
                                 c = tileInfos[tiles[offset].type, tiles[offset].u, tiles[offset].v].color;
-                                if (isHilight && hilight == tiles[offset].type)
+                                if (isHilight && tileInfos[tiles[offset].type,tiles[offset].u,tiles[offset].v].isHilighting)
                                     c = alphaBlend(c, 0xff88ff, 0.9);
                             }
                             if (tiles[offset].liquid > 0)
@@ -498,7 +528,7 @@ namespace Terrafirma
                                 b = (uint)((c & 0xff) * tiles[offset].lightB);
                                 c = (r << 16) | (g << 8) | b;
                             }
-                            if (isHilight && (!tiles[offset].isActive || tiles[offset].type != hilight))
+                            if (isHilight && (!tiles[offset].isActive || !tileInfos[tiles[offset].type,tiles[offset].u,tiles[offset].v].isHilighting))
                                 c = alphaBlend(0, c, 0.3);
                         }
                         pixels[bofs++] = (byte)(c & 0xff);
