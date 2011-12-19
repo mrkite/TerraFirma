@@ -222,7 +222,10 @@ namespace Terrafirma
     /// </summary>
     public partial class MainWindow : Window
     {
-        const UInt32 MapVersion=9;
+        const int MapVersion = 0x25;
+        const int MaxTile = 149;
+        const int MaxWall = 31;
+
         const double MaxScale = 16.0;
         const double MinScale = 1.0;
 
@@ -232,8 +235,8 @@ namespace Terrafirma
         DispatcherTimer resizeTimer;
         int curWidth, curHeight, newWidth, newHeight;
         bool loaded = false;
-        Tile[] tiles;
-        Int32 tilesWide, tilesHigh;
+        Tile[] tiles = null;
+        Int32 tilesWide=0, tilesHigh=0;
         Int32 spawnX, spawnY;
         Int32 groundLevel,rockLevel;
         string[] worlds;
@@ -391,10 +394,12 @@ namespace Terrafirma
         private void Load(string world)
         {
             currentWorld = world;
+            bool foundInvalid=false;
+            string invalid="";
             using (BinaryReader b = new BinaryReader(File.OpenRead(world)))
             {
                 uint version = b.ReadUInt32(); //now we care about the version
-                if (version > 0x25) // new map format
+                if (version > MapVersion) // new map format
                 {
                     MessageBox.Show("Unsupported Map Version");
                     loaded = false;
@@ -402,6 +407,7 @@ namespace Terrafirma
                 }
                 Title = b.ReadString();
                 b.BaseStream.Seek(20, SeekOrigin.Current); //skip id and bounds
+                int oldSize = tilesHigh * tilesWide;
                 tilesHigh = b.ReadInt32();
                 tilesWide = b.ReadInt32();
                 spawnX = b.ReadInt32();
@@ -420,16 +426,32 @@ namespace Terrafirma
                 if (version >= 0x25)
                     flaglen++;
                 b.BaseStream.Seek(flaglen, SeekOrigin.Current); //skip flags and other settings
-                tiles = new Tile[tilesWide * tilesHigh];
+                try
+                {
+                    if (tiles == null)
+                        tiles = new Tile[tilesWide * tilesHigh];
+                    else if (oldSize < tilesWide * tilesHigh) //only resize if we need to.
+                        Array.Resize(ref tiles, tilesWide * tilesHigh);
+                }
+                catch (OutOfMemoryException e)
+                {
+                    MessageBox.Show("Oops, ran out of memory!");
+                    loaded = false;
+                    return;
+                }
                 for (int i = 0; i < tilesWide * tilesHigh; i++)
                 {
                     tiles[i].isActive = b.ReadBoolean();
                     if (tiles[i].isActive)
                     {
                         tiles[i].type = b.ReadByte();
-                        if (tiles[i].type == 0x7f)
+                        if (tiles[i].type > MaxTile) // something screwy in the map
+                        {
                             tiles[i].isActive = false;
-                        if (tileInfos[tiles[i].type].hasExtra)
+                            foundInvalid = true;
+                            invalid=String.Format("{0} is not a valid tile type",tiles[i].type);
+                        }
+                        else if (tileInfos[tiles[i].type].hasExtra)
                         {
                             // torches didn't have extra in older versions.
                             if (version < 0x1c && tiles[i].type == 4)
@@ -456,6 +478,12 @@ namespace Terrafirma
                     if (b.ReadBoolean())
                     {
                         tiles[i].wall = b.ReadByte();
+                        if (tiles[i].wall > MaxWall)  // bad wall
+                        {
+                            foundInvalid = true;
+                            invalid = String.Format("{0} is not a valid wall type", tiles[i].wall);
+                            tiles[i].wall = 0;
+                        }
                         tiles[i].wallu = -1;
                         tiles[i].wallv = -1;
                     }
@@ -576,8 +604,10 @@ namespace Terrafirma
             }
 
             calculateLight();
+            if (foundInvalid)
+                MessageBox.Show("Found problems with the map: "+invalid+"\nIt may not display properly.", "Warning");
 
-            render.SetWorld(tiles, tilesWide, tilesHigh, groundLevel, rockLevel,npcs);
+            render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel,npcs);
             //load info
             loaded = true;
         }
@@ -696,9 +726,9 @@ namespace Terrafirma
             double starty = curY - (curHeight / (2 * curScale));
             try
             {
-                render.Draw(curWidth, curHeight, startx, starty, curScale, bits,
+                render.Draw(curWidth, curHeight, startx, starty, curScale, ref bits,
                     isHilight, Lighting1.IsChecked?1:Lighting2.IsChecked?2:0,
-                    UseTextures.IsChecked && curScale > 2.0,ShowHouses.IsChecked,ShowWires.IsChecked);
+                    UseTextures.IsChecked && curScale > 2.0,ShowHouses.IsChecked,ShowWires.IsChecked, ref tiles);
             }
             catch (System.NotSupportedException e)
             {
@@ -1077,8 +1107,18 @@ namespace Terrafirma
             if (h.ShowDialog() == true)
             {
                 h.SelectedItem.isHilighting = true;
+                // also hilight the subvariants
+                hiliteVariants(h.SelectedItem);
                 isHilight = true;
                 RenderMap();
+            }
+        }
+        private void hiliteVariants(TileInfo info)
+        {
+            foreach (TileInfo v in info.variants)
+            {
+                v.isHilighting = true;
+                hiliteVariants(v);
             }
         }
 
@@ -1135,8 +1175,8 @@ namespace Terrafirma
                     pixels = new byte[wd * ht * 4];
 
                     render.Draw(wd, ht, startx, starty, sc,
-                        pixels, false, Lighting1.IsChecked?1:Lighting2.IsChecked?2:0,
-                        saveOpts.UseTextures && curScale > 2.0,ShowHouses.IsChecked,ShowWires.IsChecked);
+                        ref pixels, false, Lighting1.IsChecked?1:Lighting2.IsChecked?2:0,
+                        saveOpts.UseTextures && curScale > 2.0,ShowHouses.IsChecked,ShowWires.IsChecked, ref tiles);
 
                     BitmapSource source = BitmapSource.Create(wd, ht, 96.0, 96.0,
                         PixelFormats.Bgr32, null, pixels, wd * 4);

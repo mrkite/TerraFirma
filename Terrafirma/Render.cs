@@ -34,7 +34,6 @@ namespace Terrafirma
 {
     class Render
     {
-        private Tile[] tiles;
         private TileInfos tileInfos;
         private WallInfo[] wallInfo;
         private UInt32 skyColor, earthColor, rockColor, hellColor;
@@ -62,10 +61,9 @@ namespace Terrafirma
             rand = new Random();
         }
 
-        public void SetWorld(Tile[] tiles, Int32 tilesWide, Int32 tilesHigh,
+        public void SetWorld(Int32 tilesWide, Int32 tilesHigh,
             int groundLevel, int rockLevel, List<NPC> npcs)
         {
-            this.tiles=tiles;
             this.tilesWide = tilesWide;
             this.tilesHigh = tilesHigh;
             this.groundLevel = groundLevel;
@@ -83,9 +81,9 @@ namespace Terrafirma
 
         public void Draw(int width, int height,
             double startx, double starty,
-            double scale, byte[] pixels,
+            double scale, ref byte[] pixels,
             bool isHilight,
-            int light,bool texture,bool houses,bool wires)
+            int light,bool texture,bool houses,bool wires,ref Tile[] tiles)
         {
             if (texture)
             {
@@ -205,7 +203,7 @@ namespace Terrafirma
 
                         if (tiles[offset].wall > 0)
                         {
-                            if (tiles[offset].wallu == -1) fixWall(sx, sy);
+                            if (tiles[offset].wallu == -1) fixWall(sx, sy, ref tiles);
                             Texture tex = Textures.GetWall(tiles[offset].wall);
                             if (light == 1)
                                 lightR = lightG = lightB = tiles[offset].light;
@@ -270,7 +268,7 @@ namespace Terrafirma
 
                         if (tiles[offset].isActive)
                         {
-                            if (tiles[offset].u == -1) fixTile(sx, sy);
+                            if (tiles[offset].u == -1) fixTile(sx, sy,ref tiles);
 
                             int texw = 16;
                             int texh = 16;
@@ -334,7 +332,7 @@ namespace Terrafirma
                         if (wires && tiles[offset].hasWire)
                         {
                             drawWire(sx, sy, pixels,
-                                (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0,lightR,lightG,lightB);
+                                (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0,lightR,lightG,lightB, ref tiles);
                         }
                         px += (int)scale;
                     }
@@ -396,7 +394,7 @@ namespace Terrafirma
                     else if (tiles[delay.offset].type == 5) //tree leaves
                     {
                         drawLeaves(tiles[delay.offset].u, tiles[delay.offset].v, delay.sx, delay.sy,
-                                   pixels, delay.px, delay.py, width, height, scale / 16.0, lightR, lightG, lightB);
+                                   pixels, delay.px, delay.py, width, height, scale / 16.0, lightR, lightG, lightB, ref tiles);
                     }
                 }
 
@@ -540,7 +538,7 @@ namespace Terrafirma
             }
         }
 
-        private int findCorruptGrass(int ofs)
+        private int findCorruptGrass(int ofs,ref Tile[] tiles)
         {
             for (int i = 0; i < 100; i++)
             {
@@ -558,7 +556,7 @@ namespace Terrafirma
             return 0;
         }
 
-        private void drawWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom, double lightR, double lightG, double lightB)
+        private void drawWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom, double lightR, double lightG, double lightB, ref Tile[] tiles)
         {
             int mask = 0;
             //udlr
@@ -573,7 +571,7 @@ namespace Terrafirma
 
         private void drawLeaves(int u, int v, int sx, int sy,
             byte[] pixels, int px, int py,
-            int w, int h, double zoom, double lightR, double lightG, double lightB)
+            int w, int h, double zoom, double lightR, double lightG, double lightB, ref Tile[] tiles)
         {
             if (u < 22 || v < 198) return; //not a leaf
             int variant = 0;
@@ -585,11 +583,15 @@ namespace Terrafirma
             switch (u)
             {
                 case 22: //tree top
-                    leafType = findCorruptGrass(sy + sx * tilesHigh);
+                    leafType = findCorruptGrass(sy + sx * tilesHigh, ref tiles);
                     tex = Textures.GetTreeTops(leafType);
                     if (leafType == 3) //hallowed
+                    {
                         variant += (sx % 3) * 3;
-                    if (leafType == 2)
+                        drawTexture(tex, 80, 140, variant * 82 * 4, pixels,
+                            px - (int)(30 * zoom), py - (int)(124 * zoom), w, h, zoom, lightR, lightG, lightB);
+                    }
+                    else if (leafType == 2)
                         drawTexture(tex, 114, 96, variant * 116 * 4, pixels,
                             px - (int)(46 * zoom), py - (int)(80 * zoom), w, h, zoom, lightR, lightG, lightB);
                     else
@@ -597,7 +599,7 @@ namespace Terrafirma
                             px - (int)(30 * zoom), py - (int)(62 * zoom), w, h, zoom, lightR, lightG, lightB);
                     break;
                 case 44: //left branch
-                    leafType = findCorruptGrass(sy + (sx + 1) * tilesHigh);
+                    leafType = findCorruptGrass(sy + (sx + 1) * tilesHigh,ref tiles);
                     tex = Textures.GetTreeBranches(leafType);
                     if (leafType == 3) //hallowed
                         variant += (sx % 3) * 3;
@@ -605,7 +607,7 @@ namespace Terrafirma
                         px - (int)(22 * zoom), py - (int)(12 * zoom), w, h, zoom, lightR, lightG, lightB);
                     break;
                 case 66: //right branch
-                    leafType = findCorruptGrass(sy + (sx - 1) * tilesHigh);
+                    leafType = findCorruptGrass(sy + (sx - 1) * tilesHigh, ref tiles);
                     tex = Textures.GetTreeBranches(leafType);
                     if (leafType == 3) //hallowed
                         variant += (sx % 3) * 3;
@@ -662,10 +664,23 @@ namespace Terrafirma
                         b += 4;
                         continue;
                     }
-                    pixels[b++] = (byte)(tex.data[tx++]*lightB);
-                    pixels[b++] = (byte)(tex.data[tx++]*lightG);
-                    pixels[b++] = (byte)(tex.data[tx++]*lightR);
-                    pixels[b++] = tex.data[tx++];
+                    if (tex.data[tx + 3] < 255) //alpha blend, damn
+                    {
+                        UInt32 c = (uint)(tex.data[tx] * lightB) | ((uint)(tex.data[tx + 1] * lightG) << 8) | ((uint)(tex.data[tx + 2] * lightR) << 16);
+                        UInt32 orig = (UInt32)(pixels[b] | (pixels[b + 1] << 8) | (pixels[b + 2] << 16));
+                        orig = alphaBlend(orig, c, tex.data[tx + 3] / 255.0);
+                        pixels[b++] = (byte)(orig & 0xff);
+                        pixels[b++] = (byte)((orig >> 8) & 0xff);
+                        pixels[b++] = (byte)((orig >> 16) & 0xff);
+                        pixels[b++] = 0xff;
+                    }
+                    else
+                    {
+                        pixels[b++] = (byte)(tex.data[tx++] * lightB);
+                        pixels[b++] = (byte)(tex.data[tx++] * lightG);
+                        pixels[b++] = (byte)(tex.data[tx++] * lightR);
+                        pixels[b++] = 0xff;
+                    }
                 }
                 bofs += w * 4;
             }
@@ -697,16 +712,29 @@ namespace Terrafirma
                 int b = bofs;
                 for (int x = 0; x < tw; x++)
                 {
-                    int tx = t + (int)(bw-x / zoom) * 4;
+                    int tx = t + (int)(bw - x / zoom) * 4;
                     if (x < skipx || tex.data[tx + 3] == 0)
                     {
                         b += 4;
                         continue;
                     }
-                    pixels[b++] = (byte)(tex.data[tx++]*lightB);
-                    pixels[b++] = (byte)(tex.data[tx++]*lightG);
-                    pixels[b++] = (byte)(tex.data[tx++]*lightR);
-                    pixels[b++] = tex.data[tx++];
+                    if (tex.data[tx + 3] < 255) //alpha blend
+                    {
+                        UInt32 c = (uint)(tex.data[tx] * lightB) | ((uint)(tex.data[tx + 1] * lightG) << 8) | ((uint)(tex.data[tx + 2] * lightR) << 16);
+                        UInt32 orig = (UInt32)(pixels[b] | (pixels[b + 1] << 8) | (pixels[b + 2] << 16));
+                        orig = alphaBlend(orig, c, tex.data[tx + 3] / 255.0);
+                        pixels[b++] = (byte)(orig & 0xff);
+                        pixels[b++] = (byte)((orig >> 8) & 0xff);
+                        pixels[b++] = (byte)((orig >> 16) & 0xff);
+                        pixels[b++] = 0xff;
+                    }
+                    else
+                    {
+                        pixels[b++] = (byte)(tex.data[tx++] * lightB);
+                        pixels[b++] = (byte)(tex.data[tx++] * lightG);
+                        pixels[b++] = (byte)(tex.data[tx++] * lightR);
+                        pixels[b++] = 0xff;
+                    }
                 }
                 bofs += w * 4;
             }
@@ -1067,7 +1095,7 @@ namespace Terrafirma
                         18,18       //1111
                           };
 
-        private byte fixTile(int x, int y)
+        private byte fixTile(int x, int y,ref Tile[] tiles)
         {
             int t = -1, l = -1, r = -1, b = -1;
             int tl = -1, tr = -1, bl = -1, br = -1;
@@ -1143,7 +1171,7 @@ namespace Terrafirma
             }
             if (c == 80) //cactus
             {
-                fixCactus(x, y, t,b,l,r,bl,br);
+                fixCactus(x, y, t,b,l,r,bl,br, ref tiles);
                 return 0;
             }
             if (c == 19) //wooden platform
@@ -1174,10 +1202,10 @@ namespace Terrafirma
             }
 
             //if tile blends with current tile, treat as if it were current tile
-            if (t > -1 && (t == c || (tileInfos[t].blend == c && (fixTile(x, y - 1) & 4) == 4))) mask |= 0x80000;
-            if (b > -1 && (b == c || (tileInfos[b].blend == c && (fixTile(x, y + 1) & 8) == 8))) mask |= 0x40000;
-            if (l > -1 && (l == c || (tileInfos[l].blend == c && (fixTile(x - 1, y) & 1) == 1))) mask |= 0x20000;
-            if (r > -1 && (r == c || (tileInfos[r].blend == c && (fixTile(x + 1, y) & 2) == 2))) mask |= 0x10000;
+            if (t > -1 && (t == c || (tileInfos[t].blend == c && (fixTile(x, y - 1, ref tiles) & 4) == 4))) mask |= 0x80000;
+            if (b > -1 && (b == c || (tileInfos[b].blend == c && (fixTile(x, y + 1, ref tiles) & 8) == 8))) mask |= 0x40000;
+            if (l > -1 && (l == c || (tileInfos[l].blend == c && (fixTile(x - 1, y, ref tiles) & 1) == 1))) mask |= 0x20000;
+            if (r > -1 && (r == c || (tileInfos[r].blend == c && (fixTile(x + 1, y, ref tiles) & 2) == 2))) mask |= 0x10000;
             if (tl > -1 && (tileInfos[tl].blend == c || tl == c)) mask |= 0x880;
             if (tr > -1 && (tileInfos[tr].blend == c || tr == c)) mask |= 0x440;
             if (bl > -1 && (tileInfos[bl].blend == c || bl == c)) mask |= 0x220;
@@ -1264,7 +1292,7 @@ namespace Terrafirma
             //should be impossible to get here.
             return 0;
         }
-        private void fixWall(int x, int y)
+        private void fixWall(int x, int y, ref Tile[] tiles)
         {
             byte t = 0, l = 0, r = 0, b = 0;
             byte tl = 0, tr = 0, bl = 0, br = 0;
@@ -1316,7 +1344,7 @@ namespace Terrafirma
             //again, impossible to be here.
         }
 
-        private void fixCactus(int x, int y, int t, int b, int l, int r, int bl, int br)
+        private void fixCactus(int x, int y, int t, int b, int l, int r, int bl, int br, ref Tile[] tiles)
         {
             //find the base of the cactus
             int basex = x;

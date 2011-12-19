@@ -311,14 +311,14 @@
     <var u="18" name="3 Second Timer" />
     <var u="36" name="5 Second Timer" />
   </tile>
-  <tile num="145" name="Candy Cane Block" color="#ff0000" blend="0" solid="1" />
-  <tile num="146" name="Green Candy Cane Block" color="#00ff00" blend="0" solid="1" />
-  <tile num="147" name="Snow Block" color="#ffffff" blend="0" solid="1" />
-  <tile num="148" name="Snow Brick" color="#ffffff" blend="0" solid="1" />
+  <tile num="145" name="Candy Cane Block" color="#C01E1E" blend="0" solid="1" />
+  <tile num="146" name="Green Candy Cane Block" color="#2BC01E" blend="0" solid="1" />
+  <tile num="147" name="Snow Block" color="#C7DCDF" blend="0" solid="1" />
+  <tile num="148" name="Snow Brick" color="#D3ECF1" blend="0" solid="1" />
   <tile num="149" name="Lights" color="#ffffff" hasExtra="1" letLight="1">
-    <var u="0" name="Blue Light" lightr="0.1" lightg="0.2" lightb="0.5" light="0.4" />
-    <var u="18" name="Red Light" lightr="0.5" lightg="0.1" lightb="0.1" light="0.4" />
-    <var u="36" name="Green Light" lightr="0.2" lightg="0.5" lightb="0.1" light="0.4" />
+    <var u="0" name="Blue Light" color="#206BFF" lightr="0.1" lightg="0.2" lightb="0.5" light="0.4" />
+    <var u="18" name="Red Light" color="#DA0205" lightr="0.5" lightg="0.1" lightb="0.1" light="0.4" />
+    <var u="36" name="Green Light" color="#3E7D25" lightr="0.2" lightg="0.5" lightb="0.1" light="0.4" />
   </tile>
   
   <wall num="1" name="Stone Wall" color="#343434" />
@@ -348,10 +348,10 @@
   <wall num="25" name="Cobalt Brick Wall" color="#0B233E" />
   <wall num="26" name="Mythril Brick Wall" color="#3C5B3A" />
   <wall num="27" name="Planked Wall" color="#3A291D" />
-  <wall num="28" name="Unknown Wall" color="#515465" />
-  <wall num="29" name="Candy Cane Wall" color="#ff0000" />
-  <wall num="30" name="Green Candy Cane Wall" color="#00ff00" />
-  <wall num="31" name="Snow Brick Wall" color="#ffffff" />
+  <wall num="28" name="Pearlstone Wall" color="#515465" />
+  <wall num="29" name="Candy Cane Wall" color="#581717" />
+  <wall num="30" name="Green Candy Cane Wall" color="#2C6A26" />
+  <wall num="31" name="Snow Brick Wall" color="#6B7577" />
   
   <global id="sky" color="#84AAF8" />
   <global id="earth" color="#583D2E" />
