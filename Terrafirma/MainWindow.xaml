@@ -13,6 +13,8 @@
                 </MenuItem>
                 <MenuItem Command="ApplicationCommands.Open" Header="_Open" />
                 <MenuItem Command="Refresh" />
+               <!-- <Separator />
+                <MenuItem Command="w:MapCommands.ConnectToServer" /> -->
                 <Separator />
                 <MenuItem Command="ApplicationCommands.Save" Header="_Save PNG" />
                 <Separator />
@@ -86,5 +88,8 @@
         <CommandBinding Command="w:MapCommands.Wires"
                         Executed="Redraw"
                         CanExecute="TexturesUsed" />
+        <CommandBinding Command="w:MapCommands.ConnectToServer"
+                        Executed="ConnectToServer_Executed"
+                        CanExecute="Open_CanExecute" />
     </Window.CommandBindings>
 </Window>

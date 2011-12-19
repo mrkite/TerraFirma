@@ -1,0 +1,13 @@
+﻿<Window x:Class="Terrafirma.ConnectToServer"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Connect To Server" Height="186" Width="300">
+    <Grid>
+        <Label Content="Server IP" Height="28" HorizontalAlignment="Left" Margin="12,12,0,0" Name="label1" VerticalAlignment="Top" Width="76" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="94,12,0,0" Name="serverip" VerticalAlignment="Top" Width="172" />
+        <Label Content="Server Port" Height="28" HorizontalAlignment="Left" Margin="12,46,0,0" Name="label2" VerticalAlignment="Top" Width="76" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="94,46,0,0" Name="serverport" VerticalAlignment="Top" Width="69" Text="7777" />
+        <Button Content="Connect" Height="23" HorizontalAlignment="Right" Margin="0,112,12,0" Name="button1" VerticalAlignment="Top" Width="75" Click="button1_Click" />
+        <Button Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="110,112,0,0" Name="button2" VerticalAlignment="Top" Width="75" Click="button2_Click" />
+    </Grid>
+</Window>

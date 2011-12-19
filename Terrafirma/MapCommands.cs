@@ -60,5 +60,7 @@ namespace Terrafirma
             "Show NPC Houses", "Houses", typeof(MapCommands));
         public static readonly RoutedUICommand Wires = new RoutedUICommand(
             "Show Wires", "Wires", typeof(MapCommands));
+        public static readonly RoutedUICommand ConnectToServer = new RoutedUICommand(
+            "Connect to Server...", "ConnectToServer", typeof(MapCommands));
     }
 }

@@ -60,6 +60,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ConnectToServer.xaml.cs">
+      <DependentUpon>ConnectToServer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Render.cs" />
     <Compile Include="SaveOptions.xaml.cs">
       <DependentUpon>SaveOptions.xaml</DependentUpon>
@@ -67,11 +70,18 @@
     <Compile Include="Saving.xaml.cs">
       <DependentUpon>Saving.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ServerPassword.xaml.cs">
+      <DependentUpon>ServerPassword.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SignPopup.xaml.cs">
       <DependentUpon>SignPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Textures.cs" />
     <Page Include="ChestPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ConnectToServer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -109,6 +119,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Saving.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ServerPassword.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

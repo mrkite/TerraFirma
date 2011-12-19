@@ -44,6 +44,7 @@ using System.Windows.Threading;
 using System.Windows.Interop;
 using System.Collections;
 using System.Threading;
+using System.Net.Sockets;
 
 namespace Terrafirma
 {
@@ -250,6 +251,11 @@ namespace Terrafirma
         WallInfo[] wallInfo;
         UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor;
         bool isHilight = false;
+
+        Socket socket;
+        byte[] readBuffer,writeBuffer;
+        int pendingSize;
+        byte[] messages;
 
         public MainWindow()
         {
@@ -1098,6 +1104,168 @@ namespace Terrafirma
             if (loaded)
                 RenderMap();
             load.Close();
+        }
+
+        private void ConnectToServer_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            //we should disconnect if connected.
+
+            ConnectToServer c = new ConnectToServer();
+            if (c.ShowDialog() == true)
+            {
+                string serverip = c.ServerIP;
+                int port = c.ServerPort;
+                if (serverip == "")
+                {
+                    MessageBox.Show("Invalid server address");
+                    return;
+                }
+                if (port == 0)
+                {
+                    MessageBox.Show("Invalid port");
+                    return;
+                }
+
+                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                System.Net.IPAddress ip;
+                try
+                {
+                    ip = System.Net.IPAddress.Parse(serverip);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Invalid server IP");
+                    return;
+                }
+                System.Net.IPEndPoint remoteEP = new System.Net.IPEndPoint(ip, port);
+                socket.BeginConnect(remoteEP, new AsyncCallback(connected), null);
+            }
+        }
+        private void connected(IAsyncResult ar)
+        {
+            try
+            {
+                socket.EndConnect(ar);
+                //we connected, huzzah!
+                readBuffer = new byte[1024];
+                writeBuffer = new byte[1024];
+                messages = new byte[8192];
+                pendingSize = 0;
+                SendMessage(1); //greetings server!
+                socket.BeginReceive(readBuffer, 0, readBuffer.Length, SocketFlags.None,
+                    new AsyncCallback(ReceivedData), null);
+            }
+            catch (Exception e)
+            {
+                socket.Close();
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        private void ReceivedData(IAsyncResult ar)
+        {
+            try
+            {
+                int bytesRead = socket.EndReceive(ar);
+                if (bytesRead > 0)
+                {
+                    Buffer.BlockCopy(readBuffer, 0, messages, pendingSize, bytesRead);
+                    pendingSize += bytesRead;
+                    messagePump();
+                    socket.BeginReceive(readBuffer, 0, readBuffer.Length, SocketFlags.None,
+                        new AsyncCallback(ReceivedData), null); //restart receive
+                }
+                else
+                {
+                    // socket was closed?
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        private void messagePump()
+        {
+            if (pendingSize < 5) //haven't received enough data for even a message header
+                return;
+            int msgLen = BitConverter.ToInt32(messages, 0);
+            int ofs = 0;
+            while (ofs + 4 + msgLen <= pendingSize)
+            {
+                HandleMessage(ofs + 4, msgLen);
+                ofs += msgLen + 4;
+                if (ofs + 4 <= pendingSize)
+                    msgLen = BitConverter.ToInt32(messages, ofs);
+                else
+                    break;
+            }
+            if (ofs == pendingSize)
+                pendingSize = 0;
+            else if (ofs > 0)
+            {
+                Buffer.BlockCopy(messages, ofs, messages, 0, pendingSize - ofs);
+                pendingSize -= ofs;
+            }
+        }
+
+        private void HandleMessage(int start, int len)
+        {
+            int messageid = messages[start];
+            start++;
+            len--;
+            switch (messageid)
+            {
+                case 37: //request password.
+                    ServerPassword s = new ServerPassword();
+                    if (s.ShowDialog() == true)
+                        SendMessage(38, s.Password);
+                    else
+                        socket.Close(); //cancelled?  Then we're leaving the server.
+                    break;
+                default:
+                    MessageBox.Show(String.Format("Got response {0}", messageid));
+                    break;
+            }
+        }
+
+        private void SendMessage(int messageid,string text=null)
+        {
+            int payload = 5;
+            int payloadLen = 0;
+            switch (messageid)
+            {
+                case 1: //send greeting
+                    byte[] greeting = Encoding.ASCII.GetBytes("Terraria" + MapVersion);
+                    payloadLen = greeting.Length;
+                    Buffer.BlockCopy(greeting, 0, writeBuffer, payload, payloadLen);
+                    break;
+                case 38: //send password
+                    byte[] password = Encoding.ASCII.GetBytes(text);
+                    payloadLen = password.Length;
+                    Buffer.BlockCopy(password, 0, writeBuffer, payload, payloadLen);
+                    break;
+                default:
+                    throw new Exception(String.Format("Unknown messageid: {0}", messageid));
+            }
+
+            byte[] msgLen=BitConverter.GetBytes(payloadLen+1);
+            Buffer.BlockCopy(msgLen, 0, writeBuffer, 0, 4);
+            writeBuffer[4]=(byte)messageid;
+            socket.BeginSend(writeBuffer, 0, payloadLen + 5, SocketFlags.None,
+                new AsyncCallback(SentMessage), null);
+        }
+        private void SentMessage(IAsyncResult ar)
+        {
+            try
+            {
+                socket.EndSend(ar);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
         private void Hilight_Executed(object sender, ExecutedRoutedEventArgs e)

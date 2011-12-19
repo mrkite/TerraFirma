@@ -364,6 +364,7 @@ namespace Terrafirma
 
                     if (tiles[delay.offset].type == 128) //armor
                     {
+                        int dy=8;
                         int au = tiles[delay.offset].u % 100;
                         int armor = tiles[delay.offset].u / 100;
                         switch (tiles[delay.offset].v)
@@ -372,24 +373,27 @@ namespace Terrafirma
                                 tex = Textures.GetArmorHead(armor);
                                 texw = 40;
                                 texh = 36;
+                                dy = 12;
                                 break;
                             case 18: //body
                                 tex = Textures.GetArmorBody(armor);
                                 texw = 40;
                                 texh = 54;
+                                dy = 28;
                                 break;
                             default: //legs
                                 tex = Textures.GetArmorLegs(armor);
                                 texw = 40;
                                 texh = 54;
+                                dy = 44;
                                 break;
                         }
                         if (au >= 36) //reverse
-                            drawTextureFlip(tex, texw, texh, tiles[delay.offset].v * tex.width * 4 + au * 4,
-                                pixels, delay.px, delay.py - 8, width, height, scale / 16.0, lightR, lightG, lightB);
+                            drawTexture(tex, texw, texh, 0,
+                                pixels, delay.px-4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB);
                         else
-                            drawTexture(tex, texw, texh, tiles[delay.offset].v * tex.width * 4 + au * 4,
-                                pixels, delay.px, delay.py - 8, width, height, scale / 16.0, lightR, lightG, lightB);
+                            drawTextureFlip(tex, texw, texh, 0,
+                                pixels, delay.px-4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB);
                     }
                     else if (tiles[delay.offset].type == 5) //tree leaves
                     {
