@@ -55,7 +55,7 @@ namespace Terrafirma
         public bool hasExtra;
         public double light;
         public double lightR, lightG, lightB;
-        public bool transparent,solid;
+        public bool transparent, solid;
         public bool isStone, isGrass;
         public Int16 blend;
         public int u, v, minu, maxu, minv, maxv;
@@ -182,7 +182,7 @@ namespace Terrafirma
         public string name;
         public UInt32 color;
     }
-    struct Tile
+    class Tile
     {
         public bool isActive;
         public byte type;
@@ -190,7 +190,7 @@ namespace Terrafirma
         public byte liquid;
         public bool isLava;
         public Int16 u, v, wallu, wallv;
-        public double light,lightR,lightG,lightB;
+        public double light, lightR, lightG, lightB;
         public bool hasWire;
     }
     struct ChestItem
@@ -226,6 +226,8 @@ namespace Terrafirma
         const int MapVersion = 0x25;
         const int MaxTile = 149;
         const int MaxWall = 31;
+        const int Widest = 8400;
+        const int Highest = 2400;
 
         const double MaxScale = 16.0;
         const double MinScale = 1.0;
@@ -236,10 +238,10 @@ namespace Terrafirma
         DispatcherTimer resizeTimer;
         int curWidth, curHeight, newWidth, newHeight;
         bool loaded = false;
-        Tile[] tiles = null;
-        Int32 tilesWide=0, tilesHigh=0;
+        Tile[,] tiles = null;
+        Int32 tilesWide = 0, tilesHigh = 0;
         Int32 spawnX, spawnY;
-        Int32 groundLevel,rockLevel;
+        Int32 groundLevel, rockLevel;
         string[] worlds;
         string currentWorld;
         List<Chest> chests = new List<Chest>();
@@ -253,7 +255,7 @@ namespace Terrafirma
         bool isHilight = false;
 
         Socket socket;
-        byte[] readBuffer,writeBuffer;
+        byte[] readBuffer, writeBuffer;
         int pendingSize;
         byte[] messages;
 
@@ -263,9 +265,9 @@ namespace Terrafirma
 
             fetchWorlds();
 
-           
 
-            XmlDocument xml=new XmlDocument();
+
+            XmlDocument xml = new XmlDocument();
             string xmlData = string.Empty;
             using (Stream stream = this.GetType().Assembly.GetManifestResourceStream("Terrafirma.tiles.xml"))
             {
@@ -273,7 +275,7 @@ namespace Terrafirma
             }
             tileInfos = new TileInfos(xml.GetElementsByTagName("tile"));
             XmlNodeList wallList = xml.GetElementsByTagName("wall");
-            wallInfo = new WallInfo[wallList.Count+1];
+            wallInfo = new WallInfo[wallList.Count + 1];
             for (int i = 0; i < wallList.Count; i++)
             {
                 int id = Convert.ToInt32(wallList[i].Attributes["num"].Value);
@@ -284,7 +286,7 @@ namespace Terrafirma
             for (int i = 0; i < globalList.Count; i++)
             {
                 string kind = globalList[i].Attributes["id"].Value;
-                UInt32 color=parseColor(globalList[i].Attributes["color"].Value);
+                UInt32 color = parseColor(globalList[i].Attributes["color"].Value);
                 switch (kind)
                 {
                     case "sky":
@@ -308,7 +310,7 @@ namespace Terrafirma
                 }
             }
 
-            render = new Render(tileInfos,wallInfo,skyColor,earthColor,rockColor,hellColor,waterColor,lavaColor);
+            render = new Render(tileInfos, wallInfo, skyColor, earthColor, rockColor, hellColor, waterColor, lavaColor);
             //this resize timer is used so we don't get killed on the resize
             resizeTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal,
@@ -326,13 +328,13 @@ namespace Terrafirma
                         RenderMap();
                     else
                     {
-                        var rect=new Int32Rect(0,0,curWidth,curHeight);
-                        for (int i=0;i<curWidth*curHeight*4;i++)
-                            bits[i]=0xff;
-                        mapbits.WritePixels(rect,bits,curWidth*4,0);
+                        var rect = new Int32Rect(0, 0, curWidth, curHeight);
+                        for (int i = 0; i < curWidth * curHeight * 4; i++)
+                            bits[i] = 0xff;
+                        mapbits.WritePixels(rect, bits, curWidth * 4, 0);
                     }
                 },
-                Dispatcher) {IsEnabled=false};
+                Dispatcher) { IsEnabled = false };
             curWidth = 496;
             curHeight = 400;
             newWidth = 496;
@@ -342,14 +344,16 @@ namespace Terrafirma
             bits = new byte[curWidth * curHeight * 4];
             curX = curY = 0;
             curScale = 1.0;
+
+            tiles = new Tile[Widest, Highest];
         }
 
-        
-       
+
+
 
         private void fetchWorlds()
         {
-            string path=Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             path = Path.Combine(path, "My Games");
             path = Path.Combine(path, "Terraria");
             path = Path.Combine(path, "Worlds");
@@ -397,225 +401,290 @@ namespace Terrafirma
             return c;
         }
 
-        private void Load(string world)
+        delegate void Del();
+        private void Load(string world, Del done)
         {
-            currentWorld = world;
-            bool foundInvalid=false;
-            string invalid="";
-            using (BinaryReader b = new BinaryReader(File.OpenRead(world)))
+            Loading load = new Loading();
+            load.Show();
+            ThreadStart loadThread = delegate()
             {
-                uint version = b.ReadUInt32(); //now we care about the version
-                if (version > MapVersion) // new map format
-                {
-                    MessageBox.Show("Unsupported Map Version");
-                    loaded = false;
-                    return;
-                }
-                Title = b.ReadString();
-                b.BaseStream.Seek(20, SeekOrigin.Current); //skip id and bounds
-                int oldSize = tilesHigh * tilesWide;
-                tilesHigh = b.ReadInt32();
-                tilesWide = b.ReadInt32();
-                spawnX = b.ReadInt32();
-                spawnY = b.ReadInt32();
-                groundLevel = (int)b.ReadDouble();
-                rockLevel = (int)b.ReadDouble();
-                int flaglen = 48;
-                if (version >= 0x17)
-                    flaglen += 5;
-                if (version >= 0x1d)
-                    flaglen += 3;
-                if (version >= 0x20)
-                    flaglen++;
-                if (version >= 0x22)
-                    flaglen++;
-                if (version >= 0x25)
-                    flaglen++;
-                b.BaseStream.Seek(flaglen, SeekOrigin.Current); //skip flags and other settings
-                try
-                {
-                    if (tiles == null)
-                        tiles = new Tile[tilesWide * tilesHigh];
-                    else if (oldSize < tilesWide * tilesHigh) //only resize if we need to.
-                        Array.Resize(ref tiles, tilesWide * tilesHigh);
-                }
-                catch (OutOfMemoryException e)
-                {
-                    MessageBox.Show("Oops, ran out of memory!");
-                    loaded = false;
-                    return;
-                }
-                for (int i = 0; i < tilesWide * tilesHigh; i++)
-                {
-                    tiles[i].isActive = b.ReadBoolean();
-                    if (tiles[i].isActive)
+               // try
+               // {
+                    currentWorld = world;
+                    bool foundInvalid = false;
+
+                    string invalid = "";
+                    using (BinaryReader b = new BinaryReader(File.OpenRead(world)))
                     {
-                        tiles[i].type = b.ReadByte();
-                        if (tiles[i].type > MaxTile) // something screwy in the map
+                        uint version = b.ReadUInt32(); //now we care about the version
+                        if (version > MapVersion) // new map format
+                            throw new Exception("Unsupported map version");
+                        string title = b.ReadString();
+                        Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
-                            tiles[i].isActive = false;
-                            foundInvalid = true;
-                            invalid=String.Format("{0} is not a valid tile type",tiles[i].type);
-                        }
-                        else if (tileInfos[tiles[i].type].hasExtra)
+                            Title = title;
+                        }));
+                        b.BaseStream.Seek(20, SeekOrigin.Current); //skip id and bounds
+                        tilesHigh = b.ReadInt32();
+                        tilesWide = b.ReadInt32();
+                        spawnX = b.ReadInt32();
+                        spawnY = b.ReadInt32();
+                        groundLevel = (int)b.ReadDouble();
+                        rockLevel = (int)b.ReadDouble();
+                        int flaglen = 48;
+                        if (version >= 0x17)
+                            flaglen += 5;
+                        if (version >= 0x1d)
+                            flaglen += 3;
+                        if (version >= 0x20)
+                            flaglen++;
+                        if (version >= 0x22)
+                            flaglen++;
+                        if (version >= 0x25)
+                            flaglen++;
+                        b.BaseStream.Seek(flaglen, SeekOrigin.Current); //skip flags and other settings
+                        for (int y = 0; y < tilesHigh; y++)
                         {
-                            // torches didn't have extra in older versions.
-                            if (version < 0x1c && tiles[i].type == 4)
+                            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                             {
-                                tiles[i].u = -1;
-                                tiles[i].v = -1;
+                                load.status.Text = "Allocating tiles "+((int)((float)y*100.0/(float)tilesHigh))+"%";
+                            }));
+                            for (int x = 0; x < tilesWide; x++)
+                            {
+                                if (tiles[x, y] == null)
+                                    tiles[x, y] = new Tile();
+                            }
+                        }
+                        if (tilesWide < Widest || tilesHigh < Highest) //free unused tiles
+                        {
+                            for (int y = 0; y < Highest; y++)
+                            {
+                                int start = tilesWide;
+                                if (y >= tilesHigh)
+                                    start = 0;
+                                for (int x = start; x < Widest; x++)
+                                    tiles[x, y] = null;
+                            }
+                        }
+                        for (int x = 0; x < tilesWide; x++)
+                        {
+                            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                            {
+                                load.status.Text = "Reading tiles " + ((int)((float)x * 100.0 / (float)tilesWide)) + "%";
+                            }));
+                            for (int y = 0; y < tilesHigh; y++)
+                            {
+                                tiles[x, y].isActive = b.ReadBoolean();
+                                if (tiles[x, y].isActive)
+                                {
+                                    tiles[x, y].type = b.ReadByte();
+                                    if (tiles[x, y].type > MaxTile) // something screwy in the map
+                                    {
+                                        tiles[x, y].isActive = false;
+                                        foundInvalid = true;
+                                        invalid = String.Format("{0} is not a valid tile type", tiles[x, y].type);
+                                    }
+                                    else if (tileInfos[tiles[x, y].type].hasExtra)
+                                    {
+                                        // torches didn't have extra in older versions.
+                                        if (version < 0x1c && tiles[x, y].type == 4)
+                                        {
+                                            tiles[x, y].u = -1;
+                                            tiles[x, y].v = -1;
+                                        }
+                                        else
+                                        {
+                                            tiles[x, y].u = b.ReadInt16();
+                                            tiles[x, y].v = b.ReadInt16();
+                                            if (tiles[x, y].type == 144) //timer
+                                                tiles[x, y].v = 0;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        tiles[x, y].u = -1;
+                                        tiles[x, y].v = -1;
+                                    }
+                                }
+                                if (version <= 0x19)
+                                    b.ReadBoolean(); //skip obsolete hasLight
+                                if (b.ReadBoolean())
+                                {
+                                    tiles[x, y].wall = b.ReadByte();
+                                    if (tiles[x, y].wall > MaxWall)  // bad wall
+                                    {
+                                        foundInvalid = true;
+                                        invalid = String.Format("{0} is not a valid wall type", tiles[x, y].wall);
+                                        tiles[x, y].wall = 0;
+                                    }
+                                    tiles[x, y].wallu = -1;
+                                    tiles[x, y].wallv = -1;
+                                }
+                                else
+                                    tiles[x, y].wall = 0;
+                                if (b.ReadBoolean())
+                                {
+                                    tiles[x, y].liquid = b.ReadByte();
+                                    tiles[x, y].isLava = b.ReadBoolean();
+                                }
+                                else
+                                    tiles[x, y].liquid = 0;
+                                if (version >= 0x21)
+                                    tiles[x, y].hasWire = b.ReadBoolean();
+                                else
+                                    tiles[x, y].hasWire = false;
+                                if (version >= 0x19) //RLE
+                                {
+                                    int rle = b.ReadInt16();
+                                    for (int r = y + 1; r < y + 1 + rle; r++)
+                                    {
+                                        tiles[x, r].isActive = tiles[x, y].isActive;
+                                        tiles[x, r].type = tiles[x, y].type;
+                                        tiles[x, r].u = tiles[x, y].u;
+                                        tiles[x, r].v = tiles[x, y].v;
+                                        tiles[x, r].wall = tiles[x, y].wall;
+                                        tiles[x, r].wallu = -1;
+                                        tiles[x, r].wallv = -1;
+                                        tiles[x, r].liquid = tiles[x, y].liquid;
+                                        tiles[x, r].isLava = tiles[x, y].isLava;
+                                        tiles[x, r].hasWire = tiles[x, y].hasWire;
+                                    }
+                                    y += rle;
+                                }
+                            }
+                        }
+                        chests.Clear();
+                        for (int i = 0; i < 1000; i++)
+                        {
+                            if (b.ReadBoolean())
+                            {
+                                Chest chest = new Chest();
+                                chest.items = new ChestItem[20];
+                                chest.x = b.ReadInt32();
+                                chest.y = b.ReadInt32();
+                                for (int ii = 0; ii < 20; ii++)
+                                {
+                                    chest.items[ii].stack = b.ReadByte();
+                                    if (chest.items[ii].stack > 0)
+                                    {
+                                        string name = b.ReadString();
+                                        string prefix = "";
+                                        if (version >= 0x24) //item prefixes
+                                        {
+                                            int pfx = b.ReadByte();
+                                            if (pfx < prefixes.Length)
+                                                prefix = prefixes[pfx];
+                                        }
+                                        if (prefix != "")
+                                            prefix += " ";
+                                        chest.items[ii].name = prefix + name;
+                                    }
+                                }
+                                chests.Add(chest);
+                            }
+                        }
+                        signs.Clear();
+                        for (int i = 0; i < 1000; i++)
+                        {
+                            if (b.ReadBoolean())
+                            {
+                                Sign sign = new Sign();
+                                sign.text = b.ReadString();
+                                sign.x = b.ReadInt32();
+                                sign.y = b.ReadInt32();
+                                signs.Add(sign);
+                            }
+                        }
+                        npcs.Clear();
+                        Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                        {
+                            NPCs.Items.Clear();
+                            load.status.Text = "Loading NPCs...";
+                        }));
+                        while (b.ReadBoolean())
+                        {
+                            NPC npc = new NPC();
+                            npc.name = b.ReadString();
+                            npc.x = b.ReadSingle();
+                            npc.y = b.ReadSingle();
+                            npc.isHomeless = b.ReadBoolean();
+                            npc.homeX = b.ReadInt32();
+                            npc.homeY = b.ReadInt32();
+
+                            npc.sprite = 0;
+                            if (npc.name == "Merchant") { npc.sprite = 17; npc.num = 2; }
+                            if (npc.name == "Nurse") { npc.sprite = 18; npc.num = 3; }
+                            if (npc.name == "Arms Dealer") { npc.sprite = 19; npc.num = 6; }
+                            if (npc.name == "Dryad") { npc.sprite = 20; npc.num = 5; }
+                            if (npc.name == "Guide") { npc.sprite = 22; npc.num = 1; }
+                            if (npc.name == "Old Man") { npc.sprite = 37; npc.num = 0; }
+                            if (npc.name == "Demolitionist") { npc.sprite = 38; npc.num = 4; }
+                            if (npc.name == "Clothier") { npc.sprite = 54; npc.num = 7; }
+                            if (npc.name == "Goblin Tinkerer") { npc.sprite = 107; npc.num = 9; }
+                            if (npc.name == "Wizard") { npc.sprite = 108; npc.num = 10; }
+                            if (npc.name == "Mechanic") { npc.sprite = 124; npc.num = 8; }
+                            if (npc.name == "Santa Claus") { npc.sprite = 142; npc.num = 11; }
+
+                            npcs.Add(npc);
+
+                            if (!npc.isHomeless)
+                            {
+                                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                                {
+                                    MenuItem item = new MenuItem();
+                                    item.Header = String.Format("Jump to {0}'s Home", npc.name);
+                                    item.Click += new RoutedEventHandler(jumpNPC);
+                                    item.Tag = npc;
+                                    NPCs.Items.Add(item);
+                                    NPCs.IsEnabled = true;
+                                }));
                             }
                             else
                             {
-                                tiles[i].u = b.ReadInt16();
-                                tiles[i].v = b.ReadInt16();
-                                if (tiles[i].type == 144) //timer
-                                    tiles[i].v = 0;
-                            }
-                        }
-                        else
-                        {
-                            tiles[i].u = -1;
-                            tiles[i].v = -1;
-                        }
-                    }
-                    if (version <= 0x19)
-                        b.ReadBoolean(); //skip obsolete hasLight
-                    if (b.ReadBoolean())
-                    {
-                        tiles[i].wall = b.ReadByte();
-                        if (tiles[i].wall > MaxWall)  // bad wall
-                        {
-                            foundInvalid = true;
-                            invalid = String.Format("{0} is not a valid wall type", tiles[i].wall);
-                            tiles[i].wall = 0;
-                        }
-                        tiles[i].wallu = -1;
-                        tiles[i].wallv = -1;
-                    }
-                    else
-                        tiles[i].wall = 0;
-                    if (b.ReadBoolean())
-                    {
-                        tiles[i].liquid = b.ReadByte();
-                        tiles[i].isLava = b.ReadBoolean();
-                    }
-                    else
-                        tiles[i].liquid = 0;
-                    if (version >= 0x21)
-                        tiles[i].hasWire = b.ReadBoolean();
-                    else
-                        tiles[i].hasWire = false;
-                    if (version >= 0x19) //RLE
-                    {
-                        int rle = b.ReadInt16();
-                        for (int r = 0; r < rle; r++)
-                            tiles[i + r + 1] = tiles[i];
-                        i += rle;
-                    }
-                }
-                chests.Clear();
-                for (int i = 0; i < 1000; i++)
-                {
-                    if (b.ReadBoolean())
-                    {
-                        Chest chest = new Chest();
-                        chest.items = new ChestItem[20];
-                        chest.x = b.ReadInt32();
-                        chest.y = b.ReadInt32();
-                        for (int ii = 0; ii < 20; ii++)
-                        {
-                            chest.items[ii].stack = b.ReadByte();
-                            if (chest.items[ii].stack > 0)
-                            {
-                                string name = b.ReadString();
-                                string prefix = "";
-                                if (version >= 0x24) //item prefixes
+                                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                                 {
-                                    int pfx = b.ReadByte();
-                                    if (pfx<prefixes.Length)
-                                        prefix = prefixes[pfx];
-                                }
-                                if (prefix != "")
-                                    prefix += " ";
-                                chest.items[ii].name = prefix + name;
+                                    MenuItem item = new MenuItem();
+                                    item.Header = String.Format("Jump to {0}'s Location", npc.name);
+                                    item.Click += new RoutedEventHandler(jumpNPC);
+                                    item.Tag = npc;
+                                    NPCs.Items.Add(item);
+                                    NPCs.IsEnabled = true;
+                                }));
                             }
                         }
-                        chests.Add(chest);
+                        // if (version>=0x1f) read the names of the following npcs:
+                        // merchant, nurse, arms dealer, dryad, guide, clothier, demolitionist,
+                        // tinkerer and wizard
+                        // if (version>=0x23) read the name of the mechanic
                     }
-                }
-                signs.Clear();
-                for (int i = 0; i < 1000; i++)
+                    calculateLight(load);
+                    if (foundInvalid)
+                    {
+                        Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                            {
+                                MessageBox.Show("Found problems with the map: " + invalid + "\nIt may not display properly.", "Warning");
+                            }));
+                    }
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                        {
+                            render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, npcs);
+                            loaded = true;
+                            load.Close();
+                            done();
+                        }));
+                /*}
+                catch (Exception e)
                 {
-                    if (b.ReadBoolean())
-                    {
-                        Sign sign = new Sign();
-                        sign.text = b.ReadString();
-                        sign.x = b.ReadInt32();
-                        sign.y = b.ReadInt32();
-                        signs.Add(sign);
-                    }
-                }
-                npcs.Clear();
-                NPCs.Items.Clear();
-                while (b.ReadBoolean())
-                {
-                    NPC npc = new NPC();
-                    npc.name = b.ReadString();
-                    npc.x = b.ReadSingle();
-                    npc.y = b.ReadSingle();
-                    npc.isHomeless = b.ReadBoolean();
-                    npc.homeX = b.ReadInt32();
-                    npc.homeY = b.ReadInt32();
-
-                    npc.sprite = 0;
-                    if (npc.name == "Merchant") { npc.sprite = 17; npc.num = 2; }
-                    if (npc.name == "Nurse") { npc.sprite = 18; npc.num = 3; }
-                    if (npc.name == "Arms Dealer") { npc.sprite = 19; npc.num = 6; }
-                    if (npc.name == "Dryad") { npc.sprite = 20; npc.num = 5; }
-                    if (npc.name == "Guide") { npc.sprite = 22; npc.num = 1; }
-                    if (npc.name == "Old Man") { npc.sprite = 37; npc.num = 0; }
-                    if (npc.name == "Demolitionist") { npc.sprite = 38; npc.num = 4; }
-                    if (npc.name == "Clothier") { npc.sprite = 54; npc.num = 7; }
-                    if (npc.name == "Goblin Tinkerer") { npc.sprite = 107; npc.num = 9; }
-                    if (npc.name == "Wizard") { npc.sprite = 108; npc.num = 10; }
-                    if (npc.name == "Mechanic") { npc.sprite = 124; npc.num = 8; }
-                    if (npc.name == "Santa Claus") { npc.sprite = 142; npc.num = 11; }
-                    
-                    npcs.Add(npc);
-
-                    if (!npc.isHomeless)
-                    {
-                        MenuItem item = new MenuItem();
-                        item.Header = String.Format("Jump to {0}'s Home", npc.name);
-                        item.Click += new RoutedEventHandler(jumpNPC);
-                        item.Tag = npc;
-                        NPCs.Items.Add(item);
-                        NPCs.IsEnabled = true;
-                    }
-                    else
-                    {
-                        MenuItem item = new MenuItem();
-                        item.Header = String.Format("Jump to {0}'s Location", npc.name);
-                        item.Click += new RoutedEventHandler(jumpNPC);
-                        item.Tag = npc;
-                        NPCs.Items.Add(item);
-                        NPCs.IsEnabled = true;
-                    }
-                }
-                // if (version>=0x1f) read the names of the following npcs:
-                // merchant, nurse, arms dealer, dryad, guide, clothier, demolitionist,
-                // tinkerer and wizard
-                // if (version>=0x23) read the name of the mechanic
-            }
-
-            calculateLight();
-            if (foundInvalid)
-                MessageBox.Show("Found problems with the map: "+invalid+"\nIt may not display properly.", "Warning");
-
-            render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel,npcs);
-            //load info
-            loaded = true;
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                        {
+                            MessageBox.Show(e.Message);
+                            loaded = false;
+                            load.Close();
+                            done();
+                        }));
+                }*/
+            };
+            new Thread(loadThread).Start();
         }
 
         private string[] prefixes ={
@@ -711,8 +780,8 @@ namespace Terrafirma
             NPC npc = (NPC)item.Tag;
             if (npc.isHomeless)
             {
-                curX = npc.x/16;
-                curY = npc.y/16;
+                curX = npc.x / 16;
+                curY = npc.y / 16;
             }
             else
             {
@@ -721,7 +790,7 @@ namespace Terrafirma
             }
             RenderMap();
         }
-        
+
 
 
         private void RenderMap()
@@ -733,8 +802,8 @@ namespace Terrafirma
             try
             {
                 render.Draw(curWidth, curHeight, startx, starty, curScale, ref bits,
-                    isHilight, Lighting1.IsChecked?1:Lighting2.IsChecked?2:0,
-                    UseTextures.IsChecked && curScale > 2.0,ShowHouses.IsChecked,ShowWires.IsChecked, ref tiles);
+                    isHilight, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
+                    UseTextures.IsChecked && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked, ref tiles);
             }
             catch (System.NotSupportedException e)
             {
@@ -799,14 +868,13 @@ namespace Terrafirma
                 getMapXY(curPos, out sx, out sy);
                 if (sx >= 0 && sx < tilesWide && sy >= 0 && sy < tilesHigh)
                 {
-                    int offset = sy + sx * tilesHigh;
                     string label = "Nothing";
-                    if (tiles[offset].wall > 0)
-                        label = wallInfo[tiles[offset].wall].name;
-                    if (tiles[offset].liquid > 0)
-                        label = tiles[offset].isLava ? "Lava" : "Water";
-                    if (tiles[offset].isActive)
-                        label = tileInfos[tiles[offset].type,tiles[offset].u,tiles[offset].v].name;
+                    if (tiles[sx, sy].wall > 0)
+                        label = wallInfo[tiles[sx, sy].wall].name;
+                    if (tiles[sx, sy].liquid > 0)
+                        label = tiles[sx, sy].isLava ? "Lava" : "Water";
+                    if (tiles[sx, sy].isActive)
+                        label = tileInfos[tiles[sx, sy].type, tiles[sx, sy].u, tiles[sx, sy].v].name;
                     statusText.Text = String.Format("{0},{1} {2}", sx, sy, label);
                 }
                 else
@@ -828,8 +896,8 @@ namespace Terrafirma
         {
             Map.ReleaseMouseCapture();
         }
-        private SignPopup signPop=null;
-        private ChestPopup chestPop=null;
+        private SignPopup signPop = null;
+        private ChestPopup chestPop = null;
 
         private void CloseAllPops()
         {
@@ -996,14 +1064,28 @@ namespace Terrafirma
             var result = dlg.ShowDialog();
             if (result == true)
             {
-                Loading load = new Loading();
-                load.Show();
-                Load(dlg.FileName);
-                if (!loaded)
+                Load(dlg.FileName, delegate()
                 {
-                    load.Close();
+                    if (!loaded)
+                        return;
+                    curX = spawnX;
+                    curY = spawnY;
+                    if (render.Textures.Valid)
+                    {
+                        UseTextures.IsChecked = true;
+                        curScale = 16.0;
+                    }
+                    RenderMap();
+                });
+            }
+        }
+        private void OpenWorld(object sender, ExecutedRoutedEventArgs e)
+        {
+            int id = (int)e.Parameter;
+            Load(worlds[id], delegate()
+            {
+                if (!loaded)
                     return;
-                }
                 curX = spawnX;
                 curY = spawnY;
                 if (render.Textures.Valid)
@@ -1012,29 +1094,7 @@ namespace Terrafirma
                     curScale = 16.0;
                 }
                 RenderMap();
-                load.Close();
-            }
-        }
-        private void OpenWorld(object sender, ExecutedRoutedEventArgs e)
-        {
-            int id = (int)e.Parameter;
-            Loading load = new Loading();
-            load.Show();
-            Load(worlds[id]);
-            if (!loaded)
-            {
-                load.Close();
-                return;
-            }
-            curX = spawnX;
-            curY = spawnY;
-            if (render.Textures.Valid)
-            {
-                UseTextures.IsChecked = true;
-                curScale = 16.0;
-            }
-            RenderMap();
-            load.Close();
+            });
         }
         private void Open_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -1098,12 +1158,11 @@ namespace Terrafirma
 
         private void Refresh_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            Loading load = new Loading();
-            load.Show();
-            Load(currentWorld);
-            if (loaded)
-                RenderMap();
-            load.Close();
+            Load(currentWorld, delegate()
+            {
+                if (loaded)
+                    RenderMap();
+            });
         }
 
         private void ConnectToServer_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -1132,7 +1191,7 @@ namespace Terrafirma
                 {
                     ip = System.Net.IPAddress.Parse(serverip);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     MessageBox.Show("Invalid server IP");
                     return;
@@ -1230,7 +1289,7 @@ namespace Terrafirma
             }
         }
 
-        private void SendMessage(int messageid,string text=null)
+        private void SendMessage(int messageid, string text = null)
         {
             int payload = 5;
             int payloadLen = 0;
@@ -1250,9 +1309,9 @@ namespace Terrafirma
                     throw new Exception(String.Format("Unknown messageid: {0}", messageid));
             }
 
-            byte[] msgLen=BitConverter.GetBytes(payloadLen+1);
+            byte[] msgLen = BitConverter.GetBytes(payloadLen + 1);
             Buffer.BlockCopy(msgLen, 0, writeBuffer, 0, 4);
-            writeBuffer[4]=(byte)messageid;
+            writeBuffer[4] = (byte)messageid;
             socket.BeginSend(writeBuffer, 0, payloadLen + 5, SocketFlags.None,
                 new AsyncCallback(SentMessage), null);
         }
@@ -1343,8 +1402,8 @@ namespace Terrafirma
                     pixels = new byte[wd * ht * 4];
 
                     render.Draw(wd, ht, startx, starty, sc,
-                        ref pixels, false, Lighting1.IsChecked?1:Lighting2.IsChecked?2:0,
-                        saveOpts.UseTextures && curScale > 2.0,ShowHouses.IsChecked,ShowWires.IsChecked, ref tiles);
+                        ref pixels, false, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
+                        saveOpts.UseTextures && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked, ref tiles);
 
                     BitmapSource source = BitmapSource.Create(wd, ht, 96.0, 96.0,
                         PixelFormats.Bgr32, null, pixels, wd * 4);
@@ -1375,109 +1434,124 @@ namespace Terrafirma
                 UseTextures.IsEnabled = false;
         }
 
-        private void calculateLight()
+        private void calculateLight(Loading load)
         {
             // turn off all light
-            for (int i = 0; i < tilesWide * tilesHigh; i++)
-            {
-                tiles[i].light = 0.0;
-                tiles[i].lightR = 0.0;
-                tiles[i].lightG = 0.0;
-                tiles[i].lightB = 0.0;
-            }
-            // light up light sources
             for (int y = 0; y < tilesHigh; y++)
             {
                 for (int x = 0; x < tilesWide; x++)
                 {
-                    int offset = x * tilesHigh + y;
-
-                    TileInfo inf = tileInfos[tiles[offset].type, tiles[offset].u, tiles[offset].v];
-                    if ((!tiles[offset].isActive || inf.transparent) &&
-                        (tiles[offset].wall == 0 || tiles[offset].wall==21) && tiles[offset].liquid < 255 && y < groundLevel) //sunlight
+                    Tile tile = tiles[x, y];
+                    tile.light = 0.0;
+                    tile.lightR = 0.0;
+                    tile.lightG = 0.0;
+                    tile.lightB = 0.0;
+                }
+            }
+            // light up light sources
+            for (int y = 0; y < tilesHigh; y++)
+            {
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                {
+                    load.status.Text = "Lighting tiles " + ((int)((float)y * 100.0 / (float)tilesHigh)) + "%";
+                }));
+                for (int x = 0; x < tilesWide; x++)
+                {
+                    Tile tile = tiles[x, y];
+                    TileInfo inf = tileInfos[tile.type, tile.u, tile.v];
+                    if ((!tile.isActive || inf.transparent) &&
+                        (tile.wall == 0 || tile.wall == 21) && tile.liquid < 255 && y < groundLevel) //sunlight
                     {
-                        tiles[offset].light = 1.0;
-                        tiles[offset].lightR = 1.0;
-                        tiles[offset].lightG = 1.0;
-                        tiles[offset].lightB = 1.0;
+                        tile.light = 1.0;
+                        tile.lightR = 1.0;
+                        tile.lightG = 1.0;
+                        tile.lightB = 1.0;
                     }
-                    if (tiles[offset].liquid > 0 && tiles[offset].isLava) //lava
+                    if (tile.liquid > 0 && tile.isLava) //lava
                     {
-                        tiles[offset].light = Math.Max(tiles[offset].light, (tiles[offset].liquid / 255)*0.38+0.1275);
+                        tile.light = Math.Max(tile.light, (tile.liquid / 255) * 0.38 + 0.1275);
                         // colored lava light's brightness is not affected by its level
-                        tiles[offset].lightR = Math.Max(tiles[offset].lightR, 0.66);
-                        tiles[offset].lightG = Math.Max(tiles[offset].lightG, 0.39);
-                        tiles[offset].lightB = Math.Max(tiles[offset].lightB, 0.13);
+                        tile.lightR = Math.Max(tile.lightR, 0.66);
+                        tile.lightG = Math.Max(tile.lightG, 0.39);
+                        tile.lightB = Math.Max(tile.lightB, 0.13);
                     }
-                    tiles[offset].light = Math.Max(tiles[offset].light, inf.light);
-                    tiles[offset].lightR = Math.Max(tiles[offset].lightR, inf.lightR);
-                    tiles[offset].lightG = Math.Max(tiles[offset].lightG, inf.lightG);
-                    tiles[offset].lightB = Math.Max(tiles[offset].lightB, inf.lightB);
+                    tile.light = Math.Max(tile.light, inf.light);
+                    tile.lightR = Math.Max(tile.lightR, inf.lightR);
+                    tile.lightG = Math.Max(tile.lightG, inf.lightG);
+                    tile.lightB = Math.Max(tile.lightB, inf.lightB);
                 }
             }
             // spread light
             for (int y = 0; y < tilesHigh; y++)
             {
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                {
+                    load.status.Text = "Spreading light " + ((int)((float)y * 50.0 / (float)tilesHigh)) + "%";
+                }));
                 for (int x = 0; x < tilesWide; x++)
                 {
-                    int offset = x * tilesHigh + y;
                     double delta = 0.04;
-                    TileInfo inf = tileInfos[tiles[offset].type, tiles[offset].u, tiles[offset].v];
-                    if (tiles[offset].isActive && !inf.transparent) delta = 0.16;
+                    Tile tile = tiles[x, y];
+                    TileInfo inf = tileInfos[tile.type, tile.u, tile.v];
+                    if (tile.isActive && !inf.transparent) delta = 0.16;
                     if (y > 0)
                     {
-                        if (tiles[offset - 1].light - delta > tiles[offset].light)
-                            tiles[offset].light = tiles[offset - 1].light - delta;
-                        if (tiles[offset - 1].lightR - delta > tiles[offset].lightR)
-                            tiles[offset].lightR = tiles[offset - 1].lightR - delta;
-                        if (tiles[offset - 1].lightG - delta > tiles[offset].lightG)
-                            tiles[offset].lightG = tiles[offset - 1].lightG - delta;
-                        if (tiles[offset - 1].lightB - delta > tiles[offset].lightB)
-                            tiles[offset].lightB = tiles[offset - 1].lightB - delta;
+                        if (tiles[x, y - 1].light - delta > tile.light)
+                            tile.light = tiles[x, y - 1].light - delta;
+                        if (tiles[x, y - 1].lightR - delta > tile.lightR)
+                            tile.lightR = tiles[x, y - 1].lightR - delta;
+                        if (tiles[x, y - 1].lightG - delta > tile.lightG)
+                            tile.lightG = tiles[x, y - 1].lightG - delta;
+                        if (tiles[x, y - 1].lightB - delta > tile.lightB)
+                            tile.lightB = tiles[x, y - 1].lightB - delta;
                     }
                     if (x > 0)
                     {
-                        if (tiles[offset - tilesHigh].light - delta > tiles[offset].light)
-                            tiles[offset].light = tiles[offset - tilesHigh].light - delta;
-                        if (tiles[offset - tilesHigh].lightR - delta > tiles[offset].lightR)
-                            tiles[offset].lightR = tiles[offset - tilesHigh].lightR - delta;
-                        if (tiles[offset - tilesHigh].lightG - delta > tiles[offset].lightG)
-                            tiles[offset].lightG = tiles[offset - tilesHigh].lightG - delta;
-                        if (tiles[offset - tilesHigh].lightB - delta > tiles[offset].lightB)
-                            tiles[offset].lightB = tiles[offset - tilesHigh].lightB - delta;
+                        if (tiles[x - 1, y].light - delta > tile.light)
+                            tile.light = tiles[x - 1, y].light - delta;
+                        if (tiles[x - 1, y].lightR - delta > tile.lightR)
+                            tile.lightR = tiles[x - 1, y].lightR - delta;
+                        if (tiles[x - 1, y].lightG - delta > tile.lightG)
+                            tile.lightG = tiles[x - 1, y].lightG - delta;
+                        if (tiles[x - 1, y].lightB - delta > tile.lightB)
+                            tile.lightB = tiles[x - 1, y].lightB - delta;
                     }
                 }
             }
             // spread light backwards
             for (int y = tilesHigh - 1; y >= 0; y--)
             {
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                {
+                    load.status.Text = "Spreading light " + ((int)((float)(tilesHigh-y) * 50.0 / (float)tilesHigh)+50) + "%";
+                }));
                 for (int x = tilesWide - 1; x >= 0; x--)
                 {
-                    int offset = x * tilesHigh + y;
                     double delta = 0.04;
-                    TileInfo inf = tileInfos[tiles[offset].type, tiles[offset].u, tiles[offset].v];
-                    if (tiles[offset].isActive && !inf.transparent) delta = 0.16;
+                    Tile tile = tiles[x, y];
+                    TileInfo inf = tileInfos[tile.type, tile.u, tile.v];
+                    if (tile.isActive && !inf.transparent) delta = 0.16;
                     if (y < tilesHigh - 1)
                     {
-                        if (tiles[offset + 1].light - delta > tiles[offset].light)
-                            tiles[offset].light = tiles[offset + 1].light - delta;
-                        if (tiles[offset + 1].lightR - delta > tiles[offset].lightR)
-                            tiles[offset].lightR = tiles[offset + 1].lightR - delta;
-                        if (tiles[offset + 1].lightG - delta > tiles[offset].lightG)
-                            tiles[offset].lightG = tiles[offset + 1].lightG - delta;
-                        if (tiles[offset + 1].lightB - delta > tiles[offset].lightB)
-                            tiles[offset].lightB = tiles[offset + 1].lightB - delta;
+                        if (tiles[x, y + 1].light - delta > tile.light)
+                            tile.light = tiles[x, y + 1].light - delta;
+                        if (tiles[x, y + 1].lightR - delta > tile.lightR)
+                            tile.lightR = tiles[x, y + 1].lightR - delta;
+                        if (tiles[x, y + 1].lightG - delta > tile.lightG)
+                            tile.lightG = tiles[x, y + 1].lightG - delta;
+                        if (tiles[x, y + 1].lightB - delta > tile.lightB)
+                            tile.lightB = tiles[x, y + 1].lightB - delta;
                     }
                     if (x < tilesWide - 1)
                     {
-                        if (tiles[offset + tilesHigh].light - delta > tiles[offset].light)
-                            tiles[offset].light = tiles[offset + tilesHigh].light - delta;
-                        if (tiles[offset + tilesHigh].lightR - delta > tiles[offset].lightR)
-                            tiles[offset].lightR = tiles[offset + tilesHigh].lightR - delta;
-                        if (tiles[offset + tilesHigh].lightG - delta > tiles[offset].lightG)
-                            tiles[offset].lightG = tiles[offset + tilesHigh].lightG - delta;
-                        if (tiles[offset + tilesHigh].lightB - delta > tiles[offset].lightB)
-                            tiles[offset].lightB = tiles[offset + tilesHigh].lightB - delta;
+                        if (tiles[x + 1, y].light - delta > tile.light)
+                            tile.light = tiles[x + 1, y].light - delta;
+                        if (tiles[x + 1, y].lightR - delta > tile.lightR)
+                            tile.lightR = tiles[x + 1, y].lightR - delta;
+                        if (tiles[x + 1, y].lightG - delta > tile.lightG)
+                            tile.lightG = tiles[x + 1, y].lightG - delta;
+                        if (tiles[x + 1, y].lightB - delta > tile.lightB)
+                            tile.lightB = tiles[x + 1, y].lightB - delta;
                     }
                 }
             }

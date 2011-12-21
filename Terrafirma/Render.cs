@@ -74,7 +74,6 @@ namespace Terrafirma
 
         private struct Delayed
         {
-            public int offset;
             public int px, py;
             public int sx, sy;
         };
@@ -83,7 +82,7 @@ namespace Terrafirma
             double startx, double starty,
             double scale, ref byte[] pixels,
             bool isHilight,
-            int light,bool texture,bool houses,bool wires,ref Tile[] tiles)
+            int light, bool texture, bool houses, bool wires, ref Tile[,] tiles)
         {
             if (texture)
             {
@@ -102,12 +101,12 @@ namespace Terrafirma
                 double shiftx = (startx - Math.Floor(startx)) * scale;
                 double shifty = (starty - Math.Floor(starty)) * scale;
                 int py, px;
-                
+
                 double lightR, lightG, lightB;
 
                 // draw backgrounds
 
-                int hellLevel = ((tilesHigh - 230)-groundLevel)/6; //rounded
+                int hellLevel = ((tilesHigh - 230) - groundLevel) / 6; //rounded
                 hellLevel = hellLevel * 6 + groundLevel - 5;
 
                 py = skipy * (int)scale;
@@ -151,16 +150,18 @@ namespace Terrafirma
                     for (int x = skipx; x < blocksWide; x++)
                     {
                         int sx = (int)(x + startx);
-                        int offset = sy + sx * tilesHigh;
                         if (sx < 0 || sx >= tilesWide || sy < 0 || sy >= tilesHigh)
                             continue;
+
+                        Tile tile = tiles[sx, sy];
+
                         if (light == 1)
-                            lightR = lightG = lightB = tiles[offset].light;
+                            lightR = lightG = lightB = tile.light;
                         else if (light == 2)
                         {
-                            lightR = tiles[offset].lightR;
-                            lightG = tiles[offset].lightG;
-                            lightB = tiles[offset].lightB;
+                            lightR = tile.lightR;
+                            lightG = tile.lightG;
+                            lightB = tile.lightB;
                         }
                         else
                             lightR = lightG = lightB = 1.0;
@@ -196,22 +197,23 @@ namespace Terrafirma
                     for (int x = skipx; x < blocksWide; x++)
                     {
                         int sx = (int)(x + startx);
-                        int offset = sy + sx * tilesHigh;
 
                         if (sx < 0 || sx >= tilesWide || sy < 0 || sy >= tilesHigh)
                             continue;
 
-                        if (tiles[offset].wall > 0)
+                        Tile tile = tiles[sx, sy];
+
+                        if (tile.wall > 0)
                         {
-                            if (tiles[offset].wallu == -1) fixWall(sx, sy, ref tiles);
-                            Texture tex = Textures.GetWall(tiles[offset].wall);
+                            if (tile.wallu == -1) fixWall(sx, sy, ref tiles);
+                            Texture tex = Textures.GetWall(tile.wall);
                             if (light == 1)
-                                lightR = lightG = lightB = tiles[offset].light;
+                                lightR = lightG = lightB = tile.light;
                             else if (light == 2)
                             {
-                                lightR = tiles[offset].lightR;
-                                lightG = tiles[offset].lightG;
-                                lightB = tiles[offset].lightB;
+                                lightR = tile.lightR;
+                                lightG = tile.lightG;
+                                lightB = tile.lightB;
                             }
                             else
                                 lightR = lightG = lightB = 1.0;
@@ -223,7 +225,7 @@ namespace Terrafirma
                                 lightB *= 0.3;
                             }
 
-                            drawTexture(tex, 32, 32, tiles[offset].wallv * tex.width * 4 * 2 + tiles[offset].wallu * 4 * 2,
+                            drawTexture(tex, 32, 32, tile.wallv * tex.width * 4 * 2 + tile.wallu * 4 * 2,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                         }
 
@@ -243,68 +245,69 @@ namespace Terrafirma
                     for (int x = skipx; x < blocksWide; x++)
                     {
                         int sx = (int)(x + startx);
-                        int offset = sy + sx * tilesHigh;
 
                         if (sx < 0 || sx >= tilesWide || sy < 0 || sy >= tilesHigh)
                             continue;
 
+                        Tile tile = tiles[sx, sy];
+
                         if (light == 1)
-                            lightR = lightG = lightB = tiles[offset].light;
+                            lightR = lightG = lightB = tiles[sx, sy].light;
                         else if (light == 2)
                         {
-                            lightR = tiles[offset].lightR;
-                            lightG = tiles[offset].lightG;
-                            lightB = tiles[offset].lightB;
+                            lightR = tile.lightR;
+                            lightG = tile.lightG;
+                            lightB = tile.lightB;
                         }
                         else
                             lightR = lightG = lightB = 1.0;
 
-                        if (isHilight && (!tiles[offset].isActive || !tileInfos[tiles[offset].type, tiles[offset].u, tiles[offset].v].isHilighting))
+                        if (isHilight && (!tile.isActive || !tileInfos[tile.type, tile.u, tile.v].isHilighting))
                         {
                             lightR *= 0.3;
                             lightG *= 0.3;
                             lightB *= 0.3;
                         }
 
-                        if (tiles[offset].isActive)
+                        if (tile.isActive)
                         {
-                            if (tiles[offset].u == -1) fixTile(sx, sy,ref tiles);
+                            if (tile.u == -1 || tile.v == -1) fixTile(sx, sy, ref tiles);
 
                             int texw = 16;
                             int texh = 16;
-                                                        
-                            if (tiles[offset].type == 5) //tree
+
+                            if (tile.type == 5) //tree
                                 texw = 20;
-                            if (tiles[offset].type == 72) //mushroom
-                                drawMushroom(tiles[offset].u, tiles[offset].v,
+                            if (tile.type == 72) //mushroom
+                                drawMushroom(tile.u, tile.v,
                                     pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
 
-                            if (tiles[offset].type == 103) //bowl
-                                if (tiles[offset].u == 18) texw = 14;
+                            if (tile.type == 103) //bowl
+                                if (tile.u == 18) texw = 14;
 
-                            if (tiles[offset].type == 5 && tiles[offset].v >= 198 && tiles[offset].u >= 22) //tree leaves
+                            if (tile.type == 5 && tile.v >= 198 && tile.u >= 22) //tree leaves
                             {
                                 Delayed delay = new Delayed();
-                                delay.offset = offset;
                                 delay.px = (int)(px - shiftx);
                                 delay.py = (int)(py - shifty);
                                 delay.sx = sx;
                                 delay.sy = sy;
                                 delayed.Add(delay);
                             }
-                            else if (tiles[offset].type == 128) //armor
+                            else if (tile.type == 128) //armor
                             {
-                                int au = tiles[offset].u % 100;
+                                int au = tile.u % 100;
                                 //draw armor stand
-                                Texture tex = Textures.GetTile(tiles[offset].type);
-                                drawTexture(tex, texw, texh, tiles[offset].v * tex.width * 4 + au * 4,
+                                Texture tex = Textures.GetTile(tile.type);
+                                drawTexture(tex, texw, texh, tile.v * tex.width * 4 + au * 4,
                                     pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                                 //draw armor
-                                int armor = tiles[offset].u / 100;
+                                int armor = tile.u / 100;
                                 if (armor > 0)
                                 {
                                     Delayed delay = new Delayed();
-                                    delay.offset = offset;
+                                    delay.sx = sx;
+                                    delay.sy = sy;
                                     delay.px = (int)(px - shiftx);
                                     delay.py = (int)(py - shifty);
                                     delayed.Add(delay);
@@ -312,27 +315,27 @@ namespace Terrafirma
                             }
                             else
                             {
-                                Texture tex = Textures.GetTile(tiles[offset].type);
-                                drawTexture(tex, texw, texh, tiles[offset].v * tex.width * 4 + tiles[offset].u * 4,
+                                Texture tex = Textures.GetTile(tile.type);
+                                drawTexture(tex, texw, texh, tile.v * tex.width * 4 + tile.u * 4,
                                     pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                             }
                         }
                         // draw liquid
-                        if (tiles[offset].liquid > 0)
+                        if (tile.liquid > 0)
                         {
-                            UInt32 c = tiles[offset].isLava ? lavaColor : waterColor;
-                            uint r = (uint)((c >> 16)*lightR);
-                            uint g = (uint)(((c >> 8) & 0xff)*lightG);
-                            uint b = (uint)((c & 0xff)*lightB);
+                            UInt32 c = tile.isLava ? lavaColor : waterColor;
+                            uint r = (uint)((c >> 16) * lightR);
+                            uint g = (uint)(((c >> 8) & 0xff) * lightG);
+                            uint b = (uint)((c & 0xff) * lightB);
                             c = (r << 16) | (g << 8) | b;
-                            drawOverlay(c, tiles[offset].isLava?0.85:0.5, tiles[offset].liquid,
+                            drawOverlay(c, tile.isLava ? 0.85 : 0.5, tile.liquid,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                         }
                         // draw wires if necessary
-                        if (wires && tiles[offset].hasWire)
+                        if (wires && tile.hasWire)
                         {
                             drawWire(sx, sy, pixels,
-                                (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0,lightR,lightG,lightB, ref tiles);
+                                (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, ref tiles);
                         }
                         px += (int)scale;
                     }
@@ -343,31 +346,32 @@ namespace Terrafirma
                 foreach (Delayed delay in delayed)
                 {
                     Texture tex;
+                    Tile tile = tiles[delay.sx, delay.sy];
                     int texw = 16, texh = 16;
                     if (light == 1)
-                        lightR = lightG = lightB = tiles[delay.offset].light;
+                        lightR = lightG = lightB = tiles[delay.sx, delay.sy].light;
                     else if (light == 2)
                     {
-                        lightR = tiles[delay.offset].lightR;
-                        lightG = tiles[delay.offset].lightG;
-                        lightB = tiles[delay.offset].lightB;
+                        lightR = tile.lightR;
+                        lightG = tile.lightG;
+                        lightB = tile.lightB;
                     }
                     else
                         lightR = lightG = lightB = 1.0;
 
-                    if (isHilight && !tileInfos[tiles[delay.offset].type, tiles[delay.offset].u, tiles[delay.offset].v].isHilighting)
+                    if (isHilight && !tileInfos[tile.type, tile.u, tile.v].isHilighting)
                     {
                         lightR *= 0.3;
                         lightG *= 0.3;
                         lightB *= 0.3;
                     }
 
-                    if (tiles[delay.offset].type == 128) //armor
+                    if (tile.type == 128) //armor
                     {
-                        int dy=8;
-                        int au = tiles[delay.offset].u % 100;
-                        int armor = tiles[delay.offset].u / 100;
-                        switch (tiles[delay.offset].v)
+                        int dy = 8;
+                        int au = tile.u % 100;
+                        int armor = tile.u / 100;
+                        switch (tile.v)
                         {
                             case 0: //head
                                 tex = Textures.GetArmorHead(armor);
@@ -390,14 +394,14 @@ namespace Terrafirma
                         }
                         if (au >= 36) //reverse
                             drawTexture(tex, texw, texh, 0,
-                                pixels, delay.px-4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB);
+                                pixels, delay.px - 4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB);
                         else
                             drawTextureFlip(tex, texw, texh, 0,
-                                pixels, delay.px-4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB);
+                                pixels, delay.px - 4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB);
                     }
-                    else if (tiles[delay.offset].type == 5) //tree leaves
+                    else if (tile.type == 5) //tree leaves
                     {
-                        drawLeaves(tiles[delay.offset].u, tiles[delay.offset].v, delay.sx, delay.sy,
+                        drawLeaves(tile.u, tile.v, delay.sx, delay.sy,
                                    pixels, delay.px, delay.py, width, height, scale / 16.0, lightR, lightG, lightB, ref tiles);
                     }
                 }
@@ -412,7 +416,7 @@ namespace Terrafirma
                     if (npc.sprite != 0 && (npc.x / 16) >= minx && (npc.x / 16) < maxx &&
                         (npc.y / 16) >= miny && (npc.y / 16) < maxy) //npc on screen
                     {
-                        Tile t=tiles[(int)(npc.y/16)+((int)(npc.x/16))*tilesHigh];
+                        Tile t = tiles[(int)(npc.x / 16), (int)(npc.y / 16)];
                         if (light == 1)
                             lightR = lightG = lightB = t.light;
                         else if (light == 2)
@@ -425,22 +429,22 @@ namespace Terrafirma
                             lightR = lightG = lightB = 1.0;
                         if (isHilight)
                         {
-                            lightR*=0.3;
-                            lightG*=0.3;
-                            lightB*=0.3;
+                            lightR *= 0.3;
+                            lightG *= 0.3;
+                            lightB *= 0.3;
                         }
                         Texture tex = Textures.GetNPC(npc.sprite);
                         px = (int)(skipx + npc.x / 16 - (int)startx) * (int)scale - (int)(scale / 4);
                         py = (int)(skipy + npc.y / 16 - (int)starty) * (int)scale - (int)(scale / 4);
                         drawTexture(tex, 40, 56, 0, pixels,
-                            (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0,lightR,lightG,lightB);
+                            (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                     }
                     if (houses && npc.num != 0)
                     {
                         //calc home x and y
                         int hx = npc.homeX;
                         int hy = npc.homeY - 1;
-                        while (!tiles[hy + hx * tilesHigh].isActive || !tileInfos[tiles[hy + hx * tilesHigh].type].solid)
+                        while (!tiles[hx, hy].isActive || !tileInfos[tiles[hx, hy].type].solid)
                         {
                             hy--;
                             if (hy < 10) break;
@@ -448,7 +452,7 @@ namespace Terrafirma
                         hy++;
                         if (hx >= minx && hx < maxx && hy >= miny && hy < maxy) //banner on screen
                         {
-                            Tile t = tiles[hy + hx * tilesHigh];
+                            Tile t = tiles[hx, hy];
                             if (light == 1)
                                 lightR = lightG = lightB = t.light;
                             else if (light == 2)
@@ -461,13 +465,13 @@ namespace Terrafirma
                                 lightR = lightG = lightB = 1.0;
                             if (isHilight)
                             {
-                                lightR*=0.3;
-                                lightG*=0.3;
-                                lightB*=0.3;
+                                lightR *= 0.3;
+                                lightG *= 0.3;
+                                lightB *= 0.3;
                             }
 
                             int dy = 18;
-                            if (tiles[hy - 1 + hx * tilesHigh].type == 19) //platform
+                            if (tiles[hx, hy - 1].type == 19) //platform
                                 dy -= 8;
                             px = (int)(skipx + hx - (int)startx) * (int)scale + (int)(scale / 2);
                             py = (int)(skipy + hy - (int)starty) * (int)scale + (int)(dy * scale / 16);
@@ -494,7 +498,7 @@ namespace Terrafirma
                     for (int x = 0; x < width; x++)
                     {
                         int sx = (int)(x / scale + startx);
-                        int offset = sy + sx * tilesHigh;
+                        Tile tile = tiles[sx, sy];
                         UInt32 c = 0xffffff;
                         if (sx >= 0 && sx < tilesWide && sy >= 0 && sy < tilesHigh)
                         {
@@ -508,29 +512,29 @@ namespace Terrafirma
                                 double alpha = (double)(sy - rockLevel) / (double)(tilesHigh - rockLevel);
                                 c = alphaBlend(rockColor, hellColor, alpha);
                             }
-                            if (tiles[offset].wall > 0)
+                            if (tile.wall > 0)
                             {
-                                c = wallInfo[tiles[offset].wall].color;
+                                c = wallInfo[tile.wall].color;
                             }
-                            if (tiles[offset].isActive)
+                            if (tile.isActive)
                             {
-                                c = tileInfos[tiles[offset].type, tiles[offset].u, tiles[offset].v].color;
-                                if (isHilight && tileInfos[tiles[offset].type,tiles[offset].u,tiles[offset].v].isHilighting)
+                                c = tileInfos[tile.type, tile.u, tile.v].color;
+                                if (isHilight && tileInfos[tile.type, tile.u, tile.v].isHilighting)
                                     c = alphaBlend(c, 0xff88ff, 0.9);
                             }
-                            if (tiles[offset].liquid > 0)
-                                c = alphaBlend(c, tiles[offset].isLava ? lavaColor : waterColor, 0.5);
-                            if (light==1)
-                                c = alphaBlend(0, c, tiles[offset].light);
+                            if (tile.liquid > 0)
+                                c = alphaBlend(c, tile.isLava ? lavaColor : waterColor, 0.5);
+                            if (light == 1)
+                                c = alphaBlend(0, c, tile.light);
                             else if (light == 2)
                             {
                                 uint r, g, b;
-                                r = (uint)((c >> 16) * tiles[offset].lightR);
-                                g = (uint)(((c >> 8) & 0xff) * tiles[offset].lightG);
-                                b = (uint)((c & 0xff) * tiles[offset].lightB);
+                                r = (uint)((c >> 16) * tile.lightR);
+                                g = (uint)(((c >> 8) & 0xff) * tile.lightG);
+                                b = (uint)((c & 0xff) * tile.lightB);
                                 c = (r << 16) | (g << 8) | b;
                             }
-                            if (isHilight && (!tiles[offset].isActive || !tileInfos[tiles[offset].type,tiles[offset].u,tiles[offset].v].isHilighting))
+                            if (isHilight && (!tile.isActive || !tileInfos[tile.type, tile.u, tile.v].isHilighting))
                                 c = alphaBlend(0, c, 0.3);
                         }
                         pixels[bofs++] = (byte)(c & 0xff);
@@ -541,33 +545,33 @@ namespace Terrafirma
                 }
             }
         }
-
-        private int findCorruptGrass(int ofs,ref Tile[] tiles)
+        private int findCorruptGrass(int x, int y, ref Tile[,] tiles)
         {
             for (int i = 0; i < 100; i++)
             {
-                if (tiles[ofs + i].type == 2) //normal grass
+                Tile tile = tiles[x, y + i];
+                if (tile.type == 2) //normal grass
                     return 0;
-                if (tiles[ofs + i].type == 23) //corrupt grass
+                if (tile.type == 23) //corrupt grass
                     return 1;
-                if (tiles[ofs + i].type == 60) //jungle grass
+                if (tile.type == 60) //jungle grass
                     return 2;
-                if (tiles[ofs + i].type == 109) //hallowed grass
+                if (tile.type == 109) //hallowed grass
                     return 3;
-                if (tiles[ofs + i].type == 147) //snow block
+                if (tile.type == 147) //snow block
                     return 4;
             }
             return 0;
         }
 
-        private void drawWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom, double lightR, double lightG, double lightB, ref Tile[] tiles)
+        private void drawWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom, double lightR, double lightG, double lightB, ref Tile[,] tiles)
         {
             int mask = 0;
             //udlr
-            if (sx < tilesWide - 1 && tiles[sy + (sx + 1) * tilesHigh].hasWire) mask |= 1; //right
-            if (sx > 0 && tiles[sy + (sx - 1) * tilesHigh].hasWire) mask |= 2; //left
-            if (sy < tilesHigh - 1 && tiles[sy + 1 + sx * tilesHigh].hasWire) mask |= 4; //down
-            if (sy > 0 && tiles[sy - 1 + sx * tilesHigh].hasWire) mask |= 8; //up
+            if (sx < tilesWide - 1 && tiles[sx + 1, sy].hasWire) mask |= 1; //right
+            if (sx > 0 && tiles[sx - 1, sy].hasWire) mask |= 2; //left
+            if (sy < tilesHigh - 1 && tiles[sx, sy + 1].hasWire) mask |= 4; //down
+            if (sy > 0 && tiles[sx, sy - 1].hasWire) mask |= 8; //up
             Texture tex = Textures.GetWire(0);
             drawTexture(tex, 16, 16, uvWires[mask * 2 + 1] * tex.width * 4 + uvWires[mask * 2] * 4, pixels,
                 px, py, w, h, zoom, lightR, lightG, lightB);
@@ -575,7 +579,7 @@ namespace Terrafirma
 
         private void drawLeaves(int u, int v, int sx, int sy,
             byte[] pixels, int px, int py,
-            int w, int h, double zoom, double lightR, double lightG, double lightB, ref Tile[] tiles)
+            int w, int h, double zoom, double lightR, double lightG, double lightB, ref Tile[,] tiles)
         {
             if (u < 22 || v < 198) return; //not a leaf
             int variant = 0;
@@ -587,7 +591,7 @@ namespace Terrafirma
             switch (u)
             {
                 case 22: //tree top
-                    leafType = findCorruptGrass(sy + sx * tilesHigh, ref tiles);
+                    leafType = findCorruptGrass(sx, sy, ref tiles);
                     tex = Textures.GetTreeTops(leafType);
                     if (leafType == 3) //hallowed
                     {
@@ -603,7 +607,7 @@ namespace Terrafirma
                             px - (int)(30 * zoom), py - (int)(62 * zoom), w, h, zoom, lightR, lightG, lightB);
                     break;
                 case 44: //left branch
-                    leafType = findCorruptGrass(sy + (sx + 1) * tilesHigh,ref tiles);
+                    leafType = findCorruptGrass(sx + 1, sy, ref tiles);
                     tex = Textures.GetTreeBranches(leafType);
                     if (leafType == 3) //hallowed
                         variant += (sx % 3) * 3;
@@ -611,7 +615,7 @@ namespace Terrafirma
                         px - (int)(22 * zoom), py - (int)(12 * zoom), w, h, zoom, lightR, lightG, lightB);
                     break;
                 case 66: //right branch
-                    leafType = findCorruptGrass(sy + (sx - 1) * tilesHigh, ref tiles);
+                    leafType = findCorruptGrass(sx - 1, sy, ref tiles);
                     tex = Textures.GetTreeBranches(leafType);
                     if (leafType == 3) //hallowed
                         variant += (sx % 3) * 3;
@@ -637,7 +641,7 @@ namespace Terrafirma
 
         void drawTexture(Texture tex, int bw, int bh, int tofs,
             byte[] pixels, int px, int py,
-            int w, int h, double zoom, double lightR,double lightG,double lightB)
+            int w, int h, double zoom, double lightR, double lightG, double lightB)
         {
             int tw = (int)(bw * zoom);
             int th = (int)(bh * zoom);
@@ -691,7 +695,7 @@ namespace Terrafirma
         }
         void drawTextureFlip(Texture tex, int bw, int bh, int tofs,
             byte[] pixels, int px, int py,
-            int w, int h, double zoom,double lightR,double lightG,double lightB)
+            int w, int h, double zoom, double lightR, double lightG, double lightB)
         {
             int tw = (int)(bw * zoom);
             int th = (int)(bh * zoom);
@@ -752,7 +756,7 @@ namespace Terrafirma
             if (bw <= 0) return;
             if (py < 0) skipy = -py;
             int bh = (int)(zoom * 16);
-            skipy += bh-(amount * bh / 255);
+            skipy += bh - (amount * bh / 255);
             if (py + bh >= h) bh = h - py;
             if (bh <= 0) return;
             int bofs = py * w * 4 + px * 4;
@@ -783,7 +787,7 @@ namespace Terrafirma
 
         class UVRule
         {
-            public UInt32 mask,val;
+            public UInt32 mask, val;
             public Int16[] uvs;
             public byte blend;
             public UVRule(UInt32 m, UInt32 v, Int16 u1, Int16 v1, Int16 u2, Int16 v2,
@@ -1099,65 +1103,57 @@ namespace Terrafirma
                         18,18       //1111
                           };
 
-        private byte fixTile(int x, int y,ref Tile[] tiles)
+        private byte fixTile(int x, int y, ref Tile[,] tiles)
         {
             int t = -1, l = -1, r = -1, b = -1;
             int tl = -1, tr = -1, bl = -1, br = -1;
-            byte c = tiles[y + x * tilesHigh].type;
+            byte c = tiles[x, y].type;
             Int16 u;
             int set = rand.Next(0, 3) * 2;
 
             if (x > 0)
             {
-                int xx = (x - 1) * tilesHigh;
-                if (tiles[y + xx].isActive)
-                    l = tiles[y + xx].type;
+                if (tiles[x - 1, y].isActive)
+                    l = tiles[x - 1, y].type;
                 if (y > 0)
                 {
-                    if (tiles[(y - 1) + xx].isActive)
-                        tl = tiles[(y - 1) + xx].type;
+                    if (tiles[x - 1, y - 1].isActive)
+                        tl = tiles[x - 1, y - 1].type;
                 }
                 if (y < tilesHigh - 1)
                 {
-                    if (tiles[(y + 1) + xx].isActive)
-                        bl = tiles[(y + 1) + xx].type;
+                    if (tiles[x - 1, y + 1].isActive)
+                        bl = tiles[x - 1, y + 1].type;
                 }
             }
             if (x < tilesWide - 1)
             {
-                int xx = (x + 1) * tilesHigh;
-                if (tiles[y + xx].isActive)
-                    r = tiles[y + xx].type;
+                if (tiles[x + 1, y].isActive)
+                    r = tiles[x + 1, y].type;
                 if (y > 0)
                 {
-                    if (tiles[(y - 1) + xx].isActive)
-                        tr = tiles[(y - 1) + xx].type;
+                    if (tiles[x + 1, y - 1].isActive)
+                        tr = tiles[x + 1, y - 1].type;
                 }
                 if (y < tilesHigh - 1)
                 {
-                    if (tiles[(y + 1) + xx].isActive)
-                        br = tiles[(y + 1) + xx].type;
+                    if (tiles[x + 1, y + 1].isActive)
+                        br = tiles[x + 1, y + 1].type;
                 }
             }
             if (y > 0)
-            {
-                int xx = x * tilesHigh;
-                if (tiles[(y - 1) + xx].isActive)
-                    t = tiles[(y - 1) + xx].type;
-            }
+                if (tiles[x, y - 1].isActive)
+                    t = tiles[x, y - 1].type;
             if (y < tilesHigh - 1)
-            {
-                int xx = x * tilesHigh;
-                if (tiles[(y + 1) + xx].isActive)
-                    b = tiles[(y + 1) + xx].type;
-            }
+                if (tiles[x, y + 1].isActive)
+                    b = tiles[x, y + 1].type;
 
             int mask;
             if (c == 33 || c == 49) //candles
             {
                 // these tiles don't have u/v, but are single tiles
-                tiles[y + x * tilesHigh].u = 0;
-                tiles[y + x * tilesHigh].v = 0;
+                tiles[x, y].u = 0;
+                tiles[x, y].v = 0;
                 return 0;
             }
             if (c == 4) //torch
@@ -1169,13 +1165,13 @@ namespace Terrafirma
                     if (l >= 0) u = 22;
                     else u = 44;
                 }
-                tiles[y + x * tilesHigh].u = u;
-                tiles[y + x * tilesHigh].v = 0;
+                tiles[x, y].u = u;
+                tiles[x, y].v = 0;
                 return 0;
             }
             if (c == 80) //cactus
             {
-                fixCactus(x, y, t,b,l,r,bl,br, ref tiles);
+                fixCactus(x, y, t, b, l, r, bl, br, ref tiles);
                 return 0;
             }
             if (c == 19) //wooden platform
@@ -1186,8 +1182,8 @@ namespace Terrafirma
                 if (r == c) mask |= 4;
                 if (l == -1) mask |= 2;
                 if (r == -1) mask |= 1;
-                tiles[y + x * tilesHigh].u = uvPlatforms[mask * 2];
-                tiles[y + x * tilesHigh].v = uvPlatforms[mask * 2 + 1];
+                tiles[x, y].u = uvPlatforms[mask * 2];
+                tiles[x, y].v = uvPlatforms[mask * 2 + 1];
                 return 0;
             }
 
@@ -1249,8 +1245,8 @@ namespace Terrafirma
                 {
                     if ((mask & rule.mask) == rule.val)
                     {
-                        tiles[y + x * tilesHigh].u = rule.uvs[set];
-                        tiles[y + x * tilesHigh].v = rule.uvs[set + 1];
+                        tiles[x, y].u = rule.uvs[set];
+                        tiles[x, y].v = rule.uvs[set + 1];
                         return rule.blend;
                     }
                 }
@@ -1261,8 +1257,8 @@ namespace Terrafirma
                 {
                     if ((mask & rule.mask) == rule.val)
                     {
-                        tiles[y + x * tilesHigh].u = rule.uvs[set];
-                        tiles[y + x * tilesHigh].v = rule.uvs[set + 1];
+                        tiles[x, y].u = rule.uvs[set];
+                        tiles[x, y].v = rule.uvs[set + 1];
                         return rule.blend;
                     }
                 }
@@ -1273,8 +1269,8 @@ namespace Terrafirma
                 {
                     if ((mask & rule.mask) == rule.val)
                     {
-                        tiles[y + x * tilesHigh].u = rule.uvs[set];
-                        tiles[y + x * tilesHigh].v = rule.uvs[set + 1];
+                        tiles[x, y].u = rule.uvs[set];
+                        tiles[x, y].v = rule.uvs[set + 1];
                         return rule.blend;
                     }
                 }
@@ -1288,43 +1284,41 @@ namespace Terrafirma
             {
                 if ((mask & rule.mask) == rule.val)
                 {
-                    tiles[y + x * tilesHigh].u = rule.uvs[set];
-                    tiles[y + x * tilesHigh].v = rule.uvs[set + 1];
+                    tiles[x, y].u = rule.uvs[set];
+                    tiles[x, y].v = rule.uvs[set + 1];
                     return rule.blend;
                 }
             }
             //should be impossible to get here.
             return 0;
         }
-        private void fixWall(int x, int y, ref Tile[] tiles)
+        private void fixWall(int x, int y, ref Tile[,] tiles)
         {
             byte t = 0, l = 0, r = 0, b = 0;
             byte tl = 0, tr = 0, bl = 0, br = 0;
-            byte c = tiles[y + x * tilesHigh].wall;
+            byte c = tiles[x, y].wall;
             int set = rand.Next(0, 3) * 2;
 
             if (x > 0)
             {
-                int xx = (x - 1) * tilesHigh;
-                l = tiles[y + xx].wall;
+                l = tiles[x - 1, y].wall;
                 if (y > 0)
-                    tl = tiles[(y - 1) + xx].wall;
+                    tl = tiles[x - 1, y - 1].wall;
                 if (y < tilesHigh - 1)
-                    bl = tiles[(y + 1) + xx].wall;
+                    bl = tiles[x - 1, y + 1].wall;
             }
             if (x < tilesWide - 1)
             {
-                int xx = (x + 1) * tilesHigh;
-                r = tiles[y + xx].wall;
+                r = tiles[x + 1, y].wall;
                 if (y > 0)
-                    tr = tiles[(y - 1) + xx].wall;
+                    tr = tiles[x + 1, y - 1].wall;
                 if (y < tilesHigh - 1)
-                    br = tiles[(y + 1) + xx].wall;
+                    br = tiles[x + 1, y + 1].wall;
             }
             if (y > 0)
-                t = tiles[(y - 1) + x * tilesHigh].wall;
+                t = tiles[x, y - 1].wall;
             if (y < tilesHigh - 1)
-                b = tiles[(y + 1) + x * tilesHigh].wall;
+                b = tiles[x, y + 1].wall;
 
             int mask = 0;
             if (t == c) mask |= 0x80000;
@@ -1336,45 +1330,39 @@ namespace Terrafirma
             if (bl == c) mask |= 0x220;
             if (br == c) mask |= 0x110;
 
-            foreach (UVRule rule in uvRules[mask>>16])
+            foreach (UVRule rule in uvRules[mask >> 16])
             {
                 if ((mask & rule.mask) == rule.val)
                 {
-                    tiles[y + x * tilesHigh].wallu = rule.uvs[set];
-                    tiles[y + x * tilesHigh].wallv = rule.uvs[set + 1];
+                    tiles[x, y].wallu = rule.uvs[set];
+                    tiles[x, y].wallv = rule.uvs[set + 1];
                     return;
                 }
             }
             //again, impossible to be here.
         }
 
-        private void fixCactus(int x, int y, int t, int b, int l, int r, int bl, int br, ref Tile[] tiles)
+        private void fixCactus(int x, int y, int t, int b, int l, int r, int bl, int br, ref Tile[,] tiles)
         {
             //find the base of the cactus
             int basex = x;
-            int baseofs = y + x * tilesHigh;
-            while (tiles[baseofs].isActive &&
-                tiles[baseofs].type == 80)
+            int basey = y;
+            while (tiles[basex, basey].isActive &&
+                tiles[basex, basey].type == 80)
             {
-                baseofs++;
-                if (!tiles[baseofs].isActive || tiles[baseofs].type != 80)
+                basey++;
+                if (!tiles[basex, basey].isActive || tiles[basex, basey].type != 80)
                 {
-                    if (tiles[baseofs - tilesHigh].isActive &&
-                        tiles[baseofs - tilesHigh].type == 80 &&
-                        tiles[baseofs - tilesHigh - 1].isActive &&
-                        tiles[baseofs - tilesHigh - 1].type == 80 && basex >= x)
-                    {
+                    if (tiles[basex - 1, basey].isActive &&
+                        tiles[basex - 1, basey].type == 80 &&
+                        tiles[basex - 1, basey - 1].isActive &&
+                        tiles[basex - 1, basey - 1].type == 80 && basex >= x)
                         basex--;
-                        baseofs -= tilesHigh;
-                    }
-                    if (tiles[baseofs + tilesHigh].isActive &&
-                        tiles[baseofs + tilesHigh].type == 80 &&
-                        tiles[baseofs + tilesHigh - 1].isActive &&
-                        tiles[baseofs + tilesHigh - 1].type == 80 && basex <= x)
-                    {
+                    if (tiles[basex + 1, basey].isActive &&
+                        tiles[basex + 1, basey].type == 80 &&
+                        tiles[basex + 1, basey - 1].isActive &&
+                        tiles[basex + 1, basey - 1].type == 80 && basex <= x)
                         basex++;
-                        baseofs += tilesHigh;
-                    }
                 }
             }
 
@@ -1392,8 +1380,8 @@ namespace Terrafirma
             {
                 if ((mask & rule.mask) == rule.val)
                 {
-                    tiles[y + x * tilesHigh].u = rule.uvs[0];
-                    tiles[y + x * tilesHigh].v = rule.uvs[1];
+                    tiles[x, y].u = rule.uvs[0];
+                    tiles[x, y].v = rule.uvs[1];
                     return;
                 }
             }
