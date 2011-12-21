@@ -33,9 +33,12 @@
                 <Separator />
                 <MenuItem Command="w:MapCommands.Hilight" />
                 <MenuItem Command="w:MapCommands.StopHilight" />
+                <Separator />
+                <MenuItem Command="w:MapCommands.ShowStats" />
             </MenuItem>
             <MenuItem Header="_Navigate">
                 <MenuItem Command="w:MapCommands.JumpToSpawn" />
+                <MenuItem Command="w:MapCommands.JumpToDungeon" />
                 <MenuItem Header="NPCs" IsEnabled="False" Name="NPCs" />
             </MenuItem>
         </Menu>
@@ -91,5 +94,11 @@
         <CommandBinding Command="w:MapCommands.ConnectToServer"
                         Executed="ConnectToServer_Executed"
                         CanExecute="Open_CanExecute" />
+        <CommandBinding Command="w:MapCommands.ShowStats"
+                        Executed="ShowStats_Executed"
+                        CanExecute="MapLoaded" />
+        <CommandBinding Command="w:MapCommands.JumpToDungeon"
+                        Executed="JumpToDungeon_Executed"
+                        CanExecute="MapLoaded" />
     </Window.CommandBindings>
 </Window>

@@ -77,6 +77,9 @@
       <DependentUpon>SignPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Textures.cs" />
+    <Compile Include="WorldStats.xaml.cs">
+      <DependentUpon>WorldStats.xaml</DependentUpon>
+    </Compile>
     <Page Include="ChestPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -127,6 +130,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SignPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WorldStats.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

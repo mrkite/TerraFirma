@@ -247,6 +247,20 @@ namespace Terrafirma
         List<Chest> chests = new List<Chest>();
         List<Sign> signs = new List<Sign>();
         List<NPC> npcs = new List<NPC>();
+
+        double gameTime;
+        bool dayNight,bloodMoon;
+        int moonPhase;
+        Int32 dungeonX, dungeonY;
+        bool killedBoss1, killedBoss2, killedBoss3, killedGoblins, killedClown, killedFrost;
+        bool savedTinkerer, savedWizard, savedMechanic;
+        bool smashedOrb, meteorSpawned;
+        byte shadowOrbCount;
+        Int32 altarsSmashed;
+        bool hardMode;
+        Int32 goblinsDelay, goblinsSize, goblinsType;
+        double goblinsX;
+
         Render render;
 
         TileInfos tileInfos;
@@ -431,18 +445,42 @@ namespace Terrafirma
                         spawnY = b.ReadInt32();
                         groundLevel = (int)b.ReadDouble();
                         rockLevel = (int)b.ReadDouble();
-                        int flaglen = 48;
-                        if (version >= 0x17)
-                            flaglen += 5;
-                        if (version >= 0x1d)
-                            flaglen += 3;
-                        if (version >= 0x20)
-                            flaglen++;
-                        if (version >= 0x22)
-                            flaglen++;
-                        if (version >= 0x25)
-                            flaglen++;
-                        b.BaseStream.Seek(flaglen, SeekOrigin.Current); //skip flags and other settings
+                        gameTime = b.ReadDouble();
+                        dayNight = b.ReadBoolean();
+                        moonPhase = b.ReadInt32();
+                        bloodMoon = b.ReadBoolean();
+                        dungeonX = b.ReadInt32();
+                        dungeonY = b.ReadInt32();
+                        killedBoss1 = b.ReadBoolean();
+                        killedBoss2 = b.ReadBoolean();
+                        killedBoss3 = b.ReadBoolean();
+                        savedTinkerer = savedWizard = savedMechanic = killedGoblins = killedClown = killedFrost = false;
+                        if (version >= 29)
+                        {
+                            savedTinkerer = b.ReadBoolean();
+                            savedWizard = b.ReadBoolean();
+                            if (version >= 34)
+                                savedMechanic = b.ReadBoolean();
+                            killedGoblins = b.ReadBoolean();
+                            if (version >= 32)
+                                killedClown = b.ReadBoolean();
+                            if (version >= 37)
+                                killedFrost = b.ReadBoolean();
+                        }
+                        smashedOrb = b.ReadBoolean();
+                        meteorSpawned = b.ReadBoolean();
+                        shadowOrbCount = b.ReadByte();
+                        altarsSmashed = 0;
+                        hardMode = false;
+                        if (version >= 23)
+                        {
+                            altarsSmashed = b.ReadInt32();
+                            hardMode = b.ReadBoolean();
+                        }
+                        goblinsDelay = b.ReadInt32();
+                        goblinsSize = b.ReadInt32();
+                        goblinsType = b.ReadInt32();
+                        goblinsX = b.ReadDouble();
                         for (int y = 0; y < tilesHigh; y++)
                         {
                             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
@@ -1422,6 +1460,31 @@ namespace Terrafirma
         private void MapLoaded(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = loaded;
+        }
+
+        private void JumpToDungeon_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            curX = dungeonX;
+            curY = dungeonY;
+            RenderMap();
+        }
+        private void ShowStats_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            WorldStats stats = new WorldStats();
+            stats.Add("Eye of Cthulu", killedBoss1 ? "Defeated" : "Undefeated");
+            stats.Add("Eater of Worlds", killedBoss2 ? "Defeated" : "Undefeated");
+            stats.Add("Skeletron", killedBoss3 ? "Defeated" : "Undefeated");
+            stats.Add("Wall of Flesh", hardMode ? "Defeated" : "Undefeated");
+            stats.Add("Goblin Invasion", killedGoblins ? "Destroyed" : goblinsDelay == 0 ? "Ongoing" : "In " + goblinsDelay);
+            stats.Add("Clown", killedClown ? "Dead" : "Nope!");
+            stats.Add("Frost Horde", killedFrost ? "Destroyed" : "Unsummoned");
+            stats.Add("Tinkerer", savedTinkerer ? "Saved" : killedGoblins ? "Bound" : "Not present yet");
+            stats.Add("Wizard", savedWizard ? "Saved" : hardMode ? "Bound" : "Not present yet");
+            stats.Add("Mechanic", savedMechanic ? "Saved" : killedBoss3 ? "Bound" : "Not present yet");
+            stats.Add("Game Mode", hardMode ? "Hard" : "Normal");
+            stats.Add("Broke a Shadow Orb", smashedOrb ? "Yes" : "Not Yet");
+            stats.Add("Altars Smashed", altarsSmashed.ToString());
+            stats.Show();
         }
 
         private void initWindow(object sender, EventArgs e)
