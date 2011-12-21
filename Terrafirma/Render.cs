@@ -498,10 +498,10 @@ namespace Terrafirma
                     for (int x = 0; x < width; x++)
                     {
                         int sx = (int)(x / scale + startx);
-                        Tile tile = tiles[sx, sy];
                         UInt32 c = 0xffffff;
                         if (sx >= 0 && sx < tilesWide && sy >= 0 && sy < tilesHigh)
                         {
+                            Tile tile = tiles[sx, sy];
                             if (sy < groundLevel)
                                 c = skyColor;
                             else if (sy < rockLevel)
