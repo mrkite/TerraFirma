@@ -408,8 +408,8 @@ namespace Terrafirma
             load.Show();
             ThreadStart loadThread = delegate()
             {
-               // try
-               // {
+                try
+                {
                     currentWorld = world;
                     bool foundInvalid = false;
 
@@ -672,7 +672,7 @@ namespace Terrafirma
                             load.Close();
                             done();
                         }));
-                /*}
+                }
                 catch (Exception e)
                 {
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
@@ -682,7 +682,7 @@ namespace Terrafirma
                             load.Close();
                             done();
                         }));
-                }*/
+                }
             };
             new Thread(loadThread).Start();
         }
@@ -866,7 +866,7 @@ namespace Terrafirma
 
                 int sx, sy;
                 getMapXY(curPos, out sx, out sy);
-                if (sx >= 0 && sx < tilesWide && sy >= 0 && sy < tilesHigh)
+                if (sx >= 0 && sx < tilesWide && sy >= 0 && sy < tilesHigh && loaded)
                 {
                     string label = "Nothing";
                     if (tiles[sx, sy].wall > 0)
@@ -936,6 +936,8 @@ namespace Terrafirma
 
         private void Map_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (!loaded)
+                return;
             CloseAllPops();
             Point curPos = e.GetPosition(Map);
             start = curPos;
