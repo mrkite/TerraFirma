@@ -369,7 +369,7 @@ namespace Terrafirma
             {
                 MenuItem item = new MenuItem();
 
-                using (BinaryReader b = new BinaryReader(File.OpenRead(worlds[i])))
+                using (BinaryReader b = new BinaryReader(File.Open(worlds[i],FileMode.Open,FileAccess.Read,FileShare.ReadWrite)))
                 {
                     b.ReadUInt32(); //skip map version
                     item.Header = b.ReadString();
@@ -414,7 +414,7 @@ namespace Terrafirma
                     bool foundInvalid = false;
 
                     string invalid = "";
-                    using (BinaryReader b = new BinaryReader(File.OpenRead(world)))
+                    using (BinaryReader b = new BinaryReader(File.Open(world,FileMode.Open,FileAccess.Read,FileShare.ReadWrite)))
                     {
                         uint version = b.ReadUInt32(); //now we care about the version
                         if (version > MapVersion) // new map format
