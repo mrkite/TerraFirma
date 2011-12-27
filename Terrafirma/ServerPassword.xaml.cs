@@ -21,6 +21,7 @@ namespace Terrafirma
         public ServerPassword()
         {
             InitializeComponent();
+            password.Focus();
         }
         public string Password
         {

@@ -21,6 +21,7 @@ namespace Terrafirma
         public ConnectToServer()
         {
             InitializeComponent();
+            serverip.Focus();
         }
         public string ServerIP
         {

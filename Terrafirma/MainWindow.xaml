@@ -13,8 +13,8 @@
                 </MenuItem>
                 <MenuItem Command="ApplicationCommands.Open" Header="_Open" />
                 <MenuItem Command="Refresh" />
-               <!-- <Separator />
-                <MenuItem Command="w:MapCommands.ConnectToServer" /> -->
+                <Separator />
+                <MenuItem Command="w:MapCommands.ConnectToServer" />
                 <Separator />
                 <MenuItem Command="ApplicationCommands.Save" Header="_Save PNG" />
                 <Separator />

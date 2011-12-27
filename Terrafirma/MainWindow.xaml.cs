@@ -208,14 +208,17 @@ namespace Terrafirma
         public string text;
         public Int32 x, y;
     }
-    struct NPC
+    class NPC
     {
+        public string title;
         public string name;
         public float x, y;
         public bool isHomeless;
         public Int32 homeX, homeY;
         public int sprite;
         public int num;
+        public int slot;
+        public int order;
     }
 
     /// <summary>
@@ -272,6 +275,44 @@ namespace Terrafirma
         byte[] readBuffer, writeBuffer;
         int pendingSize;
         byte[] messages;
+        byte playerSlot;
+        Loading serverLoad;
+        string status;
+        int statusTotal, statusCount;
+        int loginLevel;
+        bool[,] sentSections;
+        int sectionsWide, sectionsHigh;
+
+        struct FriendlyNPC
+        {
+            public FriendlyNPC(string title, int id, int num, int order)
+            {
+                this.title = title;
+                this.id = id;
+                this.num = num;
+                this.order = order;
+            }
+            public string title;
+            public int id; //sprite
+            public int num; // number for npc heads
+            public int order; //order in name list
+        };
+
+        FriendlyNPC[] friendlyNPCs ={
+                                        new FriendlyNPC("Merchant", 17, 2, 0),
+                                        new FriendlyNPC("Nurse", 18, 3, 1),
+                                        new FriendlyNPC("Arms Dealer", 19, 6, 2),
+                                        new FriendlyNPC("Dryad", 20, 5, 3),
+                                        new FriendlyNPC("Guide", 22, 1, 4),
+                                        new FriendlyNPC("Old Man",37, 0, -1),
+                                        new FriendlyNPC("Demolitionist", 38, 4, 6),
+                                        new FriendlyNPC("Clothier", 54, 7, 5),
+                                        new FriendlyNPC("Goblin Tinkerer", 107, 9, 7),
+                                        new FriendlyNPC("Wizard", 108, 10, 8),
+                                        new FriendlyNPC("Mechanic", 124, 8, 9),
+                                        new FriendlyNPC("Santa Claus", 142, 11, -1)
+                                   };
+
 
         public MainWindow()
         {
@@ -481,29 +522,7 @@ namespace Terrafirma
                         goblinsSize = b.ReadInt32();
                         goblinsType = b.ReadInt32();
                         goblinsX = b.ReadDouble();
-                        for (int y = 0; y < tilesHigh; y++)
-                        {
-                            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
-                            {
-                                load.status.Text = "Allocating tiles "+((int)((float)y*100.0/(float)tilesHigh))+"%";
-                            }));
-                            for (int x = 0; x < tilesWide; x++)
-                            {
-                                if (tiles[x, y] == null)
-                                    tiles[x, y] = new Tile();
-                            }
-                        }
-                        if (tilesWide < Widest || tilesHigh < Highest) //free unused tiles
-                        {
-                            for (int y = 0; y < Highest; y++)
-                            {
-                                int start = tilesWide;
-                                if (y >= tilesHigh)
-                                    start = 0;
-                                for (int x = start; x < Widest; x++)
-                                    tiles[x, y] = null;
-                            }
-                        }
+                        ResizeMap(load);
                         for (int x = 0; x < tilesWide; x++)
                         {
                             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
@@ -642,58 +661,48 @@ namespace Terrafirma
                         while (b.ReadBoolean())
                         {
                             NPC npc = new NPC();
-                            npc.name = b.ReadString();
+                            npc.title = b.ReadString();
+                            npc.name = "";
                             npc.x = b.ReadSingle();
                             npc.y = b.ReadSingle();
                             npc.isHomeless = b.ReadBoolean();
                             npc.homeX = b.ReadInt32();
                             npc.homeY = b.ReadInt32();
 
+                            npc.order = -1;
+                            npc.num = 0;
                             npc.sprite = 0;
-                            if (npc.name == "Merchant") { npc.sprite = 17; npc.num = 2; }
-                            if (npc.name == "Nurse") { npc.sprite = 18; npc.num = 3; }
-                            if (npc.name == "Arms Dealer") { npc.sprite = 19; npc.num = 6; }
-                            if (npc.name == "Dryad") { npc.sprite = 20; npc.num = 5; }
-                            if (npc.name == "Guide") { npc.sprite = 22; npc.num = 1; }
-                            if (npc.name == "Old Man") { npc.sprite = 37; npc.num = 0; }
-                            if (npc.name == "Demolitionist") { npc.sprite = 38; npc.num = 4; }
-                            if (npc.name == "Clothier") { npc.sprite = 54; npc.num = 7; }
-                            if (npc.name == "Goblin Tinkerer") { npc.sprite = 107; npc.num = 9; }
-                            if (npc.name == "Wizard") { npc.sprite = 108; npc.num = 10; }
-                            if (npc.name == "Mechanic") { npc.sprite = 124; npc.num = 8; }
-                            if (npc.name == "Santa Claus") { npc.sprite = 142; npc.num = 11; }
+                            for (int i=0;i<friendlyNPCs.Length;i++)
+                                if (friendlyNPCs[i].title == npc.title)
+                                {
+                                    npc.sprite = friendlyNPCs[i].id;
+                                    npc.num = friendlyNPCs[i].num;
+                                    npc.order = friendlyNPCs[i].order;
+                                }
 
                             npcs.Add(npc);
+                            addNPCToMenu(npc);
 
-                            if (!npc.isHomeless)
+                            
+                        }
+                        if (version >= 31) //read npcs
+                        {
+                            int numNames = 9;
+                            if (version>=34)
+                                numNames++;
+                            for (int i = 0; i < numNames; i++)
                             {
-                                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                                string name = b.ReadString();
+                                for (int j = 0; j < npcs.Count; j++)
                                 {
-                                    MenuItem item = new MenuItem();
-                                    item.Header = String.Format("Jump to {0}'s Home", npc.name);
-                                    item.Click += new RoutedEventHandler(jumpNPC);
-                                    item.Tag = npc;
-                                    NPCs.Items.Add(item);
-                                    NPCs.IsEnabled = true;
-                                }));
-                            }
-                            else
-                            {
-                                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
-                                {
-                                    MenuItem item = new MenuItem();
-                                    item.Header = String.Format("Jump to {0}'s Location", npc.name);
-                                    item.Click += new RoutedEventHandler(jumpNPC);
-                                    item.Tag = npc;
-                                    NPCs.Items.Add(item);
-                                    NPCs.IsEnabled = true;
-                                }));
+                                    if (npcs[j].order == i)
+                                    {
+                                        npcs[j].name = name;
+                                        addNPCToMenu(npcs[j]);
+                                    }
+                                }
                             }
                         }
-                        // if (version>=0x1f) read the names of the following npcs:
-                        // merchant, nurse, arms dealer, dryad, guide, clothier, demolitionist,
-                        // tinkerer and wizard
-                        // if (version>=0x23) read the name of the mechanic
                     }
                     calculateLight(load);
                     if (foundInvalid)
@@ -723,6 +732,59 @@ namespace Terrafirma
                 }
             };
             new Thread(loadThread).Start();
+        }
+
+        private void addNPCToMenu(NPC npc)
+        {
+            string name;
+            if (npc.name == "")
+                name = npc.title;
+            else
+                name = npc.name + " the " + npc.title;
+            if (!npc.isHomeless)
+            {
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                {
+                    MenuItem item;
+                    for (int i = 0; i < NPCs.Items.Count; i++)
+                    {
+                        item=(MenuItem)NPCs.Items[i];
+                        if (item.Tag == npc)
+                        {
+                            item.Header = String.Format("Jump to {0}'s Home", name);
+                            return;
+                        }
+                    }
+                    item = new MenuItem();
+                    item.Header = String.Format("Jump to {0}'s Home", name);
+                    item.Click += new RoutedEventHandler(jumpNPC);
+                    item.Tag = npc;
+                    NPCs.Items.Add(item);
+                    NPCs.IsEnabled = true;
+                }));
+            }
+            else
+            {
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                {
+                    MenuItem item;
+                    for (int i = 0; i < NPCs.Items.Count; i++)
+                    {
+                        item = (MenuItem)NPCs.Items[i];
+                        if (item.Tag == npc)
+                        {
+                            item.Header = String.Format("Jump to {0}'s Location", name);
+                            return;
+                        }
+                    }
+                    item = new MenuItem();
+                    item.Header = String.Format("Jump to {0}'s Location", name);
+                    item.Click += new RoutedEventHandler(jumpNPC);
+                    item.Tag = npc;
+                    NPCs.Items.Add(item);
+                    NPCs.IsEnabled = true;
+                }));
+            }
         }
 
         private string[] prefixes ={
@@ -1236,6 +1298,9 @@ namespace Terrafirma
                     MessageBox.Show("Invalid server IP");
                     return;
                 }
+
+                serverLoad = new Loading();
+                serverLoad.Show();
                 System.Net.IPEndPoint remoteEP = new System.Net.IPEndPoint(ip, port);
                 socket.BeginConnect(remoteEP, new AsyncCallback(connected), null);
             }
@@ -1250,6 +1315,7 @@ namespace Terrafirma
                 writeBuffer = new byte[1024];
                 messages = new byte[8192];
                 pendingSize = 0;
+                loginLevel = 1;
                 SendMessage(1); //greetings server!
                 socket.BeginReceive(readBuffer, 0, readBuffer.Length, SocketFlags.None,
                     new AsyncCallback(ReceivedData), null);
@@ -1271,8 +1337,9 @@ namespace Terrafirma
                     Buffer.BlockCopy(readBuffer, 0, messages, pendingSize, bytesRead);
                     pendingSize += bytesRead;
                     messagePump();
-                    socket.BeginReceive(readBuffer, 0, readBuffer.Length, SocketFlags.None,
-                        new AsyncCallback(ReceivedData), null); //restart receive
+                    if (socket.Connected)
+                        socket.BeginReceive(readBuffer, 0, readBuffer.Length, SocketFlags.None,
+                            new AsyncCallback(ReceivedData), null); //restart receive
                 }
                 else
                 {
@@ -1311,25 +1378,412 @@ namespace Terrafirma
 
         private void HandleMessage(int start, int len)
         {
-            int messageid = messages[start];
-            start++;
+            if (statusTotal > 0)
+            {
+                statusCount++;
+                if (statusCount == statusTotal)
+                    statusTotal = 0;
+                else
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                {
+                    serverLoad.status.Text = status + ((int)((float)statusCount * 100.0 / (float)statusTotal)) + "%";
+                }));
+            }
+            int messageid = messages[start++];
             len--;
+            int payload = start;
             switch (messageid)
             {
-                case 37: //request password.
-                    ServerPassword s = new ServerPassword();
-                    if (s.ShowDialog() == true)
-                        SendMessage(38, s.Password);
-                    else
-                        socket.Close(); //cancelled?  Then we're leaving the server.
+                case 0x01: // connect request - c2s only
                     break;
-                default:
-                    MessageBox.Show(String.Format("Got response {0}", messageid));
+                case 0x02: //error
+                    {
+                        string error = Encoding.ASCII.GetString(messages, payload, len);
+                        Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                            {
+                                MessageBox.Show(error);
+                            }));
+                        socket.Close();
+                    }
+                    break;
+                case 0x03: //connection approved
+                    {
+                        if (loginLevel == 1) loginLevel = 2;
+                        playerSlot = messages[payload];
+                        SendMessage(4);
+                        SendMessage(0x10);
+                        SendMessage(0x2a);
+                        //send buffs
+                        //send inventory
+                        SendMessage(6);
+                        if (loginLevel == 2) loginLevel = 3;
+                    }
+                    break;
+                case 0x04: //player appearance
+                    //ignore other players
+                    break;
+                case 0x05: //inventory items
+                    //ignore player inventory
+                    break;
+                case 0x06: //request world info - c2s only
+                    break;
+                case 0x07: //world info
+                    {
+                        gameTime = BitConverter.ToInt32(messages, payload); payload += 4;
+                        dayNight = messages[payload++] == 1;
+                        moonPhase = messages[payload++];
+                        bloodMoon = messages[payload++] == 1;
+                        tilesWide = BitConverter.ToInt32(messages, payload); payload += 4;
+                        tilesHigh = BitConverter.ToInt32(messages, payload); payload += 4;
+                        spawnX = BitConverter.ToInt32(messages, payload); payload += 4;
+                        spawnY = BitConverter.ToInt32(messages, payload); payload += 4;
+                        groundLevel = BitConverter.ToInt32(messages, payload); payload += 4;
+                        rockLevel = BitConverter.ToInt32(messages, payload); payload += 4;
+                        payload += 4; //skip world id
+                        byte flags = messages[payload++];
+                        string title = Encoding.ASCII.GetString(messages, payload, start + len - payload);
+                        Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                        {
+                            Title = title;
+                        }));
+                        smashedOrb = (flags & 1) == 1;
+                        killedBoss1 = (flags & 2) == 2;
+                        killedBoss2 = (flags & 4) == 4;
+                        killedBoss3 = (flags & 8) == 8;
+                        hardMode = (flags & 16) == 16;
+                        killedClown = (flags & 32) == 32;
+                        meteorSpawned = false;
+                        killedFrost = false;
+                        killedGoblins = false;
+                        savedMechanic = false;
+                        savedTinkerer = false;
+                        savedWizard = false;
+                        goblinsDelay = 0;
+                        altarsSmashed = 0;
+                        ResizeMap(serverLoad);
+                        if (loginLevel == 3)
+                        {
+                            sectionsWide = (tilesWide / 200);
+                            sectionsHigh = (tilesHigh / 150);
+                            sentSections = new bool[sectionsWide, sectionsHigh];
+                            loginLevel = 4;
+                            for (int y = 0; y < tilesHigh; y++) //set all tiles to blank
+                                for (int x = 0; x < tilesWide; x++)
+                                {
+                                    tiles[x, y].isActive = false;
+                                    tiles[x, y].wall = 0;
+                                    tiles[x, y].liquid = 0;
+                                    tiles[x, y].hasWire = false;
+                                }
+                            SendMessage(8); //request initial tile data
+                        }
+                    }
+                    break;
+                case 0x08: //request initial tile data - c2s only
+                    break;
+                case 0x09: //status text
+                    {
+                        statusTotal = BitConverter.ToInt32(messages, payload); payload += 4;
+                        statusCount = 0;
+                        String status = Encoding.ASCII.GetString(messages, payload, start + len - payload);
+                        Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                        {
+                            serverLoad.status.Text = status;
+                        }));
+                    }
+                    break;
+                case 0x0a: //tile row data
+                    {
+                        int width = BitConverter.ToInt16(messages, payload); payload += 2;
+                        int startx = BitConverter.ToInt32(messages, payload); payload += 4;
+                        int y = BitConverter.ToInt32(messages, payload); payload += 4;
+                        for (int x = startx; x < startx + width; x++)
+                        {
+                            Tile tile = tiles[x, y];
+                            byte flags = messages[payload++];
+                            tile.isActive = (flags & 1) == 1;
+                            tile.hasWire = (flags & 16) == 16;
+                            if (tile.isActive)
+                            {
+                                tile.type = messages[payload++];
+                                if (tileInfos[tile.type].hasExtra)
+                                {
+                                    tile.u = BitConverter.ToInt16(messages, payload); payload += 2;
+                                    tile.v = BitConverter.ToInt16(messages, payload); payload += 2;
+                                }
+                                else
+                                {
+                                    tile.u = -1;
+                                    tile.v = -1;
+                                }
+                            }
+                            if ((flags & 4) == 4)
+                            {
+                                tile.wall = messages[payload++];
+                                tile.wallu = -1;
+                                tile.wallv = -1;
+                            }
+                            else
+                                tile.wall = 0;
+                            if ((flags & 8) == 8)
+                            {
+                                tile.liquid = messages[payload++];
+                                tile.isLava = messages[payload++] == 1;
+                            }
+                            else
+                                tile.liquid = 0;
+                            int rle = BitConverter.ToInt16(messages, payload); payload += 2;
+                            for (int r = x + 1; r < x + 1 + rle; r++)
+                            {
+                                tiles[r, y].isActive = tiles[x, y].isActive;
+                                tiles[r, y].type = tiles[x, y].type;
+                                tiles[r, y].u = tiles[x, y].u;
+                                tiles[r, y].v = tiles[x, y].v;
+                                tiles[r, y].wall = tiles[x, y].wall;
+                                tiles[r, y].wallu = -1;
+                                tiles[r, y].wallv = -1;
+                                tiles[r, y].liquid = tiles[x, y].liquid;
+                                tiles[r, y].isLava = tiles[x, y].isLava;
+                                tiles[r, y].hasWire = tiles[x, y].hasWire;
+                            }
+                            x += rle;
+                        }
+                    }
+                    break;
+                case 0x0b: //recalculate u/v
+                    {
+                        int startx = BitConverter.ToInt32(messages, payload); payload += 4;
+                        int starty = BitConverter.ToInt32(messages, payload); payload += 4;
+                        int endx = BitConverter.ToInt32(messages, payload); payload += 4;
+                        int endy = BitConverter.ToInt32(messages, payload);
+
+                        for (int y = starty; y<= endy; y++)
+                            for (int x = startx; x <= endx; x++)
+                                sentSections[x, y] = true;
+
+                        startx *= 200;
+                        starty *= 150;
+                        endx = (endx + 1) * 200;
+                        endy = (endy + 1) * 150;
+
+                        
+                        for (int y=starty;y<endy;y++)
+                            for (int x = startx; x < endx; x++)
+                            {
+                                Tile tile = tiles[x, y];
+                                if (tile.isActive && !tileInfos[tile.type].hasExtra)
+                                {
+                                    tile.u = -1;
+                                    tile.v = -1;
+                                }
+                                if (tile.wall > 0)
+                                {
+                                    tile.wallu = -1;
+                                    tile.wallv = -1;
+                                }
+                            }
+                        if (loginLevel == 5)
+                            fetchNextSection();
+                    }
+                    break;
+                case 0x0c: //player spawned
+                    break;
+                case 0x0d: //player control
+                    break;
+                case 0x0e: //set active players
+                    break;
+                case 0x10: //player life
+                    break;
+                case 0x11: //modify tile
+                    break;
+                case 0x12: //set time
+                    break;
+                case 0x13: //open/close door
+                    break;
+                case 0x14: //update tile block
+                    break;
+                case 0x15: //update item
+                    break;
+                case 0x16: //set item owner
+                    break;
+                case 0x17: //update NPC
+                    {
+                        int slot = BitConverter.ToInt16(messages, payload); payload += 2;
+                        float posx = BitConverter.ToSingle(messages, payload); payload += 4;
+                        float posy = BitConverter.ToSingle(messages, payload); payload += 4;
+                        payload += 32; //don't care about velocity, target, ai, or direction
+                        int id = BitConverter.ToInt16(messages, payload);
+                        bool found = false;
+                        for (int i = 0; i < npcs.Count; i++)
+                        {
+                            if (npcs[i].slot == slot)
+                            {
+                                npcs[i].x = posx;
+                                npcs[i].y = posy;
+                                npcs[i].sprite = id;
+                                found = true;
+                                addNPCToMenu(npcs[i]);
+                            }
+                        }
+                        if (!found)
+                        {
+                            for (int i = 0; i < friendlyNPCs.Length; i++)
+                                if (friendlyNPCs[i].id == id) //we found a friendly npc
+                                {
+                                    NPC npc = new NPC();
+                                    npc.isHomeless = true; //homeless for now
+                                    npc.title = friendlyNPCs[i].title;
+                                    npc.name = "";
+                                    npc.num = friendlyNPCs[i].num;
+                                    npc.sprite = id;
+                                    npc.x = posx;
+                                    npc.y = posy;
+                                    npc.slot = slot;
+                                    npcs.Add(npc);
+                                    addNPCToMenu(npc);
+                                }
+                        }
+                    }
+                    break;
+                case 0x18: //strike npc
+                    break;
+                case 0x19: //chat
+                    break;
+                case 0x1a: //damage player
+                    break;
+                case 0x1b: //update projectile
+                    break;
+                case 0x1c: //damage npc
+                    break;
+                case 0x1d: //destroy projectile
+                    break;
+                case 0x1e: //pvp toggled
+                    break;
+                case 0x1f: //request open chest - c2s only
+                    break;
+                case 0x20: //set chest item
+                    break;
+                case 0x21: //open chest
+                    break;
+                case 0x22: //destroy chest
+                    break;
+                case 0x23: //heal player
+                    break;
+                case 0x24: //set zones
+                    break;
+                case 0x25: //request password.
+                    {
+                        Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                        {
+                            ServerPassword s = new ServerPassword();
+                            if (s.ShowDialog() == true)
+                                SendMessage(0x26, s.Password);
+                            else
+                                socket.Close();
+                        }));
+                    }
+                    break;
+                case 0x26: //login - c2s only
+                    break;
+                case 0x27: //unassign item
+                    break;
+                case 0x28: //talk to npc
+                    break;
+                case 0x29: //animate flail
+                    break;
+                case 0x2a: //set mana
+                    break;
+                case 0x2b: //replenish mana
+                    break;
+                case 0x2c: //kill player
+                    break;
+                case 0x2d: //change party
+                    break;
+                case 0x2e: //read sign - c2s only
+                    break;
+                case 0x2f: //edit sign
+                    break;
+                case 0x30: //adjust liquids
+                    break;
+                case 0x31: //okay to spawn
+                    if (loginLevel == 4)
+                    {
+                        loginLevel = 5;
+                        Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                            {
+                                serverLoad.Close();
+                                render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, npcs);
+                                loaded = true;
+                                curX = spawnX;
+                                curY = spawnY;
+                                if (render.Textures.Valid)
+                                {
+                                    UseTextures.IsChecked = true;
+                                    curScale = 16.0;
+                                }
+                                RenderMap();
+                            }));
+                        SendMessage(0x0c); //spawn
+                        fetchNextSection(); //start fetching the world
+                    }
+                    break;
+                case 0x32: //set buffs
+                    break;
+                case 0x33: //old man answer
+                    break;
+                case 0x34: //unlock chest
+                    break;
+                case 0x35: //add npc buff
+                    break;
+                case 0x36: //set npc buffs
+                    break;
+                case 0x37: //add player buff
+                    break;
+                case 0x38: //set npc names
+                    {
+                        int id = BitConverter.ToInt16(messages, payload); payload += 2;
+                        string name = Encoding.ASCII.GetString(messages, payload, start + len - payload);
+                        for (int i = 0; i < npcs.Count; i++)
+                        {
+                            if (npcs[i].sprite == id)
+                            {
+                                npcs[i].name = name;
+                                addNPCToMenu(npcs[i]);
+                            }
+                        }
+                    }
+                    break;
+                case 0x39: //set balance stats
+                    break;
+                case 0x3a: //play harp
+                    break;
+                case 0x3b: //flip switch
+                    break;
+                case 0x3c: //move npc home
+                    {
+                        int slot=BitConverter.ToInt16(messages,payload); payload+=2;
+                        int x=BitConverter.ToInt16(messages,payload); payload+=2;
+                        int y=BitConverter.ToInt16(messages,payload); payload+=2;
+                        byte homeless=messages[payload];
+                        for (int i = 0; i < npcs.Count; i++)
+                        {
+                            if (npcs[i].slot == slot)
+                            {
+                                npcs[i].isHomeless = homeless == 1;
+                                npcs[i].homeX = x;
+                                npcs[i].homeY = y;
+                                addNPCToMenu(npcs[i]);
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                default: // ignore unknown messages
                     break;
             }
         }
 
-        private void SendMessage(int messageid, string text = null)
+        private void SendMessage(int messageid, string text = null,int x=0,int y=0)
         {
             int payload = 5;
             int payloadLen = 0;
@@ -1340,10 +1794,70 @@ namespace Terrafirma
                     payloadLen = greeting.Length;
                     Buffer.BlockCopy(greeting, 0, writeBuffer, payload, payloadLen);
                     break;
-                case 38: //send password
+                case 4: //send player info
+                    writeBuffer[payload++] = playerSlot;
+                    writeBuffer[payload++] = 0; //hair
+                    writeBuffer[payload++] = 1; //male
+                    writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; //hair color
+                    writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; //skin color
+                    writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; //eye color
+                    writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; //shirt color
+                    writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; //undershirt color
+                    writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; //pants color
+                    writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; writeBuffer[payload++] = 0; //shoe color
+                    writeBuffer[payload++] = 0; //soft core
+                    byte[] name = Encoding.ASCII.GetBytes("Terrafirma");
+                    Buffer.BlockCopy(name, 0, writeBuffer, payload, name.Length);
+                    payloadLen += 25 + name.Length;
+                    break;
+                case 6: //request world info
+                    //no payload
+                    break;
+                case 8: //request initial tile data
+                    Buffer.BlockCopy(BitConverter.GetBytes(spawnX), 0, writeBuffer, payload, 4); payload+=4;
+                    Buffer.BlockCopy(BitConverter.GetBytes(spawnY), 0, writeBuffer, payload, 4);
+                    payloadLen += 8;
+                    break;
+                case 0x0c: //spawn
+                    writeBuffer[payload++] = playerSlot;
+                    Buffer.BlockCopy(BitConverter.GetBytes(spawnX), 0, writeBuffer, payload, 4); payload+=4;
+                    Buffer.BlockCopy(BitConverter.GetBytes(spawnY), 0, writeBuffer, payload, 4);
+                    payloadLen += 9;
+                    break;
+                case 0x0d: //player control
+                    writeBuffer[payload++] = playerSlot;
+                    writeBuffer[payload++] = 0; //no buttons
+                    writeBuffer[payload++] = 0; //selected item 0
+                    Buffer.BlockCopy(BitConverter.GetBytes((float)(x*16.0)), 0, writeBuffer, payload, 4); payload+=4;
+                    Buffer.BlockCopy(BitConverter.GetBytes((float)(y*16.0)), 0, writeBuffer, payload, 4); payload+=4;
+                    byte[] velocity = BitConverter.GetBytes((float)0);
+                    Buffer.BlockCopy(velocity, 0, writeBuffer, payload, 4); payload+=4;
+                    Buffer.BlockCopy(velocity, 0, writeBuffer, payload, 4);
+                    payloadLen += 19;
+                    break;
+                case 0x10: //set player life
+                    writeBuffer[payload++] = playerSlot;
+                    byte[] health = BitConverter.GetBytes((Int16)400);
+                    Buffer.BlockCopy(health, 0, writeBuffer, payload, 2); payload+=2;
+                    Buffer.BlockCopy(health, 0, writeBuffer, payload, 2);
+                    payloadLen += 5;
+                    break;
+                case 0x26: //send password
                     byte[] password = Encoding.ASCII.GetBytes(text);
                     payloadLen = password.Length;
                     Buffer.BlockCopy(password, 0, writeBuffer, payload, payloadLen);
+                    break;
+                case 0x2a: //set mana
+                    writeBuffer[payload++] = playerSlot;
+                    byte[] mana = BitConverter.GetBytes((Int16)0);
+                    Buffer.BlockCopy(mana, 0, writeBuffer, payload, 2); payload+=2;
+                    Buffer.BlockCopy(mana, 0, writeBuffer, payload, 2);
+                    payloadLen += 5;
+                    break;
+                case 0x2d: //set team
+                    writeBuffer[payload++] = playerSlot;
+                    writeBuffer[payload++] = (byte)x;
+                    payloadLen += 2;
                     break;
                 default:
                     throw new Exception(String.Format("Unknown messageid: {0}", messageid));
@@ -1364,6 +1878,52 @@ namespace Terrafirma
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
+            }
+        }
+
+        private void fetchNextSection()
+        {
+            bool foundOne = false;
+            for (int y = 0; y < sectionsHigh && !foundOne; y++)
+                for (int x = 0; x < sectionsWide && !foundOne; x++)
+                {
+                    if (!sentSections[x, y])
+                    {
+                        SendMessage(0x0d, "", x * 200, y * 150);
+                        foundOne = true;
+                    }
+                }
+            if (!foundOne)
+            {
+                socket.Close();
+                loginLevel = 0;
+            }
+        }
+
+        private void ResizeMap(Loading load)
+        {
+            for (int y = 0; y < tilesHigh; y++)
+            {
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                {
+                    load.status.Text = "Allocating tiles " + ((int)((float)y * 100.0 / (float)tilesHigh)) + "%";
+                }));
+                for (int x = 0; x < tilesWide; x++)
+                {
+                    if (tiles[x, y] == null)
+                        tiles[x, y] = new Tile();
+                }
+            }
+            if (tilesWide < Widest || tilesHigh < Highest) //free unused tiles
+            {
+                for (int y = 0; y < Highest; y++)
+                {
+                    int start = tilesWide;
+                    if (y >= tilesHigh)
+                        start = 0;
+                    for (int x = start; x < Widest; x++)
+                        tiles[x, y] = null;
+                }
             }
         }
 
@@ -1483,6 +2043,7 @@ namespace Terrafirma
             stats.Add("Mechanic", savedMechanic ? "Saved" : killedBoss3 ? "Bound" : "Not present yet");
             stats.Add("Game Mode", hardMode ? "Hard" : "Normal");
             stats.Add("Broke a Shadow Orb", smashedOrb ? "Yes" : "Not Yet");
+            stats.Add("Orbs left til EoW", (3 - shadowOrbCount).ToString());
             stats.Add("Altars Smashed", altarsSmashed.ToString());
             stats.Show();
         }
