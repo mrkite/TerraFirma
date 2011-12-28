@@ -46,6 +46,9 @@
             <StatusBarItem>
                 <TextBlock Name="statusText"></TextBlock>
             </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Name="serverText"></TextBlock>
+            </StatusBarItem>
         </StatusBar>
     </Grid>
     <Window.CommandBindings>

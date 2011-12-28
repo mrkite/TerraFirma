@@ -1172,7 +1172,7 @@ namespace Terrafirma
                         return;
                     curX = spawnX;
                     curY = spawnY;
-                    if (render.Textures.Valid)
+                    if (render.Textures!=null && render.Textures.Valid)
                     {
                         UseTextures.IsChecked = true;
                         curScale = 16.0;
@@ -1190,7 +1190,7 @@ namespace Terrafirma
                     return;
                 curX = spawnX;
                 curY = spawnY;
-                if (render.Textures.Valid)
+                if (render.Textures!=null && render.Textures.Valid)
                 {
                     UseTextures.IsChecked = true;
                     curScale = 16.0;
@@ -1241,7 +1241,7 @@ namespace Terrafirma
         }
         private void Texture_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (!render.Textures.Valid)
+            if (render.Textures==null || !render.Textures.Valid)
                 return;
             if (UseTextures.IsChecked)
                 UseTextures.IsChecked = false;
@@ -1716,7 +1716,7 @@ namespace Terrafirma
                                 loaded = true;
                                 curX = spawnX;
                                 curY = spawnY;
-                                if (render.Textures.Valid)
+                                if (render.Textures!=null && render.Textures.Valid)
                                 {
                                     UseTextures.IsChecked = true;
                                     curScale = 16.0;
@@ -1967,7 +1967,7 @@ namespace Terrafirma
             if (dlg.ShowDialog() == true)
             {
                 var saveOpts = new SaveOptions();
-                saveOpts.CanUseTexture = render.Textures.Valid;
+                saveOpts.CanUseTexture = render.Textures!=null && render.Textures.Valid;
                 if (saveOpts.ShowDialog() == true)
                 {
 
@@ -2053,11 +2053,19 @@ namespace Terrafirma
             checkVersion();
 
             HwndSource hwnd = HwndSource.FromVisual(Map) as HwndSource;
+            try
+            {
+                render.Textures = new Textures(hwnd.Handle);
+                if (!render.Textures.Valid) //couldn't find textures?
+                    UseTextures.IsEnabled = false;
+            }
+            catch (Exception ex)
+            {
+                render.Textures = null;
+                UseTextures.IsEnabled=false;
+                MessageBox.Show(ex.Message,"Couldn't load XNA, no texture support");
+            }
 
-            render.Textures = new Textures(hwnd.Handle);
-
-            if (!render.Textures.Valid) //couldn't find textures?
-                UseTextures.IsEnabled = false;
         }
 
         private void calculateLight(Loading load)
