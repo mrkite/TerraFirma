@@ -116,32 +116,47 @@ namespace Terrafirma
                     px = skipx * (int)scale;
 
                     int bg = 0;
+                    int bgw = 16, bgh = 16;
                     int v = sy;
                     if (sy < groundLevel)
                         bg = 0;
                     else if (sy == groundLevel)
                     {
                         bg = 1;
+                        bgw = 96;
                         v = sy - groundLevel;
                     }
                     else if (sy < rockLevel)
                     {
                         bg = 2;
+                        bgw = 96;
+                        bgh = 96;
                         v = sy - groundLevel;
                     }
                     else if (sy == rockLevel)
                     {
                         bg = 4;
+                        bgw = 96;
                         v = sy - rockLevel;
                     }
                     else if (sy < hellLevel)
                     {
                         bg = 3;
+                        bgw = 96;
+                        bgh = 96;
                         v = sy - rockLevel;
+                    }
+                    else if (sy == hellLevel)
+                    {
+                        bg = 6;
+                        bgw = 96;
+                        v = sy - hellLevel;
                     }
                     else
                     {
                         bg = 5;
+                        bgw = 96;
+                        bgh = 96;
                         v = sy - hellLevel;
                     }
 
@@ -174,8 +189,8 @@ namespace Terrafirma
                         }
 
 
-                        int u = (sx % (tex.width / 16)) * 16;
-                        int vv = (v % (tex.height / 16)) * 16;
+                        int u = (sx % (bgw / 16)) * 16;
+                        int vv = (v % (bgh / 16)) * 16;
                         if (bg == 0) //sky
                             vv = sy * tex.height / groundLevel;
                         drawTexture(tex, 16, 16, vv * tex.width * 4 + u * 4,
