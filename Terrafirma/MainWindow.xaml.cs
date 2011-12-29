@@ -276,12 +276,12 @@ namespace Terrafirma
         int pendingSize;
         byte[] messages;
         byte playerSlot;
-        Loading serverLoad;
         string status;
         int statusTotal, statusCount;
         int loginLevel;
         bool[,] sentSections;
         int sectionsWide, sectionsHigh;
+        bool busy;
 
         struct FriendlyNPC
         {
@@ -459,8 +459,6 @@ namespace Terrafirma
         delegate void Del();
         private void Load(string world, Del done)
         {
-            Loading load = new Loading();
-            load.Show();
             ThreadStart loadThread = delegate()
             {
                 try
@@ -522,12 +520,12 @@ namespace Terrafirma
                         goblinsSize = b.ReadInt32();
                         goblinsType = b.ReadInt32();
                         goblinsX = b.ReadDouble();
-                        ResizeMap(load);
+                        ResizeMap();
                         for (int x = 0; x < tilesWide; x++)
                         {
                             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                             {
-                                load.status.Text = "Reading tiles " + ((int)((float)x * 100.0 / (float)tilesWide)) + "%";
+                                serverText.Text = ((int)((float)x * 100.0 / (float)tilesWide)) + "% - Reading tiles";
                             }));
                             for (int y = 0; y < tilesHigh; y++)
                             {
@@ -656,7 +654,7 @@ namespace Terrafirma
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
                             NPCs.Items.Clear();
-                            load.status.Text = "Loading NPCs...";
+                            serverText.Text = "Loading NPCs...";
                         }));
                         while (b.ReadBoolean())
                         {
@@ -704,20 +702,23 @@ namespace Terrafirma
                             }
                         }
                     }
-                    calculateLight(load);
                     if (foundInvalid)
                     {
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
-                            {
-                                MessageBox.Show("Found problems with the map: " + invalid + "\nIt may not display properly.", "Warning");
-                            }));
+                        {
+                            MessageBox.Show("Found problems with the map: " + invalid + "\nIt may not display properly.", "Warning");
+                        }));
                     }
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
                             render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, npcs);
                             loaded = true;
-                            load.Close();
                             done();
+                        }));
+                    calculateLight();
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                        {
+                            serverText.Text = "";
                         }));
                 }
                 catch (Exception e)
@@ -726,7 +727,7 @@ namespace Terrafirma
                         {
                             MessageBox.Show(e.Message);
                             loaded = false;
-                            load.Close();
+                            serverText.Text = "";
                             done();
                         }));
                 }
@@ -1166,8 +1167,10 @@ namespace Terrafirma
             var result = dlg.ShowDialog();
             if (result == true)
             {
+                busy = true;
                 Load(dlg.FileName, delegate()
                 {
+                    busy = false;
                     if (!loaded)
                         return;
                     curX = spawnX;
@@ -1183,9 +1186,13 @@ namespace Terrafirma
         }
         private void OpenWorld(object sender, ExecutedRoutedEventArgs e)
         {
+            if (busy) //fail
+                return;
             int id = (int)e.Parameter;
+            busy = true;
             Load(worlds[id], delegate()
             {
+                busy = false;
                 if (!loaded)
                     return;
                 curX = spawnX;
@@ -1200,11 +1207,11 @@ namespace Terrafirma
         }
         private void Open_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = true;
+            e.CanExecute = !busy;
         }
         private void OpenWorld_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = true;
+            e.CanExecute = !busy;
         }
         private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -1260,8 +1267,10 @@ namespace Terrafirma
 
         private void Refresh_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            busy = true;
             Load(currentWorld, delegate()
             {
+                busy = false;
                 if (loaded)
                     RenderMap();
             });
@@ -1298,12 +1307,23 @@ namespace Terrafirma
                     MessageBox.Show("Invalid server IP");
                     return;
                 }
-
-                serverLoad = new Loading();
-                serverLoad.Show();
+                busy = true;
                 System.Net.IPEndPoint remoteEP = new System.Net.IPEndPoint(ip, port);
                 socket.BeginConnect(remoteEP, new AsyncCallback(connected), null);
+                serverText.Text = "Connecting...";
             }
+        }
+        private void Disconnect_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            socket.Close();
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+            {
+                serverText.Text = "Connection cancelled.";
+            }));
+        }
+        private void Disconnect_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = socket.Connected;
         }
         private void connected(IAsyncResult ar)
         {
@@ -1323,6 +1343,7 @@ namespace Terrafirma
             catch (Exception e)
             {
                 socket.Close();
+                busy = false;
                 MessageBox.Show(e.Message);
             }
         }
@@ -1343,12 +1364,20 @@ namespace Terrafirma
                 }
                 else
                 {
+                    busy = false;
+                    socket.Close();
                     // socket was closed?
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                    {
+                        serverText.Text = "Connection lost.";
+                    }));
                 }
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
+                socket.Close();
+                busy = false;
             }
         }
 
@@ -1386,7 +1415,7 @@ namespace Terrafirma
                 else
                 Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                 {
-                    serverLoad.status.Text = status + ((int)((float)statusCount * 100.0 / (float)statusTotal)) + "%";
+                    serverText.Text = ((int)((float)statusCount * 100.0 / (float)statusTotal)) + "% - " + status;
                 }));
             }
             int messageid = messages[start++];
@@ -1404,6 +1433,7 @@ namespace Terrafirma
                                 MessageBox.Show(error);
                             }));
                         socket.Close();
+                        busy = false;
                     }
                     break;
                 case 0x03: //connection approved
@@ -1460,7 +1490,7 @@ namespace Terrafirma
                         savedWizard = false;
                         goblinsDelay = 0;
                         altarsSmashed = 0;
-                        ResizeMap(serverLoad);
+                        ResizeMap();
                         if (loginLevel == 3)
                         {
                             sectionsWide = (tilesWide / 200);
@@ -1485,10 +1515,10 @@ namespace Terrafirma
                     {
                         statusTotal = BitConverter.ToInt32(messages, payload); payload += 4;
                         statusCount = 0;
-                        String status = Encoding.ASCII.GetString(messages, payload, start + len - payload);
+                        status = Encoding.ASCII.GetString(messages, payload, start + len - payload);
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
-                            serverLoad.status.Text = status;
+                            serverText.Text = status;
                         }));
                     }
                     break;
@@ -1679,7 +1709,11 @@ namespace Terrafirma
                             if (s.ShowDialog() == true)
                                 SendMessage(0x26, s.Password);
                             else
+                            {
                                 socket.Close();
+                                serverText.Text = "Login cancelled.";
+                                busy = false;
+                            }
                         }));
                     }
                     break;
@@ -1711,7 +1745,7 @@ namespace Terrafirma
                         loginLevel = 5;
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                             {
-                                serverLoad.Close();
+                                serverText.Text = "";
                                 render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, npcs);
                                 loaded = true;
                                 curX = spawnX;
@@ -1897,16 +1931,21 @@ namespace Terrafirma
             {
                 socket.Close();
                 loginLevel = 0;
+                busy = false;
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                {
+                    serverText.Text = "Map Load Complete. Disconnected.";
+                }));
             }
         }
 
-        private void ResizeMap(Loading load)
+        private void ResizeMap()
         {
             for (int y = 0; y < tilesHigh; y++)
             {
                 Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                 {
-                    load.status.Text = "Allocating tiles " + ((int)((float)y * 100.0 / (float)tilesHigh)) + "%";
+                    serverText.Text = ((int)((float)y * 100.0 / (float)tilesHigh)) + "% - Allocating tiles";
                 }));
                 for (int x = 0; x < tilesWide; x++)
                 {
@@ -2066,7 +2105,7 @@ namespace Terrafirma
 
         }
 
-        private void calculateLight(Loading load)
+        private void calculateLight()
         {
             // turn off all light
             for (int y = 0; y < tilesHigh; y++)
@@ -2085,7 +2124,7 @@ namespace Terrafirma
             {
                 Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                 {
-                    load.status.Text = "Lighting tiles " + ((int)((float)y * 100.0 / (float)tilesHigh)) + "%";
+                    serverText.Text = ((int)((float)y * 100.0 / (float)tilesHigh)) + "% - Lighting tiles";
                 }));
                 for (int x = 0; x < tilesWide; x++)
                 {
@@ -2118,7 +2157,7 @@ namespace Terrafirma
             {
                 Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                 {
-                    load.status.Text = "Spreading light " + ((int)((float)y * 50.0 / (float)tilesHigh)) + "%";
+                    serverText.Text = ((int)((float)y * 50.0 / (float)tilesHigh)) + "% - Spreading light";
                 }));
                 for (int x = 0; x < tilesWide; x++)
                 {
@@ -2155,7 +2194,7 @@ namespace Terrafirma
             {
                 Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                 {
-                    load.status.Text = "Spreading light " + ((int)((float)(tilesHigh-y) * 50.0 / (float)tilesHigh)+50) + "%";
+                    serverText.Text = ((int)((float)(tilesHigh-y) * 50.0 / (float)tilesHigh)+50) + "% - Spreading light";
                 }));
                 for (int x = tilesWide - 1; x >= 0; x--)
                 {

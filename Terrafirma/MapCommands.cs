@@ -63,6 +63,8 @@ namespace Terrafirma
         public static readonly RoutedUICommand ConnectToServer = new RoutedUICommand(
             "Connect to Server...", "ConnectToServer", typeof(MapCommands),
             new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.K, ModifierKeys.Control) }));
+        public static readonly RoutedUICommand Disconnect = new RoutedUICommand(
+            "Disconnect from Server", "Disconnect", typeof(MapCommands));
         public static readonly RoutedUICommand ShowStats = new RoutedUICommand(
             "World Information...", "ShowStats", typeof(MapCommands));
         public static readonly RoutedUICommand JumpToDungeon = new RoutedUICommand(
