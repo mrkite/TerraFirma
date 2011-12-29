@@ -30,82 +30,185 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Graphics.PackedVector;
 using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Terrafirma
 {
-    public class SimpleGraphicsDeviceService : IGraphicsDeviceService
-    {
-        private IntPtr handle;
-        private GraphicsDevice graphicsDevice=null;
-
-        public SimpleGraphicsDeviceService(IntPtr windowHandle)
-        {
-            handle = windowHandle;
-        }
-        public GraphicsDevice GraphicsDevice {
-               get {
-                   if (graphicsDevice==null)
-                   {
-                       PresentationParameters parms=new PresentationParameters();
-                       parms.BackBufferFormat=SurfaceFormat.Color;
-                       parms.BackBufferWidth=480;
-                       parms.BackBufferHeight=320;
-                       parms.DeviceWindowHandle=handle;
-                       parms.DepthStencilFormat=DepthFormat.Depth24Stencil8;
-                       parms.IsFullScreen=false;
-                       if (GraphicsAdapter.DefaultAdapter.IsProfileSupported(GraphicsProfile.HiDef))
-                       {
-                           graphicsDevice = new GraphicsDevice(
-                               GraphicsAdapter.DefaultAdapter,
-                               GraphicsProfile.HiDef,
-                               parms);
-                       }
-                       else
-                       {
-                           graphicsDevice = new GraphicsDevice(
-                               GraphicsAdapter.DefaultAdapter,
-                               GraphicsProfile.Reach,
-                               parms);
-                       }
-                       if (DeviceCreated!=null)
-                           DeviceCreated(this,EventArgs.Empty);
-                   }
-                   return graphicsDevice;
-               }
-        }
-        public event EventHandler<EventArgs> DeviceCreated;
-        public event EventHandler<EventArgs> DeviceDisposing;
-        public event EventHandler<EventArgs> DeviceReset;
-        public event EventHandler<EventArgs> DeviceResetting;
-    }
-    public class SimpleProvider : IServiceProvider
-    {
-        private IntPtr handle;
-        private SimpleGraphicsDeviceService graphicsDeviceService=null;
-        public SimpleProvider(IntPtr windowHandle)
-        {
-            handle = windowHandle;
-        }
-        public Object GetService(Type type)
-        {
-            if (type == typeof(IGraphicsDeviceService))
-            {
-                if (graphicsDeviceService == null)
-                    graphicsDeviceService = new SimpleGraphicsDeviceService(handle);
-                return graphicsDeviceService;
-            }
-            return null;
-        }
-    }
-    public struct Texture
+    public class Texture
     {
         public int width, height;
         public byte[] data;
+
+        private static string GetName(string path, string xnb)
+        {
+            string fn = Path.Combine(path, xnb);
+            if (File.Exists(fn))
+                return fn;
+            if (File.Exists(fn + ".xnb"))
+                return fn + ".xnb";
+            if (File.Exists(fn + ".png"))
+                return fn + ".png";
+            return null;
+        }
+
+        public Texture(string path, string xnb)
+        {
+            string fn = GetName(path, xnb);
+            if (fn == null)
+                throw new Exception(String.Format("Couldn't locate {0}", xnb));
+            using (BinaryReader b = new BinaryReader(File.Open(fn, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            {
+                UInt32 header = b.ReadUInt32();
+                // xnb header is XNBw, XNBx, XNBm for win, unix, mac, respectively.
+                if (header != 0x77424e58 && header != 0x78424e58 && header != 0x6d424e58)
+                    throw new Exception(String.Format("{0} is not a valid XNB", xnb));
+                UInt16 version = b.ReadUInt16();
+                bool compressed = (version & 0x8000) == 0x8000;
+                version &= 0xff; //ignore graphics profile
+                if (version != 4 && version != 5)
+                    throw new Exception(String.Format("{0}: Invalid XNB Version", xnb));
+                int length = b.ReadInt32(); //length of entire file
+                if (compressed)
+                {
+                    int decompSize = b.ReadInt32();
+                    MemoryStream ms = new MemoryStream(decompSize);
+                    LzxDecoder lzx = new LzxDecoder(16);
+                    for (int pos = 14; pos < length; )
+                    {
+                        b.BaseStream.Seek(pos, SeekOrigin.Begin);
+                        byte hi = b.ReadByte();
+                        byte lo = b.ReadByte();
+                        pos += 2;
+                        int compLen = (hi << 8) | lo;
+                        int decompLen = 0x8000;
+                        if (hi == 0xff)
+                        {
+                            hi = lo;
+                            lo = b.ReadByte();
+                            decompLen = (hi << 8) | lo;
+                            hi = b.ReadByte();
+                            lo = b.ReadByte();
+                            compLen = (hi << 8) | lo;
+                            pos += 3;
+                        }
+                        if (compLen == 0 || decompLen == 0) //done
+                            break;
+                        if (lzx.Decompress(b.BaseStream, compLen, ms, decompLen) < 0)
+                            throw new Exception("Failed to decompress");
+                        pos += compLen;
+                    }
+                    ms.Seek(0, SeekOrigin.Begin);
+                    ReadTexture(ms);
+                }
+                else
+                    ReadTexture(b.BaseStream);
+            }
+        }
+
+        private void ReadTexture(Stream s)
+        {
+            using (BinaryReader d = new BinaryReader(s))
+            {
+                // skip readers
+                int numReaders = d.ReadByte();
+                for (int i = 0; i < numReaders; i++)
+                {
+                    d.ReadString(); //name of reader
+                    d.ReadInt32(); //reader version
+                }
+                d.ReadByte(); //padding
+                d.ReadByte(); //reader index
+                // we should probably verify that the reader is the correct one.. if this isn't a
+                // texture 2d, we're totally screwed here.
+                int format = d.ReadInt32();
+                width = d.ReadInt32();
+                height = d.ReadInt32();
+                d.ReadInt32(); //level count
+                int imageLen = d.ReadInt32(); //image length
+                data = new byte[width * height * 4];
+                // now convert all formats to RGBA32
+                int r, g, b, a;
+
+                switch (format)
+                {
+                    case 0: //Color     (rrrrrrrr gggggggg bbbbbbbb aaaaaaaa)
+                        for (int ofs = 0, outofs = 0; ofs < width * height; ofs++, outofs += 4)
+                        {
+                            data[outofs + 2] = d.ReadByte(); //r
+                            data[outofs + 1] = d.ReadByte(); //g
+                            data[outofs] = d.ReadByte(); //b
+                            data[outofs + 3] = d.ReadByte(); //a
+                        }
+                        break;
+                    case 1: //Bgr565    (bbbbbggg gggrrrrr) 
+                        // this may not be correct.  I think it may be stored little-endian
+                        for (int ofs = 0, outofs = 0; ofs < width * height; ofs++, outofs += 4)
+                        {
+                            byte bg = d.ReadByte();
+                            byte gr = d.ReadByte();
+                            r = gr & 0x1f;
+                            g = (gr >> 5) | ((bg & 7) << 3);
+                            b = bg >> 3;
+                            data[outofs + 2] = (byte)((255 * r) / 0x1f);
+                            data[outofs + 1] = (byte)((255 * g) / 0x3f);
+                            data[outofs] = (byte)((255 * b) / 0x1f);
+                            data[outofs + 3] = 255;
+                        }
+                        break;
+                    case 2: //Bgra5551  (bbbbbggg ggrrrrra)
+                        // This may not be correct, it may be little-endian
+                        for (int ofs = 0, outofs = 0; ofs < width * height; ofs++, outofs += 4)
+                        {
+                            byte bg = d.ReadByte();
+                            byte gr = d.ReadByte();
+                            r = (gr & 0x3e) >> 1;
+                            g = (gr >> 6) | ((bg & 7) << 2);
+                            b = bg >> 3;
+                            a = gr & 1;
+                            data[outofs + 2] = (byte)((255 * r) / 0x1f);
+                            data[outofs + 1] = (byte)((255 * g) / 0x1f);
+                            data[outofs] = (byte)((255 * b) / 0x1f);
+                            data[outofs + 3] = (byte)(255 * a);
+                        }
+                        break;
+                    case 3: //Bgra4444  (bbbbgggg rrrraaaa)
+                        // this may not be correct, it may be little-endian
+                        for (int ofs = 0, outofs = 0; ofs < width * height; ofs++, outofs += 4)
+                        {
+                            byte bg = d.ReadByte();
+                            byte ra = d.ReadByte();
+                            r = ra >> 4;
+                            g = bg & 0xf;
+                            b = bg >> 4;
+                            a = ra & 0xf;
+                            data[outofs + 2] = (byte)((255 * r) / 0xf);
+                            data[outofs + 1] = (byte)((255 * g) / 0xf);
+                            data[outofs] = (byte)((255 * b) / 0xf);
+                            data[outofs + 3] = (byte)((255 * a) / 0xf);
+                        }
+                        break;
+                    case 4: //Dxt1  (compressed, then Color)
+                    case 5: //Dxt3  (compressed, then Color)
+                    case 6: //Dxt5  (compressed, then Color)
+                    case 7: //NormalizedByte2 (16-bit signed bump map)
+                    case 8: //NormalizedByte4 (32-bit signed bump map)
+                    case 9: //Rgba1010102   (rrrrrrrr rrgggggg ggggbbbb bbbbbbaa)
+                    case 10://Rg32          (rrrrrrrr rrrrrrrr gggggggg gggggggg)
+                    case 11://Rgba64        (r16 g16 b16 a16)
+                    case 12://Alpha8        (aaaaaaaa)
+                    case 13://Single        red channel only, 32-bit float
+                    case 14://Vector2       float red, green
+                    case 15://Vector4       float alpha, blue, green, red
+                    case 16://HalfSingle    Same as single, but 16-bit float
+                    case 17://HalfVector2   Same as vector2, but 16-bit float
+                    case 18://HalfVector4   Same as vector4, but 16-bit float
+                    case 19://HdrBlendable  floats
+                        // we don't support any of these, for now.
+                        throw new Exception("Invalid format");
+                }
+            }
+        }
     }
     class Textures
     {
@@ -123,9 +226,12 @@ namespace Terrafirma
         Dictionary<int, Texture> armorLegs;
         Dictionary<int, Texture> wires;
         Dictionary<int, Texture> liquids;
-        ContentManager cm=null;
-        public Textures(IntPtr windowHandle)
+        string rootDir;
+
+        public Textures()
         {
+            rootDir = null;
+
             textures = new Dictionary<int, Texture>();
             backgrounds = new Dictionary<int, Texture>();
             walls = new Dictionary<int, Texture>();
@@ -160,19 +266,17 @@ namespace Terrafirma
             path = Path.Combine(path, "Content");
             path = Path.Combine(path, "Images");
             if (Directory.Exists(path))
-            {
-                cm = new ContentManager(new SimpleProvider(windowHandle),path);
-            }
+                rootDir=path;
         }
         public bool Valid {
-            get { return cm!=null; }
+            get { return rootDir!=null; }
         }
         public Texture GetTile(int num)
         {
             if (!textures.ContainsKey(num))
             {
                 string name = String.Format("Tiles_{0}", num);
-                textures[num] = loadTexture(name);
+                textures[num] = new Texture(rootDir, name);
             }
             return textures[num];
         }
@@ -181,7 +285,7 @@ namespace Terrafirma
             if (!backgrounds.ContainsKey(num))
             {
                 string name = String.Format("Background_{0}", num);
-                backgrounds[num] = loadTexture(name);
+                backgrounds[num] = new Texture(rootDir, name);
             }
             return backgrounds[num];
         }
@@ -190,7 +294,7 @@ namespace Terrafirma
             if (!walls.ContainsKey(num))
             {
                 string name = String.Format("Wall_{0}", num);
-                walls[num] = loadTexture(name);
+                walls[num] = new Texture(rootDir, name);
             }
             return walls[num];
         }
@@ -199,7 +303,7 @@ namespace Terrafirma
             if (!treeTops.ContainsKey(num))
             {
                 string name = String.Format("Tree_Tops_{0}", num);
-                treeTops[num] = loadTexture(name);
+                treeTops[num] = new Texture(rootDir, name);
             }
             return treeTops[num];
         }
@@ -208,7 +312,7 @@ namespace Terrafirma
             if (!treeBranches.ContainsKey(num))
             {
                 string name = String.Format("Tree_Branches_{0}", num);
-                treeBranches[num] = loadTexture(name);
+                treeBranches[num] = new Texture(rootDir, name);
             }
             return treeBranches[num];
         }
@@ -217,7 +321,7 @@ namespace Terrafirma
             if (!shrooms.ContainsKey(num))
             {
                 string name = String.Format("Shroom_Tops");
-                shrooms[num] = loadTexture(name);
+                shrooms[num] = new Texture(rootDir, name);
             }
             return shrooms[num];
         }
@@ -226,7 +330,7 @@ namespace Terrafirma
             if (!npcs.ContainsKey(num))
             {
                 string name = String.Format("NPC_{0}", num);
-                npcs[num] = loadTexture(name);
+                npcs[num] = new Texture(rootDir, name);
             }
             return npcs[num];
         }
@@ -235,7 +339,7 @@ namespace Terrafirma
             if (!npcHeads.ContainsKey(num))
             {
                 string name = String.Format("NPC_Head_{0}", num);
-                npcHeads[num] = loadTexture(name);
+                npcHeads[num] = new Texture(rootDir, name);
             }
             return npcHeads[num];
         }
@@ -244,7 +348,7 @@ namespace Terrafirma
             if (!banners.ContainsKey(num))
             {
                 string name = String.Format("House_Banner_{0}", num);
-                banners[num] = loadTexture(name);
+                banners[num] = new Texture(rootDir, name);
             }
             return banners[num];
         }
@@ -252,8 +356,8 @@ namespace Terrafirma
         {
             if (!armorHeads.ContainsKey(num))
             {
-                string name=String.Format("Armor_Head_{0}",num);
-                armorHeads[num]=loadTexture(name);
+                string name = String.Format("Armor_Head_{0}", num);
+                armorHeads[num] = new Texture(rootDir, name);
             }
             return armorHeads[num];
         }
@@ -262,7 +366,7 @@ namespace Terrafirma
             if (!armorBodies.ContainsKey(num))
             {
                 string name = String.Format("Armor_Body_{0}", num);
-                armorBodies[num] = loadTexture(name);
+                armorBodies[num] = new Texture(rootDir, name);
             }
             return armorBodies[num];
         }
@@ -271,7 +375,7 @@ namespace Terrafirma
             if (!armorLegs.ContainsKey(num))
             {
                 string name = String.Format("Armor_Legs_{0}", num);
-                armorLegs[num] = loadTexture(name);
+                armorLegs[num] = new Texture(rootDir, name);
             }
             return armorLegs[num];
         }
@@ -280,7 +384,7 @@ namespace Terrafirma
             if (!wires.ContainsKey(num))
             {
                 string name = String.Format("Wires");
-                wires[num] = loadTexture(name);
+                wires[num] = new Texture(rootDir, name);
             }
             return wires[num];
         }
@@ -289,30 +393,9 @@ namespace Terrafirma
             if (!liquids.ContainsKey(num))
             {
                 string name = String.Format("Liquid_{0}", num);
-                liquids[num] = loadTexture(name);
+                liquids[num] = new Texture(rootDir, name);
             }
             return liquids[num];
-        }
-        private Texture loadTexture(string path)
-        {
-            Texture2D tex = cm.Load<Texture2D>(path);
-            Texture t = new Texture();
-            t.width = tex.Width;
-            t.height = tex.Height;
-
-            t.data = new byte[t.width * t.height * 4];
-            Byte4[] data = new Byte4[t.width * t.height];
-            tex.GetData<Byte4>(data);
-            int ofs = 0;
-            for (int i = 0; i < data.Length; i++)
-            {
-                uint val = data[i].PackedValue;
-                t.data[ofs++] = (byte)((val >> 16) & 0xff);
-                t.data[ofs++] = (byte)((val >> 8) & 0xff);
-                t.data[ofs++] = (byte)(val & 0xff);
-                t.data[ofs++] = (byte)((val >> 24) & 0xff);
-            }
-            return t;
         }
     }
 }

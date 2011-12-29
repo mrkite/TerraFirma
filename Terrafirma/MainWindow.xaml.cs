@@ -2051,11 +2051,9 @@ namespace Terrafirma
         private void initWindow(object sender, EventArgs e)
         {
             checkVersion();
-
-            HwndSource hwnd = HwndSource.FromVisual(Map) as HwndSource;
             try
             {
-                render.Textures = new Textures(hwnd.Handle);
+                render.Textures = new Textures();
                 if (!render.Textures.Valid) //couldn't find textures?
                     UseTextures.IsEnabled = false;
             }
@@ -2063,7 +2061,7 @@ namespace Terrafirma
             {
                 render.Textures = null;
                 UseTextures.IsEnabled=false;
-                MessageBox.Show(ex.Message,"Couldn't load XNA, no texture support");
+                MessageBox.Show(ex.Message,"Texture support failed");
             }
 
         }
