@@ -271,7 +271,7 @@ namespace Terrafirma
         UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor;
         bool isHilight = false;
 
-        Socket socket;
+        Socket socket=null;
         byte[] readBuffer, writeBuffer;
         int pendingSize;
         byte[] messages;
@@ -1297,19 +1297,30 @@ namespace Terrafirma
                 }
 
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                System.Net.IPAddress ip;
+                System.Net.IPAddress[] ips;
                 try
                 {
-                    ip = System.Net.IPAddress.Parse(serverip);
+                    ips = System.Net.Dns.GetHostAddresses(serverip);
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show("Invalid server IP");
+                    MessageBox.Show("Invalid server address");
                     return;
                 }
+                foreach (System.Net.IPAddress addr in ips)
+                {
+                    try
+                    {
+                        System.Net.IPEndPoint remoteEP = new System.Net.IPEndPoint(addr, port);
+
+                        socket.BeginConnect(remoteEP, new AsyncCallback(connected), null);
+                        break;
+                    }
+                    catch
+                    {
+                    }
+                }
                 busy = true;
-                System.Net.IPEndPoint remoteEP = new System.Net.IPEndPoint(ip, port);
-                socket.BeginConnect(remoteEP, new AsyncCallback(connected), null);
                 serverText.Text = "Connecting...";
             }
         }
@@ -1323,7 +1334,7 @@ namespace Terrafirma
         }
         private void Disconnect_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = socket.Connected;
+            e.CanExecute = socket!=null && socket.Connected;
         }
         private void connected(IAsyncResult ar)
         {
@@ -1344,7 +1355,11 @@ namespace Terrafirma
             {
                 socket.Close();
                 busy = false;
-                MessageBox.Show(e.Message);
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                {
+                    MessageBox.Show(e.Message);
+                    serverText.Text = "Connection failed.";
+                }));
             }
         }
 
@@ -1758,7 +1773,17 @@ namespace Terrafirma
                                 RenderMap();
                             }));
                         SendMessage(0x0c); //spawn
-                        fetchNextSection(); //start fetching the world
+                        if (tilesWide == 8400) //large world
+                        {
+                            socket.Close();
+                            busy = false;
+                            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                            {
+                                MessageBox.Show("Will not map remote large worlds\nother than the spawn point");
+                            }));
+                        }
+                        else
+                            fetchNextSection(); //start fetching the world
                     }
                     break;
                 case 0x32: //set buffs
@@ -1900,14 +1925,16 @@ namespace Terrafirma
             byte[] msgLen = BitConverter.GetBytes(payloadLen + 1);
             Buffer.BlockCopy(msgLen, 0, writeBuffer, 0, 4);
             writeBuffer[4] = (byte)messageid;
-            socket.BeginSend(writeBuffer, 0, payloadLen + 5, SocketFlags.None,
-                new AsyncCallback(SentMessage), null);
+            if (socket.Connected)
+                socket.BeginSend(writeBuffer, 0, payloadLen + 5, SocketFlags.None,
+                    new AsyncCallback(SentMessage), null);
         }
         private void SentMessage(IAsyncResult ar)
         {
             try
             {
-                socket.EndSend(ar);
+                if (socket.Connected)
+                    socket.EndSend(ar);
             }
             catch (Exception e)
             {
