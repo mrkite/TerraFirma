@@ -184,14 +184,112 @@ namespace Terrafirma
     }
     class Tile
     {
-        public bool isActive;
+        private UInt32 lite;
+        public Int16 u, v, wallu, wallv;
+        private byte flags;
         public byte type;
         public byte wall;
         public byte liquid;
-        public bool isLava;
-        public Int16 u, v, wallu, wallv;
-        public double light, lightR, lightG, lightB;
-        public bool hasWire;
+
+
+        public bool isActive
+        {
+            get
+            {
+                return (flags & 0x01) == 0x01;
+            }
+            set
+            {
+                if (value)
+                    flags |= 0x01;
+                else
+                    flags &= 0xfe;
+            }
+        }
+        public bool isLava
+        {
+            get
+            {
+                return (flags & 0x02) == 0x02;
+            }
+            set
+            {
+                if (value)
+                    flags |= 0x02;
+                else
+                    flags &= 0xfd;
+            }
+        }
+        public bool hasWire
+        {
+            get
+            {
+                return (flags & 0x04) == 0x04;
+            }
+            set
+            {
+                if (value)
+                    flags |= 0x04;
+                else
+                    flags &= 0xfb;
+            }
+        }
+
+        public double light
+        {
+            get {
+                return getRGBA(0);
+            }
+            set {
+                setRGBA(0, value);
+            }
+        }
+        public double lightR
+        {
+            get
+            {
+                return getRGBA(24);
+            }
+            set
+            {
+                setRGBA(24, value);
+            }
+        }
+        public double lightG
+        {
+            get
+            {
+                return getRGBA(16);
+            }
+            set
+            {
+                setRGBA(16, value);
+            }
+        }
+        public double lightB
+        {
+            get
+            {
+                return getRGBA(8);
+            }
+            set
+            {
+                setRGBA(8, value);
+            }
+        }
+        private void setRGBA(int shift,double v)
+        {
+            int l = (int)Math.Round(v * 255.0);
+            if (l>255) l=255;
+            else if (l<0) l=0;
+            lite &= ~(UInt32)(0xff << shift);
+            lite |= (UInt32)(l << shift);
+        }
+        private double getRGBA(int shift)
+        {
+            int r=(int)(lite>>shift)&0xff;
+            return (double)r/255.0;
+        }
     }
     struct ChestItem
     {
@@ -318,7 +416,7 @@ namespace Terrafirma
         {
             InitializeComponent();
 
-            fetchWorlds();
+            fetchWorlds();            
 
 
 
