@@ -324,7 +324,7 @@ namespace Terrafirma
     /// </summary>
     public partial class MainWindow : Window
     {
-        const int MapVersion = 0x25;
+        const int MapVersion = 0x27;
         const int MaxTile = 149;
         const int MaxWall = 31;
         const int Widest = 8400;
@@ -569,7 +569,7 @@ namespace Terrafirma
                     {
                         uint version = b.ReadUInt32(); //now we care about the version
                         if (version > MapVersion) // new map format
-                            throw new Exception("Unsupported map version");
+                            throw new Exception("Unsupported map version: "+version);
                         string title = b.ReadString();
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
@@ -720,7 +720,21 @@ namespace Terrafirma
                                     chest.items[ii].stack = b.ReadByte();
                                     if (chest.items[ii].stack > 0)
                                     {
-                                        string name = b.ReadString();
+                                        string name="Unknown";
+                                        if (version >= 0x26) //item names not stored
+                                        {
+                                            Int32 itemid = b.ReadInt32();
+                                            if (itemid < 0)
+                                            {
+                                                itemid = -itemid;
+                                                if (itemid < itemNames2.Length)
+                                                    name = itemNames2[itemid];
+                                            }
+                                            else if (itemid < itemNames.Length)
+                                                name = itemNames[itemid];
+                                        }
+                                        else
+                                            name = b.ReadString();
                                         string prefix = "";
                                         if (version >= 0x24) //item prefixes
                                         {
@@ -972,6 +986,639 @@ namespace Terrafirma
                                        "Unreal",        //82
                                        "Mythical"       //83
                                   };
+        private string[] itemNames2 ={
+                                         "",                        //0
+                                         "Gold Pickaxe",            //-1
+                                         "Gold Broadsword",         //-2
+                                         "Gold Shortsword",         //-3
+                                         "Gold Axe",                //-4
+                                         "Gold Hammer",             //-5
+                                         "Gold Bow",                //-6
+                                         "Silver Pickaxe",          //-7
+                                         "Silver Broadsword",       //-8
+                                         "Silver Shortsword",       //-9
+                                         "Silver Axe",              //-10
+                                         "Silver Hammer",           //-11
+                                         "Silver Bow",              //-12
+                                         "Copper Pickaxe",          //-13
+                                         "Copper Broadsword",       //-14
+                                         "Copper Shortsword",       //-15
+                                         "Copper Axe",              //-16
+                                         "Copper Hammer",           //-17
+                                         "Copper Bow",              //-18
+                                         "Blue Phasesaber",         //-19
+                                         "Red Phasesaber",          //-20
+                                         "Green Phasesaber",        //-21
+                                         "Purple Phasesaber",       //-22
+                                         "White Phasesaber",        //-23
+                                         "Yellow Phasesaber"        //-24
+                                     };
+        private string[] itemNames ={
+                                        "",                         //0
+                                        "Iron Pickaxe",             //1
+                                        "Dirt Block",               //2
+                                        "Stone Block",              //3
+                                        "Iron Broadsword",          //4
+                                        "Mushroom",                 //5
+                                        "Iron Shortsword",          //6
+                                        "Iron Hammer",              //7
+                                        "Torch",                    //8
+                                        "Wood",                     //9
+                                        "Iron Axe",                 //10
+                                        "Iron Ore",                 //11
+                                        "Copper Ore",               //12
+                                        "Gold Ore",                 //13
+                                        "Silver Ore",               //14
+                                        "Copper Watch",             //15
+                                        "Silver Watch",             //16
+                                        "Gold Watch",               //17
+                                        "Depth Meter",              //18
+                                        "Gold Bar",                 //19
+                                        "Copper Bar",               //20
+                                        "Silver Bar",               //21
+                                        "Iron Bar",                 //22
+                                        "Gel",                      //23
+                                        "Wooden Sword",             //24
+                                        "Wooden Door",              //25
+                                        "Stone Wall",               //26
+                                        "Acorn",                    //27
+                                        "Lesser Healing Potion",    //28
+                                        "Life Crystal",             //29
+                                        "Dirt Wall",                //30
+                                        "Bottle",                   //31
+                                        "Wooden Table",             //32
+                                        "Furnace",                  //33
+                                        "Wooden Chair",             //34
+                                        "Iron Anvil",               //35
+                                        "Work Bench",               //36
+                                        "Goggles",                  //37
+                                        "Lens",                     //38
+                                        "Wooden Bow",               //39
+                                        "Wooden Arrow",             //40
+                                        "Flaming Arrow",            //41
+                                        "Shuriken",                 //42
+                                        "Suspicious Looking Eye",   //43
+                                        "Demon Bow",                //44
+                                        "War Axe of the Night",     //45
+                                        "Light's Bane",             //46
+                                        "Unholy Arrow",             //47
+                                        "Chest",                    //48
+                                        "Band of Regeneration",     //49
+                                        "Magic Mirror",             //50
+                                        "Jester's Arrow",           //51
+                                        "Angel Statue",             //52
+                                        "Cloud in a Bottle",        //53
+                                        "Heremes Boots",            //54
+                                        "Enchanted Boomerang",      //55
+                                        "Demonite Ore",             //56
+                                        "Demonite Bar",             //57
+                                        "Heart",                    //58
+                                        "Corrupt Seeds",            //59
+                                        "Vile Mushroom",            //60
+                                        "Ebonstone Block",          //61
+                                        "Grass Seeds",              //62
+                                        "Sunflower",                //63
+                                        "Vilethorn",                //64
+                                        "Starfury",                 //65
+                                        "Purification Powder",      //66
+                                        "Vile Powder",              //67
+                                        "Rotten Chunk",             //68
+                                        "Worm Tooth",               //69
+                                        "Worm Food",                //70
+                                        "Copper Coin",              //71
+                                        "Silver Coin",              //72
+                                        "Gold Coin",                //73
+                                        "Platinum Coin",            //74
+                                        "Fallen Star",              //75
+                                        "Copper Greaves",           //76
+                                        "Iron Greaves",             //77
+                                        "Silver Greaves",           //78
+                                        "Gold Greaves",             //79
+                                        "Copper Chainmail",         //80
+                                        "Iron Chainmail",           //81
+                                        "Siler Chainmail",          //82
+                                        "Gold Chainmail",           //83
+                                        "Grappling Hook",           //84
+                                        "Iron Chain",               //85
+                                        "Shadow Scale",             //86
+                                        "Piggy Bank",               //87
+                                        "Mining Helmet",            //88
+                                        "Copper Helmet",            //89
+                                        "Iron Helmet",              //90
+                                        "Silver Helmet",            //91
+                                        "Gold Helmet",              //92
+                                        "Wood Wall",                //93
+                                        "Wood Platform",            //94
+                                        "Flintlock Pistol",         //95
+                                        "Musket",                   //96
+                                        "Musket Ball",              //97
+                                        "Minishark",                //98
+                                        "Iron Bow",                 //99
+                                        "Shadow Greaves",           //100
+                                        "Shadow Scalemail",         //101
+                                        "Shadow Helmet",            //102
+                                        "Nightmare Pickaxe",        //103
+                                        "The Breaker",              //104
+                                        "Candle",                   //105
+                                        "Copper Chandelier",        //106
+                                        "Silver Chandelier",        //107
+                                        "Gold Chandelier",          //108
+                                        "Mana Crystal",             //109
+                                        "Lesser Mana Potion",       //110
+                                        "Band of Starpower",        //111
+                                        "Flower of Fire",           //112
+                                        "Magic Missile",            //113
+                                        "Dirt Rod",                 //114
+                                        "Orb of Light",             //115
+                                        "Meteorite",                //116
+                                        "Meteorite Bar",            //117
+                                        "Hook",                     //118
+                                        "Flamarang",                //119
+                                        "Molten Fury",              //120
+                                        "Fiery Greatsword",         //121
+                                        "Molten Pickaxe",           //122
+                                        "Meteor Helmet",            //123
+                                        "Meteor Suit",              //124
+                                        "Meteor Leggings",          //125
+                                        "Bottled Water",            //126
+                                        "Space Gun",                //127
+                                        "Rocket Boots",             //128
+                                        "Gray Brick",               //129
+                                        "Gray Brick Wall",          //130
+                                        "Red Brick",                //131
+                                        "Red Brick Wall",           //132
+                                        "Clay Block",               //133
+                                        "Blue Brick",               //134
+                                        "Blue Brick Wall",          //135
+                                        "Chain Lantern",            //136
+                                        "Green Brick",              //137
+                                        "Green Brick Wall",         //138
+                                        "Pink Brick",               //139
+                                        "Pink Brick Wall",          //140
+                                        "Gold Brick",               //141
+                                        "Gold Brick Wall",          //142
+                                        "Silver Brick",             //143
+                                        "Silver Brick Wall",        //144
+                                        "Copper Brick",             //145
+                                        "Copper Brick Wall",        //146
+                                        "Spike",                    //147
+                                        "Water Candle",             //148
+                                        "Book",                     //149
+                                        "Cobweb",                   //150
+                                        "Necro Helmet",             //151
+                                        "Necro Breastplate",        //152
+                                        "Necro Greaves",            //153
+                                        "Bone",                     //154
+                                        "Muramasa",                 //155
+                                        "Cobalt Shield",            //156
+                                        "Aqua Scepter",             //157
+                                        "Lucky Horseshoe",          //158
+                                        "Shiny Red Balloon",        //159
+                                        "Harpoon",                  //160
+                                        "Spiky Ball",               //161
+                                        "Ball O' Hurt",             //162
+                                        "Blue Moon",                //163
+                                        "Handgun",                  //164
+                                        "Water Bolt",               //165
+                                        "Bomb",                     //166
+                                        "Dynamite",                 //167
+                                        "Grenade",                  //168
+                                        "Sand Block",               //169
+                                        "Glass",                    //170
+                                        "Sign",                     //171
+                                        "Ash Block",                //172
+                                        "Obsidian",                 //173
+                                        "Hellstone",                //174
+                                        "Hellstone Bar",            //175
+                                        "Mud Block",                //176
+                                        "Amethyst",                 //177
+                                        "Topaz",                    //178
+                                        "Sapphire",                 //179
+                                        "Emerald",                  //180
+                                        "Ruby",                     //181
+                                        "Diamond",                  //182
+                                        "Glowing Mushroom",         //183
+                                        "Star",                     //184
+                                        "Ivy Whip",                 //185
+                                        "Breathing Reed",           //186
+                                        "Flipper",                  //187
+                                        "Healing Potion",           //188
+                                        "Mana Potion",              //189
+                                        "Blade of Grass",           //190
+                                        "Thorn Chakram",            //191
+                                        "Obsidian Brick",           //192
+                                        "Obsidian Skull",           //193
+                                        "Mushroom Grass Seeds",     //194
+                                        "Jungle Grass Seeds",       //195
+                                        "Wooden Hammer",            //196
+                                        "Star Cannon",              //197
+                                        "Blue Phaseblade",          //198
+                                        "Red Phaseblade",           //199
+                                        "Green Phaseblade",         //200
+                                        "Purple Phaseblade",        //201
+                                        "White Phaseblade",         //202
+                                        "Yellow Phaseblade",        //203
+                                        "Meteor Hamaxe",            //204
+                                        "Empty Bucket",             //205
+                                        "Water Bucket",             //206
+                                        "Lava Bucket",              //207
+                                        "Jungle Rose",              //208
+                                        "Stinger",                  //209
+                                        "Vine",                     //210
+                                        "Feral Claws",              //211
+                                        "Anklet of the Wind",       //212
+                                        "Staff of Regrowth",        //213
+                                        "Hellstone Brick",          //214
+                                        "Whoopie Cushion",          //215
+                                        "Shackle",                  //216
+                                        "Molten Hamaxe",            //217
+                                        "Flamelash",                //218
+                                        "Phoenix Blaster",          //219
+                                        "Sunfury",                  //220
+                                        "Hellforge",                //221
+                                        "Clay Pot",                 //222
+                                        "Nature's Gift",            //223
+                                        "Bed",                      //224
+                                        "Silk",                     //225
+                                        "Lesser Restoration Potion",//226
+                                        "Restoration Potion",       //227
+                                        "Jungle Hat",               //228
+                                        "Jungle Shirt",             //229
+                                        "Jungle Pants",             //230
+                                        "Molten Helmet",            //231
+                                        "Molten Breastplate",       //232
+                                        "Molten Greaves",           //233
+                                        "Meteor Shot",              //234
+                                        "Sticky Bomb",              //235
+                                        "Black Lens",               //236
+                                        "Sunglasses",               //237
+                                        "Wizard Hat",               //238
+                                        "Top Hat",                  //239
+                                        "Tuxedo Shirt",             //240
+                                        "Tuxedo Pants",             //241
+                                        "Summer Hat",               //242
+                                        "Bunny Hood",               //243
+                                        "Plumber's Hat",            //244
+                                        "Plumber's Shirt",          //245
+                                        "Plumber's Pants",          //246
+                                        "Hero's Hat",               //247
+                                        "Hero's Shirt",             //248
+                                        "Hero's Pants",             //249
+                                        "Fish Bowl",                //250
+                                        "Archaeologist's Hat",      //251
+                                        "Archaeologist's Jacket",   //252
+                                        "Archaeologist's Pants",    //253
+                                        "Black Dye",                //254
+                                        "Green Dye",                //255
+                                        "Ninja Hood",               //256
+                                        "Ninja Shirt",              //257
+                                        "Ninja Pants",              //258
+                                        "Leather",                  //259
+                                        "Red Hat",                  //260
+                                        "Goldfish",                 //261
+                                        "Robe",                     //262
+                                        "Robot Hat",                //263
+                                        "Gold Crown",               //264
+                                        "Hellfire Arrow",           //265
+                                        "Sandgun",                  //266
+                                        "Guide Voodoo Doll",        //267
+                                        "Diving Helmet",            //268
+                                        "Familiar Shirt",           //269
+                                        "Familiar Pants",           //270
+                                        "Familiar Wig",             //271
+                                        "Demon Scythe",             //272
+                                        "Night's Edge",             //273
+                                        "Dark Lance",               //274
+                                        "Coral",                    //275
+                                        "Cactus",                   //276
+                                        "Trident",                  //277
+                                        "Silver Bullet",            //278
+                                        "Throwing Knife",           //279
+                                        "Spear",                    //280
+                                        "Blowpipe",                 //281
+                                        "Glowstick",                //282
+                                        "Seed",                     //283
+                                        "Wooden Boomerang",         //284
+                                        "Aglet",                    //285
+                                        "Sticky Glowstick",         //286
+                                        "Poisoned Knife",           //287
+                                        "Obsidian Skin Potion",     //288
+                                        "Regeneration Potion",      //289
+                                        "Swiftness Potion",         //290
+                                        "Gills Potion",             //291
+                                        "Ironskin Potion",          //292
+                                        "Mana Regeneration Potion", //293
+                                        "Magic Power Potion",       //294
+                                        "Featherfall Potion",       //295
+                                        "Spelunker Potion",         //296
+                                        "Invisibility Potion",      //297
+                                        "Shine Potion",             //298
+                                        "Night Owl Potion",         //299
+                                        "Battle Potion",            //300
+                                        "Thorns Potion",            //301
+                                        "Water Walking Potion",     //302
+                                        "Archery Potion",           //303
+                                        "Hunter Potion",            //304
+                                        "Gravitation Potion",       //305
+                                        "Gold Chest",               //306
+                                        "Daybloom Seeds",           //307
+                                        "Moonglow Seeds",           //308
+                                        "Blinkroot Seeds",          //309
+                                        "Deathweed Seeds",          //310
+                                        "Waterleaf Seeds",          //311
+                                        "Fireblossom Seeds",        //312
+                                        "Daybloom",                 //313
+                                        "Moonglow",                 //314
+                                        "Blinkroot",                //315
+                                        "Deathweed",                //316
+                                        "Waterleaf",                //317
+                                        "Fireblossom",              //318
+                                        "Shark Fin",                //319
+                                        "Feather",                  //320
+                                        "Tombstone",                //321
+                                        "Mime Mask",                //322
+                                        "Antlion Mandible",         //323
+                                        "Illegal Gun Parts",        //324
+                                        "The Doctor's Shirt",       //325
+                                        "The Doctor's Pants",       //326
+                                        "Golden Key",               //327
+                                        "Shadow Chest",             //328
+                                        "Shadow Key",               //329
+                                        "Obsidian Brick Wall",      //330
+                                        "Jungle Spores",            //331
+                                        "Loom",                     //332
+                                        "Piano",                    //333
+                                        "Dresser",                  //334
+                                        "Bench",                    //335
+                                        "Bathtub",                  //336
+                                        "Red Banner",               //337
+                                        "Green Banner",             //338
+                                        "Blue Banner",              //339
+                                        "Yellow Banner",            //340
+                                        "Lamp Post",                //341
+                                        "Tiki Torch",               //342
+                                        "Barrel",                   //343
+                                        "Chinese Lantern",          //344
+                                        "Cooking Pot",              //345
+                                        "Safe",                     //346
+                                        "Skull Lantern",            //347
+                                        "Trash Can",                //348
+                                        "Candelabra",               //349
+                                        "Pink Vase",                //350
+                                        "Mug",                      //351
+                                        "Keg",                      //352
+                                        "Ale",                      //353
+                                        "Bookcase",                 //354
+                                        "Throne",                   //355
+                                        "Bowl",                     //356
+                                        "Bowl of Soup",             //357
+                                        "Toilet",                   //358
+                                        "Grandfather Clock",        //359
+                                        "Armor Statue",             //360
+                                        "Goblin Battle Standard",   //361
+                                        "Tattered Cloth",           //362
+                                        "Sawmill",                  //363
+                                        "Cobalt Ore",               //364
+                                        "Mythril Ore",              //365
+                                        "Adamantite Ore",           //366
+                                        "Pwnhammer",                //367
+                                        "Excalibur",                //368
+                                        "Hallowed Seeds",           //369
+                                        "Ebonsand Block",           //370
+                                        "Cobalt Hat",               //371
+                                        "Cobalt Helmet",            //372
+                                        "Cobalt Mask",              //373
+                                        "Cobalt Breastplate",       //374
+                                        "Cobalt Leggings",          //375
+                                        "Mythril Hood",             //376
+                                        "Mythril Helmet",           //377
+                                        "Mythril Hat",              //378
+                                        "Mythril Chainmail",        //379
+                                        "Mythril Greaves",          //380
+                                        "Cobalt Bar",               //381
+                                        "Mythril Bar",              //382
+                                        "Cobalt Chainsaw",          //383
+                                        "Mythril Chainsaw",         //384
+                                        "Cobalt Drill",             //385
+                                        "Mythril Drill",            //386
+                                        "Adamantite Chainsaw",      //387
+                                        "Adamantite Drill",         //388
+                                        "Dao of Pow",               //389
+                                        "Mythril Halberd",          //390
+                                        "Adamantite Bar",           //391
+                                        "Glass Wall",               //392
+                                        "Compass",                  //393
+                                        "Diving Gear",              //394
+                                        "GPS",                      //395
+                                        "Obsidian Horseshoe",       //396
+                                        "Obsidian Shield",          //397
+                                        "Tinkerer's Workshop",      //398
+                                        "Cloud in a Balloon",       //399
+                                        "Adamantite Headgear",      //400
+                                        "Adamantite Helmet",        //401
+                                        "Adamantite Mask",          //402
+                                        "Adamantite Breastplate",   //403
+                                        "Adamantite Leggings",      //404
+                                        "Spectre Boots",            //405
+                                        "Adamantite Glaive",        //406
+                                        "Toolbelt",                 //407
+                                        "Pearlsand Block",          //408
+                                        "Pearlstone Block",         //409
+                                        "Mining Shirt",             //410
+                                        "Mining Pants",             //411
+                                        "Pearlstone Brick",         //412
+                                        "Iridescent Brick",         //413
+                                        "Mudstone Brick",           //414
+                                        "Cobalt Brick",             //415
+                                        "Mythril Brick",            //416
+                                        "Pearlstone Brick Wall",    //417
+                                        "Iridescent Brick Wall",    //418
+                                        "Mudstone Brick Wall",      //419
+                                        "Cobalt Brick Wall",        //420
+                                        "Mythril Brick Wall",       //421
+                                        "Holy Water",               //422
+                                        "Unholy Water",             //423
+                                        "Silt Block",               //424
+                                        "Fairy Bell",               //425
+                                        "Breaker Blade",            //426
+                                        "Blue Torch",               //427
+                                        "Red Torch",                //428
+                                        "Green Torch",              //429
+                                        "Purple Torch",             //430
+                                        "White Torch",              //431
+                                        "Yellow Torch",             //432
+                                        "Demon Torch",              //433
+                                        "Clockwork Assault Rifle",  //434
+                                        "Cobalt Repeater",          //435
+                                        "Mythril Repeater",         //436
+                                        "Dual Hook",                //437
+                                        "Star Statue",              //438
+                                        "Sword Statue",             //439
+                                        "Slime Statue",             //440
+                                        "Goblin Statue",            //441
+                                        "Shield Statue",            //442
+                                        "Bat Statue",               //443
+                                        "Fish Statue",              //444
+                                        "Bunny Statue",             //445
+                                        "Skeleton Statue",          //446
+                                        "Reaper Statue",            //447
+                                        "Woman Statue",             //448
+                                        "Imp Statue",               //449
+                                        "Gargoyle Statue",          //450
+                                        "Gloom Statue",             //451
+                                        "Hornet Statue",            //452
+                                        "Bomb Statue",              //453
+                                        "Crab Statue",              //454
+                                        "Hammer Statue",            //455
+                                        "Potion Statue",            //456
+                                        "Spear Statue",             //457
+                                        "Cross Statue",             //458
+                                        "Jellyfish Statue",         //459
+                                        "Bow Statue",               //460
+                                        "Boomerang Statue",         //461
+                                        "Boot Statue",              //462
+                                        "Chest Statue",             //463
+                                        "Bird Statue",              //464
+                                        "Axe Statue",               //465
+                                        "Corrupt Statue",           //466
+                                        "Tree Statue",              //467
+                                        "Anvil Statue",             //468
+                                        "Pickaxe Statue",           //469
+                                        "Mushroom Statue",          //470
+                                        "Eyeball Statue",           //471
+                                        "Pillar Statue",            //472
+                                        "Heart Statue",             //473
+                                        "Pot Statue",               //474
+                                        "Sunflower Statue",         //475
+                                        "King Statue",              //476
+                                        "Queen Statue",             //477
+                                        "Pirahna Statue",           //478
+                                        "Planked Wall",             //479
+                                        "Wooden Beam",              //480
+                                        "Adamantite Repeater",      //481
+                                        "Adamantite Sword",         //482
+                                        "Cobalt Sword",             //483
+                                        "Mythril Sword",            //484
+                                        "Moon Charm",               //485
+                                        "Ruler",                    //486
+                                        "Crystal Ball",             //487
+                                        "Disco Ball",               //488
+                                        "Sorcerer Emblem",          //489
+                                        "Ranger Emblem",            //490
+                                        "Warrior Emblem",           //491
+                                        "Demon Wings",              //492
+                                        "Angel Wings",              //493
+                                        "Magical Harp",             //494
+                                        "Rainbow Rod",              //495
+                                        "Ice Rod",                  //496
+                                        "Neptune's Shell",          //497
+                                        "Mannequin",                //498
+                                        "Greater Healing Potion",   //499
+                                        "Greater Mana Potion",      //500
+                                        "Pixie Dust",               //501
+                                        "Crystal Shard",            //502
+                                        "Clown Hat",                //503
+                                        "Clown Shirt",              //504
+                                        "Clown Pants",              //505
+                                        "Flamethrower",             //506
+                                        "Bell",                     //507
+                                        "Harp",                     //508
+                                        "Wrench",                   //509
+                                        "Wire Cutter",              //510
+                                        "Active Stone Block",       //511
+                                        "Inactive Stone Block",     //512
+                                        "Lever",                    //513
+                                        "Laser Rifle",              //514
+                                        "Crystal Bullet",           //515
+                                        "Holy Arrow",               //516
+                                        "Magic Dagger",             //517
+                                        "Crystal Storm",            //518
+                                        "Cursed Flames",            //519
+                                        "Soul of Light",            //520
+                                        "Soul of Night",            //521
+                                        "Cursed Flame",             //522
+                                        "Cursed Torch",             //523
+                                        "Adamantite Forge",         //524
+                                        "Mythril Anvil",            //525
+                                        "Unicorn Horn",             //526
+                                        "Dark Shard",               //527
+                                        "Light Shard",              //528
+                                        "Red Pressure Plate",       //529
+                                        "Wire",                     //530
+                                        "Spell Tome",               //531
+                                        "Star Cloak",               //532
+                                        "Megashark",                //533
+                                        "Shotgun",                  //534
+                                        "Philospher's Stone",       //535
+                                        "Titan Glove",              //536
+                                        "Cobalt Naginata",          //537
+                                        "Switch",                   //538
+                                        "Dart Trap",                //539
+                                        "Boulder",                  //540
+                                        "Green Pressure Plate",     //541
+                                        "Gray Pressure Plate",      //542
+                                        "Brown Pressure Plate",     //543
+                                        "Mechanical Eye",           //544
+                                        "Cursed Arrow",             //545
+                                        "Cursed Bullet",            //546
+                                        "Soul of Fright",           //547
+                                        "Soul of Might",            //548
+                                        "Soul of Sight",            //549
+                                        "Gungnir",                  //550
+                                        "Hallowed Plate Mail",      //551
+                                        "Hallowed Greaves",         //552
+                                        "Hallowed Helmet",          //553
+                                        "Hallowed Headgear",        //554
+                                        "Hallowed Mask",            //555
+                                        "Cross Necklace",           //556
+                                        "Mana Flower",              //557
+                                        "Mechanical Worm",          //558
+                                        "Mechanical Skull",         //559
+                                        "Slime Crown",              //560
+                                        "Light Disc",               //561
+                                        "Music Box (Overworld Day)",//562
+                                        "Music Box (Eerie)",        //563
+                                        "Music Box (Night)",        //564
+                                        "Music Box (Title)",        //565
+                                        "Music Box (Underground)",  //566
+                                        "Music Box (Boss 1)",       //567
+                                        "Music Box (Jungle)",       //568
+                                        "Music Box (Corruption)",   //569
+                                        "Music Box (Underground Corruption)", //570
+                                        "Music Box (The Hallow)",   //571
+                                        "Music Box (Boss 2)",       //572
+                                        "Music Box (Underground Hallow)", //573
+                                        "Music Box (Boss 3)",       //574
+                                        "Soul of Flight",           //575
+                                        "Music Box",                //576
+                                        "Demonite Brick",           //577
+                                        "Hallowed Repeater",        //578
+                                        "Hamdrax",                  //579
+                                        "Explosives",               //580
+                                        "Inlet Pump",               //581
+                                        "Outlet Pump",              //582
+                                        "1 Second Timer",           //583
+                                        "3 Second Timer",           //584
+                                        "5 Second Timer",           //585
+                                        "Candy Cane Block",         //586
+                                        "Candy Cane Wall",          //587
+                                        "Santa Hat",                //588
+                                        "Santa Shirt",              //589
+                                        "Santa Pants",              //590
+                                        "Green Candy Cane Block",   //591
+                                        "Green Candy Cane Wall",    //592
+                                        "Snow Block",               //593
+                                        "Snow Brick",               //594
+                                        "Snow Brick Wall",          //595
+                                        "Blue Light",               //596
+                                        "Red Light",                //597
+                                        "Green Light",              //598
+                                        "Blue Present",             //599
+                                        "Green Present",            //600
+                                        "Yellow Present",           //601
+                                        "Snow Globe",               //602
+                                        "Carrot"                    //603
+                                   };
 
         void jumpNPC(object sender, RoutedEventArgs e)
         {
