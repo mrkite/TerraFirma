@@ -103,6 +103,18 @@ namespace Terrafirma
             }
         }
 
+        public List<TileInfo> SelectedItems
+        {
+            get
+            {
+                List<TileInfo> tinfo = new List<TileInfo>();
+                foreach (var item in tileList.SelectedItems)
+                {
+                    tinfo.Add((item as HTile).Info);
+                }
+                return tinfo;
+            }
+        }
 
         private void cancel_Click(object sender, RoutedEventArgs e)
         {

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Hilight Block" Height="300" Width="300">
     <Grid>
-        <ListBox Height="237" HorizontalAlignment="Left" Margin="12,12,0,0" Name="tileList" VerticalAlignment="Top" Width="173" SelectionChanged="tileList_SelectionChanged" />
+        <ListBox Height="237" HorizontalAlignment="Left" Margin="12,12,0,0" Name="tileList" VerticalAlignment="Top" Width="173" SelectionChanged="tileList_SelectionChanged" SelectionMode="Multiple"/>
         <Button Content="Hilight" Height="23" HorizontalAlignment="Left" Margin="191,226,0,0" Name="hilightbutton" VerticalAlignment="Top" Width="75" Click="hilight_Click" IsDefault="True" IsEnabled="False" />
         <Button Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="191,197,0,0" Name="button2" VerticalAlignment="Top" Width="75" Click="cancel_Click" IsCancel="True" />
     </Grid>
