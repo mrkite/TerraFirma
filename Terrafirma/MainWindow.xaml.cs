@@ -2744,9 +2744,11 @@ namespace Terrafirma
             HilightWin h = new HilightWin(items);
             if (h.ShowDialog() == true)
             {
-                h.SelectedItem.isHilighting = true;
-                // also hilight the subvariants
-                hiliteVariants(h.SelectedItem);
+                foreach(var i in h.SelectedItems){
+                    i.isHilighting = true;
+                    // also hilight the subvariants
+                    hiliteVariants(i);
+                }
                 isHilight = true;
                 RenderMap();
             }
