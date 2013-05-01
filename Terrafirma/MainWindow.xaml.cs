@@ -48,6 +48,30 @@ using System.Net.Sockets;
 
 namespace Terrafirma
 {
+    public class HTile : IComparable
+    {
+        private string name;
+        private TileInfo info;
+        public HTile(string name, TileInfo info)
+        {
+            this.name = name;
+            this.info = info;
+        }
+        public TileInfo Info
+        {
+            get { return info; }
+        }
+        public override string ToString()
+        {
+            return name;
+        }
+        int IComparable.CompareTo(object obj)
+        {
+            HTile h = (HTile)obj;
+            int r = String.Compare(this.name, h.name);
+            return r;
+        }
+    }
     public class TileInfo
     {
         public string name;
@@ -823,11 +847,12 @@ namespace Terrafirma
                     }
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
+                            loadHighlight();
                             render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, npcs);
                             loaded = true;
                             done();
                         }));
-                    calculateLight();
+                    //calculateLight();
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
                             serverText.Text = "";
@@ -2774,6 +2799,21 @@ namespace Terrafirma
         private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var dlg = new Microsoft.Win32.SaveFileDialog();
+            try
+            {
+                string path = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Terrafirma\";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                FileInfo wldFileInfo = new FileInfo(currentWorld);
+                dlg.FileName = path + wldFileInfo.Name.Replace(wldFileInfo.Extension, "") + "-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
+                dlg.InitialDirectory = path;
+            }
+            catch (Exception)
+            {
+
+            }
             dlg.DefaultExt = ".png";
             dlg.Filter = "Png Image|*.png";
             dlg.Title = "Save Map Image";
@@ -2813,10 +2853,11 @@ namespace Terrafirma
                         starty = curY - (ht / (2 * sc));
                     }
                     pixels = new byte[wd * ht * 4];
-
+                    
                     render.Draw(wd, ht, startx, starty, sc,
                         ref pixels, false, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
                         saveOpts.UseTextures && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked, ref tiles);
+                    
 
                     BitmapSource source = BitmapSource.Create(wd, ht, 96.0, 96.0,
                         PixelFormats.Bgr32, null, pixels, wd * 4);
@@ -3060,6 +3101,67 @@ namespace Terrafirma
                 }
             };
             new Thread(start).Start();
+        }
+
+
+        ArrayList theTiles;
+        private void loadHighlight()
+        {
+            ArrayList items = tileInfos.Items();
+            theTiles = new ArrayList();
+            foreach (TileInfo info in items)
+            {
+                info.isHilighting = false;
+                theTiles.Add(new HTile(info.name, info));
+                AddVariants(theTiles, info);
+            }
+            theTiles.Sort();
+            tileList.ItemsSource = theTiles;
+        }
+        private void AddVariants(ArrayList tiles, TileInfo info)
+        {
+            foreach (TileInfo v in info.variants)
+            {
+                if (v.name != info.name)
+                {
+                    v.isHilighting = false;
+                    tiles.Add(new HTile(v.name, v));
+                }
+                AddVariants(tiles, v);
+            }
+        }
+
+        private void tileList_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+            foreach (var item in e.RemovedItems)
+            {
+                (item as HTile).Info.isHilighting = false;
+            }
+            if (tileList.SelectedItems.Count == 0)
+            {
+                isHilight = false;
+            }
+            else
+            {
+                isHilight = true;
+                List<TileInfo> tinfo = new List<TileInfo>();
+                foreach (var item in tileList.SelectedItems)
+                {
+                    tinfo.Add((item as HTile).Info);
+                }
+                foreach (var i in tinfo)
+                {
+                    i.isHilighting = true;
+                    hiliteVariants(i);
+                }
+            }
+            RenderMap();   
+        }
+
+        private void button2_Click_1(object sender, RoutedEventArgs e)
+        {
+            isHilight = false;
+            loadHighlight();
         }
     }
 }
