@@ -2520,11 +2520,19 @@ namespace Terrafirma
                         SendMessage(0x0c); //spawn
                         if (tilesWide == 8400) //large world
                         {
-                            socket.Close();
-                            busy = false;
+                            //give the user a choice to map a remote large world
                             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                             {
-                                MessageBox.Show("Will not map remote large worlds\nother than the spawn point");
+                                if (MessageBox.Show(this, "Mapping remote large worlds is not recommend.\nContinue to map the rest of the world?", "Map Whole World",
+                                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                {
+                                    fetchNextSection(); //start fetching the world
+                                }
+                                else
+                                {
+                                    socket.Close();
+                                    busy = false;
+                                }
                             }));
                         }
                         else
