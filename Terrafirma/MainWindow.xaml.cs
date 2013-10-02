@@ -408,7 +408,15 @@ namespace Terrafirma
                                         new FriendlyNPC("Goblin Tinkerer", 107, 9, 7),
                                         new FriendlyNPC("Wizard", 108, 10, 8),
                                         new FriendlyNPC("Mechanic", 124, 8, 9),
-                                        new FriendlyNPC("Santa Claus", 142, 11, -1)
+                                        new FriendlyNPC("Santa Claus", 142, 11, -1),
+										new FriendlyNPC("Truffle", 160, 12, -1),
+										new FriendlyNPC("Steampunker", 178, 13, -1),
+										new FriendlyNPC("Dye Trader", 207, 14, -1),
+										new FriendlyNPC("Party Girl", 208, 15, -1),
+										new FriendlyNPC("Cyborg", 209, 16, -1),
+										new FriendlyNPC("Painter", 227, 17, -1),
+										new FriendlyNPC("Witch Doctor", 228, 18, -1),
+										new FriendlyNPC("Pirate", 229, 19, -1)
                                    };
 
 
@@ -460,6 +468,9 @@ namespace Terrafirma
                     case "lava":
                         lavaColor = color;
                         break;
+					case "liquid":
+						liquidColor = color;
+						break;
                 }
             }
 
@@ -935,7 +946,7 @@ namespace Terrafirma
                                        "Deranged",      //31
                                        "Intense",       //32
                                        "Taboo",         //33
-                                       "",              //34
+                                       "Celestial",     //34
                                        "Furious",       //35
                                        "Keen",          //36
                                        "Superior",      //37
@@ -1011,7 +1022,31 @@ namespace Terrafirma
                                          "Green Phasesaber",        //-21
                                          "Purple Phasesaber",       //-22
                                          "White Phasesaber",        //-23
-                                         "Yellow Phasesaber"        //-24
+                                         "Yellow Phasesaber",       //-24
+										 "Tin Pickaxe",             //-25
+										 "Tin Broadsword",          //-26
+										 "Tin Shortsword",          //-27
+										 "Tin Axe",                 //-28
+										 "Tin Hammer",              //-29
+										 "Tin Bow",                 //-30
+										 "Lead Pickaxe",            //-31
+										 "Lead Broadsword",         //-32
+										 "Lead Shortsword",         //-33
+										 "Lead Axe",                //-34
+										 "Lead Hammer",             //-35
+										 "Lead Bow",                //-36
+										 "Tungsten Pickaxe",        //-37
+										 "Tungsten Broadsword",     //-38
+										 "Tungsten Shortsword",     //-39
+										 "Tungsten Axe",            //-40
+										 "Tungsten Hammer",         //-41
+										 "Tungsten Bow",            //-42
+										 "Platinum Pickaxe",        //-43
+										 "Platinum Broadsword",     //-44
+										 "Platinum Shortsword",     //-45
+										 "Platinum Axe",            //-46
+										 "Platinum Hammer",         //-47
+										 "Platinum Bow"             //-48
                                      };
         private string[] itemNames ={
                                         "",                         //0
@@ -1096,10 +1131,10 @@ namespace Terrafirma
                                         "Gold Greaves",             //79
                                         "Copper Chainmail",         //80
                                         "Iron Chainmail",           //81
-                                        "Siler Chainmail",          //82
+                                        "Silver Chainmail",         //82
                                         "Gold Chainmail",           //83
                                         "Grappling Hook",           //84
-                                        "Iron Chain",               //85
+                                        "Chain", 	                //85
                                         "Shadow Scale",             //86
                                         "Piggy Bank",               //87
                                         "Mining Helmet",            //88
@@ -1129,7 +1164,7 @@ namespace Terrafirma
                                         "Flower of Fire",           //112
                                         "Magic Missile",            //113
                                         "Dirt Rod",                 //114
-                                        "Orb of Light",             //115
+                                        "Shadow Orb",               //115
                                         "Meteorite",                //116
                                         "Meteorite Bar",            //117
                                         "Hook",                     //118
@@ -1268,8 +1303,8 @@ namespace Terrafirma
                                         "Archaeologist's Hat",      //251
                                         "Archaeologist's Jacket",   //252
                                         "Archaeologist's Pants",    //253
-                                        "Black Dye",                //254
-                                        "Green Dye",                //255
+                                        "Black Thread",             //254
+                                        "Green Thread",             //255
                                         "Ninja Hood",               //256
                                         "Ninja Shirt",              //257
                                         "Ninja Pants",              //258
@@ -1593,7 +1628,7 @@ namespace Terrafirma
                                         "Music Box",                //576
                                         "Demonite Brick",           //577
                                         "Hallowed Repeater",        //578
-                                        "Hamdrax",                  //579
+                                        "Drax",                     //579
                                         "Explosives",               //580
                                         "Inlet Pump",               //581
                                         "Outlet Pump",              //582
@@ -1617,7 +1652,1017 @@ namespace Terrafirma
                                         "Green Present",            //600
                                         "Yellow Present",           //601
                                         "Snow Globe",               //602
-                                        "Carrot"                    //603
+                                        "Carrot",                   //603
+										"Adamantite Beam",          //604
+										"Adamantite Beam Wall",     //605
+										"Demonite Brick Wall",      //606
+										"Sandstone Brick",          //607
+										"Sandstone Brick Wall",     //608
+										"Ebonstone Brick",          //609
+										"Ebonstone Brick Wall",     //610
+										"Red Stucco",               //611
+										"Yellow Stucco",            //612
+										"Green Stucco",             //613
+										"Gray Stucco",              //614
+										"Red Stucco Wall",          //615
+										"Yellow Stucco Wall",       //616
+										"Green Stucco Wall",        //617
+										"Gray Wall",                //618
+										"Ebonwood",                 //619
+										"Rich Mahogany",            //620
+										"Pearlwood",                //621
+										"Ebonwood Wall",            //622
+										"Rich Mahogany Wall",       //623
+										"Pearlwood Wall",           //624
+										"Ebonwood Chest",           //625
+										"Rich Mahogany Chest",      //626
+										"Pearlwood Chest",          //627
+										"Ebonwood Chair",           //628
+										"Rich Mahogany Chair",      //629
+										"Pearlwood Chair",          //630
+										"Ebonwood Platform",        //631
+										"Rich Mahogany Platform",   //632
+										"Pearlwood Platform",       //633
+										"Bone Platform",            //634
+										"Ebonwood Work Bench",      //635
+										"Rich Mahogany Work Bench", //636
+										"Pearlwood Work Bench",     //637
+										"Ebonwood Table",           //638
+										"Rich Mahogany Table",      //639
+										"Pearlwood Table",          //640
+										"Ebonwood Piano",           //641
+										"Rich Mahogany Piano",      //642
+										"Pearlwood Piano",          //643
+										"Ebonwood Bed",             //644
+										"Rich Mahogany Bed",        //645
+										"Pearlwood Bed",            //646
+										"Ebonwood Dresser",         //647
+										"Rich Mahogany Dresser",    //648
+										"Pearlwood Dresser",        //649
+										"Ebonwood Door",            //650
+										"Rich Mahogany Door",       //651
+										"Pearlwood Door",           //652
+										"Ebonwood Sword",           //653
+										"Ebonwood Hammer",          //654
+										"Ebonwood Bow",             //655
+										"Rich Mahogany Sword",      //656
+										"Rich Mahogany Hammer",     //657
+										"Rich Mahogany Bow",        //658
+										"Pearlwood Sword",          //659
+										"Pearlwood Hammer",         //660
+										"Pearlwood Bow",            //661
+										"Rainbow Brick",            //662
+										"Rainbow Brick Wall",       //663
+										"Ice Block",                //664
+										"Red's Wings",              //665
+										"Red's Helmet",             //666
+										"Red's Breastplate",        //667
+										"Red's Leggings",           //668
+										"Fish",                     //669
+										"Ice Boomerang",            //670
+										"Lockblade",                //671
+										"Cutlass",                  //672
+										"Icemourne",                //673
+										"True Excalibur",           //674
+										"True Night's Edge",        //675
+										"Frostbrand",               //676
+										"Scythe",                   //677
+										"Soul Scythe",              //678
+										"Tactical Shotgun",         //679
+										"Bamboo Chest",             //680
+										"Ice Chest",                //681
+										"Marrow",                   //682
+										"Unholy Trident",           //683
+										"Frost Helmet",             //684
+										"Frost Breastplate",        //685
+										"Frost Leggings",           //686
+										"Tin Helmet",               //687
+										"Tin Chainmail",            //688
+										"Tin Greaves",              //689
+										"Lead Helmet",              //690
+										"Lead Chainmail",           //691
+										"Lead Greaves",             //692
+										"Tungsten Helmet",          //693
+										"Tungsten Chainmail",       //694
+										"Tungsten Greaves",         //695
+										"Platinum Helmet",          //696
+										"Platinum Chainmail",       //697
+										"Platinum Greaves",         //698
+										"Tin Ore",                  //699
+										"Lead Ore",                 //700
+										"Tungsten Ore",             //701
+										"Platinum Ore",             //702
+										"Tin Bar",                  //703
+										"Lead Bar",                 //704
+										"Tungsten Bar",             //705
+										"Platinum Bar",             //706
+										"Tin Watch",                //707
+										"Tungsten Watch",           //708
+										"Platinum Watch",           //709
+										"Tin Chandelier",           //710
+										"Tungsten Chandelier",      //711
+										"Platinum Chandelier",      //712
+										"Platinum Candle",          //713
+										"Platinum Candelabra",      //714
+										"Platinum Crown",           //715
+										"Lead Anvil",               //716
+										"Tin Brick",                //717
+										"Tungsten Brick",           //718
+										"Platinum Brick",           //719
+										"Tin Brick Wall",           //720
+										"Tungsten Brick Wall",      //721
+										"Platinum Brick Wall",      //722
+										"Beam Sword",               //723
+										"Ice Blade",                //724
+										"Icy Bow",                  //725
+										"Frost Staff",              //726
+										"Wood Helmet",              //727
+										"Wood Breastplate",         //728
+										"Wood Greaves",             //729
+										"Ebonwood Helmet",          //730
+										"Ebonwood Breastplate",     //731
+										"Ebonwood Greaves",         //732
+										"Rich Mahogany Helmet",     //733
+										"Rich Mahogany Breastplate",//734
+										"Rich Mahogany Greaves",    //735
+										"Pearlwood Helmet",         //736
+										"Pearlwood Breastplate",    //737
+										"Pearlwood Greaves",        //738
+										"Amethyst Staff",           //739
+										"Topaz Staff",              //740
+										"Sapphire Staff",           //741
+										"Emerald Staff",            //742
+										"Ruby Staff",               //743
+										"Diamond Staff",            //744
+										"Grass Wall",               //745
+										"Jungle Wall",              //746
+										"Flower Wall",              //747
+										"Jetpack",                  //748
+										"Butterfly Wings",          //749
+										"Cactus Wall",              //750
+										"Cloud",                    //751
+										"Cloud Wall",               //752
+										"Seaweed",                  //753
+										"Rune Hat",                 //754
+										"Rune Robe",                //755
+										"Mushroom Spear",           //756
+										"Terra Blade",              //757
+										"Grenade Launcher",         //758
+										"Rocket Launcher",          //759
+										"Proximity Mine Launcher",  //760
+										"Fairy Wings",              //761
+										"Slime Block",              //762
+										"Flesh Block",              //763
+										"Mushroom Wall",            //764
+										"Rain Cloud",               //765
+										"Bone Block",               //766
+										"Frozen Slime Block",       //767
+										"Bone Block Wall",          //768
+										"Slime Block Wall",         //769
+										"Flesh Block Wall",         //770
+										"Rocket I",                 //771
+										"Rocket II",                //772
+										"Rocket III",               //773
+										"Rocket IV",                //774
+										"Asphalt Block",            //775
+										"Cobalt Pickaxe",           //776
+										"Mythril Pickaxe",          //777
+										"Adamantite Pickaxe",       //778
+										"Clentaminator",            //779
+										"Green Solution",           //780
+										"Blue Solution",            //781
+										"Purple Solution",          //782
+										"Dark Blue Solution",       //783
+										"Red Solution",             //784
+										"Harpy Wings",              //785
+										"Bone Wings",               //786
+										"Hammush",                  //787
+										"Nettle Burst",             //788
+										"Ankh Banner",              //789
+										"Snake Banner",             //790
+										"Omega Banner",             //791
+										"Crimson Helmet",           //792
+										"Crimson Scalemail",        //793
+										"Crimson Greaves",          //794
+										"Blood Butcherer",          //795
+										"Tendon Bow",               //796
+										"Flesh Grinder",            //797
+										"Deathbringer Pickaxe",     //798
+										"Blood Lust Cluster",       //799
+										"The Undertaker",           //800
+										"The Meatball",             //801
+										"The Rotted Fork",          //802
+										"Eskimo Hood",              //803
+										"Eskimo Coat",              //804
+										"Eskimo Pants",             //805
+										"Living Wood Chair",        //806
+										"Cactus Chair",             //807
+										"Bone Chair",               //808
+										"Flesh Chair",              //809
+										"Mushroom Chair",           //810
+										"Bone Work Bench",          //811
+										"Cactus Work Bench",        //812
+										"Flesh Work Bench",         //813
+										"Mushroom Work Bench",      //814
+										"Slime Work Bench",         //815
+										"Cactus Door",              //816
+										"Flesh Door",               //817
+										"Mushroom Door",            //818
+										"Living Wood Door",         //819
+										"Bone Door",                //820
+										"Flame Wings",              //821
+										"Frozen Wings",             //822
+										"Ghost Wings",              //823
+										"Sunplate Block",           //824
+										"Disc Wall",                //825
+										"Skyware Chair",            //826
+										"Bone Table",               //827
+										"Flesh Table",              //828
+										"Living Wood Table",        //829
+										"Skyware Table",            //830
+										"Living Wood Chest",        //831
+										"Living Wood Wand",         //832
+										"Purple Ice Block",         //833
+										"Pink Ice Block",           //834
+										"Red Ice Block",            //835
+										"Crimstone",                //836
+										"Skyware Door",             //837
+										"Skyware Chest",            //838
+										"Steampunk Hat",            //839
+										"Steampunk Shirt",          //840
+										"Steampunk Pants",          //841
+										"Bee Hat",                  //842
+										"Bee Shirt",                //843
+										"Bee Pants",                //844
+										"World Banner",             //845
+										"Sun Banner",               //846
+										"Gravity Banner",           //847
+										"Pharaoh's Mask",           //848
+										"Actuator",                 //849
+										"Blue Wrench",              //850
+										"Green Wrench",             //851
+										"Blue Pressure Plate",      //852
+										"Yellow Pressure Plate",    //853
+										"Discount Card",            //854
+										"Lucky Coin",               //855
+										"Stick Unicorn",            //856
+										"Sandstorm in a Bottle",    //857
+										"bl",                       //858
+										"Beach Ball",               //859
+										"Charm of Myths",           //860
+										"Moon Shell",               //861
+										"Star Veil",                //862
+										"Water Walking Boots",      //863
+										"Tiara",                    //864
+										"Princess Dress",           //865
+										"Pharaoh's Robe",           //866
+										"Green Cap",                //867
+										"Mushroom Cap",             //868
+										"Tam O' Shanter",           //869
+										"Mummy Mask",               //870
+										"Mummy Shirt",              //871
+										"Mummy Pants",              //872
+										"Cowboy Hat",               //873
+										"Cowboy Jacket",            //874
+										"Cowboy Pants",             //875
+										"Pirate Hat",               //876
+										"Pirate Shirt",             //877
+										"Pirate Pants",             //878
+										"Viking Helmet",            //879
+										"Crimtane",                 //880
+										"Cactus Sword",             //881
+										"Cactus Pickaxe",           //882
+										"Ice Brick",                //883
+										"Ice Brick Wall",           //884
+										"Adhesive Bandage",         //885
+										"Armor Polish",             //886
+										"Bezoar",                   //887
+										"Blindfold",                //888
+										"Fast Clock",               //889
+										"Megaphone",                //890
+										"Nazar",                    //891
+										"Vitamins",                 //892
+										"Trifold Map",              //893
+										"Cactus Helmet",            //894
+										"Cactus Breastplate",       //895
+										"Cactus Leggings",          //896
+										"Power Glove",              //897
+										"Lightning Boots",          //898
+										"Sun Stone",                //899
+										"Moon Stone",               //900
+										"Armor Bracing",            //901
+										"Medicated Bandage",        //902
+										"The Plan",                 //903
+										"Countercurse Mantra",      //904
+										"Coin Gun",                 //905
+										"Lava Charm",               //906
+										"Obsidian Water Walking Boots", //907
+										"Lava Waders",              //908
+										"Pure Water Fountain",      //909
+										"Desert Water Fountain",    //910
+										"Shadewood",                //911
+										"Shadewood Door",           //912
+										"Shadewood Platform",       //913
+										"Shadewood Chest",          //914
+										"Shadewood Chair",          //915
+										"Shadewood Work Bench",     //916
+										"Shadewood Table",          //917
+										"Shadewood Dresser",        //918
+										"Shadewood Piano",          //919
+										"Shadewood Bed",            //920
+										"Shadewood Sword",          //921
+										"Shadewood Hammer",         //922
+										"Shadewood Bow",            //923
+										"Shadewood Helmet",         //924
+										"Shadewood Breastplate",    //925
+										"Shadewood Greaves",        //926
+										"Shadewood Wall",           //927
+										"Cannon",                   //928
+										"Cannonball",               //929
+										"Flare Gun",                //930
+										"Flare",                    //931
+										"Bone Wand",                //932
+										"Leaf Wand",                //933
+										"Flying Carpet",            //934
+										"Avenger Emblem",           //935
+										"Mechanical Glove",         //936
+										"Land Mine",                //937
+										"Paladin's Shield",         //938
+										"Web Slinger",              //939
+										"Jungle Water Fountain",    //940
+										"Icy Water Fountain",       //941
+										"Corrupt Water Fountain",   //942
+										"Crimson Water Fountain",   //943
+										"Hallowed Water Fountain",  //944
+										"Blood Water Fountain",     //945
+										"Umbrella",                 //946
+										"Chlorophyte Ore",          //947
+										"Steampunk Wings",          //948
+										"Snowball",                 //949
+										"Ice Skates",               //950
+										"Snowball Launcher",        //951
+										"Web Covered Chest",        //952
+										"Climbing Claws",           //953
+										"Ancient Iron Helmet",      //954
+										"Ancient Gold Helmet",      //955
+										"Ancient Shadow Helmet",    //956
+										"Ancient Shadow Scalemail", //957
+										"Ancient Shadow Greaves",   //958
+										"Ancient Necro Helmet",     //959
+										"Ancient Cobalt Helmet",    //960
+										"Ancient Cobalt Breastplate",//961
+										"Anceint Cobalt Leggings",  //962
+										"Black Belt",               //963
+										"Boomstick",                //964
+										"Rope",                     //965
+										"Campfire",                 //966
+										"Marshmellow",              //967
+										"Marshmellow on a Stick",   //968
+										"Cooked Marshmellow",       //969
+										"Red Rocket",               //970
+										"Green Rocket",             //971
+										"Blue Rocket",              //972
+										"Yellow Rocket",            //973
+										"Ice Torch",                //974
+										"Shoe Spikes",              //975
+										"Tiger Climbing Gear",      //976
+										"Tabi",                     //977
+										"Pink Eskimo Hood",         //978
+										"Pink Eskimo Coat",         //979
+										"Pink Eskimo Pants",        //980
+										"Pink Thread",              //981
+										"Mana Regeneration Band",   //982
+										"Sandstorm in a Balloon",   //983
+										"Master Ninja Gear",        //984
+										"Rope Coil",                //985
+										"Blowgun",                  //986
+										"Blizzard in a Bottle",     //987
+										"Frostburn Arrow",          //988
+										"Enchanted Sword",          //989
+										"Pickaxe Axe",              //990
+										"Cobalt Waraxe",            //991
+										"Mythril Waraxe",           //992
+										"Adamantite Waraxe",        //993
+										"Eater's Bone",             //994
+										"Blend-O-Matic",            //995
+										"Meat Grinder",             //996
+										"Silt Extractinator",       //997
+										"Solidifier",               //998
+										"Amber",                    //999
+										"Confetti Gun",             //1000
+										"Chlorophyte Mask",         //1001
+										"Chlorophyte Helmet",       //1002
+										"Chlorophyte Headgear",     //1003
+										"Chlorophyte Plate Mail",   //1004
+										"Chlorophyte Greaves",      //1005
+										"Chlorophyte Bar",          //1006
+										"Red Dye",                  //1007
+										"Orange Dye",               //1008
+										"Yellow Dye",               //1009
+										"Lime Dye",                 //1010
+										"Green Dye",                //1011
+										"Teal Dye",                 //1012
+										"Cyan Dye",                 //1013
+										"Sky Blue Dye",             //1014
+										"Blue Dye",                 //1015
+										"Purple Dye",               //1016
+										"Violet Dye",               //1017
+										"Pink Dye",                 //1018
+										"Red and Black Dye",        //1019
+										"Orange and Black Dye",     //1020
+										"Yellow and Black Dye",     //1021
+										"Lime and Black Dye",       //1022
+										"Green and Black Dye",      //1023
+										"Teal and Black Dye",       //1024
+										"Cyan and Black Dye",       //1025
+										"Sky Blue and Black Dye",   //1026
+										"Blue and Black Dye",       //1027
+										"Purple and Black Dye",     //1028
+										"Violet and Black Dye",     //1029
+										"Pink and Black Dye",       //1030
+										"Flame Dye",                //1031
+										"Flame and Black Dye",      //1032
+										"Green Flame Dye",          //1033
+										"Green Flame and Black Dye",//1034
+										"Blue Flame Dye",           //1035
+										"Blue Flame and Black Dye", //1036
+										"Silver Dye",               //1037
+										"Bright Red Dye",           //1038
+										"Bright Orange Dye",        //1039
+										"Bright Yellow Dye",        //1040
+										"Bright Lime Dye",          //1041
+										"Bright Green Dye",         //1042
+										"Bright Teal Dye",          //1043
+										"Bright Cyan Dye",          //1044
+										"Bright Sky Blue Dye",      //1045
+										"Bright Blue Dye",          //1046
+										"Bright Purple Dye",        //1047
+										"Bright Violet Dye",        //1048
+										"Bright Pink Dye",          //1049
+										"Black Dye",                //1050
+										"Red and Silver Dye",       //1051
+										"Orange and Silver Dye",    //1052
+										"Yellow and Silver Dye",    //1053
+										"Lime and Silver Dye",      //1054
+										"Green and Silver Dye",     //1055
+										"Teal and Silver Dye",      //1056
+										"Cyan and Silver Dye",      //1057
+										"Sky Blue and Silver Dye",  //1058
+										"Blue and Silver Dye",      //1059
+										"Purple and Silver Dye",    //1060
+										"Violet and Silver Dye",    //1061
+										"Pink and Silver Dye",      //1062
+										"Intense Flame Dye",        //1063
+										"Intense Green Flame Dye",  //1064
+										"Intense Blue Flame Dye",   //1065
+										"Rainbow Dye",              //1066
+										"Intense Rainbow Dye",      //1067
+										"Yellow Gradient Dye",      //1068
+										"Cyan Gradient Dye",        //1069
+										"Violet Gradient Dye",      //1070
+										"Paintbrush",               //1071
+										"Paint Roller",             //1072
+										"Red Paint",                //1073
+										"Orange Paint",             //1074
+										"Yellow Paint",             //1075
+										"Lime Paint",               //1076
+										"Green Paint",              //1077
+										"Teal Paint",               //1078
+										"Cyan Paint",               //1079
+										"Sky Blue Paint",           //1080
+										"Blue Paint",               //1081
+										"Purple Paint",             //1082
+										"Violet Paint",             //1083
+										"Pink Paint",               //1084
+										"Deep Red Paint",           //1085
+										"Deep Orange Paint",        //1086
+										"Deep Yellow Paint",        //1087
+										"Deep Lime Paint",          //1088
+										"Deep Green Paint",         //1089
+										"Deep Teal Paint",          //1090
+										"Deep Cyan Paint",          //1091
+										"Deep Sky Blue Paint",      //1092
+										"Deep Blue Paint",          //1093
+										"Deep Purple Paint",        //1094
+										"Deep Violet Paint",        //1095
+										"Deep Pink Paint",          //1096
+										"Black Paint",              //1097
+										"White Paint",              //1098
+										"Grey Paint",               //1099
+										"Paint Scraper",            //1100
+										"Lihzahrd Brick",           //1101
+										"Lihzahrd Brick Wall",      //1102
+										"Slush Block",              //1103
+										"Palladium Ore",            //1104
+										"Orichalcum Ore",           //1105
+										"Titanium Ore",             //1106
+										"Teal Mushroom",            //1107
+										"Green Mushroom",           //1108
+										"Sky Blue Flower",          //1109
+										"Yellow Marigold",          //1110
+										"Blue Berries",             //1111
+										"Lime Kelp",                //1112
+										"Pink Prickly Pear",        //1113
+										"Orange Bloodroot",         //1114
+										"Red Husk",                 //1115
+										"Cyan Husk",                //1116
+										"Violet Husk",              //1117
+										"Purple Mucos",             //1118
+										"Black Ink",                //1119
+										"Dye Vat",                  //1120
+										"Beegun",                   //1121
+										"Possessed Hatchet",        //1122
+										"Bee Keeper",               //1123
+										"Hive",                     //1124
+										"Honey Block",              //1125
+										"Hive Wall",                //1126
+										"Crispy Honey Block",       //1127
+										"Honey Bucket",             //1128
+										"Hive Wand",                //1129
+										"Beenade",                  //1130
+										"Gravity Globe",            //1131
+										"Honey Comb",               //1132
+										"Abeemination",             //1133
+										"Bottled Honey",            //1134
+										"Rain Hat",                 //1135
+										"Rain Coat",                //1136
+										"Lihzahrd Door",            //1137
+										"Dungeon Door",             //1138
+										"Lead Door",                //1139
+										"Iron Door",                //1140
+										"Temple Key",               //1141
+										"Lihzahrd Chest",           //1142
+										"Lihzahrd Chair",           //1143
+										"Lihzahrd Table",           //1144
+										"Lihzahrd Work Bench",      //1145
+										"Super Dart Trap",          //1146
+										"Flame Trap",               //1147
+										"Spiky Ball Trap",          //1148
+										"Spear Trap",               //1149
+										"Wooden Spike",             //1150
+										"Lihzahrd Pressure Plate",  //1151
+										"Lihzahrd Statue",          //1152
+										"Lihzahrd Watcher Statue",  //1153
+										"Lihzahrd Guardian Statue", //1154
+										"Wasp Gun",                 //1155
+										"Piranha Gun",              //1156
+										"Pygmy Staff",              //1157
+										"Pygmy Necklace",           //1158
+										"Tiki Mask",                //1159
+										"Tiki Shirt",               //1160
+										"Tiki Pants",               //1161
+										"Leaf Wings",               //1162
+										"Blizzard in a Balloon",    //1163
+										"Bundle of Balloons",       //1164
+										"Bat Wings",                //1165
+										"Bone Sword",               //1166
+										"Hercules Beetle",          //1167
+										"Smoke Bomb",               //1168
+										"Bone Key",                 //1169
+										"Nectar",                   //1170
+										"Tiki Totem",               //1171
+										"Lizard Egg",               //1172
+										"Grave Marker",             //1173
+										"Cross Grave Marker",       //1174
+										"Headstone",                //1175
+										"Gravestone",               //1176
+										"Obelisk",                  //1177
+										"Leaf Blower",              //1178
+										"Chlorophyte Bullet",       //1179
+										"Parrot Cracker",           //1180
+										"Strange Glowing Mushroom", //1181
+										"Seedling",                 //1182
+										"Wisp in a Bottle",         //1183
+										"Palladium Bar",            //1184
+										"Palladium Sword",          //1185
+										"Palladium Pike",           //1186
+										"Palladium Repeater",       //1187
+										"Palladium Pickaxe",        //1188
+										"Palladium Drill",          //1189
+										"Palladium Chainsaw",       //1190
+										"Orichalcum Bar",           //1191
+										"Orichalcum Sword",         //1192
+										"Orichalcum Halberd",       //1193
+										"Orichalcum Repeater",      //1194
+										"Orichalcum Pickaxe",       //1195
+										"Orichalcum Drill",         //1196
+										"Orichalcum Chainsaw",      //1197
+										"Titanium Bar",             //1198
+										"Titanium Sword",           //1199
+										"Titanium Trident",         //1200
+										"Titanium Repeater",        //1201
+										"Titanium Pickaxe",         //1202
+										"Titanium Drill",           //1203
+										"Titanium Chainsaw",        //1204
+										"Palladium Mask",           //1205
+										"Palladium Helmet",         //1206
+										"Palladium Headgear",       //1207
+										"Palladium Breastplate",    //1208
+										"Palladium Leggings",       //1209
+										"Orichalcum Mask",          //1210
+										"Orichalcum Helmet",        //1211
+										"Orichalcum Headgear",      //1212
+										"Orichalcum Breastplate",   //1213
+										"Orichalcum Leggings",      //1214
+										"Titanium Mask",            //1215
+										"Titanium Helmet",          //1216
+										"Titanium Headgear",        //1217
+										"Titanium Breastplate",     //1218
+										"Titanium Leggings",        //1219
+										"Mythril Anvil",            //1220
+										"Orichalcum Forge",         //1221
+										"Palladium Waraxe",         //1222
+										"Orichalcum Waraxe",        //1223
+										"Titanium Waraxe",          //1224
+										"Hallowed Bar",             //1225
+										"Chlorophyte Claymore",     //1226
+										"Chlorophyte Saber",        //1227
+										"Chlorophyte Partisan",     //1228
+										"Chlorophyte Shotbow",      //1229
+										"Chlorophyte Pickaxe",      //1230
+										"Chlorophyte Drill",        //1231
+										"Chlorophyte Chainsaw",     //1232
+										"Chlorophyte Greataxe",     //1233
+										"Chlorophyte Warhammer",    //1234
+										"Chlorophyte Arrow",        //1235
+										"Amethyst Hook",            //1236
+										"Topaz Hook",               //1237
+										"Sapphire Hook",            //1238
+										"Emerald Hook",             //1239
+										"Ruby Hook",                //1240
+										"Diamond Hook",             //1241
+										"Amber Mosquito",           //1242
+										"Umbrella Hat",             //1243
+										"Nimbus Rod",               //1244
+										"Orange Torch",             //1245
+										"Crimsand Block",           //1246
+										"Bee Cloak",                //1247
+										"Eye of the Golem",         //1248
+										"Honey Balloon",            //1249
+										"Blue Horseshoe Balloon",   //1250
+										"White Horseshoe Balloon",  //1251
+										"Yellow Horseshoe Balloon", //1252
+										"Frozen Turtle Shell",      //1253
+										"Sniper Rifle",             //1254
+										"Venus Magnum",             //1255
+										"Crimson Rod",              //1256
+										"Crimtane Bar",             //1257
+										"Stynger",                  //1258
+										"Flower Pow",               //1259
+										"Rainbow Gun",              //1260
+										"Stynger Bolt",             //1261
+										"Chlorophyte Jackhammer",   //1262
+										"Teleporter",               //1263
+										"Flower of Frost",          //1264
+										"Uzi",                      //1265
+										"Magnet Sphere",            //1266
+										"Purple Stained Glass",     //1267
+										"Yellow Stained Glass",     //1268
+										"Blue Stained Glass",       //1269
+										"Green Stained Glass",      //1270
+										"Red Stained Glass",        //1271
+										"Multicolored Stained Glass",//1272
+										"Skeletron Hand",           //1273
+										"Skull",                    //1274
+										"Balla Hat",                //1275
+										"Gangsta Hat",              //1276
+										"Sailor Hat",               //1277
+										"Eye Patch",                //1278
+										"Sailor Shirt",             //1279
+										"Sailor Pants",             //1280
+										"Skeletron Mask",           //1281
+										"Amethyst Robe",            //1282
+										"Topaz Robe",               //1283
+										"Sapphire Robe",            //1284
+										"Emerald Robe",             //1285
+										"Ruby Robe",                //1286
+										"Diamond Robe",             //1287
+										"White Tuxedo Shirt",       //1288
+										"White Tuxedo Pants",       //1289
+										"Panic Necklace",           //1290
+										"Heart Fruit",              //1291
+										"Lihzahrd Altar",           //1292
+										"Lihzahrd Power Cell",      //1293
+										"Picksaw",                  //1294
+										"Heat Ray",                 //1295
+										"Staff of Earth",           //1296
+										"Golem Fist",               //1297
+										"Water Chest",              //1298
+										"Binoculars",               //1299
+										"Rifle Scope",              //1300
+										"Destroyer Emblem",         //1301
+										"High Velocity Bullet",     //1302
+										"Jellyfish Necklace",       //1303
+										"Zombie Arm",               //1304
+										"The Axe",                  //1305
+										"Ice Sickle",               //1306
+										"Clothier Voodoo Doll",     //1307
+										"Poison Staff",             //1308
+										"Slime Staff",              //1309
+										"Poison Dart",              //1310
+										"Eyespring",                //1311
+										"Toy Sled",                 //1312
+										"Book of Skulls",           //1313
+										"KO Cannon",                //1314
+										"Pirate Map",               //1315
+										"Turtle Helmet",            //1316
+										"Turtle Scale Mail",        //1317
+										"Turtle Leggings",          //1318
+										"Snowball Cannon",          //1319
+										"Bone Pickaxe",             //1320
+										"Magic Quiver",             //1321
+										"Magma Stone",              //1322
+										"Lava Rose",                //1323
+										"Bananarang",               //1324
+										"Chain Knife",              //1325
+										"Rod of Discord",           //1326
+										"Death Sickle",             //1327
+										"Turtle Scale",             //1328
+										"Tissue Sample",            //1329
+										"Vertebrae",                //1330
+										"Bloody Spine",             //1331
+										"Ichor",                    //1332
+										"Ichor Torch",              //1333
+										"Ichor Arrow",              //1334
+										"Ichor Bullet",             //1335
+										"Golden Shower",            //1336
+										"Bunny Cannon",             //1337
+										"Explosive Bunny",          //1338
+										"Vial of Venom",            //1339
+										"Flask of Venom",           //1340
+										"Venom Arrow",              //1341
+										"Venom Bullet",             //1342
+										"Fire Gauntlet",            //1343
+										"Cog",                      //1344
+										"Confetti",                 //1345
+										"Nanites",                  //1346
+										"Explosive Powder",         //1347
+										"Gold Dust",                //1348
+										"Party Bullet",             //1349
+										"Nano Bullet",              //1350
+										"Exploding Bullet",         //1351
+										"Golden Bullet",            //1352
+										"Flask of Cursed Flames",   //1353
+										"Flask of Fire",            //1354
+										"Flask of Gold",            //1355
+										"Flask of Ichor",           //1356
+										"Flask of Nanites",         //1357
+										"Flask of Party",           //1358
+										"Flask of Poison",          //1359
+										"Eye of Cthulu Trophy",     //1360
+										"Eater of Worlds Trophy",   //1361
+										"Brain of Cthulu Trophy",   //1362
+										"Skeletron Trophy",         //1363
+										"Queen Bee Trophy",         //1364
+										"Wall of Flesh Trophy",     //1365
+										"Destroyer Trophy",         //1366
+										"Skeletron Prime Trophy",   //1367
+										"Retinazer Trophy",         //1368
+										"Spazmatism Trophy",        //1369
+										"Plantera Trophy",          //1370
+										"Golem Trophy",             //1371
+										"Blood Moon Rising",        //1372
+										"The Hanged Man",           //1373
+										"Glory of the Fire",        //1374
+										"Bone Warp",                //1375
+										"Wall Skeleton",            //1376
+										"Hanging Skeleton",         //1377
+										"Blue Slab Wall",           //1378
+										"Blue Tiled Wall",          //1379
+										"Pink Slab Wall",           //1380
+										"Pink Tiled Wall",          //1381
+										"Green Slab Wall",          //1382
+										"Green Tiled Wall",         //1383
+										"Blue Brick Platform",      //1384
+										"Pink Brick Platform",      //1385
+										"Green Brick Platform",     //1386
+										"Dungeon Shelf 1",          //1387
+										"Dungeon Shelf 2",          //1388
+										"Dungeon Shelf 3",          //1389
+										"Lantern 1",                //1390
+										"Lantern 2",                //1391
+										"Lantern 3",                //1392
+										"Lantern 4",                //1393
+										"Lantern 5",                //1394
+										"Lantern 6",                //1395
+										"Blue Dungeon Chair",       //1396
+										"Blue Dungeon Table",       //1397
+										"Blue Dungeon Work Bench",  //1398
+										"Green Dungeon Chair",      //1399
+										"Green Dungeon Table",      //1400
+										"Green DUngeon Work Bench", //1401
+										"Pink Dungeon Chair",       //1402
+										"Pink Dungeon Table",       //1403
+										"Pink Dungeon Work Bench",  //1404
+										"Blue Dungeon Candle",      //1405
+										"Green Dungeon Candle",     //1406
+										"Pink Dungeon Candle",      //1407
+										"Blue Dungeon Vase",        //1408
+										"Green Dungeon Vase",       //1409
+										"Pink Dungeon Vase",        //1410
+										"Blue Dungeon Door",        //1411
+										"Green Dungeon Door",       //1412
+										"Pink Dungeon Door",        //1413
+										"Blue Dungeon Bookcase",    //1414
+										"Green Dungeon Bookcase",   //1415
+										"Pink Dungeon Bookcase",    //1416
+										"Catacomb",                 //1417
+										"Dungeon Shelf 4",          //1418
+										"Skellington J Skellingsworth",//1419
+										"The Cursed Man",           //1420
+										"The Eye Sees the End",     //1421
+										"Something Evil is Watching You",//1422
+										"The Twins Have Awoken",    //1423
+										"The Screamer",             //1424
+										"Goblins Playing Poker",    //1425
+										"Dryadisque",               //1426
+										"Sunflowers",               //1427
+										"Terrarian Gothic",         //1428
+										"Beanie",                   //1429
+										"Imbuing Station",          //1430
+										"Star in a Bottle",         //1431
+										"Empty Bullet",             //1432
+										"Impact",                   //1433
+										"Powered by Birds",         //1434
+										"The Destroyer",            //1435
+										"The Persistency of Eyes",  //1436
+										"Unicorn Crossing the Hallows",//1437
+										"Great Wave",               //1438
+										"Starry Night",             //1439
+										"Guide Picasso",            //1440
+										"The Guardian's Gaze",      //1441
+										"Father of Someone",        //1442
+										"Nurse Lisa",               //1443
+										"Shadowgate Staff",         //1444
+										"Inferno Fork",             //1445
+										"Spectre Staff",            //1446
+										"Wooden Fence",             //1447
+										"Metal Fence",              //1448
+										"Bubble Machine",           //1449
+										"Bubble Wand",              //1450
+										"Marching Bones Banner",    //1451
+										"Necromantic Sign",         //1452
+										"Rusted Company Standard",  //1453
+										"Ragged Brotherhood Sigil", //1454
+										"Molten Legion Flag",       //1455
+										"Diabolic Sigil",           //1456
+										"Obsidian Platform",        //1457
+										"Obsidian Door",            //1458
+										"Obsidian Chair",           //1459
+										"Obsidian Table",           //1460
+										"Obisidan Work Bench",      //1461
+										"Obsidian Vase",            //1462
+										"Obsidian Bookcase",        //1463
+										"Hellbound Banner",         //1464
+										"Hell Hammer Banner",       //1465
+										"Helltower Banner",         //1466
+										"Lost Hopes of Man Banner", //1467
+										"Obsidian Watcher Banner",  //1468
+										"Lava Erupts Banner",       //1469
+										"Blue Dungeon Bed",         //1470
+										"Green Dungeon Bed",        //1471
+										"Red Dungeon Bed",          //1472
+										"Obsidian Bed",             //1473
+										"Picture",                  //1474
+										"Picture",                  //1475
+										"Picture",                  //1476
+										"Picture",                  //1477
+										"Picture",                  //1478
+										"Picture",                  //1479
+										"Picture",                  //1480
+										"Picture",                  //1481
+										"Picture",                  //1482
+										"Picture",                  //1483
+										"Picture",                  //1484
+										"Picture",                  //1485
+										"Picture",                  //1486
+										"Picture",                  //1487
+										"Picture",                  //1488
+										"Picture",                  //1489
+										"Picture",                  //1490
+										"Picture",                  //1491
+										"Picture",                  //1492
+										"Picture",                  //1493
+										"Picture",                  //1494
+										"American Explosive",       //1495
+										"Picture",                  //1496
+										"Picture",                  //1497
+										"Picture",                  //1498
+										"Picture",                  //1499
+										"Picture",                  //1500
+										"Picture",                  //1501
+										"Picture",                  //1502
+										"Spirit Hood",              //1503
+										"Spirit Robe",              //1504
+										"Spirit Pants",             //1505
+										"Spirit Pickaxe",           //1506
+										"Spirit Hamaxe",            //1507
+										"Ectoplasm",                //1508
+										"Gothic Chair",             //1509
+										"Gothic Table",             //1510
+										"Gothic Work Bench",        //1511
+										"Gothic Bookcase",          //1512
+										"Paladin's Hammer",         //1513
+										"SWAT Helmet",              //1514
+										"Bee Wings",                //1515
+										"Feather",                  //1516
+										"Feather",                  //1517
+										"Feather",                  //1518
+										"Feather",                  //1519
+										"Feather",                  //1520
+										"Feather",                  //1521
+										"Large Amethyst",           //1522
+										"Large Topaz",              //1523
+										"Large Sapphire",           //1524
+										"Large Emerald",            //1525
+										"Large Ruby",               //1526
+										"Large Diamond",            //1527
+										"Dungeon Chest",            //1528
+										"Dungeon Chest",            //1529
+										"Dungeon Chest",            //1530
+										"Dungeon Chest",            //1531
+										"Dungeon Chest",            //1532
+										"Dungeon Key",              //1533
+										"Dungeon Key",              //1534
+										"Dungeon Key",              //1535
+										"Dungeon Key",              //1536
+										"Dungeon Key",              //1537
+										"Picture",                  //1538
+										"Picture",                  //1539
+										"Picture",                  //1540
+										"Picture",                  //1541
+										"Picture",                  //1542
+										"Spectre Paintbrush",       //1543
+										"Spectre Paintbrush",       //1544
+										"Spectre Paintbrush",       //1545
+										"Shroomite Headgear",       //1546
+										"Shroomite Mask",           //1547
+										"Shroomite Helmet",         //1548
+										"Shroomite Breastplate",    //1549
+										"Shroomite Leggings",       //1550
+										"Autohammer",               //1551
+										"Shroomite Bar",            //1552
+										"S.D.M.G.",                 //1553
+										"Cenx's Tiara",             //1554
+										"Cenx's Breastplate",       //1555
+										"Cenx's Leggings",          //1556
+										"Crowno's Mask",            //1557
+										"Crowno's Breastplate",     //1558
+										"Crowno's Leggings",        //1559
+										"Will's Helmet",            //1560
+										"Will's Breastplate",       //1561
+										"Will's Leggings",          //1562
+										"Jim's Helmet",             //1563
+										"Jim's Breastplate",        //1564
+										"Jim's Leggings",           //1565
+										"Aaron's Helmet",           //1566
+										"Aaron's Breastplate",      //1567
+										"Aaron's Leggings",         //1568
+										"Vampire Knives",           //1569
+										"Broken Hero Sword",        //1570
+										"Eater's Bite",             //1571
+										"Hydra Staff",              //1572
+										"The Creation of the Guide",//1573
+										"Picture",                  //1574
+										"Picture",                  //1575
+										"Picture",                  //1576
+										"Glorious Night",           //1577
+										"Sweetheart Necklace",      //1578
+										"Flurry Boots",             //1579
+										"D-Town's Helmet",          //1580
+										"D-Town's Breastplate",     //1581
+										"D-Town's Leggings",        //1582
+										"D-Town's Wings",           //1583
+										"Will's Wings",             //1584
+										"Crowno's Wings",           //1585
+										"Cenx's Wings",             //1586
+										"Cenx's Dress",             //1587
+										"Cenx's Dress Pants",       //1588
+										"Palladium Column",         //1589
+										"Palladium Column Wall",    //1590
+										"Bubblegum Block",          //1591
+										"Bubblegum Block Wall",     //1592
+										"Titanstone Block",         //1593
+										"Titanstone Block Wall",    //1594
+										"Magic Cuffs",              //1595
+										"Music Box",                //1596
+										"Music Box",                //1597
+										"Music Box",                //1598
+										"Music Box",                //1599
+										"Music Box",                //1600
+										"Music Box",                //1601
+										"Music Box",                //1602
+										"Music Box",                //1603
+										"Music Box",                //1604
+										"Music Box",                //1605
+										"Music Box",                //1606
+										"Music Box",                //1607
+										"Music Box",                //1608
+										"Music Box",                //1609
+										"Music Box",                //1610
+										"Butterfly Dust",           //1611
+										"Ankh Charm",               //1612
+										"Ankh Shield"               //1613
                                    };
 
         void jumpNPC(object sender, RoutedEventArgs e)

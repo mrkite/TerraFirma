@@ -31,6 +31,15 @@
     <var v="176" name="Cursed Torch" color="#60F802">
       <var maxu="66" lightr="0.85" lightg="1.0" lightb="0.7" light="1.0" />
     </var>
+	<var v="198" name="Ice Torch" color="#1df0ff">
+	  <var maxu="66" lightr="0.13" lightg="0.9" lightb="1.0" light="1.0" />
+	</var>
+	<var v="220" name="Orange Torch" color="#ffa92f">
+	  <var maxu="66" lightr="1.0" lightg="0.67" lightb="0.18" light="1.0" />
+	</var>
+	<var v="242" name="Ichor Torch" color="#601f1f">
+	  <var maxu="66" lightr="0.9" lightg="0.2" lightb="0.2" light="1.0" />
+	</var>
     <var maxu="66" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
   </tile>
   <tile num="5" name="Tree" color="#976B4B" hasExtra="1" letLight="1" solid="1" />
@@ -38,8 +47,29 @@
   <tile num="7" name="Copper Ore" color="#964316" blend="0" solid="1" />
   <tile num="8" name="Gold Ore" color="#B9A417" blend="0" solid="1" />
   <tile num="9" name="Silver Ore" color="#D9DFDF" blend="0" solid="1" />
-  <tile num="10" name="Closed Door" color="#BF8F6F" hasExtra="1" solid="1" />
-  <tile num="11" name="Open Door" color="#946B50" hasExtra="1" letLight="1" solid="1" />
+  <tile num="10" name="Closed Wooden Door" color="#BF8F6F" hasExtra="1" solid="1">
+  	<var minv="1026" name="Closed Obsidian Door" color="#545454" />
+  	<var minv="972" name="Closed Pink Dungeon Door" color="#b05e89" />
+  	<var minv="918" name="Closed Green Dungeon Door" color="#526556" />
+  	<var minv="864" name="Closed Blue Dungeon Door" color="#796d57" />
+  	<var minv="810" name="Closed Iron Door" color="#4f4735" />
+  	<var minv="756" name="Closed Lead Door" color="#4a516a" />
+  	<var minv="702" name="Closed Dungeon Door" color="#563e2c" />
+  	<var minv="648" name="Closed Lihzahrd Door" color="#8d3800" />
+	<var minv="594" name="Closed Hive Door" color="#947e18" />
+  	<var minv="540" name="Closed Shadewood Door" color="#495661" />
+  	<var minv="486" name="Closed Skyware Door" color="#008db8" />
+  	<var minv="432" name="Closed Bone Door" color="#96966f" />
+  	<var minv="378" name="Closed Living Wood Door" color="#8f6647" />
+  	<var minv="324" name="Closed Mushroom Door" color="#7a7454" />
+  	<var minv="270" name="Closed Flesh Door" color="#811622" />
+  	<var minv="216" name="Closed Cactus Door" color="#34540c" />
+  	<var minv="162" name="Closed Pearlwood Door" color="#776c51" />
+  	<var minv="108" name="Closed Rich Mahogany Door" color="#734144" />
+  	<var minv="54" name="Closed Ebonwood Door" color="#535064" />
+  </tile>
+  <tile num="11" name="Open Wooden Door" color="#946B50" hasExtra="1" letLight="1" solid="1">
+  </tile>
   <tile num="12" name="Heartstone" color="#B61239" hasExtra="1" letLight="1" />
   <tile num="13" name="Bottle" color="#4EC5FC" hasExtra="1" letLight="1">
     <var u="18" name="Health Potion" color="#D80A36" />
@@ -47,16 +77,90 @@
     <var u="54" name="Pink Vase" color="#F0C4D0" />
     <var u="72" name="Mug" color="#ACC0D7" />
   </tile>
-  <tile num="14" name="Table" color="#7F5C45" hasExtra="1" letLight="1" />
-  <tile num="15" name="Chair" color="#A2785C" hasExtra="1" letLight="1">
-    <var minv="40" name="Toilet" color="#808080" />
+  <tile num="14" name="Wooden Table" color="#7F5C45" hasExtra="1" letLight="1">
+  	<var minu="756" name="Gothic Table" color="#667367" />
+  	<var minu="702" name="Obsidian Table" color="#2b2b2b" />
+  	<var minu="648" name="Pink Dungeon Table" color="#b05e89" />
+  	<var minu="594" name="Green Dungeon Table" color="#729674" />
+  	<var minu="540" name="Blue Dungeon Table" color="#454e63" />
+  	<var minu="486" name="Lihzahrd Table" color="#8d3800" />
+  	<var minu="432" name="Shadewood Table" color="#3b4347" />
+  	<var minu="378" name="Skyware Table" color="#00a0d2" />
+  	<var minu="324" name="Living Wood Table" color="#825c42" />
+  	<var minu="270" name="Flesh Table" color="#861622" />
+  	<var minu="216" name="Bone Table" color="#96966f" />
+  	<var minu="162" name="Pearlwood Table" color="#8e805e" />
+  	<var minu="108" name="Rich Mahogany Table" color="#64383b" />
+  	<var minu="54" name="Ebonwood Table" color="#7d758f" />
   </tile>
-  <tile num="16" name="Anvil" color="#505050" hasExtra="1" letLight="1" />
+  <tile num="15" name="Wooden Chair" color="#A2785C" hasExtra="1" letLight="1">
+  	<var minv="680" name="Gothic Chair" color="#5b665c" />
+  	<var minv="640" name="Obsidian Chair" color="#2b2b2b" />
+  	<var minv="600" name="Pink Dungeon Chair" color="#bf7da0" />
+  	<var minv="560" name="Green Dungeon Chair" color="#729674" />
+  	<var minv="520" name="Blue Dungeon Chair" color="#566978" />
+  	<var minv="480" name="Lihzahrd Chair" color="#964a10" />
+  	<var minv="440" name="Shadewood Chair" color="#994142" />
+  	<var minv="400" name="Skyware Chair" color="#007fa6" />
+  	<var minv="360" name="Mushroom Chair" color="#b6af82" />
+  	<var minv="320" name="Flesh Chair" color="#9e1f2d" />
+  	<var minv="280" name="Bone Chair" color="#81815f" />
+  	<var minv="240" name="Cactus Chair" color="#527f0c" />
+  	<var minv="200" name="Living Wood Chair" color="#497811" />
+  	<var minv="160" name="Pearlwood Chair" color="#419972" />
+  	<var minv="120" name="Rich Mahogany Chair" color="#994171" />
+	<var minv="80" name="Ebonwood Chair" color="#534397" />
+  	<var minv="40" name="Toilet" color="#808080" />
+  </tile>
+  <tile num="16" name="Iron Anvil" color="#505050" hasExtra="1" letLight="1">
+  	<var minu="36" name="Lead Anvil" color="#535b72" />
+  </tile>
   <tile num="17" name="Furnace" color="#636363" hasExtra="1" letLight="1" lightr="0.83" lightg="0.6" lightb="0.5" light="0.75" />
-  <tile num="18" name="Workbench" color="#7F5C45" hasExtra="1" letLight="1" />
-  <tile num="19" name="Wooden Platform" color="#B18567" solid="1" />
+  <tile num="18" name="Work Bench" color="#7F5C45" hasExtra="1" letLight="1">
+  	<var minu="540" name="Gothic Work Bench" color="#455247" />
+  	<var minu="504" name="Obsidian Work Bench" color="#545454" />
+  	<var minu="468" name="Pink Dungeon Work Bench" color="#bf7da0" />
+  	<var minu="432" name="Green Dungeon Work Bench" color="#69816d" />
+  	<var minu="396" name="Blue Dungeon Work Bench" color="#454e63" />
+  	<var minu="360" name="Lihzahrd Work Bench" color="#8d3800" />
+  	<var minu="324" name="Shadewood Work Bench" color="#495661" />
+  	<var minu="288" name="Slime Work Bench" color="#5d76bb" />
+  	<var minu="252" name="Mushroom Work Bench" color="#2c2fb0" />
+  	<var minu="216" name="Flesh Work Bench" color="#b73341" />
+  	<var minu="180" name="Cactus Work Bench" color="#497811" />
+  	<var minu="144" name="Bone Work Bench" color="#b2b28a" />
+  	<var minu="108" name="Pearlwood Work Bench" color="#948562" />
+  	<var minu="72" name="Rich Mahogany Work Bench" color="#915155" />
+  	<var minu="36" name="Ebonwood Work Bench" color="#7d758f" />
+  </tile>
+  <tile num="19" name="Wood Platform" color="#B18567" solid="1">
+  	<var v="18" name="Ebonwood Platform" color="#535064" />
+	<var v="36" name="Rich Mahogany Platform" color="#734144" />
+	<var v="54" name="Pearlwood Platform" color="#8f815f" />
+	<var v="72" name="Bone Platform" color="#96966f" />
+  	<var v="90" name="Shadewood Platform" color="#586976" />
+	<var v="108" name="Blue Brick Platform" color="#6a8295" />
+	<var v="126" name="Pink Brick Platform" color="#8a4469" />
+	<var v="144" name="Green Brick Platform" color="#526556" />
+	<var v="162" name="Dungeon Shelf 1" color="#a2a48e" />
+	<var v="180" name="Dungeon Shelf 2" color="#ac9151" />
+	<var v="198" name="Dungeon Shelf 3" color="#59554f" />
+	<var v="216" name="Dungeon Shelf 4" color="#dbd6b5" />
+	<var v="234" name="Obsidian Platform" color="#620d0d" />
+  </tile>
   <tile num="20" name="Sapling" color="#1E9648" hasExtra="1" letLight="1" />
   <tile num="21" name="Chest" color="#946B50" hasExtra="1" letLight="1">
+  	<var minu="612" name="Water Chest" color="#018bfc" />
+  	<var minu="576" name="Lihzahrd Chest" color="#b51512" />
+  	<var minu="540" name="Web Covered Chest" color="#606a4e" />
+  	<var minu="504" name="Shadewood Chest" color="#687986" />
+  	<var minu="468" name="Skyware Chest" color="#e9cb18" />
+  	<var minu="432" name="Living Wood Chest" color="#614739" />
+  	<var minu="396" name="Ice Chest" color="#1cbbff" />
+  	<var minu="360" name="Bamboo Chest" color="#ac7e60" />
+  	<var minu="324" name="Pearlwood Chest" color="#948562" />
+  	<var minu="288" name="Rich Mahogany Chest" color="#734144" />
+  	<var minu="252" name="Ebonwood Chest" color="#68647e" />
     <var minu="216" name="Trash Can" color="#606060" />
     <var minu="180" name="Barrel" color="#604438" />
     <var minu="144" name="Locked Shadow Chest" color="#6258B0" />
@@ -76,7 +180,16 @@
   <tile num="31" name="Shadow Orb" color="#674D62" hasExtra="1" letLight="1" lightr="0.325" lightg="0.115" lightb="0.47" light="0.46" />
   <tile num="32" name="Corrupted Vines" color="#7A618F" />
   <tile num="33" name="Candle" color="#FDDD03" hasExtra="1" letLight="1">
-    <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+  	<var v="22" name="Blue Dungeon Candle" color="#566978">
+	    <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+	</var>
+	<var v="44" name="Green Dungeon Candle" color="#729674">
+	    <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+	</var>
+	<var v="66" name="Pink Dungeon Candle" color="#bf7da0">
+	    <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+	</var>
+	<var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
   </tile>
   <tile num="34" name="Copper Chandelier" color="#B75819" hasExtra="1" letLight="1">
     <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
@@ -93,7 +206,28 @@
   <tile num="40" name="Clay" color="#925144" blend="0" solid="1" />
   <tile num="41" name="Blue Brick" color="#6365C9" blend="0" solid="1" />
   <tile num="42" name="Chain Lantern" color="#F99851" hasExtra="1" letLight="1">
-    <var u="0" lightr="0.65" lightg="0.8" lightb="0.54" light="0.75" />
+  	<var minv="252" name="Star in a Bottle" color="#feffe2">
+    	<var u="0" lightr="0.65" lightg="0.8" lightb="0.54" light="0.75" />
+	</var>
+  	<var minv="216" name="Lantern 6" color="#434343">
+    	<var u="0" lightr="0.65" lightg="0.8" lightb="0.54" light="0.75" />
+	</var>
+  	<var minv="180" name="Lantern 5" color="#7d1311">
+    	<var u="0" lightr="0.65" lightg="0.8" lightb="0.54" light="0.75" />
+	</var>
+  	<var minv="144" name="Lantern 4" color="#57adbd">
+    	<var u="0" lightr="0.65" lightg="0.8" lightb="0.54" light="0.75" />
+	</var>
+  	<var minv="108" name="Lantern 3" color="#161616">
+    	<var u="0" lightr="0.65" lightg="0.8" lightb="0.54" light="0.75" />
+	</var>
+  	<var minv="72" name="Lantern 2" color="#606060">
+    	<var u="0" lightr="0.65" lightg="0.8" lightb="0.54" light="0.75" />
+	</var>
+	<var minv="36" name="Lantern 1" color="#947e18">
+    	<var u="0" lightr="0.65" lightg="0.8" lightb="0.54" light="0.75" />
+	</var>
+	<var u="0" lightr="0.65" lightg="0.8" lightb="0.54" light="0.75" />
   </tile>
   <tile num="43" name="Green Brick" color="#3FA931" blend="0" solid="1" />
   <tile num="44" name="Pink Brick" color="#A93175" blend="0" solid="1" />
@@ -133,7 +267,16 @@
   <tile num="76" name="Hellstone Brick" color="#8E4242" solid="1" />
   <tile num="77" name="Hellforge" color="#EE6646" hasExtra="1" letLight="1" lightr="0.75" lightg="0.45" lightb="0.25" light="0.6" />
   <tile num="78" name="Clay Pot" color="#796E61" hasExtra="1" letLight="1" />
-  <tile num="79" name="Bed" color="#5C6298" hasExtra="1" letLight="1" />
+  <tile num="79" name="Bed" color="#5C6298" hasExtra="1" letLight="1">
+  	<var minv="304" name="Obsidian Bed" color="#e12d2d" />
+  	<var minv="266" name="Red Dungeon Bed" color="#b05e89" />
+  	<var minv="228" name="Green Dungeon Bed" color="#69816d" />
+  	<var minv="190" name="Blue Dungeon Bed" color="#454e63" />
+  	<var minv="152" name="Shadewood Bed" color="#b04444" />
+  	<var minv="108" name="Pearlwood Bed" color="#5c9877" />
+  	<var minv="76" name="Rich Mahogany Bed" color="#33285b" />
+  	<var minv="38" name="Ebonwood Bed" color="#5b2839" />
+  </tile>
   <tile num="80" name="Cactus" color="#497811" letLight="1" />
   <tile num="81" name="Coral" color="#e5533f" hasExtra="1" letLight="1" />
   <tile num="82" name="Herb sprout" color="#fe5402" hasExtra="1" letLight="1">
@@ -160,10 +303,26 @@
     <var u="72" name="Waterleaf blossom" color="#66B5F9" />
     <var u="90" name="Fireblossom blossom" color="#FE5502" lightr="0.9" lightg="0.72" lightb="0.18" light="0.7" />
   </tile>
-  <tile num="85" name="Tombstone" color="#c0c0c0" hasExtra="1" letLight="1" />
+  <tile num="85" name="Tombstone" color="#c0c0c0" hasExtra="1" letLight="1">
+  	<var minu="36" name="Grave Marker" color="#bc8763" />
+	<var minu="72" name="Cross Grave Marker" color="#af744b" />
+	<var minu="108" name="Headstone" color="#969696" />
+	<var minu="144" name="Gravestone" color="#b0b0b0" />
+	<var minu="180" name="Obelisk" color="#000000" />
+  </tile>
   <tile num="86" name="Loom" color="#7F5C45" hasExtra="1" letLight="1" />
-  <tile num="87" name="Piano" color="#584430" hasExtra="1" letLight="1" />
-  <tile num="88" name="Dresser" color="#906850" hasExtra="1" letLight="1" />
+  <tile num="87" name="Piano" color="#584430" hasExtra="1" letLight="1">
+  	<var minu="216" name="Shadewood Piano" color="#4b5563" />
+  	<var minu="162" name="Pearlwood Piano" color="#605f4f" />
+  	<var minu="108" name="Rich Mahogany Piano" color="#583032" />
+  	<var minu="54" name="Ebonwood Piano" color="#373245" />
+  </tile>
+  <tile num="88" name="Dresser" color="#906850" hasExtra="1" letLight="1">
+  	<var minu="216" name="Shadewood Dresser" color="#586976" />
+  	<var minu="162" name="Pearlwood Dresser" color="#948562" />
+  	<var minu="108" name="Rich Mahogany Dresser" color="#915155" />
+  	<var minu="54" name="Ebonwood Dresser" color="#68647e" />
+  </tile>
   <tile num="89" name="Bench" color="#B18567" hasExtra="1" letLight="1" />
   <tile num="90" name="Bathtub" color="#606060" hasExtra="1" letLight="1" />
   <tile num="91" name="Banner" color="#188008" hasExtra="1" letLight="1">
@@ -171,6 +330,24 @@
     <var u="18" name="Green Banner" color="#187808" />
     <var u="36" name="Blue Banner" color="#0C5379" />
     <var u="54" name="Yellow Banner" color="#786C08" />
+	<var u="72" name="Ankh Banner" color="#d69e32" />
+	<var u="90" name="Snake Banner" color="#785808" />
+	<var u="108" name="Omega Banner" color="#786b08" />
+	<var u="126" name="World Banner" color="#1f61e5" />
+	<var u="144" name="Sun Banner" color="#ddc017" />
+	<var u="162" name="Gravity Banner" color="#6e0ade" />
+	<var u="180" name="Marching Bones Banner" color="#66342d" />
+	<var u="198" name="Necromantic Sign" color="#1d1d57" />
+	<var u="216" name="Rusted Company Standard" color="#c0b3a2" />
+	<var u="234" name="Ragged Brotherhood Sigil" color="#96433c" />
+	<var u="252" name="Molten Legion Flag" color="#f1731b" />
+	<var u="270" name="Diabolic Sigil" color="#c8b9a8" />
+	<var u="288" name="Hellbound Banner" color="#af5151" />
+	<var u="306" name="Hell Hammer Banner" color="#2c2c2c" />
+	<var u="324" name="Helltower Banner" color="#f54a22" />
+	<var u="342" name="Lost Hopes of Man Banner" color="#eebc70" />
+	<var u="360" name="Obsidian Watcher Banner" color="#0d0d0d" />
+	<var u="378" name="Lava Erupts Banner" color="#f34922" />
   </tile>
   <tile num="92" name="Lamp Post" color="#323232" hasExtra="1" letlight="1">
     <var u="0" maxv="36" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
@@ -191,11 +368,24 @@
   <tile num="100" name="Candelabra" color="#CCB548" hasExtra="1" letLight="1">
     <var maxu="36" lightr="1.0" lightg="0.97" lightb="0.65" light="1.0" />
   </tile>
-  <tile num="101" name="Bookcase" color="#B08460" hasExtra="1" letLight="1" />
+  <tile num="101" name="Bookcase" color="#B08460" hasExtra="1" letLight="1">
+  	<var minu="270" name="Gothic Bookcase" color="#667367" />
+  	<var minu="216" name="Obsidian Bookcase" color="#646464" />
+  	<var minu="162" name="Pink Dungeon Bookcase" color="#b05e89" />
+  	<var minu="108" name="Green Dungeon Bookcase" color="#69816d" />
+  	<var minu="54" name="Blue Dungeon Bookcase" color="#9d8f79" />
+  </tile>
   <tile num="102" name="Throne" color="#780C08" hasExtra="1" letLight="1" />
   <tile num="103" name="Bowl" color="#8D624D" hasExtra="1" letLight="1" />
   <tile num="104" name="Grandfather Clock" color="#946B50" hasExtra="1" letLight="1" />
   <tile num="105" name="Statue" color="#282828" hasExtra="1" letLight="1">
+  	<var minu="1764" name="Obsidian Vase" color="#545454" />
+  	<var minu="1728" name="Pink Dungeon Vase" color="#b97197" />
+  	<var minu="1692" name="Green Dungeon Vase" color="#729674" />
+  	<var minu="1656" name="Blue Dungeon Vase" color="#95866f" />
+  	<var minu="1620" name="Lihzahrd Guardian Statue" color="#964a10" />
+  	<var minu="1584" name="Lihzahrd Watcher Statue" color="#964a10" />
+  	<var minu="1548" name="Lihzahrd Statue" color="#964a10" />
     <var minu="1512" name="Pirahna Statue" />
     <var minu="1476" name="Queen Statue" />
     <var minu="1440" name="King Statue" />
@@ -276,16 +466,28 @@
   <tile num="130" name="Active Stone" color="#A5A5A5" blend="0" isStone="1" solid="1" />
   <tile num="131" name="Inactive Stone" color="#1A1A1A" blend="0" isStone="1" />
   <tile num="132" name="Lever" color="#C90303" hasExtra="1" letLight="1" />
-  <tile num="133" name="Adamantite Forge" color="#891012" hasExtra="1" letLight="1" lightr="0.83" lightg="0.6" lightb="0.5" light="0.75" />
-  <tile num="134" name="Mythril Anvil" color="#96AE87" hasExtra="1" letLight="1" />
+  <tile num="133" name="Adamantite Forge" color="#891012" hasExtra="1" letLight="1" lightr="0.83" lightg="0.6" lightb="0.5" light="0.75">
+  	<var minu="54" name="Orichalcum Forge" color="#72707c" />
+  </tile>
+  <tile num="134" name="Mythril Anvil" color="#96AE87" hasExtra="1" letLight="1">
+  	<var minu="36" color="#9657b0" />
+  </tile>
   <tile num="135" name="Pressure Plate" color="#FD7272" hasExtra="1" letLight="1">
     <var v="0" name="Red Pressure Plate" color="#C90303" />
     <var v="18" name="Green Pressure Plate" color="#1E9648" />
     <var v="36" name="Gray Pressure Plate" color="#808080" />
     <var v="54" name="Brown Pressure Plate" color="#976B4B" />
+	<var v="72" name="Blue Pressure Plate" color="#1e5096" />
+	<var v="90" name="Yellow Pressure Plate" color="#96901e" />
+	<var v="108" name="Lihzahrd Pressure Plate" color="#8d3800" />
   </tile>
   <tile num="136" name="Switch" color="#CCC0C0" hasExtra="1" letLight="1" />
-  <tile num="137" name="Dart Trap" color="#8C8C8C" hasExtra="1" solid="1" />
+  <tile num="137" name="Dart Trap" color="#8C8C8C" hasExtra="1" solid="1">
+  	<var v="18" name="Super Dart Trap" color="#c26015" />
+	<var v="36" name="Flame Trap" color="#c26015" />
+	<var v="54" name="Skipy Ball Trap" color="#c26015" />
+	<var v="72" name="Spear Trap" color="#c26015" />
+  </tile>
   <tile num="138" name="Boulder" color="#636363" hasExtra="1" solid="1" />
   <tile num="139" name="Music Box" color="#996343" hasExtra="1" letLight="1">
     <var minv="432" name="Music Box (Boss 3)" />
@@ -311,16 +513,227 @@
     <var u="18" name="3 Second Timer" />
     <var u="36" name="5 Second Timer" />
   </tile>
-  <tile num="145" name="Candy Cane Block" color="#C01E1E" blend="0" solid="1" />
-  <tile num="146" name="Green Candy Cane Block" color="#2BC01E" blend="0" solid="1" />
-  <tile num="147" name="Snow Block" color="#C7DCDF" blend="0" solid="1" />
+  <tile num="145" name="Candy Cane" color="#C01E1E" blend="0" solid="1" />
+  <tile num="146" name="Green Candy Cane" color="#2BC01E" blend="0" solid="1" />
+  <tile num="147" name="Snow" color="#C7DCDF" blend="0" solid="1" />
   <tile num="148" name="Snow Brick" color="#D3ECF1" blend="0" solid="1" />
   <tile num="149" name="Lights" color="#ffffff" hasExtra="1" letLight="1">
     <var u="0" name="Blue Light" color="#206BFF" lightr="0.1" lightg="0.2" lightb="0.5" light="0.4" />
     <var u="18" name="Red Light" color="#DA0205" lightr="0.5" lightg="0.1" lightb="0.1" light="0.4" />
     <var u="36" name="Green Light" color="#3E7D25" lightr="0.2" lightg="0.5" lightb="0.1" light="0.4" />
   </tile>
-  
+  <tile num="150" name="Adamantite Beam" color="#731736" blend="0" solid="1" />
+  <tile num="151" name="Sandstone Brick" color="#baa854" blend="0" solid="1" />
+  <tile num="152" name="Ebonstone Brick" color="#5f5f95" blend="0" solid="1" />
+  <tile num="153" name="Red Stucco" color="#ef8d7e" blend="0" solid="1" />
+  <tile num="154" name="Yellow Stucco" color="#dfdb93" blend="0" solid="1" />
+  <tile num="155" name="Green Stucco" color="#83a2a1" blend="0" solid="1" />
+  <tile num="156" name="Gray Stucco" color="#bcbcb1" blend="0" solid="1" />
+  <tile num="157" name="Ebonwood" color="#9989a5" blend="0" solid="1" />
+  <tile num="158" name="Rich Mahogany" color="#915155" blend="0" solid="1" />
+  <tile num="159" name="Pearlwood" color="#57503f" blend="0" solid="1" />
+  <tile num="160" name="Rainbow Brick" color="#d4d4d4" blend="0" solid="1" lightr="0.2" lightg="0.2" lightb="0.2" light="0.2" />
+  <tile num="161" name="Ice" color="#90c3e8" blend="147" solid="1" />
+  <tile num="162" name="Ice" color="#92aebf" letLight="1" solid="1" />
+  <tile num="163" name="Purple Ice" color="#9188cb" blend="147" solid="1" />
+  <tile num="164" name="Pink Ice" color="#d197bc" blend="147" solid="1" />
+  <tile num="165" name="Stalagtite" color="#5c8faf" hasExtra="1" />
+  <tile num="166" name="Tin Ore" color="#817d5d" blend="0" solid="1" />
+  <tile num="167" name="Lead Ore" color="#2f3e57" blend="0" solid="1" />
+  <tile num="168" name="Tungsten Ore" color="#5a7d53" blend="0" solid="1" />
+  <tile num="169" name="Platinum Ore" color="#8097b8" blend="0" solid="1" />
+  <tile num="170" name="Tin Chandelier" color="#817d5d" hasExtra="1" letLight="1">
+  	<var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+  </tile>
+  <tile num="171" name="Tungsten Chandelier" color="#7a907e" hasExtra="1" letLight="1">
+  	<var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+  </tile>
+  <tile num="172" name="Platinum Chandelier" color="#8097b8" hasExtra="1" letLight="1">
+  	<var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+  </tile>
+  <tile num="173" name="Platinum Candelabra" color="#8097b8" hasExtra="1" letLight="1">
+    <var maxu="36" lightr="1.0" lightg="0.97" lightb="0.65" light="1.0" />
+  </tile>
+  <tile num="174" name="Platinum Candle" color="#fe7902" hasExtra="1" letLight="1">
+    <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+  </tile>
+  <tile num="175" name="Tin Brick" color="#bba57c" blend="0" solid="1" />
+  <tile num="176" name="Tungsten Brick" color="#9cc09d" blend="0" solid="1" />
+  <tile num="177" name="Platinum Brick" color="#b5c2d9" blend="0" solid="1" />
+  <tile num="178" name="Amethyst" hasExtra="1" color="#892880" letLight="1">
+    <var u="18" name="Topaz" color="#a25813" />
+	<var u="36" name="Sapphire" color="#195cbb" />
+	<var u="54" name="Emerald" color="#039645" />
+	<var u="72" name="Ruby" color="#ba0526" />
+	<var u="90" name="Diamond" color="#848b9e" />
+	<var u="108" name="Amber" color="#ce9e26" />
+  </tile>
+  <tile num="179" name="Moss" color="#318672" isGrass="1" blend="1" solid="1" />
+  <tile num="180" name="Brown Moss" color="#7e8631" isGrass="1" blend="1" solid="1" />
+  <tile num="181" name="Red Moss" color="#863b31" isGrass="1" blend="1" solid="1" />
+  <tile num="182" name="Blue Moss" color="#2b568c" isGrass="1" blend="1" solid="1" />
+  <tile num="183" name="Purple Moss" color="#793186" isGrass="1" blend="1" solid="1" />
+  <tile num="184" name="Flowers" color="#208376" hasExtra="1" letLight="1">
+  	<var u="22" color="#7e8631" />
+	<var u="44" color="#602c28" />
+	<var u="66" color="#2b678b" />
+	<var u="88" color="#4f235f" />
+  </tile>
+  <tile num="185" name="Rubble" color="#808080" hasExtra="1" letLight="1" />
+  <tile num="186" name="Rubble" color="#999979" hasExtra="1" letLight="1" />
+  <tile num="187" name="Rubble" color="#63971f" hasExtra="1" letLight="1" />
+  <tile num="188" name="Cactus" color="#497811" blend="0" solid="1" />
+  <tile num="189" name="Cloud" color="#ffffff" letLight="1" solid="1" />
+  <tile num="190" name="Glowing Mushroom" color="#b6af82" letLight="1" blend="0" solid="1" lightr="0.35" lightg="0.425" lightb="0.85" light="0.43" />
+  <tile num="191" name="Living Wood" color="#9e7354" blend="30" solid="1" />
+  <tile num="192" name="Leaves" color="#0d6524" solid="1" />
+  <tile num="193" name="Slime" color="#3879ff" blend="0" solid="1" />
+  <tile num="194" name="Bone" color="#b2b28a" solid="1" />
+  <tile num="195" name="Flesh" color="#b74d70" blend="0" solid="1" />
+  <tile num="196" name="Rain Cloud" color="#9390b2" blend="189" solid="1" />
+  <tile num="197" name="Frozen Slime" color="#61c8e1" blend="0" solid="1" />
+  <tile num="198" name="Asphalt" color="#202122" blend="0" solid="1" />
+  <tile num="199" name="Flesh Grass" color="#9f3a3a" isGrass="1" blend="0" solid="1" />
+  <tile num="200" name="Red Ice" color="#e6bab7" blend="147" solid="1" />
+  <tile num="201" name="Flesh Weeds" color="#a63f3f" hasExtra="1" letLight="1" solid="1" />
+  <tile num="202" name="Sunplate" color="#171594" blend="0" solid="1" />
+  <tile num="203" name="Crimstone" color="#c34343" blend="0" solid="1" />
+  <tile num="204" name="Crimtane" color="#85212e" blend="0" solid="1" lightr="0.2" lightg="0.0" lightb="0.0" light="0.2" />
+  <tile num="205" name="Crimstone Vines" color="#b74544" />
+  <tile num="206" name="Ice Brick" color="7cafc9" blend="0" solid="1" />
+  <tile num="207" name="Pure Water Fountain" color="#838383" hasExtra="1">
+  	<var minu="504" name="Blood Water Fountain" />
+  	<var minu="432" name="Hallowed Water Fountain" />
+  	<var minu="360" name="Crimson Water Fountain" />
+  	<var minu="288" name="Corrupt Water Fountain" />
+  	<var minu="216" name="Icy Water Fountain" />
+	<var minu="144" name="Jungle Water Fountain" />
+  	<var minu="72" name="Desert Water Fountain" />
+  </tile>
+  <tile num="208" name="Shadewood" color="#687986" blend="0" solid="1" />
+  <tile num="209" name="Cannon" color="#676767" hasExtra="1">
+  	<var minu="72" name="Bunny Cannon" color="#f0f0f0" />
+  </tile>
+  <tile num="210" name="Land Mine" color="#ed1c24" hasExtra="1" letLight="1" />
+  <tile num="211" name="Chlorophyte Ore" color="#4fbf2d" blend="59" solid="1" />
+  <tile num="212" name="Snowball Launcher" color="#f5f5f5" hasExtra="1" />
+  <tile num="213" name="Rope" color="#897843" solid="1" />
+  <tile num="214" name="Chain" color="#676767" solid="1" />
+  <tile num="215" name="Campfire" color="#fd3e03" hasExtra="1" lightr="0.99" lightg="0.24" lightb="0.01" light="1.0" />
+  <tile num="216" name="Red Rocket" color="#be303e" hasExtra="1">
+     <var minv="120" name="Yellow Rocket" color="#ffcc39" />
+	 <var minv="80" name="Blue Rocket" color="#2e3192" />
+	 <var minv="40" name="Green Rocket" color="#007740" />
+  </tile>
+  <tile num="217" name="Blend-O-Matic" color="#676767" hasExtra="1" />
+  <tile num="218" name="Meat Grinder" color="#4d4d4d" hasExtra="1" />
+  <tile num="219" name="Silt Extractinator" color="#676767" hasExtra="1" />
+  <tile num="220" name="Solidifier" color="#563a01" hasExtra="1" />
+  <tile num="221" name="Palladium Ore" color="#f35e36" blend="0" solid="1" />
+  <tile num="222" name="Orichalcum Ore" color="#841380" blend="0" solid="1" />
+  <tile num="223" name="Titanium Ore" color="#a7d29f" blend="0" solid="1" />
+  <tile num="224" name="Slush" color="#7e989d" blend="147" solid="1" />
+  <tile num="225" name="Hive" color="#c86c10" blend="59" solid="1" />
+  <tile num="226" name="Lihzahrd Brick" color="#8d3800" blend="59" solid="1" />
+  <tile num="227" name="Teal Mushroom" color="#46bb93" hasExtra="1" letLight="1">
+    <var u="34" name="Green Mushroom" color="#1a823e" />
+	<var u="68" name="Sky Blue Flower" color="#1e4e8c" />
+	<var u="102" name="Yellow Marigold" color="#f0b404" />
+	<var u="136" name="Blue Berries" color="#518729" />
+	<var u="170" name="Lime Kelp" color="#2d4400" />
+	<var u="204" name="Pink Prickly Pear" color="#d87098" />
+	<var u="238" name="Orange Bloodroot" color="#b04747" />
+  </tile>
+  <tile num="228" name="Dye Vat" color="#a87858" hasExtra="1" />
+  <tile num="229" name="Honey" color="#ff9c0c" blend="0" solid="1" />
+  <tile num="230" name="Crispy Honey" color="#5e3e24" blend="0" solid="1" />
+  <tile num="231" name="Pod" color="#c8964a" hasExtra="1" />
+  <tile num="232" name="Wooden Spike" color="#734144" solid="1" />
+  <tile num="233" name="Plant" color="#6bb600" hasExtra="1" />
+  <tile num="234" name="Crimsand" color="#4d4c42" blend="0" solid="1" />
+  <tile num="235" name="Teleporter" color="#b3bb44" hasExtra="1" solid="1" />
+  <tile num="236" name="Heart Fruit" color="#cd733d" hasExtra="1" />
+  <tile num="237" name="Lihzahrd Altar" color="#fff133" hasExtra="1" lightr="0.2" lightg="0.2" lightb="0.2" light="0.2" />
+  <tile num="238" name="Purple Flower" color="#e180ce" hasExtra="1" />
+  <tile num="239" name="Copper Bar" color="#cd8647" hasExtra="1" solid="1">
+  	<var u="18" name="Tin Bar" color="#bba57c" />
+  	<var u="36" name="Iron Bar" color="#b2b2b2" />
+	<var u="54" name="Lead Bar" color="#3e5272" />
+	<var u="72" name="Silver Bar" color="#c1cacb" />
+	<var u="90" name="Tungsten Bar" color="#5a7d53" />
+  	<var u="108" name="Gold Bar" color="#e9cb18" />
+	<var u="126" name="Platinum Bar" color="#8097b8" />
+	<var u="144" name="Demonite Bar" color="#614e9e" />
+	<var u="162" name="Meteorite Bar" color="#685654" />
+	<var u="180" name="Hellstone Bar" color="#d85c5f" />
+	<var u="198" name="Cobalt Bar" color="#48a5cc" />
+	<var u="216" name="Palladium Bar" color="#f57449" />
+	<var u="234" name="Mythril Bar" color="#4a7647" />
+	<var u="252" name="Orichalcum Bar" color="#b020ab" />
+	<var u="270" name="Adamantite Bar" color="#801a34" />
+	<var u="288" name="Titanium Bar" color="#c0bddd" />
+	<var u="306" name="Chlorophyte Bar" color="#378e1c" />
+	<var u="324" name="Hallowed Bar" color="#fae888" />
+	<var u="342" name="Crimtane Bar" color="#9c3436" />
+	<var u="360" name="Shroomite Bar" color="#2814ea" />
+  </tile>
+  <tile num="240" name="Picture" color="#634732" hasExtra="1">
+  	<var minu="1350" name="Nurse Lisa" color="#f6b62e" />
+  	<var minu="1296" name="Father of Someone" color="#855636" />
+  	<var minu="1242" name="The Guardian's Gaze" color="#81815f" />
+  	<var minu="1188" name="Guide Picasso" color="#e69c84" />
+  	<var minu="1134" name="Terrarian Gothic" color="#ef845a" />
+  	<var minu="1080" name="Sunflowers" color="#e9da63" />
+  	<var minu="1026" name="The Cursed Man" color="#f2d2c5" />
+  	<var minu="972" name="Skellington J Skellingsworth" color="#b8a06c" />
+  	<var minu="918" name="Hanging Skeleton" color="#999975" />
+  	<var minu="864" name="Wall Skeleton" color="#999975" />
+  	<var minu="810" name="Bone Warp" color="#5b2974" />
+  	<var minu="756" name="Glory of the Fire" color="#fd5b03" />
+  	<var minu="702" name="The Hanged Man" color="#454b45" />
+  	<var minu="648" name="Blood Moon Rising" color="#d95661" />
+  	<var minu="594" name="Golem Trophy" color="#964a10" />
+  	<var minu="540" name="Plantera Trophy" color="#e180ce" />
+  	<var minu="486" name="Spazmatism Trophy" color="#3b9b2b" />
+  	<var minu="432" name="Retinazer Trophy" color="#fa2300" />
+  	<var minu="378" name="Skeletron Prime Trophy" color="#b5b5b5" />
+  	<var minu="324" name="Destroyer Trophy" color="#f57a7a" />
+  	<var minu="270" name="Wall of Flesh Trophy" color="#b84e71" />
+  	<var minu="216" name="Queen Bee Trophy" color="#e3df45" />
+  	<var minu="162" name="Skeletron Trophy" color="#96966f"/>
+	<var minu="108" name="Brain of Cthulhu Trophy" color="#c87578" />
+  	<var minu="54" name="Eater of Worlds Trophy" color="#d7d7d7" />
+  	<var minu="0" name="Eye of Cthulhu Trophy" color="#634732" />
+  </tile>
+  <tile num="241" name="Catacomb" color="#4d4a48" hasExtra="1" />
+  <tile num="242" name="Picture" color="#454b45" hasExtra="1">
+  	<var minv="1152" name="The Creation of the Guide" color="#c7c7bf" />
+  	<var minv="864" name="Starry Night" color="#7086ab" />
+  	<var minv="792" name="Great Wave" color="#54829c" />
+  	<var minv="720" name="Unicorn Crossing the Hallows" color="#8db1b8" />
+  	<var minv="648" name="The Persistency of Eyes" color="#6b5332" />
+  	<var minv="576" name="The Destroyer" color="#000000" />
+  	<var minv="504" name="Powered by Birds" color="#293d4f" />
+  	<var minv="432" name="Impact" color="#976b4b" />
+  	<var minv="360" name="Dryadisque" color="#fae9b1" />
+  	<var minv="288" name="Goblins Playing Poker" color="#7ba15f" />
+  	<var minv="216" name="The Screamer" color="#9d7937" />
+  	<var minv="144" name="The Twins Have Awoken" color="#1700a3" />
+  	<var minv="72" name="Something Evil is Watching You" color="#0f094f" />
+  	<var minv="0" name="The Eye Sees the End" color="#493b37" />
+  </tile>
+  <tile num="243" name="Imbuing Station" color="#c6c4aa" hasExtra="1" />
+  <tile num="244" name="Bubble Machine" color="#c8f5fd" hasExtra="1" />
+  <tile num="245" name="Picture" color="#554545" hasExtra="1">
+  	<var minu="216" name="Glorious Night" color="#0d0f1c" />
+  	<var minu="180" name="American Explosive" color="#f39349" />
+  </tile>
+  <tile num="246" name="Picture" color="#6d5332" hasExtra="1" />
+  <tile num="247" name="Autohammer" color="#696969" hasExtra="1" />
+  <tile num="248" name="Palladium Column" color="#e1623f" blend="0" solid="1" />
+  <tile num="249" name="Bubblegum" color="#df23dc" blend="0" solid="1" />
+  <tile num="250" name="Titanstone" color="#636169" blend="59" solid="1" />
+
   <wall num="1" name="Stone Wall" color="#343434" />
   <wall num="2" name="Dirt Wall" color="#583D2E" />
   <wall num="3" name="Stone Wall" color="#3D3A4E" />
@@ -352,6 +765,86 @@
   <wall num="29" name="Candy Cane Wall" color="#581717" />
   <wall num="30" name="Green Candy Cane Wall" color="#2C6A26" />
   <wall num="31" name="Snow Brick Wall" color="#6B7577" />
+  <wall num="32" name="Adamantite Beam Wall" color="#5a122b" />
+  <wall num="33" name="Demonite Brick Wall" color="#46455e" />
+  <wall num="34" name="Sandstone Brick Wall" color="#6c6748" />
+  <wall num="35" name="Ebonstone Brick Wall" color="#333346" />
+  <wall num="36" name="Red Stucco Wall" color="#704b46" />
+  <wall num="37" name="Yellow Stucco Wall" color="#574f30" />
+  <wall num="38" name="Green Stucco Wall" color="#5a5d73" />
+  <wall num="39" name="Gray Stucco Wall" color="#6d6d6b" />
+  <wall num="40" name="Crimsand Wall" color="#577173" />
+  <wall num="41" name="Ebonwood Wall" color="#3a3944" />
+  <wall num="42" name="Rich Mahogany Wall" color="#4e1e20" />
+  <wall num="43" name="Pearlwood Wall" color="#776c51" />
+  <wall num="44" name="Rainbow Brick Wall" color="#414141" />
+  <wall num="45" name="Tin Brick Wall" color="#3c3b33" />
+  <wall num="46" name="Tungsten Brick Wall" color="#586758" />
+  <wall num="47" name="Platinum Brick Wall" color="#666b75" />
+  <wall num="48" name="Amethyst Wall" color="#3c2452" />
+  <wall num="49" name="Topaz Wall" color="#614b1c" />
+  <wall num="50" name="Sapphire Wall" color="#32527d" />
+  <wall num="51" name="Emerald Wall" color="#1c4924" />
+  <wall num="52" name="Ruby Wall" color="#431d22" />
+  <wall num="53" name="Diamond Wall" color="#234249" />
+  <wall num="54" name="Moss Wall" color="#304a42" />
+  <wall num="55" name="Green Moss Wall" color="#4f4f33" />
+  <wall num="56" name="Red Moss Wall" color="#4e3938" />
+  <wall num="57" name="Blue Moss Wall" color="#334452" />
+  <wall num="58" name="Purple Moss Wall" color="#432f49" />
+  <wall num="59" name="Rocky Dirt Wall" color="583d2e" />
+  <wall num="60" name="Shrub Wall" color="#013e17" />
+  <wall num="61" name="Rock Wall" color="#362619" />
+  <wall num="62" name="Asphalt Wall" color="#242424" />
+  <wall num="63" name="Shrub Wall" color="#235f39" />
+  <wall num="64" name="Shrub Wall" color="#3f5f23" />
+  <wall num="65" name="Shrub Wall" color="#1e5030" />
+  <wall num="66" name="Grass Wall" color="#1e5030" />
+  <wall num="67" name="Jungle Wall" color="#35501e" />
+  <wall num="68" name="Flower Wall" color="#1e5030" />
+  <wall num="69" name="Shrub Wall" color="#333250" />
+  <wall num="70" name="Shrub Wall" color="#143736" />
+  <wall num="71" name="Ice Wall" color="#306085" />
+  <wall num="72" name="Cactus Wall" color="#34540c" />
+  <wall num="73" name="Cloud Wall" color="#e4ecee" />
+  <wall num="74" name="Mushroom Wall" color="#313b8c" />
+  <wall num="75" name="Bone Wall" color="#63633c" />
+  <wall num="76" name="Slime Wall" color="#213c79" />
+  <wall num="77" name="Flesh Wall" color="#3d0d10" />
+  <wall num="78" name="Bolder Wall" color="#513426" />
+  <wall num="79" name="Cave Wall" color="#332f60" />
+  <wall num="80" name="Mushroom Wall" color="#313b8c" />
+  <wall num="81" name="Clay Wall" color="#844545" />
+  <wall num="82" name="Disc Wall" color="#4d4022" />
+  <wall num="83" name="Hellstone Wall" color="#3f1c21" />
+  <wall num="84" name="Ice Brick Wall" color="#596f72" />
+  <wall num="85" name="Shadewood Wall" color="#2a363f" />
+  <wall num="86" name="Hive Wall" color="#8c5131" />
+  <wall num="87" name="Lihzahrd Brick Wall" color="#320f08" />
+  <wall num="88" name="Purple Stained Glass" color="#6c3c82" />
+  <wall num="89" name="Yellow Stained Glass" color="#787a45" />
+  <wall num="90" name="Blue Stained Glass" color="#35498a" />
+  <wall num="91" name="Green Stained Glass" color="#45794f" />
+  <wall num="92" name="Red Stained Glass" color="#8a3535" />
+  <wall num="93" name="Multicolored Stained Glass" color="#99255c" />
+  <wall num="94" name="Blue Brick Wall" color="#303f46" />
+  <wall num="95" name="Gray Brick Wall" color="#393643" />
+  <wall num="96" name="Purple Brick Wall" color="#593e5f" />
+  <wall num="97" name="Pink Brick Wall" color="#4e3245" />
+  <wall num="98" name="Mossy Brick Wall" color="#384745" />
+  <wall num="99" name="Textured Wall" color="#383e47" />
+  <wall num="100" name="Blue Slab Wall" color="#303f46" />
+  <wall num="101" name="Blue Tiled Wall" color="#393643" />
+  <wall num="102" name="Pink Slab Wall" color="#48324d" />
+  <wall num="103" name="Pink Tiled Wall" color="#4e3245" />
+  <wall num="104" name="Green Slab Wall" color="#445747" />
+  <wall num="105" name="Green Tiled Wall" color="#383e47" />
+  <wall num="106" name="Wooden Fence" color="#604438" />
+  <wall num="107" name="Metal Fence" color="#3c3c3c" />
+  <wall num="108" name="Hive Wall" color="#8c5131" />
+  <wall num="109" name="Palladium Column Wall" color="#5e1911" />
+  <wall num="110" name="Bubblegum Wall" color="#994996" />
+  <wall num="111" name="Titanstone Wall" color="#1f1814" />
   
   <global id="sky" color="#84AAF8" />
   <global id="earth" color="#583D2E" />
@@ -359,4 +852,18 @@
   <global id="hell" color="#000000" />
   <global id="lava" color="#fd2003" />
   <global id="water" color="#093dbf" />
+  <global id="liquid2" color="#3b1d83" />
+  <global id="liquid3" color="#07918e" />
+  <global id="liquid4" color="#ab0bd1" />
+  <global id="liquid5" color="#0989bf" />
+  <global id="liquid6" color="#a86a20" />
+  <global id="liquid7" color="#243c94" />
+  <global id="liquid8" color="#413b65" />
+  <global id="liquid9" color="#c80000" />
+  <global id="liquid10" color="#b1364f" />
+  <global id="honey" color="#ff9c0c" />
+  <global id="wire1" color="#ac0205" />
+  <global id="wire2" color="#0257ac" />
+  <global id="wire3" color="#2fac02" />
+
 </tiles>
