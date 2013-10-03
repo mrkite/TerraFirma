@@ -106,6 +106,42 @@ namespace Terrafirma
 
                 // draw backgrounds
 
+				/*
+					midx = middle of current view:
+					style=caveBackStyle[3];
+					if (midx<=caveBackX[0]) style=caveBackStyle[0]
+					else if (midx<=treeX[1]) style=caveBackStyle[1]
+					else if (midx<=treeX[2]) style=caveBackStyle[2]
+
+					switch (style)
+					{
+						case 0:
+							styles=[66,67,68,69,128,125];
+						case 1:
+							styles=[70,71,68,72,128,125];
+						case 2:
+							styles=[73,74,75,76,131,125];
+						case 3:
+							styles=[77,78,79,80,134,125];
+						case 4:
+							styles=[77,81,79,82,134,125];
+						case 5:
+							styles=[83,84,85,86,137,125];
+						case 6:
+							styles=[83,87,88,89,137,125];
+						case 7:
+							styles=[121,122,123,124,140,125];
+						case 8:
+							if (jungleBackStyle==0)
+								styles=[153,147,148,149,150,125];
+							else
+								styles=[146,154,155,156,157,125];
+					}
+					styles[4]+=hellBackStyle
+					styles[5]+=hellBackStyle
+				*/
+
+
                 int hellLevel = ((tilesHigh - 230) - groundLevel) / 6; //rounded
                 hellLevel = hellLevel * 6 + groundLevel - 5;
 
