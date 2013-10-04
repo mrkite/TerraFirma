@@ -191,6 +191,15 @@ namespace Terrafirma
         public byte wall;
         public byte liquid;
 
+        public byte color;
+        public byte wallColor;
+        public bool isHoney;
+        public bool half;
+        public int wires;
+        public byte slope;
+        public bool actuator;
+        public bool inActive;
+
 
         public bool isActive
         {
@@ -325,8 +334,8 @@ namespace Terrafirma
     public partial class MainWindow : Window
     {
         const int MapVersion = 68;
-        const int MaxTile = 149;
-        const int MaxWall = 31;
+        const int MaxTile = 250;
+        const int MaxWall = 111;
         const int Widest = 8400;
         const int Highest = 2400;
 
@@ -349,6 +358,19 @@ namespace Terrafirma
         List<Sign> signs = new List<Sign>();
         List<NPC> npcs = new List<NPC>();
 
+        byte moonType;
+        Int32[] treeX = new Int32[3];
+        Int32[] treeStyle = new Int32[4];
+        Int32[] caveBackX = new Int32[3];
+        Int32[] caveBackStyle = new Int32[4];
+        Int32 iceBackStyle, jungleBackStyle, hellBackStyle;
+        bool crimson;
+        bool killedQueenBee, killedMechBoss1, killedMechBoss2, killedMechBoss3, killedMechBossAny, killedPirates;
+        bool isRaining;
+        Int32 rainTime;
+        float maxRain;
+        Int32 oreTier1, oreTier2, oreTier3;
+        
         double gameTime;
         bool dayNight,bloodMoon;
         int moonPhase;
@@ -366,7 +388,7 @@ namespace Terrafirma
 
         TileInfos tileInfos;
         WallInfo[] wallInfo;
-        UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor;
+        UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor, liquidColor;
         bool isHilight = false;
 
         Socket socket=null;
@@ -578,7 +600,7 @@ namespace Terrafirma
                     string invalid = "";
                     using (BinaryReader b = new BinaryReader(File.Open(world,FileMode.Open,FileAccess.Read,FileShare.ReadWrite)))
                     {
-                        uint version = b.ReadInt32(); //now we care about the version
+                        int version = b.ReadInt32(); //now we care about the version
                         if (version > MapVersion) // new map format
                             throw new Exception("Unsupported map version: "+version);
                         string title = b.ReadString();
@@ -682,7 +704,7 @@ namespace Terrafirma
 
 						isRaining = false;
 						rainTime = 0;
-						maxRain = 0.0;
+						maxRain = 0.0F;
 						oreTier1 = 107;
 						oreTier2 = 108;
 						oreTier3 = 111;
@@ -752,6 +774,11 @@ namespace Terrafirma
                                     {
                                         tiles[x, y].u = -1;
                                         tiles[x, y].v = -1;
+                                    }
+
+                                    if (version >= 48 && b.ReadBoolean())
+                                    {
+                                        tiles[x, y].color = b.ReadByte();
                                     }
                                 }
                                 if (version <= 25)
