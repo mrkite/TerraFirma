@@ -26,6 +26,9 @@
                 <MenuItem Command="w:MapCommands.Houses" Name="ShowHouses" IsCheckable="True" />
                 <MenuItem Command="w:MapCommands.Wires" Name="ShowWires" IsCheckable="True" />
                 <Separator />
+				<MenuItem Header="Select _Player" Name="Players">
+				</MenuItem>
+                <Separator />
                 <MenuItem Header="Lighting">
                     <MenuItem Command="w:MapCommands.NoLight" Name="Lighting0" IsCheckable="True" IsChecked="True" />
                     <MenuItem Command="w:MapCommands.Lighting" Name="Lighting1" IsCheckable="True" />
@@ -65,6 +68,9 @@
         <CommandBinding Command="w:MapCommands.OpenWorld"
                         Executed="OpenWorld"
                         CanExecute="OpenWorld_CanExecute" />
+		<CommandBinding Command="w:MapCommands.SelectPlayer"
+						Executed="SelectPlayer"
+						CanExecute="SelectPlayer_CanExecute" />
         <CommandBinding Command="Refresh"
                         Executed="Refresh_Executed"
                         CanExecute="MapLoaded" />

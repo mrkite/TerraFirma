@@ -199,6 +199,7 @@ namespace Terrafirma
         public byte slope;
         public bool actuator;
         public bool inActive;
+		public bool seen;
 
 
         public bool isActive
@@ -354,6 +355,9 @@ namespace Terrafirma
         Int32 groundLevel, rockLevel;
         string[] worlds;
         string currentWorld;
+		Int32 worldID=0;
+		string[] players;
+		string player;
         List<Chest> chests = new List<Chest>();
         List<Sign> signs = new List<Sign>();
         List<NPC> npcs = new List<NPC>();
@@ -539,12 +543,12 @@ namespace Terrafirma
 
         private void fetchWorlds()
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            path = Path.Combine(path, "My Games");
-            path = Path.Combine(path, "Terraria");
-            path = Path.Combine(path, "Worlds");
-            if (Directory.Exists(path))
-                worlds = Directory.GetFiles(path, "*.wld");
+            string terrariapath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            terrariapath = Path.Combine(terrariapath, "My Games");
+            terrariapath = Path.Combine(terrariapath, "Terraria");
+            string worldpath = Path.Combine(terrariapath, "Worlds");
+            if (Directory.Exists(worldpath))
+                worlds = Directory.GetFiles(worldpath, "*.wld");
             else
             {
                 worlds = new string[0];
@@ -570,6 +574,30 @@ namespace Terrafirma
                 Worlds.Items.Add(item);
                 numItems++;
             }
+			// fetch players too
+			string playerpath=Path.Combine(terrariapath,"Players");
+			if (Directory.Exists(playerpath))
+				players=Directory.GetFiles(playerpath,"*.plr");
+			else
+			{
+				players=new string[0];
+				Players.IsEnabled = false;
+			}
+			int numItems = 0;
+			for (int i=0;i<players.Length;i++)
+			{
+				MenuItem item=new MenuItem();
+				using (BinaryReader b = new BinaryReader(File.Open(players[i],FileMode.Open,FileAccess.Read,FileShare.ReadWrite)))
+				{
+					item.Header = b.ReadString();
+				}
+				item.Command = MapCommands.SelectPlayer;
+				item.CommandParameter = i;
+				CommandBindings.Add(new CommandBinding(MapCommands.SelectPlayer, SelectPlayer));
+				Players.Items.Add(item);
+			}
+			if (players.length>0)
+				player=players[0];
         }
         private UInt32 parseColor(string color)
         {
@@ -608,7 +636,8 @@ namespace Terrafirma
                         {
                             Title = title;
                         }));
-                        b.BaseStream.Seek(20, SeekOrigin.Current); //skip id and bounds
+						worldID=b.readInt32();
+                        b.BaseStream.Seek(16, SeekOrigin.Current); //skip bounds
                         tilesHigh = b.ReadInt32();
                         tilesWide = b.ReadInt32();
 						moonType=0;
@@ -984,6 +1013,10 @@ namespace Terrafirma
                             MessageBox.Show("Found problems with the map: " + invalid + "\nIt may not display properly.", "Warning");
                         }));
                     }
+
+					//load player's map
+					loadPlayerMap();
+
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
                             render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, npcs);
@@ -1009,6 +1042,65 @@ namespace Terrafirma
             };
             new Thread(loadThread).Start();
         }
+
+		private void loadPlayerMap()
+		{
+			for (int x = 0; x < tilesWide; x++)
+				for (int y = 0; y < tilesHigh; y++)
+					tiles[x,y].seen=false;
+
+			try
+			{
+				string path=Path.Combine(player.Substring(0, player.Length-4),string.Concat(worldID,".map"));
+				using (BinaryReader b = new BinaryReader(File.Open(path,FileMode.Open,FileAccess.Read,FileShare.ReadWrite)))
+				{
+					int version=b.ReadInt32();
+					if (version>MapVersion) //new map format
+						throw new Exception("Unsupported map versioN: "+version);
+					string title=b.ReadString();
+					b.BaseStream.Seek(12, SeekOrigin.Current); //skip worldid and bounds
+					for (int x = 0; x < tilesWide; x++)
+					{
+						for (int y = 0; y < tilesHigh; y++)
+						{
+							if (b.ReadBoolean())
+							{
+								tiles[x, y].seen=true;
+								byte type=b.ReadByte();
+								byte light=b.ReadByte();
+								byte misc=b.ReadByte();
+								byte misc2=0;
+								if (version>=50) misc2=b.ReadByte();
+								int rle=b.ReadInt16();
+								if (light==255)
+								{
+									for (int r = y + 1; r < y + 1 + rle; r++)
+										tiles[x, r].seen=true;
+								}
+								else
+								{
+									for (int r = y + 1; r < y + 1 + rle; r++)
+									{
+										light=b.ReadByte();
+										tiles[x, r].seen=true;
+									}
+								}
+								y+=rle;
+							}
+							else
+								y+=b.ReadInt16(); //skip
+						}
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+					{
+						MessageBox.Show(e.Message);
+					}));
+			}
+		}
 
         private void addNPCToMenu(NPC npc)
         {
@@ -3163,6 +3255,24 @@ namespace Terrafirma
         {
             e.CanExecute = true;
         }
+		private void SelectPlayer_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+            if (busy) //fail
+                return;
+            int id = (int)e.Parameter;
+			player=players[id];
+			// should load player map here
+			ThreadStart loader = delegate()
+				{
+					loadPlayerMap();
+					//we should redraw the map here
+				};
+			new Thread(loader).Start();
+		}
+		private void SelectPlayer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = !busy;
+		}
         private void JumpToSpawn_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             curX = spawnX;

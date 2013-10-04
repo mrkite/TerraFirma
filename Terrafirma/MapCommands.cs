@@ -38,6 +38,8 @@ namespace Terrafirma
     {
         public static readonly RoutedUICommand OpenWorld = new RoutedUICommand(
             "Open World", "OpenWorld", typeof(MapCommands));
+		public static readonly RoutedUICommand SelectPlayer = new RoutedUICommand(
+			"Select Player", "SelectPlayer", typeof(MapCommands));
         public static readonly RoutedUICommand JumpToSpawn = new RoutedUICommand(
             "Jump To Spawn", "JumpToSpawn", typeof(MapCommands),
             new InputGestureCollection(new InputGesture[]{ new KeyGesture(Key.F6) }));
