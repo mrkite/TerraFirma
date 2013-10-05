@@ -3029,6 +3029,8 @@ namespace Terrafirma
                         label = tiles[sx, sy].isLava ? "Lava" : "Water";
                     if (tiles[sx, sy].isActive)
                         label = tileInfos[tiles[sx, sy].type, tiles[sx, sy].u, tiles[sx, sy].v].name;
+                    if (FogOfWar.IsChecked && !tiles[sx, sy].seen)
+                        label = "Murky blackness";
                     statusText.Text = String.Format("{0},{1} {2}", sx, sy, label);
                 }
                 else
@@ -4192,13 +4194,18 @@ namespace Terrafirma
         private void ShowStats_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             WorldStats stats = new WorldStats();
-            stats.Add("Eye of Cthulu", killedBoss1 ? "Defeated" : "Undefeated");
-            stats.Add("Eater of Worlds", killedBoss2 ? "Defeated" : "Undefeated");
-            stats.Add("Skeletron", killedBoss3 ? "Defeated" : "Undefeated");
-            stats.Add("Wall of Flesh", hardMode ? "Defeated" : "Undefeated");
-            stats.Add("Goblin Invasion", killedGoblins ? "Destroyed" : goblinsDelay == 0 ? "Ongoing" : "In " + goblinsDelay);
-            stats.Add("Clown", killedClown ? "Dead" : "Nope!");
-            stats.Add("Frost Horde", killedFrost ? "Destroyed" : "Unsummoned");
+            stats.Add("Eye of Cthulu", killedBoss1 ? "Blackened" : "Undefeated");
+            stats.Add("Eater of Worlds", killedBoss2 ? "Choked" : "Undefeated");
+            stats.Add("Skeletron", killedBoss3 ? "Boned" : "Undefeated");
+            stats.Add("Wall of Flesh", hardMode ? "Flayed" : "Undefeated");
+            stats.Add("Queen Bee", killedQueenBee ? "Swatted" : "Undefeated");
+            stats.Add("The Destroyer", killedMechBoss1 ? "Destroyed" : "Undefeated");
+            stats.Add("The Twins", killedMechBoss2 ? "Separated" : "Undefeated");
+            stats.Add("Skeletron Prime", killedMechBoss3 ? "Boned" : "Undefeated");
+            stats.Add("Goblin Invasion", killedGoblins ? "Thwarted" : "Undefeated");
+            stats.Add("Clown", killedClown ? "Eviscerated" : "Undefeated");
+            stats.Add("Frost Horde", killedFrost ? "Thawed" : "Undefeated");
+            stats.Add("Pirates", killedPirates ? "Keelhauled" : "Undefeated");
             stats.Add("Tinkerer", savedTinkerer ? "Saved" : killedGoblins ? "Bound" : "Not present yet");
             stats.Add("Wizard", savedWizard ? "Saved" : hardMode ? "Bound" : "Not present yet");
             stats.Add("Mechanic", savedMechanic ? "Saved" : killedBoss3 ? "Bound" : "Not present yet");
