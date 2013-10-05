@@ -82,7 +82,7 @@ namespace Terrafirma
             double startx, double starty,
             double scale, ref byte[] pixels,
             bool isHilight,
-            int light, bool texture, bool houses, bool wires, ref Tile[,] tiles)
+            int light, bool texture, bool houses, bool wires, bool fogofwar, ref Tile[,] tiles)
         {
             if (texture)
             {
@@ -223,6 +223,8 @@ namespace Terrafirma
                             lightG *= 0.3;
                             lightB *= 0.3;
                         }
+                        if (fogofwar && !tile.seen)
+                            lightR = lightG = lightB = 0.0;
 
 
                         int u = (sx % (bgw / 16)) * 16;
@@ -276,6 +278,9 @@ namespace Terrafirma
                                 lightB *= 0.3;
                             }
 
+                            if (fogofwar && !tile.seen)
+                                lightR = lightG = lightB = 0.0;
+
                             drawTexture(tex, 32, 32, tile.wallv * tex.width * 4 * 2 + tile.wallu * 4 * 2,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                         }
@@ -319,6 +324,8 @@ namespace Terrafirma
                             lightG *= 0.3;
                             lightB *= 0.3;
                         }
+                        if (fogofwar && !tile.seen)
+                            lightR = lightG = lightB = 0.0;
 
                         if (tile.isActive)
                         {
@@ -416,6 +423,8 @@ namespace Terrafirma
                         lightG *= 0.3;
                         lightB *= 0.3;
                     }
+                    if (fogofwar && !tile.seen)
+                        lightR = lightG = lightB = 0.0;
 
                     if (tile.type == 128) //armor
                     {
@@ -587,6 +596,8 @@ namespace Terrafirma
                             }
                             if (isHilight && (!tile.isActive || !tileInfos[tile.type, tile.u, tile.v].isHilighting))
                                 c = alphaBlend(0, c, 0.3);
+                            if (fogofwar && !tile.seen)
+                                c = 0;
                         }
                         pixels[bofs++] = (byte)(c & 0xff);
                         pixels[bofs++] = (byte)((c >> 8) & 0xff);

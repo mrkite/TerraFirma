@@ -40,6 +40,8 @@ namespace Terrafirma
             "Open World", "OpenWorld", typeof(MapCommands));
 		public static readonly RoutedUICommand SelectPlayer = new RoutedUICommand(
 			"Select Player", "SelectPlayer", typeof(MapCommands));
+        public static readonly RoutedUICommand FogOfWar = new RoutedUICommand(
+            "Fog of War", "FogOfWar", typeof(MapCommands));
         public static readonly RoutedUICommand JumpToSpawn = new RoutedUICommand(
             "Jump To Spawn", "JumpToSpawn", typeof(MapCommands),
             new InputGestureCollection(new InputGesture[]{ new KeyGesture(Key.F6) }));

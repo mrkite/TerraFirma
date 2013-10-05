@@ -605,11 +605,15 @@ namespace Terrafirma
 
                 item.Command = MapCommands.SelectPlayer;
                 item.CommandParameter = i;
+                item.IsCheckable = true;
                 CommandBindings.Add(new CommandBinding(MapCommands.SelectPlayer, SelectPlayer));
                 Players.Items.Add(item);
+                if (i==0)
+                {
+                    player=players[i];
+                    item.IsChecked=true;
+                }
             }
-			if (players.Length>0)
-				player=players[0];
         }
         private UInt32 parseColor(string color)
         {
@@ -1064,11 +1068,13 @@ namespace Terrafirma
 			try
 			{
 				string path=Path.Combine(player.Substring(0, player.Length-4),string.Concat(worldID,".map"));
+                if (!File.Exists(path))
+                    return;
 				using (BinaryReader b = new BinaryReader(File.Open(path,FileMode.Open,FileAccess.Read,FileShare.ReadWrite)))
 				{
 					int version=b.ReadInt32();
 					if (version>MapVersion) //new map format
-						throw new Exception("Unsupported map versioN: "+version);
+						throw new Exception("Unsupported map version: "+version);
 					string title=b.ReadString();
 					b.BaseStream.Seek(12, SeekOrigin.Current); //skip worldid and bounds
 					for (int x = 0; x < tilesWide; x++)
@@ -2950,7 +2956,8 @@ namespace Terrafirma
             {
                 render.Draw(curWidth, curHeight, startx, starty, curScale, ref bits,
                     isHilight, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
-                    UseTextures.IsChecked && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked, ref tiles);
+                    UseTextures.IsChecked && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked,
+                    FogOfWar.IsChecked, ref tiles);
             }
             catch (System.NotSupportedException e)
             {
@@ -3273,11 +3280,23 @@ namespace Terrafirma
                 return;
             int id = (int)e.Parameter;
 			player=players[id];
+            //uncheck other players
+            foreach (MenuItem item in Players.Items)
+            {
+                if (item.CommandParameter != e.Parameter)
+                    item.IsChecked = false;
+            }
+            if (!loaded)
+                return;
+
 			// should load player map here
 			ThreadStart loader = delegate()
 				{
 					loadPlayerMap();
-					//we should redraw the map here
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                    {
+                        RenderMap();
+                    }));
 				};
 			new Thread(loader).Start();
 		}
@@ -3285,6 +3304,15 @@ namespace Terrafirma
 		{
 			e.CanExecute = !busy;
 		}
+        private void FogOfWar_Toggle(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (loaded)
+                RenderMap();
+        }
+        private void FogOfWar_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !busy && Players.IsEnabled;
+        }
         private void JumpToSpawn_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             curX = spawnX;
@@ -4135,7 +4163,8 @@ namespace Terrafirma
 
                     render.Draw(wd, ht, startx, starty, sc,
                         ref pixels, false, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
-                        saveOpts.UseTextures && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked, ref tiles);
+                        saveOpts.UseTextures && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked,
+                        FogOfWar.IsChecked, ref tiles);
 
                     BitmapSource source = BitmapSource.Create(wd, ht, 96.0, 96.0,
                         PixelFormats.Bgr32, null, pixels, wd * 4);
