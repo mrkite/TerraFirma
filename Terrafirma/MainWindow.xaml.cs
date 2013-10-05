@@ -45,6 +45,7 @@ using System.Windows.Interop;
 using System.Collections;
 using System.Threading;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 
 namespace Terrafirma
 {
@@ -583,20 +584,31 @@ namespace Terrafirma
 				players=new string[0];
 				Players.IsEnabled = false;
 			}
-			int numItems = 0;
-			for (int i=0;i<players.Length;i++)
-			{
-				MenuItem item=new MenuItem();
-				using (BinaryReader b = new BinaryReader(File.Open(players[i],FileMode.Open,FileAccess.Read,FileShare.ReadWrite)))
-				{
-					item.Header = b.ReadString();
-				}
-				item.Command = MapCommands.SelectPlayer;
-				item.CommandParameter = i;
-				CommandBindings.Add(new CommandBinding(MapCommands.SelectPlayer, SelectPlayer));
-				Players.Items.Add(item);
-			}
-			if (players.length>0)
+
+
+
+            for (int i = 0; i < players.Length; i++)
+            {
+                MenuItem item = new MenuItem();
+                //decrypt player file to get the name
+
+                RijndaelManaged encscheme = new RijndaelManaged();
+                encscheme.Padding = PaddingMode.None;
+                byte[] key = new UnicodeEncoding().GetBytes("h3y_gUyZ");
+                FileStream inp = new FileStream(players[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                CryptoStream crypt = new CryptoStream(inp, encscheme.CreateDecryptor(key, key), CryptoStreamMode.Read);
+                using (BinaryReader b = new BinaryReader(crypt))
+                {
+                    b.ReadUInt32(); //skip player version
+                    item.Header = b.ReadString();
+                }
+
+                item.Command = MapCommands.SelectPlayer;
+                item.CommandParameter = i;
+                CommandBindings.Add(new CommandBinding(MapCommands.SelectPlayer, SelectPlayer));
+                Players.Items.Add(item);
+            }
+			if (players.Length>0)
 				player=players[0];
         }
         private UInt32 parseColor(string color)
@@ -636,7 +648,7 @@ namespace Terrafirma
                         {
                             Title = title;
                         }));
-						worldID=b.readInt32();
+						worldID=b.ReadInt32();
                         b.BaseStream.Seek(16, SeekOrigin.Current); //skip bounds
                         tilesHigh = b.ReadInt32();
                         tilesWide = b.ReadInt32();
@@ -3255,7 +3267,7 @@ namespace Terrafirma
         {
             e.CanExecute = true;
         }
-		private void SelectPlayer_Executed(object sender, ExecutedRoutedEventArgs e)
+		private void SelectPlayer(object sender, ExecutedRoutedEventArgs e)
 		{
             if (busy) //fail
                 return;

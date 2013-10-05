@@ -68,9 +68,6 @@
         <CommandBinding Command="w:MapCommands.OpenWorld"
                         Executed="OpenWorld"
                         CanExecute="OpenWorld_CanExecute" />
-		<CommandBinding Command="w:MapCommands.SelectPlayer"
-						Executed="SelectPlayer"
-						CanExecute="SelectPlayer_CanExecute" />
         <CommandBinding Command="Refresh"
                         Executed="Refresh_Executed"
                         CanExecute="MapLoaded" />
