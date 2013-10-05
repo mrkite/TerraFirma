@@ -37,10 +37,12 @@ namespace Terrafirma
         private TileInfos tileInfos;
         private WallInfo[] wallInfo;
         private UInt32 skyColor, earthColor, rockColor, hellColor;
-        private UInt32 waterColor, lavaColor;
+        private UInt32 waterColor, lavaColor, honeyColor;
         private Int32 tilesWide, tilesHigh;
         private int groundLevel, rockLevel;
         private List<NPC> npcs;
+        private byte[] styles;
+        private Int32[] treeX,treeStyle;
 
         Random rand;
 
@@ -48,7 +50,7 @@ namespace Terrafirma
 
         public Render(TileInfos tileInfos, WallInfo[] wallInfo,
             UInt32 skyColor, UInt32 earthColor, UInt32 rockColor, UInt32 hellColor,
-            UInt32 waterColor, UInt32 lavaColor)
+            UInt32 waterColor, UInt32 lavaColor, UInt32 honeyColor)
         {
             this.tileInfos = tileInfos;
             this.wallInfo = wallInfo;
@@ -58,17 +60,22 @@ namespace Terrafirma
             this.hellColor = hellColor;
             this.waterColor = waterColor;
             this.lavaColor = lavaColor;
+            this.honeyColor = honeyColor;
             rand = new Random();
         }
 
         public void SetWorld(Int32 tilesWide, Int32 tilesHigh,
-            int groundLevel, int rockLevel, List<NPC> npcs)
+            int groundLevel, int rockLevel, byte[] styles, 
+            Int32[] treeX, Int32[] treeStyle, List<NPC> npcs)
         {
             this.tilesWide = tilesWide;
             this.tilesHigh = tilesHigh;
             this.groundLevel = groundLevel;
             this.rockLevel = rockLevel;
             this.npcs = npcs;
+            this.styles = styles;
+            this.treeX = treeX;
+            this.treeStyle = treeStyle;
         }
 
 
@@ -373,7 +380,50 @@ namespace Terrafirma
                             }
                             else
                             {
-                                Texture tex = Textures.GetTile(tile.type);
+                                Texture tex;
+                                int wood = -1;
+                                if (tile.type == 5) //tree, might change texture
+                                {
+                                    int trunkx = sx;
+                                    int trunky = sy;
+                                    if (tile.u == 66 && tile.v <= 45) trunkx++;
+                                    if (tile.u == 88 && tile.v >= 66 && tile.v <= 110) trunkx--;
+                                    if (tile.u == 22 && tile.v >= 132) trunkx--;
+                                    if (tile.u == 44 && tile.v >= 132) trunkx++;
+                                    while (tiles[trunkx,trunky].isActive && tiles[trunkx, trunky].type == 5)
+                                        trunky++;
+                                    if (tiles[trunkx, trunky].isActive)
+                                    {
+                                        switch (tiles[trunkx, trunky].type)
+                                        {
+                                            case 23: //corrupted grass
+                                                wood = 0;
+                                                break;
+                                            case 60: //jungle grass
+                                                wood = 1;
+                                                if (trunky>groundLevel)
+                                                    wood = 5;
+                                                break;
+                                            case 70: //mushroom grass
+                                                wood = 6;
+                                                break;
+                                            case 109: //hallowed grass
+                                                wood = 2;
+                                                break;
+                                            case 147: //snow
+                                                if (styles[3] != 0)
+                                                    wood = 3;
+                                                break;
+                                            case 199: //flesh
+                                                wood = 4;
+                                                break;
+                                        }
+                                    }
+                                }
+                                if (wood == -1)
+                                    tex = Textures.GetTile(tile.type);
+                                else
+                                    tex = Textures.GetWood(wood);
                                 drawTexture(tex, texw, texh, tile.v * tex.width * 4 + tile.u * 4,
                                     pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                             }
@@ -381,7 +431,7 @@ namespace Terrafirma
                         // draw liquid
                         if (tile.liquid > 0)
                         {
-                            UInt32 c = tile.isLava ? lavaColor : waterColor;
+                            UInt32 c = tile.isLava ? lavaColor : tile.isHoney ? honeyColor : waterColor;
                             uint r = (uint)((c >> 16) * lightR);
                             uint g = (uint)(((c >> 8) & 0xff) * lightG);
                             uint b = (uint)((c & 0xff) * lightB);
@@ -583,7 +633,7 @@ namespace Terrafirma
                                     c = alphaBlend(c, 0xff88ff, 0.9);
                             }
                             if (tile.liquid > 0)
-                                c = alphaBlend(c, tile.isLava ? lavaColor : waterColor, 0.5);
+                                c = alphaBlend(c, tile.isLava ? lavaColor : tile.isHoney ? honeyColor : waterColor, 0.5);
                             if (light == 1)
                                 c = alphaBlend(0, c, tile.light);
                             else if (light == 2)
@@ -613,15 +663,39 @@ namespace Terrafirma
             {
                 Tile tile = tiles[x, y + i];
                 if (tile.type == 2) //normal grass
-                    return 0;
+                {
+                    int s = treeStyle[3];
+                    for (int j = 0; j < 3; j++)
+                        if (x <= treeX[j])
+                        {
+                            s = treeStyle[j];
+                            break;
+                        }
+                    if (s == 0) return 0;
+                    return s + 5;
+                }
                 if (tile.type == 23) //corrupt grass
                     return 1;
                 if (tile.type == 60) //jungle grass
+                {
+                    if (y > groundLevel)
+                        return 13;
+                    if (styles[2] == 1)
+                        return 11;
                     return 2;
+                }
                 if (tile.type == 109) //hallowed grass
                     return 3;
                 if (tile.type == 147) //snow block
+                {
+                    if (styles[3] == 0)
+                        return 12;
                     return 4;
+                }
+                if (tile.type == 70) //mushroom grass
+                    return 14;
+                if (tile.type == 199) //flesh grass
+                    return 5;
             }
             return 0;
         }
@@ -661,7 +735,7 @@ namespace Terrafirma
                         drawTexture(tex, 80, 140, variant * 82 * 4, pixels,
                             px - (int)(30 * zoom), py - (int)(124 * zoom), w, h, zoom, lightR, lightG, lightB);
                     }
-                    else if (leafType == 2)
+                    else if (leafType == 2 || leafType==11 || leafType==13) //jungle
                         drawTexture(tex, 114, 96, variant * 116 * 4, pixels,
                             px - (int)(46 * zoom), py - (int)(80 * zoom), w, h, zoom, lightR, lightG, lightB);
                     else

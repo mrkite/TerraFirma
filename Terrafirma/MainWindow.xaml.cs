@@ -335,7 +335,7 @@ namespace Terrafirma
     /// </summary>
     public partial class MainWindow : Window
     {
-        const int MapVersion = 68;
+        const int MapVersion = 69;
         const int MaxTile = 250;
         const int MaxWall = 111;
         const int Widest = 8400;
@@ -381,6 +381,7 @@ namespace Terrafirma
         int moonPhase;
         Int32 dungeonX, dungeonY;
         bool killedBoss1, killedBoss2, killedBoss3, killedGoblins, killedClown, killedFrost;
+        bool killedPlantBoss, killedGolemBoss;
         bool savedTinkerer, savedWizard, savedMechanic;
         bool smashedOrb, meteorSpawned;
         byte shadowOrbCount;
@@ -388,12 +389,20 @@ namespace Terrafirma
         bool hardMode;
         Int32 goblinsDelay, goblinsSize, goblinsType;
         double goblinsX;
+        byte[] styles = {   0, //tree
+                            0, //corruption
+                            0, //jungle
+                            0, //snow
+                            0, //hallow
+                            0, //crimson
+                            0, //desert
+                            0 }; //ocean
 
         Render render;
 
         TileInfos tileInfos;
         WallInfo[] wallInfo;
-        UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor, liquidColor;
+        UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor, honeyColor;
         bool isHilight = false;
 
         Socket socket=null;
@@ -495,13 +504,13 @@ namespace Terrafirma
                     case "lava":
                         lavaColor = color;
                         break;
-					case "liquid":
-						liquidColor = color;
+					case "honey":
+						honeyColor = color;
 						break;
                 }
             }
 
-            render = new Render(tileInfos, wallInfo, skyColor, earthColor, rockColor, hellColor, waterColor, lavaColor);
+            render = new Render(tileInfos, wallInfo, skyColor, earthColor, rockColor, hellColor, waterColor, lavaColor, honeyColor);
             //this resize timer is used so we don't get killed on the resize
             resizeTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal,
@@ -717,6 +726,12 @@ namespace Terrafirma
 							killedMechBoss3=b.ReadBoolean();
 							killedMechBossAny=b.ReadBoolean();
 						}
+                        killedPlantBoss = killedGolemBoss = false;
+                        if (version >= 64)
+                        {
+                            killedPlantBoss = b.ReadBoolean();
+                            killedGolemBoss = b.ReadBoolean();
+                        }
                         savedTinkerer = savedWizard = savedMechanic = killedGoblins = killedClown = killedFrost = killedPirates = false;
                         if (version >= 29)
                         {
@@ -769,11 +784,15 @@ namespace Terrafirma
 						}
 						if (version>=55)
 						{
-							//skip background styles
-							b.BaseStream.Seek(3, SeekOrigin.Current); 
+                            int numstyles = 3;
+                            if (version >= 60)
+                                numstyles = 8;
+                            for (int i = 0; i < numstyles; i++)
+                                styles[i] = b.ReadByte();
+                            //skip clouds
 							if (version>=60)
 							{
-								b.BaseStream.Seek(9, SeekOrigin.Current);
+								b.BaseStream.Seek(4, SeekOrigin.Current);
 								if (version>=62)
 									b.BaseStream.Seek(6, SeekOrigin.Current);
 							}
@@ -1035,7 +1054,7 @@ namespace Terrafirma
 
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
-                            render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, npcs);
+                            render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, npcs);
                             loaded = true;
                             done();
                         }));
@@ -3026,7 +3045,7 @@ namespace Terrafirma
                     if (tiles[sx, sy].wall > 0)
                         label = wallInfo[tiles[sx, sy].wall].name;
                     if (tiles[sx, sy].liquid > 0)
-                        label = tiles[sx, sy].isLava ? "Lava" : "Water";
+                        label = tiles[sx, sy].isLava ? "Lava" : tiles[sx, sy].isHoney ? "Honey" : "Water";
                     if (tiles[sx, sy].isActive)
                         label = tileInfos[tiles[sx, sy].type, tiles[sx, sy].u, tiles[sx, sy].v].name;
                     if (FogOfWar.IsChecked && !tiles[sx, sy].seen)
@@ -3855,7 +3874,7 @@ namespace Terrafirma
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                             {
                                 serverText.Text = "";
-                                render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, npcs);
+                                render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, npcs);
                                 loaded = true;
                                 curX = spawnX;
                                 curY = spawnY;
@@ -4202,6 +4221,8 @@ namespace Terrafirma
             stats.Add("The Destroyer", killedMechBoss1 ? "Destroyed" : "Undefeated");
             stats.Add("The Twins", killedMechBoss2 ? "Separated" : "Undefeated");
             stats.Add("Skeletron Prime", killedMechBoss3 ? "Boned" : "Undefeated");
+            stats.Add("Plantera", killedPlantBoss ? "Weeded" : "Undefeated");
+            stats.Add("Golem", killedGolemBoss ? "Stoned" : "Undefeated");
             stats.Add("Goblin Invasion", killedGoblins ? "Thwarted" : "Undefeated");
             stats.Add("Clown", killedClown ? "Eviscerated" : "Undefeated");
             stats.Add("Frost Horde", killedFrost ? "Thawed" : "Undefeated");

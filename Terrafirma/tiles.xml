@@ -799,7 +799,7 @@
   <wall num="59" name="Rocky Dirt Wall" color="583d2e" />
   <wall num="60" name="Shrub Wall" color="#013e17" />
   <wall num="61" name="Rock Wall" color="#362619" />
-  <wall num="62" name="Asphalt Wall" color="#242424" />
+  <wall num="62" name="Spider Cave Wall" color="#242424" />
   <wall num="63" name="Shrub Wall" color="#235f39" />
   <wall num="64" name="Shrub Wall" color="#3f5f23" />
   <wall num="65" name="Shrub Wall" color="#1e5030" />
@@ -815,7 +815,7 @@
   <wall num="75" name="Bone Wall" color="#63633c" />
   <wall num="76" name="Slime Wall" color="#213c79" />
   <wall num="77" name="Flesh Wall" color="#3d0d10" />
-  <wall num="78" name="Bolder Wall" color="#513426" />
+  <wall num="78" name="Living Wood Wall" color="#513426" />
   <wall num="79" name="Cave Wall" color="#332f60" />
   <wall num="80" name="Mushroom Wall" color="#313b8c" />
   <wall num="81" name="Clay Wall" color="#844545" />
