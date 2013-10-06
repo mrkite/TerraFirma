@@ -440,7 +440,7 @@ namespace Terrafirma
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                         }
                         // draw wires if necessary
-                        if (wires && tile.hasWire)
+                        if (wires && tile.hasRedWire)
                         {
                             drawWire(sx, sy, pixels,
                                 (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, ref tiles);
@@ -704,10 +704,10 @@ namespace Terrafirma
         {
             int mask = 0;
             //udlr
-            if (sx < tilesWide - 1 && tiles[sx + 1, sy].hasWire) mask |= 1; //right
-            if (sx > 0 && tiles[sx - 1, sy].hasWire) mask |= 2; //left
-            if (sy < tilesHigh - 1 && tiles[sx, sy + 1].hasWire) mask |= 4; //down
-            if (sy > 0 && tiles[sx, sy - 1].hasWire) mask |= 8; //up
+            if (sx < tilesWide - 1 && tiles[sx + 1, sy].hasRedWire) mask |= 1; //right
+            if (sx > 0 && tiles[sx - 1, sy].hasRedWire) mask |= 2; //left
+            if (sy < tilesHigh - 1 && tiles[sx, sy + 1].hasRedWire) mask |= 4; //down
+            if (sy > 0 && tiles[sx, sy - 1].hasRedWire) mask |= 8; //up
             Texture tex = Textures.GetWire(0);
             drawTexture(tex, 16, 16, uvWires[mask * 2 + 1] * tex.width * 4 + uvWires[mask * 2] * 4, pixels,
                 px, py, w, h, zoom, lightR, lightG, lightB);
