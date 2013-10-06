@@ -1684,7 +1684,7 @@ namespace Terrafirma
         }
         private void FogOfWar_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = !busy && Players.IsEnabled;
+            e.CanExecute = Players.IsEnabled;
         }
         private void JumpToSpawn_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -1928,6 +1928,7 @@ namespace Terrafirma
                         SendMessage(0x2a);
                         //send buffs
                         //send inventory
+                        //send dyes
                         SendMessage(6);
                         if (loginLevel == 2) loginLevel = 3;
                     }
@@ -1946,14 +1947,37 @@ namespace Terrafirma
                         dayNight = messages[payload++] == 1;
                         moonPhase = messages[payload++];
                         bloodMoon = messages[payload++] == 1;
+                        payload++; //eclipse
                         tilesWide = BitConverter.ToInt32(messages, payload); payload += 4;
                         tilesHigh = BitConverter.ToInt32(messages, payload); payload += 4;
                         spawnX = BitConverter.ToInt32(messages, payload); payload += 4;
                         spawnY = BitConverter.ToInt32(messages, payload); payload += 4;
                         groundLevel = BitConverter.ToInt32(messages, payload); payload += 4;
                         rockLevel = BitConverter.ToInt32(messages, payload); payload += 4;
-                        payload += 4; //skip world id
+                        worldID = BitConverter.ToInt32(messages, payload); payload += 4;
+                        payload++; //moon type
+                        for (int i = 0; i < 3; i++)
+                        {
+                            treeX[i] = BitConverter.ToInt32(messages, payload); payload += 4;
+                        }
+                        for (int i = 0; i < 4; i++)
+                            treeStyle[i] = messages[payload++];
+                        for (int i = 0; i < 3; i++)
+                        {
+                            caveBackX[i] = BitConverter.ToInt32(messages, payload); payload += 4;
+                        }
+                        for (int i = 0; i < 4; i++)
+                            caveBackStyle[i] = messages[payload++];
+                        for (int i = 0; i < 8; i++)
+                            styles[i] = messages[payload++];
+                        iceBackStyle = messages[payload++];
+                        jungleBackStyle = messages[payload++];
+                        hellBackStyle = messages[payload++];
+                        payload += 4; //wind speed
+                        payload++; //number of clouds
                         byte flags = messages[payload++];
+                        byte flags2 = messages[payload++];
+                        payload += 4; //max rain
                         string title = Encoding.ASCII.GetString(messages, payload, start + len - payload);
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
@@ -1965,9 +1989,17 @@ namespace Terrafirma
                         killedBoss3 = (flags & 8) == 8;
                         hardMode = (flags & 16) == 16;
                         killedClown = (flags & 32) == 32;
+                        killedMechBoss1 = (flags2 & 1) == 1;
+                        killedMechBoss2 = (flags2 & 2) == 2;
+                        killedMechBoss3 = (flags2 & 4) == 4;
+                        killedMechBossAny = (flags2 & 8) == 8;
+                        crimson = (flags2 & 32) == 32;
                         meteorSpawned = false;
                         killedFrost = false;
                         killedGoblins = false;
+                        killedPirates = false;
+                        killedPlantBoss = false;
+                        killedQueenBee = false;
                         savedMechanic = false;
                         savedTinkerer = false;
                         savedWizard = false;
@@ -1989,9 +2021,15 @@ namespace Terrafirma
                                     tiles[x, y].hasRedWire = false;
                                     tiles[x, y].hasGreenWire = false;
                                     tiles[x, y].hasBlueWire = false;
+                                    tiles[x, y].half = false;
+                                    tiles[x, y].color = 0;
                                 }
                             SendMessage(8); //request initial tile data
                         }
+                        chests.Clear();
+                        signs.Clear();
+                        npcs.Clear();
+                        loadPlayerMap();
                     }
                     break;
                 case 0x08: //request initial tile data - c2s only
@@ -2016,8 +2054,21 @@ namespace Terrafirma
                         {
                             Tile tile = tiles[x, y];
                             byte flags = messages[payload++];
+                            byte flags2 = messages[payload++];
                             tile.isActive = (flags & 1) == 1;
                             tile.hasRedWire = (flags & 16) == 16;
+                            tile.half = (flags & 32) == 32;
+                            tile.hasGreenWire = (flags2 & 1) == 1;
+                            tile.hasBlueWire = (flags2 & 2) == 2;
+                            tile.slope = (byte)((flags2 & 0x30) >> 4);
+                            if ((flags2 & 4) == 4)
+                                tile.color = messages[payload++];
+                            else
+                                tile.color = 0;
+                            if ((flags2 & 8) == 8)
+                                tile.wallColor = messages[payload++];
+                            else
+                                tile.wallColor = 0;
                             if (tile.isActive)
                             {
                                 tile.type = messages[payload++];
@@ -2043,7 +2094,9 @@ namespace Terrafirma
                             if ((flags & 8) == 8)
                             {
                                 tile.liquid = messages[payload++];
-                                tile.isLava = messages[payload++] == 1;
+                                tile.isLava = messages[payload] == 1;
+                                tile.isHoney = messages[payload] == 2;
+                                payload++;
                             }
                             else
                                 tile.liquid = 0;
@@ -2059,9 +2112,14 @@ namespace Terrafirma
                                 tiles[r, y].wallv = -1;
                                 tiles[r, y].liquid = tiles[x, y].liquid;
                                 tiles[r, y].isLava = tiles[x, y].isLava;
+                                tiles[r, y].isHoney = tiles[x, y].isHoney;
                                 tiles[r, y].hasRedWire = tiles[x, y].hasRedWire;
                                 tiles[r, y].hasGreenWire = tiles[x, y].hasGreenWire;
                                 tiles[r, y].hasBlueWire = tiles[x, y].hasBlueWire;
+                                tiles[r, y].half = tiles[x, y].half;
+                                tiles[r, y].slope = tiles[x, y].slope;
+                                tiles[r, y].color = tiles[x, y].color;
+                                tiles[r, y].wallColor = tiles[x, y].wallColor;
                             }
                             x += rle;
                         }
@@ -2128,7 +2186,7 @@ namespace Terrafirma
                         int slot = BitConverter.ToInt16(messages, payload); payload += 2;
                         float posx = BitConverter.ToSingle(messages, payload); payload += 4;
                         float posy = BitConverter.ToSingle(messages, payload); payload += 4;
-                        payload += 32; //don't care about velocity, target, ai, or direction
+                        payload += 30; //don't care about velocity, target, ai, or direction
                         int id = BitConverter.ToInt16(messages, payload);
                         bool found = false;
                         for (int i = 0; i < npcs.Count; i++)
@@ -2317,6 +2375,20 @@ namespace Terrafirma
                         }
                     }
                     break;
+                case 0x3d: //summon boss
+                    break;
+                case 0x3e: //ninja dodge
+                    break;
+                case 0x3f: //paint tile
+                    break;
+                case 0x40: //paint wall
+                    break;
+                case 0x41: //teleport npc
+                    break;
+                case 0x42: //heal player
+                    break;
+                case 0x44: //unknown
+                    break;
                 default: // ignore unknown messages
                     break;
             }
@@ -2371,8 +2443,9 @@ namespace Terrafirma
                     Buffer.BlockCopy(BitConverter.GetBytes((float)(y*16.0)), 0, writeBuffer, payload, 4); payload+=4;
                     byte[] velocity = BitConverter.GetBytes((float)0);
                     Buffer.BlockCopy(velocity, 0, writeBuffer, payload, 4); payload+=4;
-                    Buffer.BlockCopy(velocity, 0, writeBuffer, payload, 4);
-                    payloadLen += 19;
+                    Buffer.BlockCopy(velocity, 0, writeBuffer, payload, 4); payload+=4;
+                    writeBuffer[payload] = 0; //not on a rope
+                    payloadLen += 20;
                     break;
                 case 0x10: //set player life
                     writeBuffer[payload++] = playerSlot;
