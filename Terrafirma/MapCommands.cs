@@ -41,7 +41,8 @@ namespace Terrafirma
 		public static readonly RoutedUICommand SelectPlayer = new RoutedUICommand(
 			"Select Player", "SelectPlayer", typeof(MapCommands));
         public static readonly RoutedUICommand FogOfWar = new RoutedUICommand(
-            "Fog of War", "FogOfWar", typeof(MapCommands));
+            "Fog of War", "FogOfWar", typeof(MapCommands),
+            new InputGestureCollection(new InputGesture[]{ new KeyGesture(Key.F, ModifierKeys.Control) }));
         public static readonly RoutedUICommand JumpToSpawn = new RoutedUICommand(
             "Jump To Spawn", "JumpToSpawn", typeof(MapCommands),
             new InputGestureCollection(new InputGesture[]{ new KeyGesture(Key.F6) }));

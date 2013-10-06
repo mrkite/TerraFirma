@@ -28,12 +28,12 @@
                 <Separator />
 				<MenuItem Header="Select _Player" Name="Players">
 				</MenuItem>
-                <MenuItem Command="w:MapCommands.FogOfWar" Name="FogOfWar" IsCheckable="True" IsChecked="True" />
+                <MenuItem Command="w:MapCommands.FogOfWar" Name="FogOfWar" IsChecked="True" />
                 <Separator />
                 <MenuItem Header="Lighting">
-                    <MenuItem Command="w:MapCommands.NoLight" Name="Lighting0" IsCheckable="True" IsChecked="True" />
-                    <MenuItem Command="w:MapCommands.Lighting" Name="Lighting1" IsCheckable="True" />
-                    <MenuItem Command="w:MapCommands.NewLight" Name="Lighting2" IsCheckable="True" />
+                    <MenuItem Command="w:MapCommands.NoLight" Name="Lighting0" IsChecked="True" />
+                    <MenuItem Command="w:MapCommands.Lighting" Name="Lighting1"  />
+                    <MenuItem Command="w:MapCommands.NewLight" Name="Lighting2"  />
                 </MenuItem>
                 <Separator />
                 <MenuItem Command="w:MapCommands.Hilight" />

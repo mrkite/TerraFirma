@@ -1948,7 +1948,7 @@ namespace Terrafirma
 										"Red Stucco Wall",          //615
 										"Yellow Stucco Wall",       //616
 										"Green Stucco Wall",        //617
-										"Gray Wall",                //618
+										"Gray Stucco Wall",         //618
 										"Ebonwood",                 //619
 										"Rich Mahogany",            //620
 										"Pearlwood",                //621
@@ -2001,7 +2001,7 @@ namespace Terrafirma
 										"Red's Leggings",           //668
 										"Fish",                     //669
 										"Ice Boomerang",            //670
-										"Lockblade",                //671
+										"Keybrand",                 //671
 										"Cutlass",                  //672
 										"Icemourne",                //673
 										"True Excalibur",           //674
@@ -2010,7 +2010,7 @@ namespace Terrafirma
 										"Scythe",                   //677
 										"Soul Scythe",              //678
 										"Tactical Shotgun",         //679
-										"Bamboo Chest",             //680
+										"Ivy Chest",                //680
 										"Ice Chest",                //681
 										"Marrow",                   //682
 										"Unholy Trident",           //683
@@ -2127,7 +2127,7 @@ namespace Terrafirma
 										"Crimson Greaves",          //794
 										"Blood Butcherer",          //795
 										"Tendon Bow",               //796
-										"Flesh Grinder",            //797
+										"Meat Grinder",             //797
 										"Deathbringer Pickaxe",     //798
 										"Blood Lust Cluster",       //799
 										"The Undertaker",           //800
@@ -2717,15 +2717,15 @@ namespace Terrafirma
 										"Blue Brick Platform",      //1384
 										"Pink Brick Platform",      //1385
 										"Green Brick Platform",     //1386
-										"Dungeon Shelf 1",          //1387
-										"Dungeon Shelf 2",          //1388
-										"Dungeon Shelf 3",          //1389
-										"Lantern 1",                //1390
-										"Lantern 2",                //1391
-										"Lantern 3",                //1392
-										"Lantern 4",                //1393
-										"Lantern 5",                //1394
-										"Lantern 6",                //1395
+										"Metal Shelf",              //1387
+										"Brass Shelf",              //1388
+										"Wood Shelf",               //1389
+										"Brass Lantern",            //1390
+										"Caged Lantern",            //1391
+										"Carriage Lantern",         //1392
+										"Alchemy Lantern",          //1393
+										"Diablost Lamp",            //1394
+										"Oil Rag Sconse",           //1395
 										"Blue Dungeon Chair",       //1396
 										"Blue Dungeon Table",       //1397
 										"Blue Dungeon Work Bench",  //1398
@@ -2748,7 +2748,7 @@ namespace Terrafirma
 										"Green Dungeon Bookcase",   //1415
 										"Pink Dungeon Bookcase",    //1416
 										"Catacomb",                 //1417
-										"Dungeon Shelf 4",          //1418
+										"Dungeon Shelf",            //1418
 										"Skellington J Skellingsworth",//1419
 										"The Cursed Man",           //1420
 										"The Eye Sees the End",     //1421
@@ -2804,40 +2804,40 @@ namespace Terrafirma
 										"Green Dungeon Bed",        //1471
 										"Red Dungeon Bed",          //1472
 										"Obsidian Bed",             //1473
-										"Picture",                  //1474
-										"Picture",                  //1475
-										"Picture",                  //1476
-										"Picture",                  //1477
-										"Picture",                  //1478
-										"Picture",                  //1479
-										"Picture",                  //1480
-										"Picture",                  //1481
-										"Picture",                  //1482
-										"Picture",                  //1483
-										"Picture",                  //1484
-										"Picture",                  //1485
-										"Picture",                  //1486
-										"Picture",                  //1487
-										"Picture",                  //1488
-										"Picture",                  //1489
-										"Picture",                  //1490
-										"Picture",                  //1491
-										"Picture",                  //1492
-										"Picture",                  //1493
-										"Picture",                  //1494
+										"Waldo",                    //1474
+										"Darkness",                 //1475
+										"Dark Soul Reaper",         //1476
+										"Land",                     //1477
+										"Trapped Ghost",            //1478
+										"Demon's Eye",              //1479
+										"Finding Gold",             //1480
+										"First Encounter",          //1481
+										"Good Morning",             //1482
+										"Underground Reward",       //1483
+										"Through the Window",       //1484
+										"Place Above the Clouds",   //1485
+										"Do Not Step on the Grass", //1486
+										"Cold Waters in the White Land",//1487
+										"Lightless Chasms",         //1488
+										"The Land of Deceiving Looks",//1489
+										"Daylight",                 //1490
+										"Secret of the Sands",      //1491
+										"Deadland Comes Alive",     //1492
+										"Evil Presence",            //1493
+										"Sky Guardian",             //1494
 										"American Explosive",       //1495
-										"Picture",                  //1496
-										"Picture",                  //1497
-										"Picture",                  //1498
-										"Picture",                  //1499
-										"Picture",                  //1500
-										"Picture",                  //1501
-										"Picture",                  //1502
-										"Spirit Hood",              //1503
-										"Spirit Robe",              //1504
-										"Spirit Pants",             //1505
-										"Spirit Pickaxe",           //1506
-										"Spirit Hamaxe",            //1507
+										"Discover",                 //1496
+										"Hand Earth",               //1497
+										"Old Miner",                //1498
+										"Skelehead",                //1499
+										"Facing the Cerebral Mastermind",//1500
+										"Lake of Fire",             //1501
+										"Trio Super Heroes",        //1502
+										"Spectre Hood",             //1503
+										"Spectre Robe",             //1504
+										"Spectre Pants",            //1505
+										"Spectre Pickaxe",          //1506
+										"Spectre Hamaxe",           //1507
 										"Ectoplasm",                //1508
 										"Gothic Chair",             //1509
 										"Gothic Table",             //1510
@@ -2846,36 +2846,36 @@ namespace Terrafirma
 										"Paladin's Hammer",         //1513
 										"SWAT Helmet",              //1514
 										"Bee Wings",                //1515
-										"Feather",                  //1516
-										"Feather",                  //1517
-										"Feather",                  //1518
-										"Feather",                  //1519
-										"Feather",                  //1520
-										"Feather",                  //1521
+										"Giant Harpey Feather",     //1516
+										"Bone Feather",             //1517
+										"Fire Feather",             //1518
+										"Ice Feather",              //1519
+										"Broken Bat Wing",          //1520
+										"Tattered Bee Wing",        //1521
 										"Large Amethyst",           //1522
 										"Large Topaz",              //1523
 										"Large Sapphire",           //1524
 										"Large Emerald",            //1525
 										"Large Ruby",               //1526
 										"Large Diamond",            //1527
-										"Dungeon Chest",            //1528
-										"Dungeon Chest",            //1529
-										"Dungeon Chest",            //1530
-										"Dungeon Chest",            //1531
-										"Dungeon Chest",            //1532
-										"Dungeon Key",              //1533
-										"Dungeon Key",              //1534
-										"Dungeon Key",              //1535
-										"Dungeon Key",              //1536
-										"Dungeon Key",              //1537
-										"Picture",                  //1538
-										"Picture",                  //1539
-										"Picture",                  //1540
-										"Picture",                  //1541
-										"Picture",                  //1542
+										"Jungle Chest",             //1528
+										"Corruption Chest",         //1529
+										"Crimson Chest",            //1530
+										"Hallowed Chest",           //1531
+										"Frozen Chest",             //1532
+										"Jungle Key",               //1533
+										"Corruption Key",           //1534
+										"Crimson Key",              //1535
+										"Hallowed Key",             //1536
+										"Frozen Key",               //1537
+										"Imp Face",                 //1538
+										"Ominous Presence",         //1539
+										"Shining Moon",             //1540
+										"Living Gore",              //1541
+										"Flowing Magma",            //1542
 										"Spectre Paintbrush",       //1543
-										"Spectre Paintbrush",       //1544
-										"Spectre Paintbrush",       //1545
+										"Spectre Paint Roller",     //1544
+										"Spectre Paint Scraper",    //1545
 										"Shroomite Headgear",       //1546
 										"Shroomite Mask",           //1547
 										"Shroomite Helmet",         //1548
@@ -2901,12 +2901,12 @@ namespace Terrafirma
 										"Aaron's Leggings",         //1568
 										"Vampire Knives",           //1569
 										"Broken Hero Sword",        //1570
-										"Eater's Bite",             //1571
-										"Hydra Staff",              //1572
+										"Scourge of the Corruptor", //1571
+										"Staff of the Frost Hydra", //1572
 										"The Creation of the Guide",//1573
-										"Picture",                  //1574
-										"Picture",                  //1575
-										"Picture",                  //1576
+										"The Merchant",             //1574
+										"Crowno Devours His Lunch", //1575
+										"Rare Enchantment",         //1576
 										"Glorious Night",           //1577
 										"Sweetheart Necklace",      //1578
 										"Flurry Boots",             //1579
@@ -2926,24 +2926,25 @@ namespace Terrafirma
 										"Titanstone Block",         //1593
 										"Titanstone Block Wall",    //1594
 										"Magic Cuffs",              //1595
-										"Music Box",                //1596
-										"Music Box",                //1597
-										"Music Box",                //1598
-										"Music Box",                //1599
-										"Music Box",                //1600
-										"Music Box",                //1601
-										"Music Box",                //1602
-										"Music Box",                //1603
-										"Music Box",                //1604
-										"Music Box",                //1605
-										"Music Box",                //1606
-										"Music Box",                //1607
-										"Music Box",                //1608
-										"Music Box",                //1609
-										"Music Box",                //1610
+										"Music Box (Snow)",         //1596
+										"Music Box (Space)",        //1597
+										"Music Box (Crimson)",      //1598
+										"Music Box (Boss 4)",       //1599
+										"Music Box (Alt Overworld Day)",//1600
+										"Music Box (Rain)",         //1601
+										"Music Box (Ice)",          //1602
+										"Music Box (Desert)",       //1603
+										"Music Box (Ocean)",        //1604
+										"Music Box (Dungeon)",      //1605
+										"Music Box (Plantera)",     //1606
+										"Music Box (Boss 5)",       //1607
+										"Music Box (Temple)",       //1608
+										"Music Box (Eclipse)",      //1609
+										"Music Box (Mushrooms)",    //1610
 										"Butterfly Dust",           //1611
 										"Ankh Charm",               //1612
-										"Ankh Shield"               //1613
+										"Ankh Shield",              //1613
+                                        "Blue Flare"                //1614
                                    };
 
         void jumpNPC(object sender, RoutedEventArgs e)
@@ -3327,6 +3328,10 @@ namespace Terrafirma
 		}
         private void FogOfWar_Toggle(object sender, ExecutedRoutedEventArgs e)
         {
+            if (FogOfWar.IsChecked)
+                FogOfWar.IsChecked = false;
+            else
+                FogOfWar.IsChecked = true;
             if (loaded)
                 RenderMap();
         }
@@ -3344,18 +3349,21 @@ namespace Terrafirma
         {
             if (e.Command == MapCommands.NoLight)
             {
+                Lighting0.IsChecked = true;
                 Lighting1.IsChecked = false;
                 Lighting2.IsChecked = false;
             }
             else if (e.Command == MapCommands.Lighting)
             {
                 Lighting0.IsChecked = false;
+                Lighting1.IsChecked = true;
                 Lighting2.IsChecked = false;
             }
             else
             {
                 Lighting0.IsChecked = false;
                 Lighting1.IsChecked = false;
+                Lighting2.IsChecked = true;
             }
             RenderMap();
         }
@@ -4213,8 +4221,11 @@ namespace Terrafirma
         private void ShowStats_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             WorldStats stats = new WorldStats();
-            stats.Add("Eye of Cthulu", killedBoss1 ? "Blackened" : "Undefeated");
-            stats.Add("Eater of Worlds", killedBoss2 ? "Choked" : "Undefeated");
+            stats.Add("Eye of Cthulhu", killedBoss1 ? "Blackened" : "Undefeated");
+            if (crimson)
+                stats.Add("Brain of Cthulhu", killedBoss2 ? "Lobotomized" : "Undefeated");
+            else
+                stats.Add("Eater of Worlds", killedBoss2 ? "Choked" : "Undefeated");
             stats.Add("Skeletron", killedBoss3 ? "Boned" : "Undefeated");
             stats.Add("Wall of Flesh", hardMode ? "Flayed" : "Undefeated");
             stats.Add("Queen Bee", killedQueenBee ? "Swatted" : "Undefeated");
