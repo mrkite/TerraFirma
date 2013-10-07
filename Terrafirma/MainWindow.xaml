@@ -45,6 +45,7 @@
                 <MenuItem Command="w:MapCommands.JumpToSpawn" />
                 <MenuItem Command="w:MapCommands.JumpToDungeon" />
                 <MenuItem Header="NPCs" IsEnabled="False" Name="NPCs" />
+                <MenuItem Command="w:MapCommands.FindItem" />
             </MenuItem>
         </Menu>
         <StatusBar Name="statusBar1" Height="23" VerticalAlignment="Bottom">
@@ -116,6 +117,9 @@
                         CanExecute="MapLoaded" />
         <CommandBinding Command="w:MapCommands.JumpToDungeon"
                         Executed="JumpToDungeon_Executed"
+                        CanExecute="MapLoaded" />
+        <CommandBinding Command="w:MapCommands.FindItem"
+                        Executed="FindItem_Executed"
                         CanExecute="MapLoaded" />
     </Window.CommandBindings>
 </Window>
