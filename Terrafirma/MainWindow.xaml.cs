@@ -374,7 +374,8 @@ namespace Terrafirma
     }
     struct Chest
     {
-        public Int32 x, y;
+        public Int32 x { get; set; }
+        public Int32 y { get; set; }
         public ChestItem[] items;
     }
     struct Sign
@@ -599,9 +600,9 @@ namespace Terrafirma
             {
                 int id = Convert.ToInt32(itemList[i].Attributes["num"].Value);
                 if (id < 0)
-                    itemNames2[-id] = itemList[i].Attributes["name"].Value;
+                    itemNames2[-id] = itemList[i].Attributes["name"].Value.Trim();
                 else
-                    itemNames[id] = itemList[i].Attributes["name"].Value;
+                    itemNames[id] = itemList[i].Attributes["name"].Value.Trim();
             }
 
             render = new Render(tileInfos, wallInfo, skyColor, earthColor, rockColor, hellColor, waterColor, lavaColor, honeyColor);
@@ -1069,7 +1070,7 @@ namespace Terrafirma
                                         }
                                         if (prefix != "")
                                             prefix += " ";
-                                        chest.items[ii].name = prefix + name;
+                                        chest.items[ii].name = (prefix + name).Trim();
                                     }
                                 }
                                 chests.Add(chest);
@@ -1310,8 +1311,6 @@ namespace Terrafirma
             }
             RenderMap();
         }
-
-
 
         private void RenderMap()
         {
@@ -2678,6 +2677,87 @@ namespace Terrafirma
             stats.Add("Orbs left til EoW", (3 - shadowOrbCount).ToString());
             stats.Add("Altars Smashed", altarsSmashed.ToString());
             stats.Show();
+        }
+
+        private void FindItem_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            int offset = itemNames2.Length;
+            Window popup = new Window();
+            popup.SizeToContent = SizeToContent.WidthAndHeight;
+
+            StackPanel stack = new StackPanel();
+            stack.Margin = new Thickness(10);
+            popup.Content = stack;
+            ComboBox itemChooser = new ComboBox();
+            stack.Children.Add(itemChooser);
+            ComboBox chestChooser = new ComboBox();
+            chestChooser.Visibility = Visibility.Collapsed;
+            stack.Children.Add(chestChooser);
+            TextBlock warning = new TextBlock();
+            warning.Text = "No such chests";
+            warning.Visibility = Visibility.Collapsed;
+            stack.Children.Add(warning);
+
+            List<string> allItems = new List<string>(itemNames.Length + itemNames2.Length);
+
+            for (int id = 0; id < itemNames.Length + itemNames2.Length; id++)
+            {
+                string name = (id < offset) ? itemNames2[id] : itemNames[id-offset] ;
+                allItems.Add(name);
+            }
+
+            itemChooser.ItemsSource = allItems;
+
+            itemChooser.SelectionChanged += delegate(object o, SelectionChangedEventArgs s)
+            {
+                string itemName = (string)s.AddedItems[0];
+                List<Chest> matchingChests = new List<Chest>();
+
+                foreach (Chest c in chests)
+                {
+                    if (c.items.Any(i => i.name == itemName))
+                    {
+                        matchingChests.Add(c);
+                    }
+                }
+
+                if (matchingChests.Count() > 0)
+                {
+                    chestChooser.ItemsSource = matchingChests;
+                    chestChooser.Visibility = Visibility.Visible;
+                    warning.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    chestChooser.Visibility = Visibility.Collapsed;
+                    warning.Visibility = Visibility.Visible;
+                }
+            };
+
+            var d = new DataTemplate();
+
+            MultiBinding mb = new MultiBinding();
+            mb.StringFormat = "Chest at {0} x {1}";
+            mb.Bindings.Add(new Binding("x"));
+            mb.Bindings.Add(new Binding("y"));
+
+            FrameworkElementFactory textElement = new FrameworkElementFactory(typeof(TextBlock));
+            textElement.SetBinding(TextBlock.TextProperty, mb);
+            d.VisualTree = textElement;
+
+            chestChooser.ItemTemplate = d;
+
+            chestChooser.SelectionChanged += delegate(object o, SelectionChangedEventArgs s)
+            {
+                Chest chosen = (Chest)s.AddedItems[0];
+                curX = chosen.x;
+                curY = chosen.y;
+                RenderMap();
+
+                popup.Close();
+            };
+
+            popup.Show();
         }
 
         private void initWindow(object sender, EventArgs e)
