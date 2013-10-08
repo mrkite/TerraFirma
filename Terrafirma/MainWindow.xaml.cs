@@ -58,6 +58,7 @@ namespace Terrafirma
         public double lightR, lightG, lightB;
         public bool transparent, solid;
         public bool isStone, isGrass;
+		public bool canMerge;
         public Int16 blend;
         public int u, v, minu, maxu, minv, maxv;
         public bool isHilighting;
@@ -143,6 +144,7 @@ namespace Terrafirma
             info.solid = node.Attributes["solid"] != null;
             info.isStone = node.Attributes["isStone"] != null;
             info.isGrass = node.Attributes["isGrass"] != null;
+			info.canMerge = node.Attributes["merge"] != null;
             if (node.Attributes["blend"] != null)
                 info.blend = parseInt(node.Attributes["blend"].Value);
             else
@@ -182,6 +184,7 @@ namespace Terrafirma
     {
         public string name;
         public UInt32 color;
+		public Int16 blend;
     }
     class Tile
     {
@@ -546,6 +549,10 @@ namespace Terrafirma
                 int id = Convert.ToInt32(wallList[i].Attributes["num"].Value);
                 wallInfo[id].name = wallList[i].Attributes["name"].Value;
                 wallInfo[id].color = parseColor(wallList[i].Attributes["color"].Value);
+            	if (wallList[i].Attributes["blend"] != null)
+					wallInfo[id].blend = parseInt(wallList[i].Attributes["blend"].Value);
+				else
+					wallInfo[id].blend = id;
             }
             XmlNodeList globalList = xml.GetElementsByTagName("global");
             for (int i = 0; i < globalList.Count; i++)
