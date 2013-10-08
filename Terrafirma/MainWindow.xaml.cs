@@ -371,6 +371,7 @@ namespace Terrafirma
     {
         public int stack;
         public string name;
+        public string prefix;
     }
     struct Chest
     {
@@ -600,9 +601,9 @@ namespace Terrafirma
             {
                 int id = Convert.ToInt32(itemList[i].Attributes["num"].Value);
                 if (id < 0)
-                    itemNames2[-id] = itemList[i].Attributes["name"].Value.Trim();
+                    itemNames2[-id] = itemList[i].Attributes["name"].Value;
                 else
-                    itemNames[id] = itemList[i].Attributes["name"].Value.Trim();
+                    itemNames[id] = itemList[i].Attributes["name"].Value;
             }
 
             render = new Render(tileInfos, wallInfo, skyColor, earthColor, rockColor, hellColor, waterColor, lavaColor, honeyColor);
@@ -1068,9 +1069,8 @@ namespace Terrafirma
                                             if (pfx < prefixes.Length)
                                                 prefix = prefixes[pfx];
                                         }
-                                        if (prefix != "")
-                                            prefix += " ";
-                                        chest.items[ii].name = (prefix + name).Trim();
+                                        chest.items[ii].name = name;
+                                        chest.items[ii].prefix = prefix;
                                     }
                                 }
                                 chests.Add(chest);
@@ -1474,7 +1474,12 @@ namespace Terrafirma
                     for (int i = 0; i < c.items.Length; i++)
                     {
                         if (c.items[i].stack > 0)
-                            items.Add(String.Format("{0} {1}", c.items[i].stack, c.items[i].name));
+                        {
+                            if (c.items[i].prefix=="")
+                                items.Add(String.Format("{0} {1}", c.items[i].stack, c.items[i].name));
+                            else
+                                items.Add(String.Format("{0} {1} {2}", c.items[i].stack, c.items[i].prefix, c.items[i].name));
+                        }
                     }
                     chestPop = new ChestPopup(items);
                     chestPop.IsOpen = true;
@@ -2681,83 +2686,27 @@ namespace Terrafirma
 
         private void FindItem_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            int offset = itemNames2.Length;
-            Window popup = new Window();
-            popup.SizeToContent = SizeToContent.WidthAndHeight;
-
-            StackPanel stack = new StackPanel();
-            stack.Margin = new Thickness(10);
-            popup.Content = stack;
-            ComboBox itemChooser = new ComboBox();
-            stack.Children.Add(itemChooser);
-            ComboBox chestChooser = new ComboBox();
-            chestChooser.Visibility = Visibility.Collapsed;
-            stack.Children.Add(chestChooser);
-            TextBlock warning = new TextBlock();
-            warning.Text = "No such chests";
-            warning.Visibility = Visibility.Collapsed;
-            stack.Children.Add(warning);
-
-            List<string> allItems = new List<string>(itemNames.Length + itemNames2.Length);
-
-            for (int id = 0; id < itemNames.Length + itemNames2.Length; id++)
+            Dictionary<string,List<int>> items=new Dictionary<string,List<int>>();
+            for (int i = 0; i < chests.Count; i++)
             {
-                string name = (id < offset) ? itemNames2[id] : itemNames[id-offset] ;
-                allItems.Add(name);
+                foreach (ChestItem c in chests[i].items)
+                {
+                    if (c.name == null)
+                        continue;
+                    if (!items.ContainsKey(c.name))
+                        items.Add(c.name, new List<int>());
+                    items[c.name].Add(i);
+                }
             }
 
-            itemChooser.ItemsSource = allItems;
-
-            itemChooser.SelectionChanged += delegate(object o, SelectionChangedEventArgs s)
+            FindItem fi = new FindItem(items);
+            if (fi.ShowDialog() == true)
             {
-                string itemName = (string)s.AddedItems[0];
-                List<Chest> matchingChests = new List<Chest>();
-
-                foreach (Chest c in chests)
-                {
-                    if (c.items.Any(i => i.name == itemName))
-                    {
-                        matchingChests.Add(c);
-                    }
-                }
-
-                if (matchingChests.Count() > 0)
-                {
-                    chestChooser.ItemsSource = matchingChests;
-                    chestChooser.Visibility = Visibility.Visible;
-                    warning.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    chestChooser.Visibility = Visibility.Collapsed;
-                    warning.Visibility = Visibility.Visible;
-                }
-            };
-
-            var d = new DataTemplate();
-
-            MultiBinding mb = new MultiBinding();
-            mb.StringFormat = "Chest at {0} x {1}";
-            mb.Bindings.Add(new Binding("x"));
-            mb.Bindings.Add(new Binding("y"));
-
-            FrameworkElementFactory textElement = new FrameworkElementFactory(typeof(TextBlock));
-            textElement.SetBinding(TextBlock.TextProperty, mb);
-            d.VisualTree = textElement;
-
-            chestChooser.ItemTemplate = d;
-
-            chestChooser.SelectionChanged += delegate(object o, SelectionChangedEventArgs s)
-            {
-                Chest chosen = (Chest)s.AddedItems[0];
-                curX = chosen.x;
-                curY = chosen.y;
+                int id = fi.SelectedChest;
+                curX = chests[id].x;
+                curY = chests[id].y;
                 RenderMap();
-
-                popup.Close();
-            };
-
-            popup.Show();
+            }
         }
 
         private void initWindow(object sender, EventArgs e)

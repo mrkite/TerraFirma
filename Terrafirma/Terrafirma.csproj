@@ -94,6 +94,9 @@
     <Compile Include="ConnectToServer.xaml.cs">
       <DependentUpon>ConnectToServer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FindItem.xaml.cs">
+      <DependentUpon>FindItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LzxDecoder.cs" />
     <Compile Include="Render.cs" />
     <Compile Include="SaveOptions.xaml.cs">
@@ -117,6 +120,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ConnectToServer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FindItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
