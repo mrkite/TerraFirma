@@ -2665,9 +2665,8 @@ namespace Terrafirma
         {
             WorldStats stats = new WorldStats();
             stats.Add("Eye of Cthulhu", killedBoss1 ? "Blackened" : "Undefeated");
-            if (crimson)
-                stats.Add("Brain of Cthulhu", killedBoss2 ? "Lobotomized" : "Undefeated");
-            else
+            // killedBoss2 should be Brain of Cthulhu in crimson, but it isn't.
+            if (!crimson)
                 stats.Add("Eater of Worlds", killedBoss2 ? "Choked" : "Undefeated");
             stats.Add("Skeletron", killedBoss3 ? "Boned" : "Undefeated");
             stats.Add("Wall of Flesh", hardMode ? "Flayed" : "Undefeated");
