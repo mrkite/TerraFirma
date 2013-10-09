@@ -45,33 +45,10 @@ using System.Windows.Interop;
 using System.Collections;
 using System.Threading;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 
 namespace Terrafirma
 {
-    public class HTile : IComparable
-    {
-        private string name;
-        private TileInfo info;
-        public HTile(string name, TileInfo info)
-        {
-            this.name = name;
-            this.info = info;
-        }
-        public TileInfo Info
-        {
-            get { return info; }
-        }
-        public override string ToString()
-        {
-            return name;
-        }
-        int IComparable.CompareTo(object obj)
-        {
-            HTile h = (HTile)obj;
-            int r = String.Compare(this.name, h.name);
-            return r;
-        }
-    }
     public class TileInfo
     {
         public string name;
@@ -81,6 +58,7 @@ namespace Terrafirma
         public double lightR, lightG, lightB;
         public bool transparent, solid;
         public bool isStone, isGrass;
+		public bool canMerge;
         public Int16 blend;
         public int u, v, minu, maxu, minv, maxv;
         public bool isHilighting;
@@ -166,6 +144,7 @@ namespace Terrafirma
             info.solid = node.Attributes["solid"] != null;
             info.isStone = node.Attributes["isStone"] != null;
             info.isGrass = node.Attributes["isGrass"] != null;
+			info.canMerge = node.Attributes["merge"] != null;
             if (node.Attributes["blend"] != null)
                 info.blend = parseInt(node.Attributes["blend"].Value);
             else
@@ -205,6 +184,7 @@ namespace Terrafirma
     {
         public string name;
         public UInt32 color;
+		public Int16 blend;
     }
     class Tile
     {
@@ -214,6 +194,10 @@ namespace Terrafirma
         public byte type;
         public byte wall;
         public byte liquid;
+
+        public byte color;
+        public byte wallColor;
+        public byte slope;
 
 
         public bool isActive
@@ -244,7 +228,7 @@ namespace Terrafirma
                     flags &= 0xfd;
             }
         }
-        public bool hasWire
+        public bool isHoney
         {
             get
             {
@@ -256,6 +240,77 @@ namespace Terrafirma
                     flags |= 0x04;
                 else
                     flags &= 0xfb;
+            }
+        }
+        public bool seen
+        {
+            get
+            {
+                return (flags & 0x08) == 0x08;
+            }
+            set
+            {
+                if (value)
+                    flags |= 0x08;
+                else
+                    flags &= 0xf7;
+            }
+        }
+
+        public bool hasRedWire
+        {
+            get
+            {
+                return (flags & 0x10) == 0x10;
+            }
+            set
+            {
+                if (value)
+                    flags |= 0x10;
+                else
+                    flags &= 0xef;
+            }
+        }
+        public bool hasBlueWire
+        {
+            get
+            {
+                return (flags & 0x20) == 0x20;
+            }
+            set
+            {
+                if (value)
+                    flags |= 0x20;
+                else
+                    flags &= 0xdf;
+            }
+        }
+        public bool hasGreenWire
+        {
+            get
+            {
+                return (flags & 0x40) == 0x40;
+            }
+            set
+            {
+                if (value)
+                    flags |= 0x40;
+                else
+                    flags &= 0xbf;
+            }
+        }
+        public bool half
+        {
+            get
+            {
+                return (flags & 0x80) == 0x80;
+            }
+            set
+            {
+                if (value)
+                    flags |= 0x80;
+                else
+                    flags &= 0x7f;
             }
         }
 
@@ -317,12 +372,14 @@ namespace Terrafirma
     }
     struct ChestItem
     {
-        public byte stack;
+        public int stack;
         public string name;
+        public string prefix;
     }
     struct Chest
     {
-        public Int32 x, y;
+        public Int32 x { get; set; }
+        public Int32 y { get; set; }
         public ChestItem[] items;
     }
     struct Sign
@@ -348,9 +405,9 @@ namespace Terrafirma
     /// </summary>
     public partial class MainWindow : Window
     {
-        const int MapVersion = 0x27;
-        const int MaxTile = 149;
-        const int MaxWall = 31;
+        const int MapVersion = 69;
+        const int MaxTile = 250;
+        const int MaxWall = 111;
         const int Widest = 8400;
         const int Highest = 2400;
 
@@ -369,15 +426,32 @@ namespace Terrafirma
         Int32 groundLevel, rockLevel;
         string[] worlds;
         string currentWorld;
+		Int32 worldID=0;
+		string[] players;
+		string player;
         List<Chest> chests = new List<Chest>();
         List<Sign> signs = new List<Sign>();
         List<NPC> npcs = new List<NPC>();
 
+        byte moonType;
+        Int32[] treeX = new Int32[3];
+        Int32[] treeStyle = new Int32[4];
+        Int32[] caveBackX = new Int32[3];
+        Int32[] caveBackStyle = new Int32[4];
+        Int32 iceBackStyle, jungleBackStyle, hellBackStyle;
+        bool crimson;
+        bool killedQueenBee, killedMechBoss1, killedMechBoss2, killedMechBoss3, killedMechBossAny, killedPirates;
+        bool isRaining;
+        Int32 rainTime;
+        float maxRain;
+        Int32 oreTier1, oreTier2, oreTier3;
+        
         double gameTime;
         bool dayNight,bloodMoon;
         int moonPhase;
         Int32 dungeonX, dungeonY;
         bool killedBoss1, killedBoss2, killedBoss3, killedGoblins, killedClown, killedFrost;
+        bool killedPlantBoss, killedGolemBoss;
         bool savedTinkerer, savedWizard, savedMechanic;
         bool smashedOrb, meteorSpawned;
         byte shadowOrbCount;
@@ -385,12 +459,20 @@ namespace Terrafirma
         bool hardMode;
         Int32 goblinsDelay, goblinsSize, goblinsType;
         double goblinsX;
+        byte[] styles = {   0, //tree
+                            0, //corruption
+                            0, //jungle
+                            0, //snow
+                            0, //hallow
+                            0, //crimson
+                            0, //desert
+                            0 }; //ocean
 
         Render render;
 
         TileInfos tileInfos;
         WallInfo[] wallInfo;
-        UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor;
+        UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor, honeyColor;
         bool isHilight = false;
 
         Socket socket=null;
@@ -432,7 +514,15 @@ namespace Terrafirma
                                         new FriendlyNPC("Goblin Tinkerer", 107, 9, 7),
                                         new FriendlyNPC("Wizard", 108, 10, 8),
                                         new FriendlyNPC("Mechanic", 124, 8, 9),
-                                        new FriendlyNPC("Santa Claus", 142, 11, -1)
+                                        new FriendlyNPC("Santa Claus", 142, 11, -1),
+										new FriendlyNPC("Truffle", 160, 12, 10),
+										new FriendlyNPC("Steampunker", 178, 13, 11),
+										new FriendlyNPC("Dye Trader", 207, 14, 12),
+										new FriendlyNPC("Party Girl", 208, 15, 13),
+										new FriendlyNPC("Cyborg", 209, 16, 14),
+										new FriendlyNPC("Painter", 227, 17, 15),
+										new FriendlyNPC("Witch Doctor", 228, 18, 16),
+										new FriendlyNPC("Pirate", 229, 19, 17)
                                    };
 
 
@@ -440,12 +530,13 @@ namespace Terrafirma
         {
             InitializeComponent();
 
-            fetchWorlds();            
+            fetchWorlds();
 
 
 
             XmlDocument xml = new XmlDocument();
             string xmlData = string.Empty;
+
             using (Stream stream = this.GetType().Assembly.GetManifestResourceStream("Terrafirma.tiles.xml"))
             {
                 xml.Load(stream);
@@ -458,6 +549,10 @@ namespace Terrafirma
                 int id = Convert.ToInt32(wallList[i].Attributes["num"].Value);
                 wallInfo[id].name = wallList[i].Attributes["name"].Value;
                 wallInfo[id].color = parseColor(wallList[i].Attributes["color"].Value);
+            	if (wallList[i].Attributes["blend"] != null)
+					wallInfo[id].blend = Convert.ToInt16(wallList[i].Attributes["blend"].Value);
+				else
+					wallInfo[id].blend = (Int16)id;
             }
             XmlNodeList globalList = xml.GetElementsByTagName("global");
             for (int i = 0; i < globalList.Count; i++)
@@ -484,10 +579,41 @@ namespace Terrafirma
                     case "lava":
                         lavaColor = color;
                         break;
+                    case "honey":
+                        honeyColor = color;
+                        break;
                 }
             }
+            XmlNodeList prefixList = xml.GetElementsByTagName("prefix");
+            prefixes = new string[prefixList.Count + 1];
+            for (int i = 0; i < prefixList.Count; i++)
+            {
+                int id = Convert.ToInt32(prefixList[i].Attributes["num"].Value);
+                prefixes[id] = prefixList[i].Attributes["name"].Value;
+            }
+            XmlNodeList itemList = xml.GetElementsByTagName("item");
+            //find min/max
+            Int32 minItemId = 0, maxItemId = 0;
+            for (int i = 0; i < itemList.Count; i++)
+            {
+                Int32 id = Convert.ToInt32(itemList[i].Attributes["num"].Value);
+                if (id < minItemId)
+                    minItemId = id;
+                if (id > maxItemId)
+                    maxItemId = id;
+            }
+            itemNames2 = new string[(-minItemId) + 1];
+            itemNames = new string[maxItemId + 1];
+            for (int i = 0; i < itemList.Count; i++)
+            {
+                int id = Convert.ToInt32(itemList[i].Attributes["num"].Value);
+                if (id < 0)
+                    itemNames2[-id] = itemList[i].Attributes["name"].Value;
+                else
+                    itemNames[id] = itemList[i].Attributes["name"].Value;
+            }
 
-            render = new Render(tileInfos, wallInfo, skyColor, earthColor, rockColor, hellColor, waterColor, lavaColor);
+            render = new Render(tileInfos, wallInfo, skyColor, earthColor, rockColor, hellColor, waterColor, lavaColor, honeyColor);
             //this resize timer is used so we don't get killed on the resize
             resizeTimer = new DispatcherTimer(
                 TimeSpan.FromMilliseconds(20), DispatcherPriority.Normal,
@@ -530,12 +656,12 @@ namespace Terrafirma
 
         private void fetchWorlds()
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            path = Path.Combine(path, "My Games");
-            path = Path.Combine(path, "Terraria");
-            path = Path.Combine(path, "Worlds");
-            if (Directory.Exists(path))
-                worlds = Directory.GetFiles(path, "*.wld");
+            string terrariapath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            terrariapath = Path.Combine(terrariapath, "My Games");
+            terrariapath = Path.Combine(terrariapath, "Terraria");
+            string worldpath = Path.Combine(terrariapath, "Worlds");
+            if (Directory.Exists(worldpath))
+                worlds = Directory.GetFiles(worldpath, "*.wld");
             else
             {
                 worlds = new string[0];
@@ -546,7 +672,7 @@ namespace Terrafirma
             {
                 MenuItem item = new MenuItem();
 
-                using (BinaryReader b = new BinaryReader(File.Open(worlds[i],FileMode.Open,FileAccess.Read,FileShare.ReadWrite)))
+                using (BinaryReader b = new BinaryReader(File.Open(worlds[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
                     b.ReadUInt32(); //skip map version
                     item.Header = b.ReadString();
@@ -560,6 +686,45 @@ namespace Terrafirma
                 InputBindings.Add(inp);
                 Worlds.Items.Add(item);
                 numItems++;
+            }
+            // fetch players too
+            string playerpath = Path.Combine(terrariapath, "Players");
+            if (Directory.Exists(playerpath))
+                players = Directory.GetFiles(playerpath, "*.plr");
+            else
+            {
+                players = new string[0];
+                Players.IsEnabled = false;
+            }
+
+
+
+            for (int i = 0; i < players.Length; i++)
+            {
+                MenuItem item = new MenuItem();
+                //decrypt player file to get the name
+
+                RijndaelManaged encscheme = new RijndaelManaged();
+                encscheme.Padding = PaddingMode.None;
+                byte[] key = new UnicodeEncoding().GetBytes("h3y_gUyZ");
+                FileStream inp = new FileStream(players[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                CryptoStream crypt = new CryptoStream(inp, encscheme.CreateDecryptor(key, key), CryptoStreamMode.Read);
+                using (BinaryReader b = new BinaryReader(crypt))
+                {
+                    b.ReadUInt32(); //skip player version
+                    item.Header = b.ReadString();
+                }
+
+                item.Command = MapCommands.SelectPlayer;
+                item.CommandParameter = i;
+                item.IsCheckable = true;
+                CommandBindings.Add(new CommandBinding(MapCommands.SelectPlayer, SelectPlayer));
+                Players.Items.Add(item);
+                if (i == 0)
+                {
+                    player = players[i];
+                    item.IsChecked = true;
+                }
             }
         }
         private UInt32 parseColor(string color)
@@ -591,7 +756,7 @@ namespace Terrafirma
                     string invalid = "";
                     using (BinaryReader b = new BinaryReader(File.Open(world,FileMode.Open,FileAccess.Read,FileShare.ReadWrite)))
                     {
-                        uint version = b.ReadUInt32(); //now we care about the version
+                        int version = b.ReadInt32(); //now we care about the version
                         if (version > MapVersion) // new map format
                             throw new Exception("Unsupported map version: "+version);
                         string title = b.ReadString();
@@ -599,9 +764,44 @@ namespace Terrafirma
                         {
                             Title = title;
                         }));
-                        b.BaseStream.Seek(20, SeekOrigin.Current); //skip id and bounds
+						worldID=b.ReadInt32();
+                        b.BaseStream.Seek(16, SeekOrigin.Current); //skip bounds
                         tilesHigh = b.ReadInt32();
                         tilesWide = b.ReadInt32();
+						moonType=0;
+						if (version>=63)
+							moonType=b.ReadByte();
+						treeX[0]=treeX[1]=treeX[2]=0;
+						treeStyle[0]=treeStyle[1]=treeStyle[2]=treeStyle[3]=0;
+						if (version>=44)
+						{
+							treeX[0]=b.ReadInt32();
+							treeX[1]=b.ReadInt32();
+							treeX[2]=b.ReadInt32();
+							treeStyle[0]=b.ReadInt32();
+							treeStyle[1]=b.ReadInt32();
+							treeStyle[2]=b.ReadInt32();
+							treeStyle[3]=b.ReadInt32();
+						}
+						caveBackX[0]=caveBackX[1]=caveBackX[2]=0;
+						caveBackStyle[0]=caveBackStyle[1]=caveBackStyle[2]=caveBackStyle[3]=0;
+						iceBackStyle=jungleBackStyle=hellBackStyle=0;
+						if (version>=60)
+						{
+							caveBackX[0]=b.ReadInt32();
+							caveBackX[1]=b.ReadInt32();
+							caveBackX[2]=b.ReadInt32();
+							caveBackStyle[0]=b.ReadInt32();
+							caveBackStyle[1]=b.ReadInt32();
+							caveBackStyle[2]=b.ReadInt32();
+							caveBackStyle[3]=b.ReadInt32();
+							iceBackStyle=b.ReadInt32();
+							if (version>=61)
+							{
+								jungleBackStyle=b.ReadInt32();
+								hellBackStyle=b.ReadInt32();
+							}
+						}
                         spawnX = b.ReadInt32();
                         spawnY = b.ReadInt32();
                         groundLevel = (int)b.ReadDouble();
@@ -612,10 +812,30 @@ namespace Terrafirma
                         bloodMoon = b.ReadBoolean();
                         dungeonX = b.ReadInt32();
                         dungeonY = b.ReadInt32();
+						crimson=false;
+						if (version>=56)
+							crimson=b.ReadBoolean();
                         killedBoss1 = b.ReadBoolean();
                         killedBoss2 = b.ReadBoolean();
                         killedBoss3 = b.ReadBoolean();
-                        savedTinkerer = savedWizard = savedMechanic = killedGoblins = killedClown = killedFrost = false;
+						killedQueenBee = false;
+						if (version>=66)
+							killedQueenBee=b.ReadBoolean();
+						killedMechBoss1 = killedMechBoss2 = killedMechBoss3 = killedMechBossAny = false;
+						if (version>=44)
+						{
+							killedMechBoss1=b.ReadBoolean();
+							killedMechBoss2=b.ReadBoolean();
+							killedMechBoss3=b.ReadBoolean();
+							killedMechBossAny=b.ReadBoolean();
+						}
+                        killedPlantBoss = killedGolemBoss = false;
+                        if (version >= 64)
+                        {
+                            killedPlantBoss = b.ReadBoolean();
+                            killedGolemBoss = b.ReadBoolean();
+                        }
+                        savedTinkerer = savedWizard = savedMechanic = killedGoblins = killedClown = killedFrost = killedPirates = false;
                         if (version >= 29)
                         {
                             savedTinkerer = b.ReadBoolean();
@@ -627,6 +847,8 @@ namespace Terrafirma
                                 killedClown = b.ReadBoolean();
                             if (version >= 37)
                                 killedFrost = b.ReadBoolean();
+							if (version >= 56)
+								killedPirates = b.ReadBoolean();
                         }
                         smashedOrb = b.ReadBoolean();
                         meteorSpawned = b.ReadBoolean();
@@ -642,6 +864,43 @@ namespace Terrafirma
                         goblinsSize = b.ReadInt32();
                         goblinsType = b.ReadInt32();
                         goblinsX = b.ReadDouble();
+
+						isRaining = false;
+						rainTime = 0;
+						maxRain = 0.0F;
+						oreTier1 = 107;
+						oreTier2 = 108;
+						oreTier3 = 111;
+						if (version >= 23 && altarsSmashed == 0)
+							oreTier1 = oreTier2 = oreTier3 = -1;
+						if (version >= 53)
+						{
+							isRaining = b.ReadBoolean();
+							rainTime = b.ReadInt32();
+							maxRain = b.ReadSingle();
+							if (version >= 54)
+							{
+								oreTier1 = b.ReadInt32();
+								oreTier2 = b.ReadInt32();
+								oreTier3 = b.ReadInt32();
+							}
+						}
+						if (version>=55)
+						{
+                            int numstyles = 3;
+                            if (version >= 60)
+                                numstyles = 8;
+                            for (int i = 0; i < numstyles; i++)
+                                styles[i] = b.ReadByte();
+                            //skip clouds
+							if (version>=60)
+							{
+								b.BaseStream.Seek(4, SeekOrigin.Current);
+								if (version>=62)
+									b.BaseStream.Seek(6, SeekOrigin.Current);
+							}
+						}
+
                         ResizeMap();
                         for (int x = 0; x < tilesWide; x++)
                         {
@@ -663,8 +922,9 @@ namespace Terrafirma
                                     }
                                     else if (tileInfos[tiles[x, y].type].hasExtra)
                                     {
-                                        // torches didn't have extra in older versions.
-                                        if (version < 0x1c && tiles[x, y].type == 4)
+                                        // torches and platforms didn't have extra in older versions.
+                                        if ((version < 28 && tiles[x, y].type == 4) || 
+											(version < 40 && tiles[x, y].type == 19))
                                         {
                                             tiles[x, y].u = -1;
                                             tiles[x, y].v = -1;
@@ -682,8 +942,13 @@ namespace Terrafirma
                                         tiles[x, y].u = -1;
                                         tiles[x, y].v = -1;
                                     }
+
+                                    if (version >= 48 && b.ReadBoolean())
+                                    {
+                                        tiles[x, y].color = b.ReadByte();
+                                    }
                                 }
-                                if (version <= 0x19)
+                                if (version <= 25)
                                     b.ReadBoolean(); //skip obsolete hasLight
                                 if (b.ReadBoolean())
                                 {
@@ -694,6 +959,8 @@ namespace Terrafirma
                                         invalid = String.Format("{0} is not a valid wall type", tiles[x, y].wall);
                                         tiles[x, y].wall = 0;
                                     }
+									if (version >= 48 && b.ReadBoolean())
+										tiles[x, y].wallColor=b.ReadByte();
                                     tiles[x, y].wallu = -1;
                                     tiles[x, y].wallv = -1;
                                 }
@@ -703,14 +970,42 @@ namespace Terrafirma
                                 {
                                     tiles[x, y].liquid = b.ReadByte();
                                     tiles[x, y].isLava = b.ReadBoolean();
+									if (version >= 51)
+										tiles[x, y].isHoney = b.ReadBoolean();
                                 }
                                 else
                                     tiles[x, y].liquid = 0;
-                                if (version >= 0x21)
-                                    tiles[x, y].hasWire = b.ReadBoolean();
-                                else
-                                    tiles[x, y].hasWire = false;
-                                if (version >= 0x19) //RLE
+                                tiles[x, y].hasRedWire = false;
+                                tiles[x, y].hasGreenWire = false;
+                                tiles[x, y].hasBlueWire = false;
+								tiles[x, y].half = false;
+								tiles[x, y].slope = 0;
+                                if (version >= 33)
+								{
+                                    tiles[x, y].hasRedWire = b.ReadBoolean();
+									if (version >= 43)
+									{
+										tiles[x, y].hasGreenWire = b.ReadBoolean();
+										tiles[x, y].hasBlueWire = b.ReadBoolean();
+									}
+									if (version >= 41)
+									{
+										tiles[x, y].half = b.ReadBoolean();
+										if (version >= 49)
+											tiles[x, y].slope = b.ReadByte();
+										if (!tileInfos[tiles[x, y].type].solid)
+										{
+											tiles[x, y].half = false;
+											tiles[x, y].slope = 0;
+										}
+										if (version >= 42)
+										{
+                                            b.ReadBoolean(); //tile actuator
+                                            b.ReadBoolean(); //tile inActive
+										}
+									}
+								}
+                                if (version >= 25) //RLE
                                 {
                                     int rle = b.ReadInt16();
                                     for (int r = y + 1; r < y + 1 + rle; r++)
@@ -724,28 +1019,43 @@ namespace Terrafirma
                                         tiles[x, r].wallv = -1;
                                         tiles[x, r].liquid = tiles[x, y].liquid;
                                         tiles[x, r].isLava = tiles[x, y].isLava;
-                                        tiles[x, r].hasWire = tiles[x, y].hasWire;
+										tiles[x, r].isHoney = tiles[x, y].isHoney;
+                                        tiles[x, r].hasRedWire = tiles[x, y].hasRedWire;
+                                        tiles[x, r].hasGreenWire = tiles[x, y].hasGreenWire;
+                                        tiles[x, r].hasBlueWire = tiles[x, y].hasBlueWire;
+										tiles[x, r].half = tiles[x, y].half;
+										tiles[x, r].slope = tiles[x, y].slope;
+									//	tiles[x, r].actuator = tiles[x, y].actuator;
+									//	tiles[x, r].inActive = tiles[x, y].inActive;
+										tiles[x, r].color = tiles[x, y].color;
+										tiles[x, r].wallColor = tiles[x, y].wallColor;
                                     }
                                     y += rle;
                                 }
                             }
                         }
+						int itemsPerChest=40;
+						if (version < 58)
+							itemsPerChest=20;
                         chests.Clear();
                         for (int i = 0; i < 1000; i++)
                         {
                             if (b.ReadBoolean())
                             {
                                 Chest chest = new Chest();
-                                chest.items = new ChestItem[20];
+                                chest.items = new ChestItem[itemsPerChest];
                                 chest.x = b.ReadInt32();
                                 chest.y = b.ReadInt32();
-                                for (int ii = 0; ii < 20; ii++)
+                                for (int ii = 0; ii < itemsPerChest; ii++)
                                 {
-                                    chest.items[ii].stack = b.ReadByte();
+									if (version<59)
+	                                    chest.items[ii].stack = b.ReadByte();
+									else
+										chest.items[ii].stack = b.ReadInt16();
                                     if (chest.items[ii].stack > 0)
                                     {
                                         string name="Unknown";
-                                        if (version >= 0x26) //item names not stored
+                                        if (version >= 38) //item names not stored
                                         {
                                             Int32 itemid = b.ReadInt32();
                                             if (itemid < 0)
@@ -760,15 +1070,14 @@ namespace Terrafirma
                                         else
                                             name = b.ReadString();
                                         string prefix = "";
-                                        if (version >= 0x24) //item prefixes
+                                        if (version >= 36) //item prefixes
                                         {
                                             int pfx = b.ReadByte();
                                             if (pfx < prefixes.Length)
                                                 prefix = prefixes[pfx];
                                         }
-                                        if (prefix != "")
-                                            prefix += " ";
-                                        chest.items[ii].name = prefix + name;
+                                        chest.items[ii].name = name;
+                                        chest.items[ii].prefix = prefix;
                                     }
                                 }
                                 chests.Add(chest);
@@ -816,14 +1125,14 @@ namespace Terrafirma
 
                             npcs.Add(npc);
                             addNPCToMenu(npc);
-
-                            
                         }
                         if (version >= 31) //read npcs
                         {
                             int numNames = 9;
                             if (version>=34)
                                 numNames++;
+							if (version>=65)
+								numNames+=8;
                             for (int i = 0; i < numNames; i++)
                             {
                                 string name = b.ReadString();
@@ -845,14 +1154,19 @@ namespace Terrafirma
                             MessageBox.Show("Found problems with the map: " + invalid + "\nIt may not display properly.", "Warning");
                         }));
                     }
+
+					//load player's map
+					loadPlayerMap();
+
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
+                            //Load highlight list items
                             loadHighlight();
-                            render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, npcs);
+                            render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, npcs);
                             loaded = true;
                             done();
                         }));
-                    //calculateLight();
+                    calculateLight();
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
                             serverText.Text = "";
@@ -871,6 +1185,67 @@ namespace Terrafirma
             };
             new Thread(loadThread).Start();
         }
+
+		private void loadPlayerMap()
+		{
+			for (int x = 0; x < tilesWide; x++)
+				for (int y = 0; y < tilesHigh; y++)
+					tiles[x,y].seen=false;
+
+			try
+			{
+				string path=Path.Combine(player.Substring(0, player.Length-4),string.Concat(worldID,".map"));
+                if (!File.Exists(path))
+                    return;
+				using (BinaryReader b = new BinaryReader(File.Open(path,FileMode.Open,FileAccess.Read,FileShare.ReadWrite)))
+				{
+					int version=b.ReadInt32();
+					if (version>MapVersion) //new map format
+						throw new Exception("Unsupported map version: "+version);
+					string title=b.ReadString();
+					b.BaseStream.Seek(12, SeekOrigin.Current); //skip worldid and bounds
+					for (int x = 0; x < tilesWide; x++)
+					{
+						for (int y = 0; y < tilesHigh; y++)
+						{
+							if (b.ReadBoolean())
+							{
+								tiles[x, y].seen=true;
+								byte type=b.ReadByte();
+								byte light=b.ReadByte();
+								byte misc=b.ReadByte();
+								byte misc2=0;
+								if (version>=50) misc2=b.ReadByte();
+								int rle=b.ReadInt16();
+								if (light==255)
+								{
+									for (int r = y + 1; r < y + 1 + rle; r++)
+										tiles[x, r].seen=true;
+								}
+								else
+								{
+									for (int r = y + 1; r < y + 1 + rle; r++)
+									{
+										light=b.ReadByte();
+										tiles[x, r].seen=true;
+									}
+								}
+								y+=rle;
+							}
+							else
+								y+=b.ReadInt16(); //skip
+						}
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+					{
+						MessageBox.Show(e.Message);
+					}));
+			}
+		}
 
         private void addNPCToMenu(NPC npc)
         {
@@ -925,725 +1300,9 @@ namespace Terrafirma
             }
         }
 
-        private string[] prefixes ={
-                                       "",
-                                       "Large",         //1
-                                       "Massive",       //2
-                                       "Dangerous",     //3
-                                       "Savage",        //4
-                                       "Sharp",         //5
-                                       "Pointy",        //6
-                                       "Tiny",          //7
-                                       "Terrible",      //8
-                                       "Small",         //9
-                                       "Dull",          //10
-                                       "Unhappy",       //11
-                                       "Bulky",         //12
-                                       "Shameful",      //13
-                                       "Heavy",         //14
-                                       "Light",         //15
-                                       "Sighted",       //16
-                                       "Rapid",         //17
-                                       "Hasty",         //18
-                                       "Intimidating",  //19
-                                       "Deadly",        //20
-                                       "Staunch",       //21
-                                       "Awful",         //22
-                                       "Lethargic",     //23
-                                       "Awkward",       //24
-                                       "Powerful",      //25
-                                       "Mystic",        //26
-                                       "Adept",         //27
-                                       "Masterful",     //28
-                                       "Inept",         //29
-                                       "Ignorant",      //30
-                                       "Deranged",      //31
-                                       "Intense",       //32
-                                       "Taboo",         //33
-                                       "",              //34
-                                       "Furious",       //35
-                                       "Keen",          //36
-                                       "Superior",      //37
-                                       "Forceful",      //38
-                                       "Broken",        //39
-                                       "Damaged",       //40
-                                       "Shoddy",        //41
-                                       "Quick",         //42
-                                       "Deadly",        //43
-                                       "Agile",         //44
-                                       "Nimble",        //45
-                                       "Murderous",     //46
-                                       "Slow",          //47
-                                       "Sluggish",      //48
-                                       "Lazy",          //49
-                                       "Annoying",      //50
-                                       "Nasty",         //51
-                                       "Manic",         //52
-                                       "Hurtful",       //53
-                                       "Strong",        //54
-                                       "Unpleasant",    //55
-                                       "Weak",          //56
-                                       "Ruthless",      //57
-                                       "Frenzying",     //58
-                                       "Godly",         //59
-                                       "Demonic",       //60
-                                       "Zealous",       //61
-                                       "Hard",          //62
-                                       "Guarding",      //63
-                                       "Armored",       //64
-                                       "Warding",       //65
-                                       "Arcane",        //66
-                                       "Precise",       //67
-                                       "Lucky",         //68
-                                       "Jagged",        //69
-                                       "Spiked",        //70
-                                       "Angry",         //71
-                                       "Menacing",      //72
-                                       "Brisk",         //73
-                                       "Fleeting",      //74
-                                       "Hasty",         //75
-                                       "Quick",         //76
-                                       "Wild",          //77
-                                       "Rash",          //78
-                                       "Intrepid",      //79
-                                       "Violent",       //80
-                                       "Legendary",     //81
-                                       "Unreal",        //82
-                                       "Mythical"       //83
-                                  };
-        private string[] itemNames2 ={
-                                         "",                        //0
-                                         "Gold Pickaxe",            //-1
-                                         "Gold Broadsword",         //-2
-                                         "Gold Shortsword",         //-3
-                                         "Gold Axe",                //-4
-                                         "Gold Hammer",             //-5
-                                         "Gold Bow",                //-6
-                                         "Silver Pickaxe",          //-7
-                                         "Silver Broadsword",       //-8
-                                         "Silver Shortsword",       //-9
-                                         "Silver Axe",              //-10
-                                         "Silver Hammer",           //-11
-                                         "Silver Bow",              //-12
-                                         "Copper Pickaxe",          //-13
-                                         "Copper Broadsword",       //-14
-                                         "Copper Shortsword",       //-15
-                                         "Copper Axe",              //-16
-                                         "Copper Hammer",           //-17
-                                         "Copper Bow",              //-18
-                                         "Blue Phasesaber",         //-19
-                                         "Red Phasesaber",          //-20
-                                         "Green Phasesaber",        //-21
-                                         "Purple Phasesaber",       //-22
-                                         "White Phasesaber",        //-23
-                                         "Yellow Phasesaber"        //-24
-                                     };
-        private string[] itemNames ={
-                                        "",                         //0
-                                        "Iron Pickaxe",             //1
-                                        "Dirt Block",               //2
-                                        "Stone Block",              //3
-                                        "Iron Broadsword",          //4
-                                        "Mushroom",                 //5
-                                        "Iron Shortsword",          //6
-                                        "Iron Hammer",              //7
-                                        "Torch",                    //8
-                                        "Wood",                     //9
-                                        "Iron Axe",                 //10
-                                        "Iron Ore",                 //11
-                                        "Copper Ore",               //12
-                                        "Gold Ore",                 //13
-                                        "Silver Ore",               //14
-                                        "Copper Watch",             //15
-                                        "Silver Watch",             //16
-                                        "Gold Watch",               //17
-                                        "Depth Meter",              //18
-                                        "Gold Bar",                 //19
-                                        "Copper Bar",               //20
-                                        "Silver Bar",               //21
-                                        "Iron Bar",                 //22
-                                        "Gel",                      //23
-                                        "Wooden Sword",             //24
-                                        "Wooden Door",              //25
-                                        "Stone Wall",               //26
-                                        "Acorn",                    //27
-                                        "Lesser Healing Potion",    //28
-                                        "Life Crystal",             //29
-                                        "Dirt Wall",                //30
-                                        "Bottle",                   //31
-                                        "Wooden Table",             //32
-                                        "Furnace",                  //33
-                                        "Wooden Chair",             //34
-                                        "Iron Anvil",               //35
-                                        "Work Bench",               //36
-                                        "Goggles",                  //37
-                                        "Lens",                     //38
-                                        "Wooden Bow",               //39
-                                        "Wooden Arrow",             //40
-                                        "Flaming Arrow",            //41
-                                        "Shuriken",                 //42
-                                        "Suspicious Looking Eye",   //43
-                                        "Demon Bow",                //44
-                                        "War Axe of the Night",     //45
-                                        "Light's Bane",             //46
-                                        "Unholy Arrow",             //47
-                                        "Chest",                    //48
-                                        "Band of Regeneration",     //49
-                                        "Magic Mirror",             //50
-                                        "Jester's Arrow",           //51
-                                        "Angel Statue",             //52
-                                        "Cloud in a Bottle",        //53
-                                        "Heremes Boots",            //54
-                                        "Enchanted Boomerang",      //55
-                                        "Demonite Ore",             //56
-                                        "Demonite Bar",             //57
-                                        "Heart",                    //58
-                                        "Corrupt Seeds",            //59
-                                        "Vile Mushroom",            //60
-                                        "Ebonstone Block",          //61
-                                        "Grass Seeds",              //62
-                                        "Sunflower",                //63
-                                        "Vilethorn",                //64
-                                        "Starfury",                 //65
-                                        "Purification Powder",      //66
-                                        "Vile Powder",              //67
-                                        "Rotten Chunk",             //68
-                                        "Worm Tooth",               //69
-                                        "Worm Food",                //70
-                                        "Copper Coin",              //71
-                                        "Silver Coin",              //72
-                                        "Gold Coin",                //73
-                                        "Platinum Coin",            //74
-                                        "Fallen Star",              //75
-                                        "Copper Greaves",           //76
-                                        "Iron Greaves",             //77
-                                        "Silver Greaves",           //78
-                                        "Gold Greaves",             //79
-                                        "Copper Chainmail",         //80
-                                        "Iron Chainmail",           //81
-                                        "Siler Chainmail",          //82
-                                        "Gold Chainmail",           //83
-                                        "Grappling Hook",           //84
-                                        "Iron Chain",               //85
-                                        "Shadow Scale",             //86
-                                        "Piggy Bank",               //87
-                                        "Mining Helmet",            //88
-                                        "Copper Helmet",            //89
-                                        "Iron Helmet",              //90
-                                        "Silver Helmet",            //91
-                                        "Gold Helmet",              //92
-                                        "Wood Wall",                //93
-                                        "Wood Platform",            //94
-                                        "Flintlock Pistol",         //95
-                                        "Musket",                   //96
-                                        "Musket Ball",              //97
-                                        "Minishark",                //98
-                                        "Iron Bow",                 //99
-                                        "Shadow Greaves",           //100
-                                        "Shadow Scalemail",         //101
-                                        "Shadow Helmet",            //102
-                                        "Nightmare Pickaxe",        //103
-                                        "The Breaker",              //104
-                                        "Candle",                   //105
-                                        "Copper Chandelier",        //106
-                                        "Silver Chandelier",        //107
-                                        "Gold Chandelier",          //108
-                                        "Mana Crystal",             //109
-                                        "Lesser Mana Potion",       //110
-                                        "Band of Starpower",        //111
-                                        "Flower of Fire",           //112
-                                        "Magic Missile",            //113
-                                        "Dirt Rod",                 //114
-                                        "Orb of Light",             //115
-                                        "Meteorite",                //116
-                                        "Meteorite Bar",            //117
-                                        "Hook",                     //118
-                                        "Flamarang",                //119
-                                        "Molten Fury",              //120
-                                        "Fiery Greatsword",         //121
-                                        "Molten Pickaxe",           //122
-                                        "Meteor Helmet",            //123
-                                        "Meteor Suit",              //124
-                                        "Meteor Leggings",          //125
-                                        "Bottled Water",            //126
-                                        "Space Gun",                //127
-                                        "Rocket Boots",             //128
-                                        "Gray Brick",               //129
-                                        "Gray Brick Wall",          //130
-                                        "Red Brick",                //131
-                                        "Red Brick Wall",           //132
-                                        "Clay Block",               //133
-                                        "Blue Brick",               //134
-                                        "Blue Brick Wall",          //135
-                                        "Chain Lantern",            //136
-                                        "Green Brick",              //137
-                                        "Green Brick Wall",         //138
-                                        "Pink Brick",               //139
-                                        "Pink Brick Wall",          //140
-                                        "Gold Brick",               //141
-                                        "Gold Brick Wall",          //142
-                                        "Silver Brick",             //143
-                                        "Silver Brick Wall",        //144
-                                        "Copper Brick",             //145
-                                        "Copper Brick Wall",        //146
-                                        "Spike",                    //147
-                                        "Water Candle",             //148
-                                        "Book",                     //149
-                                        "Cobweb",                   //150
-                                        "Necro Helmet",             //151
-                                        "Necro Breastplate",        //152
-                                        "Necro Greaves",            //153
-                                        "Bone",                     //154
-                                        "Muramasa",                 //155
-                                        "Cobalt Shield",            //156
-                                        "Aqua Scepter",             //157
-                                        "Lucky Horseshoe",          //158
-                                        "Shiny Red Balloon",        //159
-                                        "Harpoon",                  //160
-                                        "Spiky Ball",               //161
-                                        "Ball O' Hurt",             //162
-                                        "Blue Moon",                //163
-                                        "Handgun",                  //164
-                                        "Water Bolt",               //165
-                                        "Bomb",                     //166
-                                        "Dynamite",                 //167
-                                        "Grenade",                  //168
-                                        "Sand Block",               //169
-                                        "Glass",                    //170
-                                        "Sign",                     //171
-                                        "Ash Block",                //172
-                                        "Obsidian",                 //173
-                                        "Hellstone",                //174
-                                        "Hellstone Bar",            //175
-                                        "Mud Block",                //176
-                                        "Amethyst",                 //177
-                                        "Topaz",                    //178
-                                        "Sapphire",                 //179
-                                        "Emerald",                  //180
-                                        "Ruby",                     //181
-                                        "Diamond",                  //182
-                                        "Glowing Mushroom",         //183
-                                        "Star",                     //184
-                                        "Ivy Whip",                 //185
-                                        "Breathing Reed",           //186
-                                        "Flipper",                  //187
-                                        "Healing Potion",           //188
-                                        "Mana Potion",              //189
-                                        "Blade of Grass",           //190
-                                        "Thorn Chakram",            //191
-                                        "Obsidian Brick",           //192
-                                        "Obsidian Skull",           //193
-                                        "Mushroom Grass Seeds",     //194
-                                        "Jungle Grass Seeds",       //195
-                                        "Wooden Hammer",            //196
-                                        "Star Cannon",              //197
-                                        "Blue Phaseblade",          //198
-                                        "Red Phaseblade",           //199
-                                        "Green Phaseblade",         //200
-                                        "Purple Phaseblade",        //201
-                                        "White Phaseblade",         //202
-                                        "Yellow Phaseblade",        //203
-                                        "Meteor Hamaxe",            //204
-                                        "Empty Bucket",             //205
-                                        "Water Bucket",             //206
-                                        "Lava Bucket",              //207
-                                        "Jungle Rose",              //208
-                                        "Stinger",                  //209
-                                        "Vine",                     //210
-                                        "Feral Claws",              //211
-                                        "Anklet of the Wind",       //212
-                                        "Staff of Regrowth",        //213
-                                        "Hellstone Brick",          //214
-                                        "Whoopie Cushion",          //215
-                                        "Shackle",                  //216
-                                        "Molten Hamaxe",            //217
-                                        "Flamelash",                //218
-                                        "Phoenix Blaster",          //219
-                                        "Sunfury",                  //220
-                                        "Hellforge",                //221
-                                        "Clay Pot",                 //222
-                                        "Nature's Gift",            //223
-                                        "Bed",                      //224
-                                        "Silk",                     //225
-                                        "Lesser Restoration Potion",//226
-                                        "Restoration Potion",       //227
-                                        "Jungle Hat",               //228
-                                        "Jungle Shirt",             //229
-                                        "Jungle Pants",             //230
-                                        "Molten Helmet",            //231
-                                        "Molten Breastplate",       //232
-                                        "Molten Greaves",           //233
-                                        "Meteor Shot",              //234
-                                        "Sticky Bomb",              //235
-                                        "Black Lens",               //236
-                                        "Sunglasses",               //237
-                                        "Wizard Hat",               //238
-                                        "Top Hat",                  //239
-                                        "Tuxedo Shirt",             //240
-                                        "Tuxedo Pants",             //241
-                                        "Summer Hat",               //242
-                                        "Bunny Hood",               //243
-                                        "Plumber's Hat",            //244
-                                        "Plumber's Shirt",          //245
-                                        "Plumber's Pants",          //246
-                                        "Hero's Hat",               //247
-                                        "Hero's Shirt",             //248
-                                        "Hero's Pants",             //249
-                                        "Fish Bowl",                //250
-                                        "Archaeologist's Hat",      //251
-                                        "Archaeologist's Jacket",   //252
-                                        "Archaeologist's Pants",    //253
-                                        "Black Dye",                //254
-                                        "Green Dye",                //255
-                                        "Ninja Hood",               //256
-                                        "Ninja Shirt",              //257
-                                        "Ninja Pants",              //258
-                                        "Leather",                  //259
-                                        "Red Hat",                  //260
-                                        "Goldfish",                 //261
-                                        "Robe",                     //262
-                                        "Robot Hat",                //263
-                                        "Gold Crown",               //264
-                                        "Hellfire Arrow",           //265
-                                        "Sandgun",                  //266
-                                        "Guide Voodoo Doll",        //267
-                                        "Diving Helmet",            //268
-                                        "Familiar Shirt",           //269
-                                        "Familiar Pants",           //270
-                                        "Familiar Wig",             //271
-                                        "Demon Scythe",             //272
-                                        "Night's Edge",             //273
-                                        "Dark Lance",               //274
-                                        "Coral",                    //275
-                                        "Cactus",                   //276
-                                        "Trident",                  //277
-                                        "Silver Bullet",            //278
-                                        "Throwing Knife",           //279
-                                        "Spear",                    //280
-                                        "Blowpipe",                 //281
-                                        "Glowstick",                //282
-                                        "Seed",                     //283
-                                        "Wooden Boomerang",         //284
-                                        "Aglet",                    //285
-                                        "Sticky Glowstick",         //286
-                                        "Poisoned Knife",           //287
-                                        "Obsidian Skin Potion",     //288
-                                        "Regeneration Potion",      //289
-                                        "Swiftness Potion",         //290
-                                        "Gills Potion",             //291
-                                        "Ironskin Potion",          //292
-                                        "Mana Regeneration Potion", //293
-                                        "Magic Power Potion",       //294
-                                        "Featherfall Potion",       //295
-                                        "Spelunker Potion",         //296
-                                        "Invisibility Potion",      //297
-                                        "Shine Potion",             //298
-                                        "Night Owl Potion",         //299
-                                        "Battle Potion",            //300
-                                        "Thorns Potion",            //301
-                                        "Water Walking Potion",     //302
-                                        "Archery Potion",           //303
-                                        "Hunter Potion",            //304
-                                        "Gravitation Potion",       //305
-                                        "Gold Chest",               //306
-                                        "Daybloom Seeds",           //307
-                                        "Moonglow Seeds",           //308
-                                        "Blinkroot Seeds",          //309
-                                        "Deathweed Seeds",          //310
-                                        "Waterleaf Seeds",          //311
-                                        "Fireblossom Seeds",        //312
-                                        "Daybloom",                 //313
-                                        "Moonglow",                 //314
-                                        "Blinkroot",                //315
-                                        "Deathweed",                //316
-                                        "Waterleaf",                //317
-                                        "Fireblossom",              //318
-                                        "Shark Fin",                //319
-                                        "Feather",                  //320
-                                        "Tombstone",                //321
-                                        "Mime Mask",                //322
-                                        "Antlion Mandible",         //323
-                                        "Illegal Gun Parts",        //324
-                                        "The Doctor's Shirt",       //325
-                                        "The Doctor's Pants",       //326
-                                        "Golden Key",               //327
-                                        "Shadow Chest",             //328
-                                        "Shadow Key",               //329
-                                        "Obsidian Brick Wall",      //330
-                                        "Jungle Spores",            //331
-                                        "Loom",                     //332
-                                        "Piano",                    //333
-                                        "Dresser",                  //334
-                                        "Bench",                    //335
-                                        "Bathtub",                  //336
-                                        "Red Banner",               //337
-                                        "Green Banner",             //338
-                                        "Blue Banner",              //339
-                                        "Yellow Banner",            //340
-                                        "Lamp Post",                //341
-                                        "Tiki Torch",               //342
-                                        "Barrel",                   //343
-                                        "Chinese Lantern",          //344
-                                        "Cooking Pot",              //345
-                                        "Safe",                     //346
-                                        "Skull Lantern",            //347
-                                        "Trash Can",                //348
-                                        "Candelabra",               //349
-                                        "Pink Vase",                //350
-                                        "Mug",                      //351
-                                        "Keg",                      //352
-                                        "Ale",                      //353
-                                        "Bookcase",                 //354
-                                        "Throne",                   //355
-                                        "Bowl",                     //356
-                                        "Bowl of Soup",             //357
-                                        "Toilet",                   //358
-                                        "Grandfather Clock",        //359
-                                        "Armor Statue",             //360
-                                        "Goblin Battle Standard",   //361
-                                        "Tattered Cloth",           //362
-                                        "Sawmill",                  //363
-                                        "Cobalt Ore",               //364
-                                        "Mythril Ore",              //365
-                                        "Adamantite Ore",           //366
-                                        "Pwnhammer",                //367
-                                        "Excalibur",                //368
-                                        "Hallowed Seeds",           //369
-                                        "Ebonsand Block",           //370
-                                        "Cobalt Hat",               //371
-                                        "Cobalt Helmet",            //372
-                                        "Cobalt Mask",              //373
-                                        "Cobalt Breastplate",       //374
-                                        "Cobalt Leggings",          //375
-                                        "Mythril Hood",             //376
-                                        "Mythril Helmet",           //377
-                                        "Mythril Hat",              //378
-                                        "Mythril Chainmail",        //379
-                                        "Mythril Greaves",          //380
-                                        "Cobalt Bar",               //381
-                                        "Mythril Bar",              //382
-                                        "Cobalt Chainsaw",          //383
-                                        "Mythril Chainsaw",         //384
-                                        "Cobalt Drill",             //385
-                                        "Mythril Drill",            //386
-                                        "Adamantite Chainsaw",      //387
-                                        "Adamantite Drill",         //388
-                                        "Dao of Pow",               //389
-                                        "Mythril Halberd",          //390
-                                        "Adamantite Bar",           //391
-                                        "Glass Wall",               //392
-                                        "Compass",                  //393
-                                        "Diving Gear",              //394
-                                        "GPS",                      //395
-                                        "Obsidian Horseshoe",       //396
-                                        "Obsidian Shield",          //397
-                                        "Tinkerer's Workshop",      //398
-                                        "Cloud in a Balloon",       //399
-                                        "Adamantite Headgear",      //400
-                                        "Adamantite Helmet",        //401
-                                        "Adamantite Mask",          //402
-                                        "Adamantite Breastplate",   //403
-                                        "Adamantite Leggings",      //404
-                                        "Spectre Boots",            //405
-                                        "Adamantite Glaive",        //406
-                                        "Toolbelt",                 //407
-                                        "Pearlsand Block",          //408
-                                        "Pearlstone Block",         //409
-                                        "Mining Shirt",             //410
-                                        "Mining Pants",             //411
-                                        "Pearlstone Brick",         //412
-                                        "Iridescent Brick",         //413
-                                        "Mudstone Brick",           //414
-                                        "Cobalt Brick",             //415
-                                        "Mythril Brick",            //416
-                                        "Pearlstone Brick Wall",    //417
-                                        "Iridescent Brick Wall",    //418
-                                        "Mudstone Brick Wall",      //419
-                                        "Cobalt Brick Wall",        //420
-                                        "Mythril Brick Wall",       //421
-                                        "Holy Water",               //422
-                                        "Unholy Water",             //423
-                                        "Silt Block",               //424
-                                        "Fairy Bell",               //425
-                                        "Breaker Blade",            //426
-                                        "Blue Torch",               //427
-                                        "Red Torch",                //428
-                                        "Green Torch",              //429
-                                        "Purple Torch",             //430
-                                        "White Torch",              //431
-                                        "Yellow Torch",             //432
-                                        "Demon Torch",              //433
-                                        "Clockwork Assault Rifle",  //434
-                                        "Cobalt Repeater",          //435
-                                        "Mythril Repeater",         //436
-                                        "Dual Hook",                //437
-                                        "Star Statue",              //438
-                                        "Sword Statue",             //439
-                                        "Slime Statue",             //440
-                                        "Goblin Statue",            //441
-                                        "Shield Statue",            //442
-                                        "Bat Statue",               //443
-                                        "Fish Statue",              //444
-                                        "Bunny Statue",             //445
-                                        "Skeleton Statue",          //446
-                                        "Reaper Statue",            //447
-                                        "Woman Statue",             //448
-                                        "Imp Statue",               //449
-                                        "Gargoyle Statue",          //450
-                                        "Gloom Statue",             //451
-                                        "Hornet Statue",            //452
-                                        "Bomb Statue",              //453
-                                        "Crab Statue",              //454
-                                        "Hammer Statue",            //455
-                                        "Potion Statue",            //456
-                                        "Spear Statue",             //457
-                                        "Cross Statue",             //458
-                                        "Jellyfish Statue",         //459
-                                        "Bow Statue",               //460
-                                        "Boomerang Statue",         //461
-                                        "Boot Statue",              //462
-                                        "Chest Statue",             //463
-                                        "Bird Statue",              //464
-                                        "Axe Statue",               //465
-                                        "Corrupt Statue",           //466
-                                        "Tree Statue",              //467
-                                        "Anvil Statue",             //468
-                                        "Pickaxe Statue",           //469
-                                        "Mushroom Statue",          //470
-                                        "Eyeball Statue",           //471
-                                        "Pillar Statue",            //472
-                                        "Heart Statue",             //473
-                                        "Pot Statue",               //474
-                                        "Sunflower Statue",         //475
-                                        "King Statue",              //476
-                                        "Queen Statue",             //477
-                                        "Pirahna Statue",           //478
-                                        "Planked Wall",             //479
-                                        "Wooden Beam",              //480
-                                        "Adamantite Repeater",      //481
-                                        "Adamantite Sword",         //482
-                                        "Cobalt Sword",             //483
-                                        "Mythril Sword",            //484
-                                        "Moon Charm",               //485
-                                        "Ruler",                    //486
-                                        "Crystal Ball",             //487
-                                        "Disco Ball",               //488
-                                        "Sorcerer Emblem",          //489
-                                        "Ranger Emblem",            //490
-                                        "Warrior Emblem",           //491
-                                        "Demon Wings",              //492
-                                        "Angel Wings",              //493
-                                        "Magical Harp",             //494
-                                        "Rainbow Rod",              //495
-                                        "Ice Rod",                  //496
-                                        "Neptune's Shell",          //497
-                                        "Mannequin",                //498
-                                        "Greater Healing Potion",   //499
-                                        "Greater Mana Potion",      //500
-                                        "Pixie Dust",               //501
-                                        "Crystal Shard",            //502
-                                        "Clown Hat",                //503
-                                        "Clown Shirt",              //504
-                                        "Clown Pants",              //505
-                                        "Flamethrower",             //506
-                                        "Bell",                     //507
-                                        "Harp",                     //508
-                                        "Wrench",                   //509
-                                        "Wire Cutter",              //510
-                                        "Active Stone Block",       //511
-                                        "Inactive Stone Block",     //512
-                                        "Lever",                    //513
-                                        "Laser Rifle",              //514
-                                        "Crystal Bullet",           //515
-                                        "Holy Arrow",               //516
-                                        "Magic Dagger",             //517
-                                        "Crystal Storm",            //518
-                                        "Cursed Flames",            //519
-                                        "Soul of Light",            //520
-                                        "Soul of Night",            //521
-                                        "Cursed Flame",             //522
-                                        "Cursed Torch",             //523
-                                        "Adamantite Forge",         //524
-                                        "Mythril Anvil",            //525
-                                        "Unicorn Horn",             //526
-                                        "Dark Shard",               //527
-                                        "Light Shard",              //528
-                                        "Red Pressure Plate",       //529
-                                        "Wire",                     //530
-                                        "Spell Tome",               //531
-                                        "Star Cloak",               //532
-                                        "Megashark",                //533
-                                        "Shotgun",                  //534
-                                        "Philospher's Stone",       //535
-                                        "Titan Glove",              //536
-                                        "Cobalt Naginata",          //537
-                                        "Switch",                   //538
-                                        "Dart Trap",                //539
-                                        "Boulder",                  //540
-                                        "Green Pressure Plate",     //541
-                                        "Gray Pressure Plate",      //542
-                                        "Brown Pressure Plate",     //543
-                                        "Mechanical Eye",           //544
-                                        "Cursed Arrow",             //545
-                                        "Cursed Bullet",            //546
-                                        "Soul of Fright",           //547
-                                        "Soul of Might",            //548
-                                        "Soul of Sight",            //549
-                                        "Gungnir",                  //550
-                                        "Hallowed Plate Mail",      //551
-                                        "Hallowed Greaves",         //552
-                                        "Hallowed Helmet",          //553
-                                        "Hallowed Headgear",        //554
-                                        "Hallowed Mask",            //555
-                                        "Cross Necklace",           //556
-                                        "Mana Flower",              //557
-                                        "Mechanical Worm",          //558
-                                        "Mechanical Skull",         //559
-                                        "Slime Crown",              //560
-                                        "Light Disc",               //561
-                                        "Music Box (Overworld Day)",//562
-                                        "Music Box (Eerie)",        //563
-                                        "Music Box (Night)",        //564
-                                        "Music Box (Title)",        //565
-                                        "Music Box (Underground)",  //566
-                                        "Music Box (Boss 1)",       //567
-                                        "Music Box (Jungle)",       //568
-                                        "Music Box (Corruption)",   //569
-                                        "Music Box (Underground Corruption)", //570
-                                        "Music Box (The Hallow)",   //571
-                                        "Music Box (Boss 2)",       //572
-                                        "Music Box (Underground Hallow)", //573
-                                        "Music Box (Boss 3)",       //574
-                                        "Soul of Flight",           //575
-                                        "Music Box",                //576
-                                        "Demonite Brick",           //577
-                                        "Hallowed Repeater",        //578
-                                        "Hamdrax",                  //579
-                                        "Explosives",               //580
-                                        "Inlet Pump",               //581
-                                        "Outlet Pump",              //582
-                                        "1 Second Timer",           //583
-                                        "3 Second Timer",           //584
-                                        "5 Second Timer",           //585
-                                        "Candy Cane Block",         //586
-                                        "Candy Cane Wall",          //587
-                                        "Santa Hat",                //588
-                                        "Santa Shirt",              //589
-                                        "Santa Pants",              //590
-                                        "Green Candy Cane Block",   //591
-                                        "Green Candy Cane Wall",    //592
-                                        "Snow Block",               //593
-                                        "Snow Brick",               //594
-                                        "Snow Brick Wall",          //595
-                                        "Blue Light",               //596
-                                        "Red Light",                //597
-                                        "Green Light",              //598
-                                        "Blue Present",             //599
-                                        "Green Present",            //600
-                                        "Yellow Present",           //601
-                                        "Snow Globe",               //602
-                                        "Carrot"                    //603
-                                   };
+        private string[] prefixes;
+        private string[] itemNames2;
+        private string[] itemNames;
 
         void jumpNPC(object sender, RoutedEventArgs e)
         {
@@ -1662,8 +1321,6 @@ namespace Terrafirma
             RenderMap();
         }
 
-
-
         private void RenderMap()
         {
             var rect = new Int32Rect(0, 0, curWidth, curHeight);
@@ -1674,7 +1331,8 @@ namespace Terrafirma
             {
                 render.Draw(curWidth, curHeight, startx, starty, curScale, ref bits,
                     isHilight, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
-                    UseTextures.IsChecked && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked, ref tiles);
+                    UseTextures.IsChecked && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked,
+                    FogOfWar.IsChecked, ref tiles);
             }
             catch (System.NotSupportedException e)
             {
@@ -1743,9 +1401,11 @@ namespace Terrafirma
                     if (tiles[sx, sy].wall > 0)
                         label = wallInfo[tiles[sx, sy].wall].name;
                     if (tiles[sx, sy].liquid > 0)
-                        label = tiles[sx, sy].isLava ? "Lava" : "Water";
+                        label = tiles[sx, sy].isLava ? "Lava" : tiles[sx, sy].isHoney ? "Honey" : "Water";
                     if (tiles[sx, sy].isActive)
                         label = tileInfos[tiles[sx, sy].type, tiles[sx, sy].u, tiles[sx, sy].v].name;
+                    if (FogOfWar.IsChecked && !tiles[sx, sy].seen)
+                        label = "Murky blackness";
                     statusText.Text = String.Format("{0},{1} {2}", sx, sy, label);
                 }
                 else
@@ -1823,7 +1483,12 @@ namespace Terrafirma
                     for (int i = 0; i < c.items.Length; i++)
                     {
                         if (c.items[i].stack > 0)
-                            items.Add(String.Format("{0} {1}", c.items[i].stack, c.items[i].name));
+                        {
+                            if (c.items[i].prefix=="")
+                                items.Add(String.Format("{0} {1}", c.items[i].stack, c.items[i].name));
+                            else
+                                items.Add(String.Format("{0} {1} {2}", c.items[i].stack, c.items[i].prefix, c.items[i].name));
+                        }
                     }
                     chestPop = new ChestPopup(items);
                     chestPop.IsOpen = true;
@@ -1991,6 +1656,49 @@ namespace Terrafirma
         {
             e.CanExecute = true;
         }
+		private void SelectPlayer(object sender, ExecutedRoutedEventArgs e)
+		{
+            if (busy) //fail
+                return;
+            int id = (int)e.Parameter;
+			player=players[id];
+            //uncheck other players
+            foreach (MenuItem item in Players.Items)
+            {
+                if (item.CommandParameter != e.Parameter)
+                    item.IsChecked = false;
+            }
+            if (!loaded)
+                return;
+
+			// should load player map here
+			ThreadStart loader = delegate()
+				{
+					loadPlayerMap();
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                    {
+                        RenderMap();
+                    }));
+				};
+			new Thread(loader).Start();
+		}
+		private void SelectPlayer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = !busy;
+		}
+        private void FogOfWar_Toggle(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (FogOfWar.IsChecked)
+                FogOfWar.IsChecked = false;
+            else
+                FogOfWar.IsChecked = true;
+            if (loaded)
+                RenderMap();
+        }
+        private void FogOfWar_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = Players.IsEnabled;
+        }
         private void JumpToSpawn_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             curX = spawnX;
@@ -2001,18 +1709,21 @@ namespace Terrafirma
         {
             if (e.Command == MapCommands.NoLight)
             {
+                Lighting0.IsChecked = true;
                 Lighting1.IsChecked = false;
                 Lighting2.IsChecked = false;
             }
             else if (e.Command == MapCommands.Lighting)
             {
                 Lighting0.IsChecked = false;
+                Lighting1.IsChecked = true;
                 Lighting2.IsChecked = false;
             }
             else
             {
                 Lighting0.IsChecked = false;
                 Lighting1.IsChecked = false;
+                Lighting2.IsChecked = true;
             }
             RenderMap();
         }
@@ -2230,6 +1941,7 @@ namespace Terrafirma
                         SendMessage(0x2a);
                         //send buffs
                         //send inventory
+                        //send dyes
                         SendMessage(6);
                         if (loginLevel == 2) loginLevel = 3;
                     }
@@ -2248,14 +1960,37 @@ namespace Terrafirma
                         dayNight = messages[payload++] == 1;
                         moonPhase = messages[payload++];
                         bloodMoon = messages[payload++] == 1;
+                        payload++; //eclipse
                         tilesWide = BitConverter.ToInt32(messages, payload); payload += 4;
                         tilesHigh = BitConverter.ToInt32(messages, payload); payload += 4;
                         spawnX = BitConverter.ToInt32(messages, payload); payload += 4;
                         spawnY = BitConverter.ToInt32(messages, payload); payload += 4;
                         groundLevel = BitConverter.ToInt32(messages, payload); payload += 4;
                         rockLevel = BitConverter.ToInt32(messages, payload); payload += 4;
-                        payload += 4; //skip world id
+                        worldID = BitConverter.ToInt32(messages, payload); payload += 4;
+                        payload++; //moon type
+                        for (int i = 0; i < 3; i++)
+                        {
+                            treeX[i] = BitConverter.ToInt32(messages, payload); payload += 4;
+                        }
+                        for (int i = 0; i < 4; i++)
+                            treeStyle[i] = messages[payload++];
+                        for (int i = 0; i < 3; i++)
+                        {
+                            caveBackX[i] = BitConverter.ToInt32(messages, payload); payload += 4;
+                        }
+                        for (int i = 0; i < 4; i++)
+                            caveBackStyle[i] = messages[payload++];
+                        for (int i = 0; i < 8; i++)
+                            styles[i] = messages[payload++];
+                        iceBackStyle = messages[payload++];
+                        jungleBackStyle = messages[payload++];
+                        hellBackStyle = messages[payload++];
+                        payload += 4; //wind speed
+                        payload++; //number of clouds
                         byte flags = messages[payload++];
+                        byte flags2 = messages[payload++];
+                        payload += 4; //max rain
                         string title = Encoding.ASCII.GetString(messages, payload, start + len - payload);
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
@@ -2267,9 +2002,17 @@ namespace Terrafirma
                         killedBoss3 = (flags & 8) == 8;
                         hardMode = (flags & 16) == 16;
                         killedClown = (flags & 32) == 32;
+                        killedMechBoss1 = (flags2 & 1) == 1;
+                        killedMechBoss2 = (flags2 & 2) == 2;
+                        killedMechBoss3 = (flags2 & 4) == 4;
+                        killedMechBossAny = (flags2 & 8) == 8;
+                        crimson = (flags2 & 32) == 32;
                         meteorSpawned = false;
                         killedFrost = false;
                         killedGoblins = false;
+                        killedPirates = false;
+                        killedPlantBoss = false;
+                        killedQueenBee = false;
                         savedMechanic = false;
                         savedTinkerer = false;
                         savedWizard = false;
@@ -2288,10 +2031,18 @@ namespace Terrafirma
                                     tiles[x, y].isActive = false;
                                     tiles[x, y].wall = 0;
                                     tiles[x, y].liquid = 0;
-                                    tiles[x, y].hasWire = false;
+                                    tiles[x, y].hasRedWire = false;
+                                    tiles[x, y].hasGreenWire = false;
+                                    tiles[x, y].hasBlueWire = false;
+                                    tiles[x, y].half = false;
+                                    tiles[x, y].color = 0;
                                 }
                             SendMessage(8); //request initial tile data
                         }
+                        chests.Clear();
+                        signs.Clear();
+                        npcs.Clear();
+                        loadPlayerMap();
                     }
                     break;
                 case 0x08: //request initial tile data - c2s only
@@ -2316,8 +2067,21 @@ namespace Terrafirma
                         {
                             Tile tile = tiles[x, y];
                             byte flags = messages[payload++];
+                            byte flags2 = messages[payload++];
                             tile.isActive = (flags & 1) == 1;
-                            tile.hasWire = (flags & 16) == 16;
+                            tile.hasRedWire = (flags & 16) == 16;
+                            tile.half = (flags & 32) == 32;
+                            tile.hasGreenWire = (flags2 & 1) == 1;
+                            tile.hasBlueWire = (flags2 & 2) == 2;
+                            tile.slope = (byte)((flags2 & 0x30) >> 4);
+                            if ((flags2 & 4) == 4)
+                                tile.color = messages[payload++];
+                            else
+                                tile.color = 0;
+                            if ((flags2 & 8) == 8)
+                                tile.wallColor = messages[payload++];
+                            else
+                                tile.wallColor = 0;
                             if (tile.isActive)
                             {
                                 tile.type = messages[payload++];
@@ -2343,7 +2107,9 @@ namespace Terrafirma
                             if ((flags & 8) == 8)
                             {
                                 tile.liquid = messages[payload++];
-                                tile.isLava = messages[payload++] == 1;
+                                tile.isLava = messages[payload] == 1;
+                                tile.isHoney = messages[payload] == 2;
+                                payload++;
                             }
                             else
                                 tile.liquid = 0;
@@ -2359,7 +2125,14 @@ namespace Terrafirma
                                 tiles[r, y].wallv = -1;
                                 tiles[r, y].liquid = tiles[x, y].liquid;
                                 tiles[r, y].isLava = tiles[x, y].isLava;
-                                tiles[r, y].hasWire = tiles[x, y].hasWire;
+                                tiles[r, y].isHoney = tiles[x, y].isHoney;
+                                tiles[r, y].hasRedWire = tiles[x, y].hasRedWire;
+                                tiles[r, y].hasGreenWire = tiles[x, y].hasGreenWire;
+                                tiles[r, y].hasBlueWire = tiles[x, y].hasBlueWire;
+                                tiles[r, y].half = tiles[x, y].half;
+                                tiles[r, y].slope = tiles[x, y].slope;
+                                tiles[r, y].color = tiles[x, y].color;
+                                tiles[r, y].wallColor = tiles[x, y].wallColor;
                             }
                             x += rle;
                         }
@@ -2426,7 +2199,7 @@ namespace Terrafirma
                         int slot = BitConverter.ToInt16(messages, payload); payload += 2;
                         float posx = BitConverter.ToSingle(messages, payload); payload += 4;
                         float posy = BitConverter.ToSingle(messages, payload); payload += 4;
-                        payload += 32; //don't care about velocity, target, ai, or direction
+                        payload += 30; //don't care about velocity, target, ai, or direction
                         int id = BitConverter.ToInt16(messages, payload);
                         bool found = false;
                         for (int i = 0; i < npcs.Count; i++)
@@ -2531,7 +2304,7 @@ namespace Terrafirma
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                             {
                                 serverText.Text = "";
-                                render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, npcs);
+                                render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, npcs);
                                 loaded = true;
                                 curX = spawnX;
                                 curY = spawnY;
@@ -2545,11 +2318,19 @@ namespace Terrafirma
                         SendMessage(0x0c); //spawn
                         if (tilesWide == 8400) //large world
                         {
-                            socket.Close();
-                            busy = false;
+                            //give the user a choice to map a remote large world
                             Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                             {
-                                MessageBox.Show("Will not map remote large worlds\nother than the spawn point");
+                                if (MessageBox.Show(this, "Mapping remote large worlds is not recommend.\nContinue to map the rest of the world?", "Map Whole World",
+                                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                {
+                                    fetchNextSection(); //start fetching the world
+                                }
+                                else
+                                {
+                                    socket.Close();
+                                    busy = false;
+                                }
                             }));
                         }
                         else
@@ -2607,6 +2388,20 @@ namespace Terrafirma
                         }
                     }
                     break;
+                case 0x3d: //summon boss
+                    break;
+                case 0x3e: //ninja dodge
+                    break;
+                case 0x3f: //paint tile
+                    break;
+                case 0x40: //paint wall
+                    break;
+                case 0x41: //teleport npc
+                    break;
+                case 0x42: //heal player
+                    break;
+                case 0x44: //unknown
+                    break;
                 default: // ignore unknown messages
                     break;
             }
@@ -2661,8 +2456,9 @@ namespace Terrafirma
                     Buffer.BlockCopy(BitConverter.GetBytes((float)(y*16.0)), 0, writeBuffer, payload, 4); payload+=4;
                     byte[] velocity = BitConverter.GetBytes((float)0);
                     Buffer.BlockCopy(velocity, 0, writeBuffer, payload, 4); payload+=4;
-                    Buffer.BlockCopy(velocity, 0, writeBuffer, payload, 4);
-                    payloadLen += 19;
+                    Buffer.BlockCopy(velocity, 0, writeBuffer, payload, 4); payload+=4;
+                    writeBuffer[payload] = 0; //not on a rope
+                    payloadLen += 20;
                     break;
                 case 0x10: //set player life
                     writeBuffer[payload++] = playerSlot;
@@ -2799,21 +2595,6 @@ namespace Terrafirma
         private void Save_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             var dlg = new Microsoft.Win32.SaveFileDialog();
-            try
-            {
-                string path = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Terrafirma\";
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-                FileInfo wldFileInfo = new FileInfo(currentWorld);
-                dlg.FileName = path + wldFileInfo.Name.Replace(wldFileInfo.Extension, "") + "-" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
-                dlg.InitialDirectory = path;
-            }
-            catch (Exception)
-            {
-
-            }
             dlg.DefaultExt = ".png";
             dlg.Filter = "Png Image|*.png";
             dlg.Title = "Save Map Image";
@@ -2853,11 +2634,11 @@ namespace Terrafirma
                         starty = curY - (ht / (2 * sc));
                     }
                     pixels = new byte[wd * ht * 4];
-                    
+
                     render.Draw(wd, ht, startx, starty, sc,
                         ref pixels, false, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
-                        saveOpts.UseTextures && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked, ref tiles);
-                    
+                        saveOpts.UseTextures && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked,
+                        FogOfWar.IsChecked, ref tiles);
 
                     BitmapSource source = BitmapSource.Create(wd, ht, 96.0, 96.0,
                         PixelFormats.Bgr32, null, pixels, wd * 4);
@@ -2885,13 +2666,22 @@ namespace Terrafirma
         private void ShowStats_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             WorldStats stats = new WorldStats();
-            stats.Add("Eye of Cthulu", killedBoss1 ? "Defeated" : "Undefeated");
-            stats.Add("Eater of Worlds", killedBoss2 ? "Defeated" : "Undefeated");
-            stats.Add("Skeletron", killedBoss3 ? "Defeated" : "Undefeated");
-            stats.Add("Wall of Flesh", hardMode ? "Defeated" : "Undefeated");
-            stats.Add("Goblin Invasion", killedGoblins ? "Destroyed" : goblinsDelay == 0 ? "Ongoing" : "In " + goblinsDelay);
-            stats.Add("Clown", killedClown ? "Dead" : "Nope!");
-            stats.Add("Frost Horde", killedFrost ? "Destroyed" : "Unsummoned");
+            stats.Add("Eye of Cthulhu", killedBoss1 ? "Blackened" : "Undefeated");
+            // killedBoss2 should be Brain of Cthulhu in crimson, but it isn't.
+            if (!crimson)
+                stats.Add("Eater of Worlds", killedBoss2 ? "Choked" : "Undefeated");
+            stats.Add("Skeletron", killedBoss3 ? "Boned" : "Undefeated");
+            stats.Add("Wall of Flesh", hardMode ? "Flayed" : "Undefeated");
+            stats.Add("Queen Bee", killedQueenBee ? "Swatted" : "Undefeated");
+            stats.Add("The Destroyer", killedMechBoss1 ? "Destroyed" : "Undefeated");
+            stats.Add("The Twins", killedMechBoss2 ? "Separated" : "Undefeated");
+            stats.Add("Skeletron Prime", killedMechBoss3 ? "Boned" : "Undefeated");
+            stats.Add("Plantera", killedPlantBoss ? "Weeded" : "Undefeated");
+            stats.Add("Golem", killedGolemBoss ? "Stoned" : "Undefeated");
+            stats.Add("Goblin Invasion", killedGoblins ? "Thwarted" : "Undefeated");
+            stats.Add("Clown", killedClown ? "Eviscerated" : "Undefeated");
+            stats.Add("Frost Horde", killedFrost ? "Thawed" : "Undefeated");
+            stats.Add("Pirates", killedPirates ? "Keelhauled" : "Undefeated");
             stats.Add("Tinkerer", savedTinkerer ? "Saved" : killedGoblins ? "Bound" : "Not present yet");
             stats.Add("Wizard", savedWizard ? "Saved" : hardMode ? "Bound" : "Not present yet");
             stats.Add("Mechanic", savedMechanic ? "Saved" : killedBoss3 ? "Bound" : "Not present yet");
@@ -2900,6 +2690,31 @@ namespace Terrafirma
             stats.Add("Orbs left til EoW", (3 - shadowOrbCount).ToString());
             stats.Add("Altars Smashed", altarsSmashed.ToString());
             stats.Show();
+        }
+
+        private void FindItem_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Dictionary<string,List<int>> items=new Dictionary<string,List<int>>();
+            for (int i = 0; i < chests.Count; i++)
+            {
+                foreach (ChestItem c in chests[i].items)
+                {
+                    if (c.name == null)
+                        continue;
+                    if (!items.ContainsKey(c.name))
+                        items.Add(c.name, new List<int>());
+                    items[c.name].Add(i);
+                }
+            }
+
+            FindItem fi = new FindItem(items);
+            if (fi.ShowDialog() == true)
+            {
+                int id = fi.SelectedChest;
+                curX = chests[id].x;
+                curY = chests[id].y;
+                RenderMap();
+            }
         }
 
         private void initWindow(object sender, EventArgs e)
@@ -3104,7 +2919,20 @@ namespace Terrafirma
         }
 
 
+        // Quick Highlight stuffs
         ArrayList theTiles;
+        private void AddVariants(ArrayList tiles, TileInfo info)
+        {
+            foreach (TileInfo v in info.variants)
+            {
+                if (v.name != info.name)
+                {
+                    v.isHilighting = false;
+                    tiles.Add(new HTile(v.name, v));
+                }
+                AddVariants(tiles, v);
+            }
+        }
         private void loadHighlight()
         {
             ArrayList items = tileInfos.Items();
@@ -3118,24 +2946,12 @@ namespace Terrafirma
             theTiles.Sort();
             tileList.ItemsSource = theTiles;
         }
-        private void AddVariants(ArrayList tiles, TileInfo info)
-        {
-            foreach (TileInfo v in info.variants)
-            {
-                if (v.name != info.name)
-                {
-                    v.isHilighting = false;
-                    tiles.Add(new HTile(v.name, v));
-                }
-                AddVariants(tiles, v);
-            }
-        }
-
         private void tileList_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
-        {
+        {   
             foreach (var item in e.RemovedItems)
             {
                 (item as HTile).Info.isHilighting = false;
+                loadHighlight();
             }
             if (tileList.SelectedItems.Count == 0)
             {
@@ -3155,13 +2971,37 @@ namespace Terrafirma
                     hiliteVariants(i);
                 }
             }
-            RenderMap();   
+            RenderMap();
         }
 
         private void button2_Click_1(object sender, RoutedEventArgs e)
         {
             isHilight = false;
             loadHighlight();
+        }
+    }
+    public class HTile : IComparable
+    {
+        private string name;
+        private TileInfo info;
+        public HTile(string name, TileInfo info)
+        {
+            this.name = name;
+            this.info = info;
+        }
+        public TileInfo Info
+        {
+            get { return info; }
+        }
+        public override string ToString()
+        {
+            return name;
+        }
+        int IComparable.CompareTo(object obj)
+        {
+            HTile h = (HTile)obj;
+            int r = String.Compare(this.name, h.name);
+            return r;
         }
     }
 }

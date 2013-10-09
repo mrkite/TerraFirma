@@ -37,10 +37,12 @@ namespace Terrafirma
         private TileInfos tileInfos;
         private WallInfo[] wallInfo;
         private UInt32 skyColor, earthColor, rockColor, hellColor;
-        private UInt32 waterColor, lavaColor;
+        private UInt32 waterColor, lavaColor, honeyColor;
         private Int32 tilesWide, tilesHigh;
         private int groundLevel, rockLevel;
         private List<NPC> npcs;
+        private byte[] styles;
+        private Int32[] treeX,treeStyle;
 
         Random rand;
 
@@ -48,7 +50,7 @@ namespace Terrafirma
 
         public Render(TileInfos tileInfos, WallInfo[] wallInfo,
             UInt32 skyColor, UInt32 earthColor, UInt32 rockColor, UInt32 hellColor,
-            UInt32 waterColor, UInt32 lavaColor)
+            UInt32 waterColor, UInt32 lavaColor, UInt32 honeyColor)
         {
             this.tileInfos = tileInfos;
             this.wallInfo = wallInfo;
@@ -58,17 +60,22 @@ namespace Terrafirma
             this.hellColor = hellColor;
             this.waterColor = waterColor;
             this.lavaColor = lavaColor;
+            this.honeyColor = honeyColor;
             rand = new Random();
         }
 
         public void SetWorld(Int32 tilesWide, Int32 tilesHigh,
-            int groundLevel, int rockLevel, List<NPC> npcs)
+            int groundLevel, int rockLevel, byte[] styles, 
+            Int32[] treeX, Int32[] treeStyle, List<NPC> npcs)
         {
             this.tilesWide = tilesWide;
             this.tilesHigh = tilesHigh;
             this.groundLevel = groundLevel;
             this.rockLevel = rockLevel;
             this.npcs = npcs;
+            this.styles = styles;
+            this.treeX = treeX;
+            this.treeStyle = treeStyle;
         }
 
 
@@ -82,7 +89,7 @@ namespace Terrafirma
             double startx, double starty,
             double scale, ref byte[] pixels,
             bool isHilight,
-            int light, bool texture, bool houses, bool wires, ref Tile[,] tiles)
+            int light, bool texture, bool houses, bool wires, bool fogofwar, ref Tile[,] tiles)
         {
             if (texture)
             {
@@ -105,6 +112,42 @@ namespace Terrafirma
                 double lightR, lightG, lightB;
 
                 // draw backgrounds
+
+				/*
+					midx = middle of current view:
+					style=caveBackStyle[3];
+					if (midx<=caveBackX[0]) style=caveBackStyle[0]
+					else if (midx<=treeX[1]) style=caveBackStyle[1]
+					else if (midx<=treeX[2]) style=caveBackStyle[2]
+
+					switch (style)
+					{
+						case 0:
+							styles=[66,67,68,69,128,125];
+						case 1:
+							styles=[70,71,68,72,128,125];
+						case 2:
+							styles=[73,74,75,76,131,125];
+						case 3:
+							styles=[77,78,79,80,134,125];
+						case 4:
+							styles=[77,81,79,82,134,125];
+						case 5:
+							styles=[83,84,85,86,137,125];
+						case 6:
+							styles=[83,87,88,89,137,125];
+						case 7:
+							styles=[121,122,123,124,140,125];
+						case 8:
+							if (jungleBackStyle==0)
+								styles=[153,147,148,149,150,125];
+							else
+								styles=[146,154,155,156,157,125];
+					}
+					styles[4]+=hellBackStyle
+					styles[5]+=hellBackStyle
+				*/
+
 
                 int hellLevel = ((tilesHigh - 230) - groundLevel) / 6; //rounded
                 hellLevel = hellLevel * 6 + groundLevel - 5;
@@ -187,6 +230,8 @@ namespace Terrafirma
                             lightG *= 0.3;
                             lightB *= 0.3;
                         }
+                        if (fogofwar && !tile.seen)
+                            lightR = lightG = lightB = 0.0;
 
 
                         int u = (sx % (bgw / 16)) * 16;
@@ -202,6 +247,8 @@ namespace Terrafirma
                 }
 
                 //draw walls
+
+                Texture wallOutline = Textures.GetWallOutline(0);
 
                 py = skipy * (int)scale - (int)(scale / 2);
                 for (int y = skipy; y < blocksHigh; y++)
@@ -240,8 +287,29 @@ namespace Terrafirma
                                 lightB *= 0.3;
                             }
 
+                            if (fogofwar && !tile.seen)
+                                lightR = lightG = lightB = 0.0;
+
                             drawTexture(tex, 32, 32, tile.wallv * tex.width * 4 * 2 + tile.wallu * 4 * 2,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                            Int16 blend = wallInfo[tile.wall].blend;
+                            if (sx > 0 && tiles[sx - 1, sy].wall > 0 &&
+                                wallInfo[tiles[sx - 1, sy].wall].blend != blend)
+                                drawTexture(wallOutline, 2, 16, 0,
+                                    pixels, (int)(px + (scale / 2) - shiftx), (int)(py + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                            double pad = 14.0 * scale / 16.0;
+                            if (sx < tilesWide - 2 && tiles[sx + 1, sy].wall > 0 &&
+                                wallInfo[tiles[sx + 1, sy].wall].blend != blend)
+                                drawTexture(wallOutline, 2, 16, 14 * 4 * 2,
+                                    pixels, (int)(px + pad + (scale / 2) - shiftx), (int)(py + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                            if (sy > 0 && tiles[sx, sy - 1].wall > 0 &&
+                                wallInfo[tiles[sx, sy - 1].wall].blend != blend)
+                                drawTexture(wallOutline, 16, 2, 0,
+                                    pixels, (int)(px + (scale / 2) - shiftx), (int)(py + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                            if (sy < tilesHigh - 2 && tiles[sx, sy + 1].wall > 0 &&
+                                wallInfo[tiles[sx, sy + 1].wall].blend != blend)
+                                drawTexture(wallOutline, 16, 2, 14 * tex.width * 4 * 2,
+                                    pixels, (int)(px + (scale / 2) - shiftx), (int)(py + pad + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                         }
 
                         px += (int)scale;
@@ -283,17 +351,93 @@ namespace Terrafirma
                             lightG *= 0.3;
                             lightB *= 0.3;
                         }
+                        if (fogofwar && !tile.seen)
+                            lightR = lightG = lightB = 0.0;
 
                         if (tile.isActive)
                         {
                             if (tile.u == -1 || tile.v == -1) fixTile(sx, sy, ref tiles);
+                            bool flip = false;
+                            // flip every other weed, coral, herb, banner, etc
+                            if (tile.type==3 || tile.type==13 || tile.type==20 || tile.type==24 ||
+                                tile.type==49 || tile.type==50 || tile.type==52 || tile.type==61 ||
+                                tile.type==62 || tile.type==71 || tile.type==73 || tile.type==73 ||
+                                tile.type==74 || tile.type==81 || tile.type==82 || tile.type==84 ||
+                                tile.type==91 || tile.type==92 || tile.type==93 || tile.type==110 ||
+                                tile.type==113 || tile.type==115 || tile.type==135 || tile.type==141 ||
+                                tile.type==165 || tile.type==201 || tile.type==205 || tile.type==227)
+                                flip=(sx&1)==1;
 
                             int texw = 16;
                             int texh = 16;
+                            int toppad = 0;
+                            if (tile.type == 4 && tileInfos[tiles[sx,sy-1].type].solid) //torch
+                            {
+                                toppad = 2;
+                                if (tileInfos[tiles[sx - 1, sy + 1].type].solid ||
+                                    tileInfos[tiles[sx + 1, sy + 1].type].solid)
+                                    toppad = 4;
+                            }
+                            if (tile.type == 78 || tile.type == 85 || tile.type == 105 || tile.type==132 ||
+                                tile.type == 133 || tile.type == 134 || tile.type==135 || tile.type == 139 ||
+                                tile.type == 142 || tile.type == 143 || (tile.type == 178 && tile.v <= 36) ||
+                                tile.type == 185 || tile.type == 186 || tile.type == 187 || tile.type == 207 ||
+                                tile.type == 210 || tile.type == 215 || tile.type == 217 || tile.type == 218 ||
+                                tile.type == 219 || tile.type == 220 || tile.type == 231 || tile.type == 233 ||
+                                tile.type == 243 || tile.type == 244 || tile.type == 247) //small items have a gap
+                                toppad = 2;
+                            if (tile.type == 33 || tile.type == 49 || tile.type == 174) //candles
+                                toppad = -4;
 
-                            if (tile.type == 5) //tree
+                            //trees and weeds and others are 20 pixels tall
+                            if (tile.type == 3 || tile.type == 4 || tile.type == 5 || tile.type == 24 ||
+                                tile.type == 33 || tile.type == 49 || tile.type == 61 || tile.type == 71 ||
+                                tile.type == 110 || tile.type == 174 || tile.type == 201)
+                                texh = 20;
+                            // furniture and others are 18 pixels tall
+                            else if (tile.type == 14 || tile.type == 15 || tile.type == 16 || tile.type == 17 ||
+                                tile.type == 18 || tile.type == 20 || tile.type == 21 || tile.type == 26 ||
+                                tile.type == 27 || tile.type == 32 || tile.type == 69 || tile.type == 72 ||
+                                tile.type == 77 || tile.type == 80 || tile.type == 124 || tile.type == 132 ||
+                                tile.type == 135 || tile.type == 137 || tile.type == 138)
+                                texh = 18;
+                            if (tile.type == 52) //vines
+                                toppad -= 2;
+                            if (tile.type == 28 || tile.type == 238 ) //pots and purple flower
+                                toppad += 2;
+                            if (tile.type == 4 || tile.type == 5) //torch and tree
                                 texw = 20;
-                            if (tile.type == 72) //mushroom
+                            if (tile.type == 73 || tile.type == 74 || tile.type == 113) //weeds
+                            {
+                                toppad -= 12;
+                                texh = 32;
+                            }
+                            if (tile.type == 227) //dye plants
+                            {
+                                texw = 32;
+                                texh = 38;
+                                if (tile.u == 238) //orange blood root
+                                    toppad -= 6;
+                                else
+                                    toppad -= 20;
+                            }
+                            if (tile.type == 184) //flowers
+                            {
+                                texw = 20;
+                                if (tile.v <= 36)
+                                    toppad = 2;
+                                else if (tile.v <= 108)
+                                    toppad = -2;
+                            }
+                            if (tile.type == 81) //coral
+                            {
+                                toppad -= 8;
+                                texw = 24;
+                                texh = 26;
+                            }
+
+
+                            if (tile.type == 72 && tile.u>=36) //mushroom
                                 drawMushroom(tile.u, tile.v,
                                     pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
 
@@ -328,17 +472,172 @@ namespace Terrafirma
                                     delayed.Add(delay);
                                 }
                             }
-                            else
+                            else if (tile.type == 237 && tile.u == 18 && tile.v == 0) //lihzahrd altar
                             {
-                                Texture tex = Textures.GetTile(tile.type);
+                                Delayed delay = new Delayed();
+                                delay.sx = sx;
+                                delay.sy = sy;
+                                delay.px = (int)(px - shiftx);
+                                delay.py = (int)(py - shifty);
+                                delayed.Add(delay);
+                            }
+                            else if (tile.type == 5) //tree
+                            {
+                                int wood = -1;
+                                int trunkx = sx;
+                                int trunky = sy;
+                                if (tile.u == 66 && tile.v <= 45) trunkx++;
+                                if (tile.u == 88 && tile.v >= 66 && tile.v <= 110) trunkx--;
+                                if (tile.u == 22 && tile.v >= 132) trunkx--;
+                                if (tile.u == 44 && tile.v >= 132) trunkx++;
+                                while (tiles[trunkx, trunky].isActive && tiles[trunkx, trunky].type == 5)
+                                    trunky++;
+                                if (tiles[trunkx, trunky].isActive)
+                                {
+                                    switch (tiles[trunkx, trunky].type)
+                                    {
+                                        case 23: //corrupted grass
+                                            wood = 0;
+                                            break;
+                                        case 60: //jungle grass
+                                            wood = 1;
+                                            if (trunky > groundLevel)
+                                                wood = 5;
+                                            break;
+                                        case 70: //mushroom grass
+                                            wood = 6;
+                                            break;
+                                        case 109: //hallowed grass
+                                            wood = 2;
+                                            break;
+                                        case 147: //snow
+                                            if (styles[3] != 0)
+                                                wood = 3;
+                                            break;
+                                        case 199: //flesh
+                                            wood = 4;
+                                            break;
+                                    }
+                                }
+                                Texture tex;
+                                if (wood == -1)
+                                    tex = Textures.GetTile(tile.type);
+                                else
+                                    tex = Textures.GetWood(wood);
                                 drawTexture(tex, texw, texh, tile.v * tex.width * 4 + tile.u * 4,
                                     pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                            }
+                            else
+                            {
+                                Texture tex;
+                                tex = Textures.GetTile(tile.type);
+
+                                double ypad=0.0;
+                                if (tile.slope > 0)
+                                {
+                                    if (tile.slope == 1)
+                                    {
+                                        for (int i = 0; i < 8; i++)
+                                        {
+                                            double xpad = ((double)i * 2.0) * scale / 16.0;
+                                            ypad = ((double)toppad + (double)i * 2.0) * scale / 16.0;
+                                            drawTexture(tex, 2, 14 - i * 2, tile.v * tex.width * 4 + (tile.u + i * 2) * 4,
+                                                pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                        }
+                                    }
+                                    if (tile.slope == 2)
+                                    {
+                                        for (int i = 0; i < 8; i++)
+                                        {
+                                            double xpad = (14 - (double)i * 2.0) * scale / 16.0;
+                                            ypad = ((double)toppad + (double)i * 2.0) * scale / 16.0;
+                                            drawTexture(tex, 2, 14 - i * 2, tile.v * tex.width * 4 + (tile.u + 14 - i * 2) * 4,
+                                                pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                        }
+                                    }
+                                    ypad = ((double)toppad + 14.0) * scale / 16.0;
+                                    drawTexture(tex, 16, 2, (tile.v + 14) * tex.width * 4 + tile.u * 4,
+                                        pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                }
+                                else
+                                {
+                                    //non-platform solid tile next to a half tile
+                                    if (!tile.half && tile.type != 19 && tileInfos[tile.type].solid &&
+                                        (tiles[sx - 1, sy].half || tiles[sx + 1, sy].half))
+                                    {
+                                        if (tiles[sx - 1, sy].half && tiles[sx + 1, sy].half) //both sides
+                                        {
+                                            ypad = ((double)toppad + 8.0) * scale / 16.0;
+                                            drawTexture(tex, texw, 8, (tile.v + 8) * tex.width * 4 + tile.u * 4,
+                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                            ypad = (double)toppad * scale / 16.0;
+                                            drawTexture(tex, 16, 8, 126 * 4,
+                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                        }
+                                        else
+                                        {
+                                            ypad = ((double)toppad + 8.0) * scale / 16.0;
+                                            drawTexture(tex, texw, 8, (tile.v + 8) * tex.width * 4 + tile.u * 4,
+                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                            if (tiles[sx - 1, sy].half) //left side
+                                            {
+                                                double xpad = 4 * scale / 16.0;
+                                                ypad = (double)toppad * scale / 16.0;
+                                                drawTexture(tex, texw - 4, texh, tile.v * tex.width * 4 + (tile.u + 4) * 4,
+                                                    pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                drawTexture(tex, 4, 8, 126 * 4,
+                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                            }
+                                            else //right side
+                                            {
+                                                ypad = (double)toppad * scale / 16.0;
+                                                drawTexture(tex, texw - 4, texh, tile.v * tex.width * 4 + tile.u * 4,
+                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                double xpad = 12 * scale / 16.0;
+                                                drawTexture(tex, 4, 8, 138 * 4,
+                                                    pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //half block on top of an empty space
+                                        if (tile.half && (!tiles[sx, sy + 1].isActive || !tileInfos[tiles[sx, sy + 1].type].solid ||
+                                            tiles[sx, sy + 1].half))
+                                        {
+                                            ypad = ((double)toppad + 8.0) * scale / 16.0;
+                                            if (tile.type == 19) //platform
+                                            {
+                                                drawTexture(tex, texw, texh, tile.v * tex.width * 4 + tile.u * 4,
+                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                            }
+                                            else
+                                            {
+                                                drawTexture(tex, texw, texh - 12, tile.v * tex.width * 4 + tile.u * 4,
+                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                ypad = ((double)toppad + 12.0) * scale / 16.0;
+                                                drawTexture(tex, texw, 4, 66 * tex.width * 4 + 144 * 4,
+                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ypad = ((double)toppad + (tile.half ? 8.0 : 0.0)) * scale / 16.0;
+                                            if (flip)
+                                                drawTextureFlip(tex, texw - 1, texh, tile.v * tex.width * 4 + tile.u * 4,
+            pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                            else
+                                                drawTexture(tex, texw, texh - (tile.half ? 8 : 0), tile.v * tex.width * 4 + tile.u * 4,
+                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                        }
+                                    }
+                                }
                             }
                         }
                         // draw liquid
                         if (tile.liquid > 0)
                         {
-                            UInt32 c = tile.isLava ? lavaColor : waterColor;
+                            UInt32 c = tile.isLava ? lavaColor : tile.isHoney ? honeyColor : waterColor;
                             uint r = (uint)((c >> 16) * lightR);
                             uint g = (uint)(((c >> 8) & 0xff) * lightG);
                             uint b = (uint)((c & 0xff) * lightB);
@@ -347,7 +646,7 @@ namespace Terrafirma
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                         }
                         // draw wires if necessary
-                        if (wires && tile.hasWire)
+                        if (wires && tile.hasRedWire)
                         {
                             drawWire(sx, sy, pixels,
                                 (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, ref tiles);
@@ -380,6 +679,8 @@ namespace Terrafirma
                         lightG *= 0.3;
                         lightB *= 0.3;
                     }
+                    if (fogofwar && !tile.seen)
+                        lightR = lightG = lightB = 0.0;
 
                     if (tile.type == 128) //armor
                     {
@@ -538,7 +839,7 @@ namespace Terrafirma
                                     c = alphaBlend(c, 0xff88ff, 0.9);
                             }
                             if (tile.liquid > 0)
-                                c = alphaBlend(c, tile.isLava ? lavaColor : waterColor, 0.5);
+                                c = alphaBlend(c, tile.isLava ? lavaColor : tile.isHoney ? honeyColor : waterColor, 0.5);
                             if (light == 1)
                                 c = alphaBlend(0, c, tile.light);
                             else if (light == 2)
@@ -551,6 +852,8 @@ namespace Terrafirma
                             }
                             if (isHilight && (!tile.isActive || !tileInfos[tile.type, tile.u, tile.v].isHilighting))
                                 c = alphaBlend(0, c, 0.3);
+                            if (fogofwar && !tile.seen)
+                                c = 0;
                         }
                         pixels[bofs++] = (byte)(c & 0xff);
                         pixels[bofs++] = (byte)((c >> 8) & 0xff);
@@ -566,15 +869,39 @@ namespace Terrafirma
             {
                 Tile tile = tiles[x, y + i];
                 if (tile.type == 2) //normal grass
-                    return 0;
+                {
+                    int s = treeStyle[3];
+                    for (int j = 0; j < 3; j++)
+                        if (x <= treeX[j])
+                        {
+                            s = treeStyle[j];
+                            break;
+                        }
+                    if (s == 0) return 0;
+                    return s + 5;
+                }
                 if (tile.type == 23) //corrupt grass
                     return 1;
                 if (tile.type == 60) //jungle grass
+                {
+                    if (y > groundLevel)
+                        return 13;
+                    if (styles[2] == 1)
+                        return 11;
                     return 2;
+                }
                 if (tile.type == 109) //hallowed grass
                     return 3;
                 if (tile.type == 147) //snow block
+                {
+                    if (styles[3] == 0)
+                        return 12;
                     return 4;
+                }
+                if (tile.type == 70) //mushroom grass
+                    return 14;
+                if (tile.type == 199) //flesh grass
+                    return 5;
             }
             return 0;
         }
@@ -583,10 +910,10 @@ namespace Terrafirma
         {
             int mask = 0;
             //udlr
-            if (sx < tilesWide - 1 && tiles[sx + 1, sy].hasWire) mask |= 1; //right
-            if (sx > 0 && tiles[sx - 1, sy].hasWire) mask |= 2; //left
-            if (sy < tilesHigh - 1 && tiles[sx, sy + 1].hasWire) mask |= 4; //down
-            if (sy > 0 && tiles[sx, sy - 1].hasWire) mask |= 8; //up
+            if (sx < tilesWide - 1 && tiles[sx + 1, sy].hasRedWire) mask |= 1; //right
+            if (sx > 0 && tiles[sx - 1, sy].hasRedWire) mask |= 2; //left
+            if (sy < tilesHigh - 1 && tiles[sx, sy + 1].hasRedWire) mask |= 4; //down
+            if (sy > 0 && tiles[sx, sy - 1].hasRedWire) mask |= 8; //up
             Texture tex = Textures.GetWire(0);
             drawTexture(tex, 16, 16, uvWires[mask * 2 + 1] * tex.width * 4 + uvWires[mask * 2] * 4, pixels,
                 px, py, w, h, zoom, lightR, lightG, lightB);
@@ -614,7 +941,7 @@ namespace Terrafirma
                         drawTexture(tex, 80, 140, variant * 82 * 4, pixels,
                             px - (int)(30 * zoom), py - (int)(124 * zoom), w, h, zoom, lightR, lightG, lightB);
                     }
-                    else if (leafType == 2)
+                    else if (leafType == 2 || leafType==11 || leafType==13) //jungle
                         drawTexture(tex, 114, 96, variant * 116 * 4, pixels,
                             px - (int)(46 * zoom), py - (int)(80 * zoom), w, h, zoom, lightR, lightG, lightB);
                     else
@@ -643,7 +970,6 @@ namespace Terrafirma
             byte[] pixels, int px, int py,
             int w, int h, double zoom, double lightR, double lightG, double lightB)
         {
-            if (u < 36) return; //not mushroom top
             int variant = 0;
             if (v == 18)
                 variant = 1;
@@ -658,8 +984,8 @@ namespace Terrafirma
             byte[] pixels, int px, int py,
             int w, int h, double zoom, double lightR, double lightG, double lightB)
         {
-            int tw = (int)(bw * zoom);
-            int th = (int)(bh * zoom);
+            int tw = (int)(bw * zoom+0.5);
+            int th = (int)(bh * zoom+0.5);
             int skipx = 0, skipy = 0;
             if (px < 0) skipx = -px;
             if (px + tw >= w) tw = w - px;
@@ -712,8 +1038,8 @@ namespace Terrafirma
             byte[] pixels, int px, int py,
             int w, int h, double zoom, double lightR, double lightG, double lightB)
         {
-            int tw = (int)(bw * zoom);
-            int th = (int)(bh * zoom);
+            int tw = (int)(bw * zoom +0.5);
+            int th = (int)(bh * zoom +0.5);
             int skipx = 0, skipy = 0;
             if (px < 0) skipx = -px;
             if (px + tw >= w) tw = w - px;
@@ -1239,6 +1565,18 @@ namespace Terrafirma
                 if (bl == blend) mask |= 0x202;
                 if (br == blend) mask |= 0x101;
             }
+            //set up merge rules
+            if (tileInfos[c].canMerge)
+            {
+                if (t > -1 && tileInfos[t].canMerge) mask |= 0x80000;
+                if (b > -1 && tileInfos[b].canMerge) mask |= 0x40000;
+                if (l > -1 && tileInfos[l].canMerge) mask |= 0x20000;
+                if (r > -1 && tileInfos[r].canMerge) mask |= 0x10000;
+                if (tl > -1 && tileInfos[tl].canMerge) mask |= 0x880;
+                if (tr > -1 && tileInfos[tr].canMerge) mask |= 0x440;
+                if (bl > -1 && tileInfos[bl].canMerge) mask |= 0x220;
+                if (br > -1 && tileInfos[br].canMerge) mask |= 0x110;
+            }
 
             if (c == 32 && b == 23) mask |= 0x40000; //corrupted vines above corrupted grass
             if (c == 69 && b == 60) mask |= 0x40000; //jungle thorn above jungle grass
@@ -1295,6 +1633,8 @@ namespace Terrafirma
                 mask &= 0xf0f00;
             else
                 mask = ((mask & 0xf0000) ^ ((mask & 0xf000) << 4)) | ((mask & 0xf0) << 4);
+
+
             foreach (UVRule rule in uvRules[mask >> 16])
             {
                 if ((mask & rule.mask) == rule.val)
@@ -1310,40 +1650,29 @@ namespace Terrafirma
         private void fixWall(int x, int y, ref Tile[,] tiles)
         {
             byte t = 0, l = 0, r = 0, b = 0;
-            byte tl = 0, tr = 0, bl = 0, br = 0;
             byte c = tiles[x, y].wall;
             int set = rand.Next(0, 3) * 2;
 
             if (x > 0)
-            {
                 l = tiles[x - 1, y].wall;
-                if (y > 0)
-                    tl = tiles[x - 1, y - 1].wall;
-                if (y < tilesHigh - 1)
-                    bl = tiles[x - 1, y + 1].wall;
-            }
             if (x < tilesWide - 1)
-            {
                 r = tiles[x + 1, y].wall;
-                if (y > 0)
-                    tr = tiles[x + 1, y - 1].wall;
-                if (y < tilesHigh - 1)
-                    br = tiles[x + 1, y + 1].wall;
-            }
             if (y > 0)
                 t = tiles[x, y - 1].wall;
             if (y < tilesHigh - 1)
                 b = tiles[x, y + 1].wall;
 
+            //we don't actually care what the wall texture is, we just care if there's a wall or not.
             int mask = 0;
-            if (t == c) mask |= 0x80000;
-            if (b == c) mask |= 0x40000;
-            if (l == c) mask |= 0x20000;
-            if (r == c) mask |= 0x10000;
-            if (tl == c) mask |= 0x880;
-            if (tr == c) mask |= 0x440;
-            if (bl == c) mask |= 0x220;
-            if (br == c) mask |= 0x110;
+            if (t > 0) mask |= 0x80000;
+            if (b > 0) mask |= 0x40000;
+            if (l > 0) mask |= 0x20000;
+            if (r > 0) mask |= 0x10000;
+            if (x % 3 == 1 && y % 3 == 1) mask |= 0x300;
+            else if (x % 3 == 0 && y % 3 == 0) mask |= 0xc00;
+            else if (x % 3 == 2 && y % 3 == 1) mask |= 0x500;
+            else if (x % 3 == 1 && y % 3 == 2) mask |= 0xa00;
+            else mask |= 0xf00;
 
             foreach (UVRule rule in uvRules[mask >> 16])
             {

@@ -26,10 +26,14 @@
                 <MenuItem Command="w:MapCommands.Houses" Name="ShowHouses" IsCheckable="True" />
                 <MenuItem Command="w:MapCommands.Wires" Name="ShowWires" IsCheckable="True" />
                 <Separator />
+				<MenuItem Header="Select _Player" Name="Players">
+				</MenuItem>
+                <MenuItem Command="w:MapCommands.FogOfWar" Name="FogOfWar" IsChecked="True" />
+                <Separator />
                 <MenuItem Header="Lighting">
-                    <MenuItem Command="w:MapCommands.NoLight" Name="Lighting0" IsCheckable="True" IsChecked="True" />
-                    <MenuItem Command="w:MapCommands.Lighting" Name="Lighting1" IsCheckable="True" />
-                    <MenuItem Command="w:MapCommands.NewLight" Name="Lighting2" IsCheckable="True" />
+                    <MenuItem Command="w:MapCommands.NoLight" Name="Lighting0" IsChecked="True" />
+                    <MenuItem Command="w:MapCommands.Lighting" Name="Lighting1"  />
+                    <MenuItem Command="w:MapCommands.NewLight" Name="Lighting2"  />
                 </MenuItem>
                 <Separator />
                 <MenuItem Command="w:MapCommands.Hilight" />
@@ -41,6 +45,7 @@
                 <MenuItem Command="w:MapCommands.JumpToSpawn" />
                 <MenuItem Command="w:MapCommands.JumpToDungeon" />
                 <MenuItem Header="NPCs" IsEnabled="False" Name="NPCs" />
+                <MenuItem Command="w:MapCommands.FindItem" />
             </MenuItem>
         </Menu>
         <StatusBar Name="statusBar1" Height="23" VerticalAlignment="Bottom">
@@ -86,6 +91,12 @@
         <CommandBinding Command="w:MapCommands.JumpToSpawn"
                         Executed="JumpToSpawn_Executed"
                         CanExecute="MapLoaded" />
+        <CommandBinding Command="w:MapCommands.SelectPlayer"
+                        Executed="SelectPlayer"
+                        CanExecute="SelectPlayer_CanExecute" />
+        <CommandBinding Command="w:MapCommands.FogOfWar"
+                        Executed="FogOfWar_Toggle"
+                        CanExecute="FogOfWar_CanExecute" />
         <CommandBinding Command="w:MapCommands.Textures"
                         Executed="Texture_Executed"
                         CanExecute="MapLoaded" />
@@ -121,6 +132,9 @@
                         CanExecute="MapLoaded" />
         <CommandBinding Command="w:MapCommands.JumpToDungeon"
                         Executed="JumpToDungeon_Executed"
+                        CanExecute="MapLoaded" />
+        <CommandBinding Command="w:MapCommands.FindItem"
+                        Executed="FindItem_Executed"
                         CanExecute="MapLoaded" />
     </Window.CommandBindings>
 </Window>

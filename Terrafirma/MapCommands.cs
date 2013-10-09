@@ -38,6 +38,11 @@ namespace Terrafirma
     {
         public static readonly RoutedUICommand OpenWorld = new RoutedUICommand(
             "Open World", "OpenWorld", typeof(MapCommands));
+		public static readonly RoutedUICommand SelectPlayer = new RoutedUICommand(
+			"Select Player", "SelectPlayer", typeof(MapCommands));
+        public static readonly RoutedUICommand FogOfWar = new RoutedUICommand(
+            "Fog of War", "FogOfWar", typeof(MapCommands),
+            new InputGestureCollection(new InputGesture[]{ new KeyGesture(Key.F, ModifierKeys.Control) }));
         public static readonly RoutedUICommand JumpToSpawn = new RoutedUICommand(
             "Jump To Spawn", "JumpToSpawn", typeof(MapCommands),
             new InputGestureCollection(new InputGesture[]{ new KeyGesture(Key.F6) }));
@@ -69,5 +74,7 @@ namespace Terrafirma
             "World Information...", "ShowStats", typeof(MapCommands));
         public static readonly RoutedUICommand JumpToDungeon = new RoutedUICommand(
             "Jump to Dungeon", "JumpToDungeon", typeof(MapCommands));
+        public static readonly RoutedUICommand FindItem = new RoutedUICommand(
+            "Find Item", "FindItem", typeof(MapCommands));
     }
 }
