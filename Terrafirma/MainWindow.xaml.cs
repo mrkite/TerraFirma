@@ -651,8 +651,49 @@ namespace Terrafirma
             curScale = 1.0;
 
             tiles = new Tile[Widest, Highest];
-        }
 
+            //setup quick hilight menu
+            ArrayList quickItems = new ArrayList();
+            foreach (TileInfo info in tileInfos.Items())
+            {
+                info.isHilighting = false;
+                quickItems.Add(new HTile(info.name, info));
+                addVariants(quickItems, info);
+            }
+            quickItems.Sort();
+            QuickHilite.ItemsSource = quickItems;
+        }
+        private void addVariants(ArrayList quickItems, TileInfo info)
+        {
+            foreach (TileInfo v in info.variants)
+            {
+                if (v.name != info.name)
+                {
+                    v.isHilighting = true;
+                    quickItems.Add(new HTile(v.name,v));
+                }
+                addVariants(quickItems, v);
+            }
+        }
+        class HTile : IComparable
+        {
+            private string name;
+            public TileInfo Info { get; set; }
+            public HTile(string name, TileInfo info)
+            {
+                this.name = name;
+                Info = info;
+            }
+            public override string ToString()
+            {
+                return name;
+            }
+            int IComparable.CompareTo(object obj)
+            {
+                HTile h = (HTile)obj;
+                return String.Compare(name, h.name);
+            }
+        }
 
 
 
@@ -1162,8 +1203,7 @@ namespace Terrafirma
 
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
-                            // Load quick highlight items
-                            loadHighlight();
+                            QuickHiliteToggle.IsEnabled = true;
                             render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, npcs);
                             loaded = true;
                             done();
@@ -1710,24 +1750,11 @@ namespace Terrafirma
         private void Lighting_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             if (e.Command == MapCommands.NoLight)
-            {
-                Lighting0.IsChecked = true;
-                Lighting1.IsChecked = false;
-                Lighting2.IsChecked = false;
-            }
+                Lighting.SelectedIndex = 0;
             else if (e.Command == MapCommands.Lighting)
-            {
-                Lighting0.IsChecked = false;
-                Lighting1.IsChecked = true;
-                Lighting2.IsChecked = false;
-            }
+                Lighting.SelectedIndex = 1;
             else
-            {
-                Lighting0.IsChecked = false;
-                Lighting1.IsChecked = false;
-                Lighting2.IsChecked = true;
-            }
-            RenderMap();
+                Lighting.SelectedIndex = 2;
         }
         private void Texture_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -2573,8 +2600,7 @@ namespace Terrafirma
                     // also hilight the subvariants
                     hiliteVariants(i);
                 }
-                isHilight = true;
-                RenderMap();
+                QuickHiliteToggle.IsChecked = true;
             }
         }
         private void hiliteVariants(TileInfo info)
@@ -2588,8 +2614,7 @@ namespace Terrafirma
 
         private void HilightStop_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            isHilight = false;
-            RenderMap();
+            QuickHiliteToggle.IsChecked = false;
         }
         private void IsHilighting(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -2921,90 +2946,52 @@ namespace Terrafirma
             new Thread(start).Start();
         }
 
-
-        // Quick Highlight stuffs
-        ArrayList theTiles;
-        private void AddVariants(ArrayList tiles, TileInfo info)
+        private void QuickHiliteToggle_Checked(object sender, RoutedEventArgs e)
         {
-            foreach (TileInfo v in info.variants)
-            {
-                if (v.name != info.name)
-                {
-                    v.isHilighting = false;
-                    tiles.Add(new HTile(v.name, v));
-                }
-                AddVariants(tiles, v);
-            }
-        }
-        private void loadHighlight()
-        {
-            ArrayList items = tileInfos.Items();
-            theTiles = new ArrayList();
-            foreach (TileInfo info in items)
-            {
-                info.isHilighting = false;
-                theTiles.Add(new HTile(info.name, info));
-                AddVariants(theTiles, info);
-            }
-            theTiles.Sort();
-            tileList.ItemsSource = theTiles;
-        }
-        private void tileList_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
-        {
-            foreach (var item in e.RemovedItems)
-            {
-                (item as HTile).Info.isHilighting = false;
-                AddVariants(theTiles, (item as HTile).Info);
-            }
-            if (tileList.SelectedItems.Count == 0)
-            {
-                isHilight = false;
-            }
-            else
-            {
-                isHilight = true;
-                List<TileInfo> tinfo = new List<TileInfo>();
-                foreach (var item in tileList.SelectedItems)
-                {
-                    tinfo.Add((item as HTile).Info);
-                }
-                foreach (var i in tinfo)
-                {
-                    i.isHilighting = true;
-                    hiliteVariants(i);
-                }
-            }
+            isHilight = true;
             RenderMap();
         }
 
-        private void button2_Click_1(object sender, RoutedEventArgs e)
+        private void QuickHiliteToggle_Unchecked(object sender, RoutedEventArgs e)
         {
             isHilight = false;
-            loadHighlight();
+            RenderMap();
         }
-    }
-    public class HTile : IComparable
-    {
-        private string name;
-        private TileInfo info;
-        public HTile(string name, TileInfo info)
+
+        private void QuickHilite_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.name = name;
-            this.info = info;
+            foreach (object obj in QuickHilite.Items)
+            {
+                HTile info=(HTile)obj;
+                info.Info.isHilighting = false;
+            }
+            HTile tile = (HTile)QuickHilite.SelectedItem;
+            tile.Info.isHilighting = true;
+            RenderMap();
         }
-        public TileInfo Info
+
+        private void Lighting_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            get { return info; }
-        }
-        public override string ToString()
-        {
-            return name;
-        }
-        int IComparable.CompareTo(object obj)
-        {
-            HTile h = (HTile)obj;
-            int r = String.Compare(this.name, h.name);
-            return r;
+            switch (Lighting.SelectedIndex)
+            {
+                case 0:
+                    Lighting0.IsChecked = true;
+                    Lighting1.IsChecked = false;
+                    Lighting2.IsChecked = false;
+                    break;
+                case 1:
+                    Lighting0.IsChecked = false;
+                    Lighting1.IsChecked = true;
+                    Lighting2.IsChecked = false;
+                    break;
+                case 2:
+                    Lighting0.IsChecked = false;
+                    Lighting1.IsChecked = false;
+                    Lighting2.IsChecked = true;
+                    break;
+            }
+            if (loaded)
+                RenderMap();
         }
     }
 }

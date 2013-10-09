@@ -5,49 +5,62 @@
         Title="Terrafirma" Height="450" Width="525" KeyDown="Window_KeyDown" KeyUp="Window_KeyUp" SourceInitialized="initWindow">
     <Grid>
         <Border Name="resizeProxy" Margin="0,23,0,23" SizeChanged="Map_SizeChanged">
-            <Image Name="Map" Width="500" Height="360" MouseWheel="Map_MouseWheel" MouseMove="Map_MouseMove" MouseLeftButtonDown="Map_MouseLeftButtonDown" MouseLeftButtonUp="Map_MouseLeftButtonUp" MouseRightButtonUp="Map_MouseRightButtonUp" Focusable="False" />
+            <Image Name="Map" Width="500" Height="360" MouseWheel="Map_MouseWheel" MouseMove="Map_MouseMove" MouseLeftButtonDown="Map_MouseLeftButtonDown" MouseLeftButtonUp="Map_MouseLeftButtonUp" MouseRightButtonUp="Map_MouseRightButtonUp" Focusable="True" />
         </Border>
-        <Menu Height="23" Name="menu1" VerticalAlignment="Top">
-            <MenuItem Header="_File">
-                <MenuItem Header="Open _World" Name="Worlds">
+        <DockPanel>
+            <Menu Height="23" Name="menu1" DockPanel.Dock="Top">
+                <MenuItem Header="_File">
+                    <MenuItem Header="Open _World" Name="Worlds">
+                    </MenuItem>
+                    <MenuItem Command="ApplicationCommands.Open" Header="_Open" />
+                    <MenuItem Command="Refresh" />
+                    <Separator />
+                    <MenuItem Command="w:MapCommands.ConnectToServer" />
+                    <MenuItem Command="w:MapCommands.Disconnect" />
+                    <Separator />
+                    <MenuItem Command="ApplicationCommands.Save" Header="_Save PNG" />
+                    <Separator />
+                    <MenuItem Command="ApplicationCommands.Close" Header="_Close" />
                 </MenuItem>
-                <MenuItem Command="ApplicationCommands.Open" Header="_Open" />
-                <MenuItem Command="Refresh" />
-                <Separator />
-                <MenuItem Command="w:MapCommands.ConnectToServer" />
-                <MenuItem Command="w:MapCommands.Disconnect" />
-                <Separator />
-                <MenuItem Command="ApplicationCommands.Save" Header="_Save PNG" />
-                <Separator />
-                <MenuItem Command="ApplicationCommands.Close" Header="_Close" />
-            </MenuItem>
-            <MenuItem Header="_View">
-                <MenuItem Command="w:MapCommands.Textures" Name="UseTextures" />
-                <MenuItem Command="w:MapCommands.Houses" Name="ShowHouses" IsCheckable="True" />
-                <MenuItem Command="w:MapCommands.Wires" Name="ShowWires" IsCheckable="True" />
-                <Separator />
-				<MenuItem Header="Select _Player" Name="Players">
-				</MenuItem>
-                <MenuItem Command="w:MapCommands.FogOfWar" Name="FogOfWar" IsChecked="True" />
-                <Separator />
-                <MenuItem Header="Lighting">
-                    <MenuItem Command="w:MapCommands.NoLight" Name="Lighting0" IsChecked="True" />
-                    <MenuItem Command="w:MapCommands.Lighting" Name="Lighting1"  />
-                    <MenuItem Command="w:MapCommands.NewLight" Name="Lighting2"  />
+                <MenuItem Header="_View">
+                    <MenuItem Command="w:MapCommands.Textures" Name="UseTextures" />
+                    <MenuItem Command="w:MapCommands.Houses" Name="ShowHouses" IsCheckable="True" />
+                    <MenuItem Command="w:MapCommands.Wires" Name="ShowWires" IsCheckable="True" />
+                    <Separator />
+                    <MenuItem Header="Select _Player" Name="Players">
+                    </MenuItem>
+                    <MenuItem Command="w:MapCommands.FogOfWar" Name="FogOfWar" IsChecked="True" />
+                    <Separator />
+                    <MenuItem Header="Lighting">
+                        <MenuItem Command="w:MapCommands.NoLight" Name="Lighting0" IsChecked="True" />
+                        <MenuItem Command="w:MapCommands.Lighting" Name="Lighting1"  />
+                        <MenuItem Command="w:MapCommands.NewLight" Name="Lighting2"  />
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Command="w:MapCommands.Hilight" />
+                    <MenuItem Command="w:MapCommands.StopHilight" />
+                    <Separator />
+                    <MenuItem Command="w:MapCommands.ShowStats" />
                 </MenuItem>
-                <Separator />
-                <MenuItem Command="w:MapCommands.Hilight" />
-                <MenuItem Command="w:MapCommands.StopHilight" />
-                <Separator />
-                <MenuItem Command="w:MapCommands.ShowStats" />
-            </MenuItem>
-            <MenuItem Header="_Navigate">
-                <MenuItem Command="w:MapCommands.JumpToSpawn" />
-                <MenuItem Command="w:MapCommands.JumpToDungeon" />
-                <MenuItem Header="NPCs" IsEnabled="False" Name="NPCs" />
-                <MenuItem Command="w:MapCommands.FindItem" />
-            </MenuItem>
-        </Menu>
+                <MenuItem Header="_Navigate">
+                    <MenuItem Command="w:MapCommands.JumpToSpawn" />
+                    <MenuItem Command="w:MapCommands.JumpToDungeon" />
+                    <MenuItem Header="NPCs" IsEnabled="False" Name="NPCs" />
+                    <MenuItem Command="w:MapCommands.FindItem" />
+                </MenuItem>
+            </Menu>
+            <ToolBarPanel DockPanel.Dock="Top">
+                <ToolBar>
+                    <ComboBox Name="Lighting" Margin="0" Width="120" SelectionChanged="Lighting_SelectionChanged">
+                        <ComboBoxItem IsSelected="True">No Lighting</ComboBoxItem>
+                        <ComboBoxItem>Lighting</ComboBoxItem>
+                        <ComboBoxItem>Color Lighting</ComboBoxItem>
+                    </ComboBox>
+                    <ComboBox Width="120" Name="QuickHilite" SelectionChanged="QuickHilite_SelectionChanged" />
+                    <CheckBox Name="QuickHiliteToggle" Content="Highlight" Height="22" VerticalAlignment="Top" IsEnabled="False" Checked="QuickHiliteToggle_Checked" Unchecked="QuickHiliteToggle_Unchecked"/>
+                </ToolBar>
+            </ToolBarPanel>
+        </DockPanel>
         <StatusBar Name="statusBar1" Height="23" VerticalAlignment="Bottom">
             <StatusBarItem>
                 <TextBlock Name="statusText"></TextBlock>
@@ -56,21 +69,7 @@
                 <TextBlock Name="serverText"></TextBlock>
             </StatusBarItem>
         </StatusBar>
-        <Expander VerticalAlignment="Top" HorizontalAlignment="Right" Header="Highlight Tiles" Background="White">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
-                    <RowDefinition Height="30"></RowDefinition>
-                </Grid.RowDefinitions>
-                <ListBox SelectionChanged="tileList_SelectionChanged_1" Height="250" Width="200" Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Stretch" Name="tileList" VerticalAlignment="Stretch" SelectionMode="Multiple"/>
-                <Button Visibility="Collapsed" Content="Hilight" Grid.Row="1" Grid.Column="0" Height="23" HorizontalAlignment="Left" Name="hilightbutton" VerticalAlignment="Top" Width="75" IsDefault="True" IsEnabled="False" />
-                <Button Content="Clean Highlight " Grid.Row="1" Grid.ColumnSpan="2" Height="23" HorizontalAlignment="Center" Name="button2" VerticalAlignment="Center" Width="90" IsCancel="True" Click="button2_Click_1" />
-            </Grid>
-        </Expander>
+
     </Grid>
     <Window.CommandBindings>
         <CommandBinding Command="Open"
