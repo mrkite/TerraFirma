@@ -56,6 +56,21 @@
                 <TextBlock Name="serverText"></TextBlock>
             </StatusBarItem>
         </StatusBar>
+        <Expander VerticalAlignment="Top" HorizontalAlignment="Right" Header="Highlight Tiles" Background="White">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
+                </Grid.RowDefinitions>
+                <ListBox SelectionChanged="tileList_SelectionChanged_1" Height="250" Width="200" Grid.ColumnSpan="2" Grid.Column="0" HorizontalAlignment="Stretch" Name="tileList" VerticalAlignment="Stretch" SelectionMode="Multiple"/>
+                <Button Visibility="Collapsed" Content="Hilight" Grid.Row="1" Grid.Column="0" Height="23" HorizontalAlignment="Left" Name="hilightbutton" VerticalAlignment="Top" Width="75" IsDefault="True" IsEnabled="False" />
+                <Button Content="Clean Highlight " Grid.Row="1" Grid.ColumnSpan="2" Height="23" HorizontalAlignment="Center" Name="button2" VerticalAlignment="Center" Width="90" IsCancel="True" Click="button2_Click_1" />
+            </Grid>
+        </Expander>
     </Grid>
     <Window.CommandBindings>
         <CommandBinding Command="Open"
