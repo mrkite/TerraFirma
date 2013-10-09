@@ -58,7 +58,7 @@ namespace Terrafirma
         public double lightR, lightG, lightB;
         public bool transparent, solid;
         public bool isStone, isGrass;
-		public bool canMerge;
+        public bool canMerge;
         public Int16 blend;
         public int u, v, minu, maxu, minv, maxv;
         public bool isHilighting;
@@ -144,7 +144,7 @@ namespace Terrafirma
             info.solid = node.Attributes["solid"] != null;
             info.isStone = node.Attributes["isStone"] != null;
             info.isGrass = node.Attributes["isGrass"] != null;
-			info.canMerge = node.Attributes["merge"] != null;
+            info.canMerge = node.Attributes["merge"] != null;
             if (node.Attributes["blend"] != null)
                 info.blend = parseInt(node.Attributes["blend"].Value);
             else
@@ -184,7 +184,7 @@ namespace Terrafirma
     {
         public string name;
         public UInt32 color;
-		public Int16 blend;
+        public Int16 blend;
     }
     class Tile
     {
@@ -316,10 +316,12 @@ namespace Terrafirma
 
         public double light
         {
-            get {
+            get
+            {
                 return getRGBA(0);
             }
-            set {
+            set
+            {
                 setRGBA(0, value);
             }
         }
@@ -356,18 +358,18 @@ namespace Terrafirma
                 setRGBA(8, value);
             }
         }
-        private void setRGBA(int shift,double v)
+        private void setRGBA(int shift, double v)
         {
             int l = (int)Math.Round(v * 255.0);
-            if (l>255) l=255;
-            else if (l<0) l=0;
+            if (l > 255) l = 255;
+            else if (l < 0) l = 0;
             lite &= ~(UInt32)(0xff << shift);
             lite |= (UInt32)(l << shift);
         }
         private double getRGBA(int shift)
         {
-            int r=(int)(lite>>shift)&0xff;
-            return (double)r/255.0;
+            int r = (int)(lite >> shift) & 0xff;
+            return (double)r / 255.0;
         }
     }
     struct ChestItem
@@ -426,9 +428,9 @@ namespace Terrafirma
         Int32 groundLevel, rockLevel;
         string[] worlds;
         string currentWorld;
-		Int32 worldID=0;
-		string[] players;
-		string player;
+        Int32 worldID = 0;
+        string[] players;
+        string player;
         List<Chest> chests = new List<Chest>();
         List<Sign> signs = new List<Sign>();
         List<NPC> npcs = new List<NPC>();
@@ -445,9 +447,9 @@ namespace Terrafirma
         Int32 rainTime;
         float maxRain;
         Int32 oreTier1, oreTier2, oreTier3;
-        
+
         double gameTime;
-        bool dayNight,bloodMoon;
+        bool dayNight, bloodMoon;
         int moonPhase;
         Int32 dungeonX, dungeonY;
         bool killedBoss1, killedBoss2, killedBoss3, killedGoblins, killedClown, killedFrost;
@@ -475,7 +477,7 @@ namespace Terrafirma
         UInt32 skyColor, earthColor, rockColor, hellColor, lavaColor, waterColor, honeyColor;
         bool isHilight = false;
 
-        Socket socket=null;
+        Socket socket = null;
         byte[] readBuffer, writeBuffer;
         int pendingSize;
         byte[] messages;
@@ -549,10 +551,10 @@ namespace Terrafirma
                 int id = Convert.ToInt32(wallList[i].Attributes["num"].Value);
                 wallInfo[id].name = wallList[i].Attributes["name"].Value;
                 wallInfo[id].color = parseColor(wallList[i].Attributes["color"].Value);
-            	if (wallList[i].Attributes["blend"] != null)
-					wallInfo[id].blend = Convert.ToInt16(wallList[i].Attributes["blend"].Value);
-				else
-					wallInfo[id].blend = (Int16)id;
+                if (wallList[i].Attributes["blend"] != null)
+                    wallInfo[id].blend = Convert.ToInt16(wallList[i].Attributes["blend"].Value);
+                else
+                    wallInfo[id].blend = (Int16)id;
             }
             XmlNodeList globalList = xml.GetElementsByTagName("global");
             for (int i = 0; i < globalList.Count; i++)
@@ -754,54 +756,54 @@ namespace Terrafirma
                     bool foundInvalid = false;
 
                     string invalid = "";
-                    using (BinaryReader b = new BinaryReader(File.Open(world,FileMode.Open,FileAccess.Read,FileShare.ReadWrite)))
+                    using (BinaryReader b = new BinaryReader(File.Open(world, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                     {
                         int version = b.ReadInt32(); //now we care about the version
                         if (version > MapVersion) // new map format
-                            throw new Exception("Unsupported map version: "+version);
+                            throw new Exception("Unsupported map version: " + version);
                         string title = b.ReadString();
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
                             Title = title;
                         }));
-						worldID=b.ReadInt32();
+                        worldID = b.ReadInt32();
                         b.BaseStream.Seek(16, SeekOrigin.Current); //skip bounds
                         tilesHigh = b.ReadInt32();
                         tilesWide = b.ReadInt32();
-						moonType=0;
-						if (version>=63)
-							moonType=b.ReadByte();
-						treeX[0]=treeX[1]=treeX[2]=0;
-						treeStyle[0]=treeStyle[1]=treeStyle[2]=treeStyle[3]=0;
-						if (version>=44)
-						{
-							treeX[0]=b.ReadInt32();
-							treeX[1]=b.ReadInt32();
-							treeX[2]=b.ReadInt32();
-							treeStyle[0]=b.ReadInt32();
-							treeStyle[1]=b.ReadInt32();
-							treeStyle[2]=b.ReadInt32();
-							treeStyle[3]=b.ReadInt32();
-						}
-						caveBackX[0]=caveBackX[1]=caveBackX[2]=0;
-						caveBackStyle[0]=caveBackStyle[1]=caveBackStyle[2]=caveBackStyle[3]=0;
-						iceBackStyle=jungleBackStyle=hellBackStyle=0;
-						if (version>=60)
-						{
-							caveBackX[0]=b.ReadInt32();
-							caveBackX[1]=b.ReadInt32();
-							caveBackX[2]=b.ReadInt32();
-							caveBackStyle[0]=b.ReadInt32();
-							caveBackStyle[1]=b.ReadInt32();
-							caveBackStyle[2]=b.ReadInt32();
-							caveBackStyle[3]=b.ReadInt32();
-							iceBackStyle=b.ReadInt32();
-							if (version>=61)
-							{
-								jungleBackStyle=b.ReadInt32();
-								hellBackStyle=b.ReadInt32();
-							}
-						}
+                        moonType = 0;
+                        if (version >= 63)
+                            moonType = b.ReadByte();
+                        treeX[0] = treeX[1] = treeX[2] = 0;
+                        treeStyle[0] = treeStyle[1] = treeStyle[2] = treeStyle[3] = 0;
+                        if (version >= 44)
+                        {
+                            treeX[0] = b.ReadInt32();
+                            treeX[1] = b.ReadInt32();
+                            treeX[2] = b.ReadInt32();
+                            treeStyle[0] = b.ReadInt32();
+                            treeStyle[1] = b.ReadInt32();
+                            treeStyle[2] = b.ReadInt32();
+                            treeStyle[3] = b.ReadInt32();
+                        }
+                        caveBackX[0] = caveBackX[1] = caveBackX[2] = 0;
+                        caveBackStyle[0] = caveBackStyle[1] = caveBackStyle[2] = caveBackStyle[3] = 0;
+                        iceBackStyle = jungleBackStyle = hellBackStyle = 0;
+                        if (version >= 60)
+                        {
+                            caveBackX[0] = b.ReadInt32();
+                            caveBackX[1] = b.ReadInt32();
+                            caveBackX[2] = b.ReadInt32();
+                            caveBackStyle[0] = b.ReadInt32();
+                            caveBackStyle[1] = b.ReadInt32();
+                            caveBackStyle[2] = b.ReadInt32();
+                            caveBackStyle[3] = b.ReadInt32();
+                            iceBackStyle = b.ReadInt32();
+                            if (version >= 61)
+                            {
+                                jungleBackStyle = b.ReadInt32();
+                                hellBackStyle = b.ReadInt32();
+                            }
+                        }
                         spawnX = b.ReadInt32();
                         spawnY = b.ReadInt32();
                         groundLevel = (int)b.ReadDouble();
@@ -812,23 +814,23 @@ namespace Terrafirma
                         bloodMoon = b.ReadBoolean();
                         dungeonX = b.ReadInt32();
                         dungeonY = b.ReadInt32();
-						crimson=false;
-						if (version>=56)
-							crimson=b.ReadBoolean();
+                        crimson = false;
+                        if (version >= 56)
+                            crimson = b.ReadBoolean();
                         killedBoss1 = b.ReadBoolean();
                         killedBoss2 = b.ReadBoolean();
                         killedBoss3 = b.ReadBoolean();
-						killedQueenBee = false;
-						if (version>=66)
-							killedQueenBee=b.ReadBoolean();
-						killedMechBoss1 = killedMechBoss2 = killedMechBoss3 = killedMechBossAny = false;
-						if (version>=44)
-						{
-							killedMechBoss1=b.ReadBoolean();
-							killedMechBoss2=b.ReadBoolean();
-							killedMechBoss3=b.ReadBoolean();
-							killedMechBossAny=b.ReadBoolean();
-						}
+                        killedQueenBee = false;
+                        if (version >= 66)
+                            killedQueenBee = b.ReadBoolean();
+                        killedMechBoss1 = killedMechBoss2 = killedMechBoss3 = killedMechBossAny = false;
+                        if (version >= 44)
+                        {
+                            killedMechBoss1 = b.ReadBoolean();
+                            killedMechBoss2 = b.ReadBoolean();
+                            killedMechBoss3 = b.ReadBoolean();
+                            killedMechBossAny = b.ReadBoolean();
+                        }
                         killedPlantBoss = killedGolemBoss = false;
                         if (version >= 64)
                         {
@@ -847,8 +849,8 @@ namespace Terrafirma
                                 killedClown = b.ReadBoolean();
                             if (version >= 37)
                                 killedFrost = b.ReadBoolean();
-							if (version >= 56)
-								killedPirates = b.ReadBoolean();
+                            if (version >= 56)
+                                killedPirates = b.ReadBoolean();
                         }
                         smashedOrb = b.ReadBoolean();
                         meteorSpawned = b.ReadBoolean();
@@ -865,41 +867,41 @@ namespace Terrafirma
                         goblinsType = b.ReadInt32();
                         goblinsX = b.ReadDouble();
 
-						isRaining = false;
-						rainTime = 0;
-						maxRain = 0.0F;
-						oreTier1 = 107;
-						oreTier2 = 108;
-						oreTier3 = 111;
-						if (version >= 23 && altarsSmashed == 0)
-							oreTier1 = oreTier2 = oreTier3 = -1;
-						if (version >= 53)
-						{
-							isRaining = b.ReadBoolean();
-							rainTime = b.ReadInt32();
-							maxRain = b.ReadSingle();
-							if (version >= 54)
-							{
-								oreTier1 = b.ReadInt32();
-								oreTier2 = b.ReadInt32();
-								oreTier3 = b.ReadInt32();
-							}
-						}
-						if (version>=55)
-						{
+                        isRaining = false;
+                        rainTime = 0;
+                        maxRain = 0.0F;
+                        oreTier1 = 107;
+                        oreTier2 = 108;
+                        oreTier3 = 111;
+                        if (version >= 23 && altarsSmashed == 0)
+                            oreTier1 = oreTier2 = oreTier3 = -1;
+                        if (version >= 53)
+                        {
+                            isRaining = b.ReadBoolean();
+                            rainTime = b.ReadInt32();
+                            maxRain = b.ReadSingle();
+                            if (version >= 54)
+                            {
+                                oreTier1 = b.ReadInt32();
+                                oreTier2 = b.ReadInt32();
+                                oreTier3 = b.ReadInt32();
+                            }
+                        }
+                        if (version >= 55)
+                        {
                             int numstyles = 3;
                             if (version >= 60)
                                 numstyles = 8;
                             for (int i = 0; i < numstyles; i++)
                                 styles[i] = b.ReadByte();
                             //skip clouds
-							if (version>=60)
-							{
-								b.BaseStream.Seek(4, SeekOrigin.Current);
-								if (version>=62)
-									b.BaseStream.Seek(6, SeekOrigin.Current);
-							}
-						}
+                            if (version >= 60)
+                            {
+                                b.BaseStream.Seek(4, SeekOrigin.Current);
+                                if (version >= 62)
+                                    b.BaseStream.Seek(6, SeekOrigin.Current);
+                            }
+                        }
 
                         ResizeMap();
                         for (int x = 0; x < tilesWide; x++)
@@ -923,8 +925,8 @@ namespace Terrafirma
                                     else if (tileInfos[tiles[x, y].type].hasExtra)
                                     {
                                         // torches and platforms didn't have extra in older versions.
-                                        if ((version < 28 && tiles[x, y].type == 4) || 
-											(version < 40 && tiles[x, y].type == 19))
+                                        if ((version < 28 && tiles[x, y].type == 4) ||
+                                            (version < 40 && tiles[x, y].type == 19))
                                         {
                                             tiles[x, y].u = -1;
                                             tiles[x, y].v = -1;
@@ -959,8 +961,8 @@ namespace Terrafirma
                                         invalid = String.Format("{0} is not a valid wall type", tiles[x, y].wall);
                                         tiles[x, y].wall = 0;
                                     }
-									if (version >= 48 && b.ReadBoolean())
-										tiles[x, y].wallColor=b.ReadByte();
+                                    if (version >= 48 && b.ReadBoolean())
+                                        tiles[x, y].wallColor = b.ReadByte();
                                     tiles[x, y].wallu = -1;
                                     tiles[x, y].wallv = -1;
                                 }
@@ -970,41 +972,41 @@ namespace Terrafirma
                                 {
                                     tiles[x, y].liquid = b.ReadByte();
                                     tiles[x, y].isLava = b.ReadBoolean();
-									if (version >= 51)
-										tiles[x, y].isHoney = b.ReadBoolean();
+                                    if (version >= 51)
+                                        tiles[x, y].isHoney = b.ReadBoolean();
                                 }
                                 else
                                     tiles[x, y].liquid = 0;
                                 tiles[x, y].hasRedWire = false;
                                 tiles[x, y].hasGreenWire = false;
                                 tiles[x, y].hasBlueWire = false;
-								tiles[x, y].half = false;
-								tiles[x, y].slope = 0;
+                                tiles[x, y].half = false;
+                                tiles[x, y].slope = 0;
                                 if (version >= 33)
-								{
+                                {
                                     tiles[x, y].hasRedWire = b.ReadBoolean();
-									if (version >= 43)
-									{
-										tiles[x, y].hasGreenWire = b.ReadBoolean();
-										tiles[x, y].hasBlueWire = b.ReadBoolean();
-									}
-									if (version >= 41)
-									{
-										tiles[x, y].half = b.ReadBoolean();
-										if (version >= 49)
-											tiles[x, y].slope = b.ReadByte();
-										if (!tileInfos[tiles[x, y].type].solid)
-										{
-											tiles[x, y].half = false;
-											tiles[x, y].slope = 0;
-										}
-										if (version >= 42)
-										{
+                                    if (version >= 43)
+                                    {
+                                        tiles[x, y].hasGreenWire = b.ReadBoolean();
+                                        tiles[x, y].hasBlueWire = b.ReadBoolean();
+                                    }
+                                    if (version >= 41)
+                                    {
+                                        tiles[x, y].half = b.ReadBoolean();
+                                        if (version >= 49)
+                                            tiles[x, y].slope = b.ReadByte();
+                                        if (!tileInfos[tiles[x, y].type].solid)
+                                        {
+                                            tiles[x, y].half = false;
+                                            tiles[x, y].slope = 0;
+                                        }
+                                        if (version >= 42)
+                                        {
                                             b.ReadBoolean(); //tile actuator
                                             b.ReadBoolean(); //tile inActive
-										}
-									}
-								}
+                                        }
+                                    }
+                                }
                                 if (version >= 25) //RLE
                                 {
                                     int rle = b.ReadInt16();
@@ -1019,24 +1021,24 @@ namespace Terrafirma
                                         tiles[x, r].wallv = -1;
                                         tiles[x, r].liquid = tiles[x, y].liquid;
                                         tiles[x, r].isLava = tiles[x, y].isLava;
-										tiles[x, r].isHoney = tiles[x, y].isHoney;
+                                        tiles[x, r].isHoney = tiles[x, y].isHoney;
                                         tiles[x, r].hasRedWire = tiles[x, y].hasRedWire;
                                         tiles[x, r].hasGreenWire = tiles[x, y].hasGreenWire;
                                         tiles[x, r].hasBlueWire = tiles[x, y].hasBlueWire;
-										tiles[x, r].half = tiles[x, y].half;
-										tiles[x, r].slope = tiles[x, y].slope;
-									//	tiles[x, r].actuator = tiles[x, y].actuator;
-									//	tiles[x, r].inActive = tiles[x, y].inActive;
-										tiles[x, r].color = tiles[x, y].color;
-										tiles[x, r].wallColor = tiles[x, y].wallColor;
+                                        tiles[x, r].half = tiles[x, y].half;
+                                        tiles[x, r].slope = tiles[x, y].slope;
+                                        //	tiles[x, r].actuator = tiles[x, y].actuator;
+                                        //	tiles[x, r].inActive = tiles[x, y].inActive;
+                                        tiles[x, r].color = tiles[x, y].color;
+                                        tiles[x, r].wallColor = tiles[x, y].wallColor;
                                     }
                                     y += rle;
                                 }
                             }
                         }
-						int itemsPerChest=40;
-						if (version < 58)
-							itemsPerChest=20;
+                        int itemsPerChest = 40;
+                        if (version < 58)
+                            itemsPerChest = 20;
                         chests.Clear();
                         for (int i = 0; i < 1000; i++)
                         {
@@ -1048,13 +1050,13 @@ namespace Terrafirma
                                 chest.y = b.ReadInt32();
                                 for (int ii = 0; ii < itemsPerChest; ii++)
                                 {
-									if (version<59)
-	                                    chest.items[ii].stack = b.ReadByte();
-									else
-										chest.items[ii].stack = b.ReadInt16();
+                                    if (version < 59)
+                                        chest.items[ii].stack = b.ReadByte();
+                                    else
+                                        chest.items[ii].stack = b.ReadInt16();
                                     if (chest.items[ii].stack > 0)
                                     {
-                                        string name="Unknown";
+                                        string name = "Unknown";
                                         if (version >= 38) //item names not stored
                                         {
                                             Int32 itemid = b.ReadInt32();
@@ -1115,7 +1117,7 @@ namespace Terrafirma
                             npc.order = -1;
                             npc.num = 0;
                             npc.sprite = 0;
-                            for (int i=0;i<friendlyNPCs.Length;i++)
+                            for (int i = 0; i < friendlyNPCs.Length; i++)
                                 if (friendlyNPCs[i].title == npc.title)
                                 {
                                     npc.sprite = friendlyNPCs[i].id;
@@ -1129,10 +1131,10 @@ namespace Terrafirma
                         if (version >= 31) //read npcs
                         {
                             int numNames = 9;
-                            if (version>=34)
+                            if (version >= 34)
                                 numNames++;
-							if (version>=65)
-								numNames+=8;
+                            if (version >= 65)
+                                numNames += 8;
                             for (int i = 0; i < numNames; i++)
                             {
                                 string name = b.ReadString();
@@ -1155,11 +1157,13 @@ namespace Terrafirma
                         }));
                     }
 
-					//load player's map
-					loadPlayerMap();
+                    //load player's map
+                    loadPlayerMap();
 
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
+                            // Load quick highlight items
+                            loadHighlight();
                             render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, npcs);
                             loaded = true;
                             done();
@@ -1184,66 +1188,66 @@ namespace Terrafirma
             new Thread(loadThread).Start();
         }
 
-		private void loadPlayerMap()
-		{
-			for (int x = 0; x < tilesWide; x++)
-				for (int y = 0; y < tilesHigh; y++)
-					tiles[x,y].seen=false;
+        private void loadPlayerMap()
+        {
+            for (int x = 0; x < tilesWide; x++)
+                for (int y = 0; y < tilesHigh; y++)
+                    tiles[x, y].seen = false;
 
-			try
-			{
-				string path=Path.Combine(player.Substring(0, player.Length-4),string.Concat(worldID,".map"));
+            try
+            {
+                string path = Path.Combine(player.Substring(0, player.Length - 4), string.Concat(worldID, ".map"));
                 if (!File.Exists(path))
                     return;
-				using (BinaryReader b = new BinaryReader(File.Open(path,FileMode.Open,FileAccess.Read,FileShare.ReadWrite)))
-				{
-					int version=b.ReadInt32();
-					if (version>MapVersion) //new map format
-						throw new Exception("Unsupported map version: "+version);
-					string title=b.ReadString();
-					b.BaseStream.Seek(12, SeekOrigin.Current); //skip worldid and bounds
-					for (int x = 0; x < tilesWide; x++)
-					{
-						for (int y = 0; y < tilesHigh; y++)
-						{
-							if (b.ReadBoolean())
-							{
-								tiles[x, y].seen=true;
-								byte type=b.ReadByte();
-								byte light=b.ReadByte();
-								byte misc=b.ReadByte();
-								byte misc2=0;
-								if (version>=50) misc2=b.ReadByte();
-								int rle=b.ReadInt16();
-								if (light==255)
-								{
-									for (int r = y + 1; r < y + 1 + rle; r++)
-										tiles[x, r].seen=true;
-								}
-								else
-								{
-									for (int r = y + 1; r < y + 1 + rle; r++)
-									{
-										light=b.ReadByte();
-										tiles[x, r].seen=true;
-									}
-								}
-								y+=rle;
-							}
-							else
-								y+=b.ReadInt16(); //skip
-						}
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
-					{
-						MessageBox.Show(e.Message);
-					}));
-			}
-		}
+                using (BinaryReader b = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                {
+                    int version = b.ReadInt32();
+                    if (version > MapVersion) //new map format
+                        throw new Exception("Unsupported map version: " + version);
+                    string title = b.ReadString();
+                    b.BaseStream.Seek(12, SeekOrigin.Current); //skip worldid and bounds
+                    for (int x = 0; x < tilesWide; x++)
+                    {
+                        for (int y = 0; y < tilesHigh; y++)
+                        {
+                            if (b.ReadBoolean())
+                            {
+                                tiles[x, y].seen = true;
+                                byte type = b.ReadByte();
+                                byte light = b.ReadByte();
+                                byte misc = b.ReadByte();
+                                byte misc2 = 0;
+                                if (version >= 50) misc2 = b.ReadByte();
+                                int rle = b.ReadInt16();
+                                if (light == 255)
+                                {
+                                    for (int r = y + 1; r < y + 1 + rle; r++)
+                                        tiles[x, r].seen = true;
+                                }
+                                else
+                                {
+                                    for (int r = y + 1; r < y + 1 + rle; r++)
+                                    {
+                                        light = b.ReadByte();
+                                        tiles[x, r].seen = true;
+                                    }
+                                }
+                                y += rle;
+                            }
+                            else
+                                y += b.ReadInt16(); //skip
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                    {
+                        MessageBox.Show(e.Message);
+                    }));
+            }
+        }
 
         private void addNPCToMenu(NPC npc)
         {
@@ -1259,7 +1263,7 @@ namespace Terrafirma
                     MenuItem item;
                     for (int i = 0; i < NPCs.Items.Count; i++)
                     {
-                        item=(MenuItem)NPCs.Items[i];
+                        item = (MenuItem)NPCs.Items[i];
                         if (item.Tag == npc)
                         {
                             item.Header = String.Format("Jump to {0}'s Home", name);
@@ -1482,7 +1486,7 @@ namespace Terrafirma
                     {
                         if (c.items[i].stack > 0)
                         {
-                            if (c.items[i].prefix=="")
+                            if (c.items[i].prefix == "")
                                 items.Add(String.Format("{0} {1}", c.items[i].stack, c.items[i].name));
                             else
                                 items.Add(String.Format("{0} {1} {2}", c.items[i].stack, c.items[i].prefix, c.items[i].name));
@@ -1608,7 +1612,7 @@ namespace Terrafirma
                         return;
                     curX = spawnX;
                     curY = spawnY;
-                    if (render.Textures!=null && render.Textures.Valid)
+                    if (render.Textures != null && render.Textures.Valid)
                     {
                         UseTextures.IsChecked = true;
                         curScale = 16.0;
@@ -1630,7 +1634,7 @@ namespace Terrafirma
                     return;
                 curX = spawnX;
                 curY = spawnY;
-                if (render.Textures!=null && render.Textures.Valid)
+                if (render.Textures != null && render.Textures.Valid)
                 {
                     UseTextures.IsChecked = true;
                     curScale = 16.0;
@@ -1654,12 +1658,12 @@ namespace Terrafirma
         {
             e.CanExecute = true;
         }
-		private void SelectPlayer(object sender, ExecutedRoutedEventArgs e)
-		{
+        private void SelectPlayer(object sender, ExecutedRoutedEventArgs e)
+        {
             if (busy) //fail
                 return;
             int id = (int)e.Parameter;
-			player=players[id];
+            player = players[id];
             //uncheck other players
             foreach (MenuItem item in Players.Items)
             {
@@ -1669,21 +1673,21 @@ namespace Terrafirma
             if (!loaded)
                 return;
 
-			// should load player map here
-			ThreadStart loader = delegate()
-				{
-					loadPlayerMap();
+            // should load player map here
+            ThreadStart loader = delegate()
+                {
+                    loadPlayerMap();
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                     {
                         RenderMap();
                     }));
-				};
-			new Thread(loader).Start();
-		}
-		private void SelectPlayer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = !busy;
-		}
+                };
+            new Thread(loader).Start();
+        }
+        private void SelectPlayer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !busy;
+        }
         private void FogOfWar_Toggle(object sender, ExecutedRoutedEventArgs e)
         {
             if (FogOfWar.IsChecked)
@@ -1727,7 +1731,7 @@ namespace Terrafirma
         }
         private void Texture_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            if (render.Textures==null || !render.Textures.Valid)
+            if (render.Textures == null || !render.Textures.Valid)
                 return;
             if (UseTextures.IsChecked)
                 UseTextures.IsChecked = false;
@@ -1813,7 +1817,7 @@ namespace Terrafirma
         }
         private void Disconnect_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = socket!=null && socket.Connected;
+            e.CanExecute = socket != null && socket.Connected;
         }
         private void connected(IAsyncResult ar)
         {
@@ -1907,10 +1911,10 @@ namespace Terrafirma
                 if (statusCount == statusTotal)
                     statusTotal = 0;
                 else
-                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
-                {
-                    serverText.Text = ((int)((float)statusCount * 100.0 / (float)statusTotal)) + "% - " + status;
-                }));
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                    {
+                        serverText.Text = ((int)((float)statusCount * 100.0 / (float)statusTotal)) + "% - " + status;
+                    }));
             }
             int messageid = messages[start++];
             len--;
@@ -2143,7 +2147,7 @@ namespace Terrafirma
                         int endx = BitConverter.ToInt32(messages, payload); payload += 4;
                         int endy = BitConverter.ToInt32(messages, payload);
 
-                        for (int y = starty; y<= endy; y++)
+                        for (int y = starty; y <= endy; y++)
                             for (int x = startx; x <= endx; x++)
                                 sentSections[x, y] = true;
 
@@ -2152,8 +2156,8 @@ namespace Terrafirma
                         endx = (endx + 1) * 200;
                         endy = (endy + 1) * 150;
 
-                        
-                        for (int y=starty;y<endy;y++)
+
+                        for (int y = starty; y < endy; y++)
                             for (int x = startx; x < endx; x++)
                             {
                                 Tile tile = tiles[x, y];
@@ -2306,7 +2310,7 @@ namespace Terrafirma
                                 loaded = true;
                                 curX = spawnX;
                                 curY = spawnY;
-                                if (render.Textures!=null && render.Textures.Valid)
+                                if (render.Textures != null && render.Textures.Valid)
                                 {
                                     UseTextures.IsChecked = true;
                                     curScale = 16.0;
@@ -2369,10 +2373,10 @@ namespace Terrafirma
                     break;
                 case 0x3c: //move npc home
                     {
-                        int slot=BitConverter.ToInt16(messages,payload); payload+=2;
-                        int x=BitConverter.ToInt16(messages,payload); payload+=2;
-                        int y=BitConverter.ToInt16(messages,payload); payload+=2;
-                        byte homeless=messages[payload];
+                        int slot = BitConverter.ToInt16(messages, payload); payload += 2;
+                        int x = BitConverter.ToInt16(messages, payload); payload += 2;
+                        int y = BitConverter.ToInt16(messages, payload); payload += 2;
+                        byte homeless = messages[payload];
                         for (int i = 0; i < npcs.Count; i++)
                         {
                             if (npcs[i].slot == slot)
@@ -2405,7 +2409,7 @@ namespace Terrafirma
             }
         }
 
-        private void SendMessage(int messageid, string text = null,int x=0,int y=0)
+        private void SendMessage(int messageid, string text = null, int x = 0, int y = 0)
         {
             int payload = 5;
             int payloadLen = 0;
@@ -2436,13 +2440,13 @@ namespace Terrafirma
                     //no payload
                     break;
                 case 8: //request initial tile data
-                    Buffer.BlockCopy(BitConverter.GetBytes(spawnX), 0, writeBuffer, payload, 4); payload+=4;
+                    Buffer.BlockCopy(BitConverter.GetBytes(spawnX), 0, writeBuffer, payload, 4); payload += 4;
                     Buffer.BlockCopy(BitConverter.GetBytes(spawnY), 0, writeBuffer, payload, 4);
                     payloadLen += 8;
                     break;
                 case 0x0c: //spawn
                     writeBuffer[payload++] = playerSlot;
-                    Buffer.BlockCopy(BitConverter.GetBytes(spawnX), 0, writeBuffer, payload, 4); payload+=4;
+                    Buffer.BlockCopy(BitConverter.GetBytes(spawnX), 0, writeBuffer, payload, 4); payload += 4;
                     Buffer.BlockCopy(BitConverter.GetBytes(spawnY), 0, writeBuffer, payload, 4);
                     payloadLen += 9;
                     break;
@@ -2450,18 +2454,18 @@ namespace Terrafirma
                     writeBuffer[payload++] = playerSlot;
                     writeBuffer[payload++] = 0; //no buttons
                     writeBuffer[payload++] = 0; //selected item 0
-                    Buffer.BlockCopy(BitConverter.GetBytes((float)(x*16.0)), 0, writeBuffer, payload, 4); payload+=4;
-                    Buffer.BlockCopy(BitConverter.GetBytes((float)(y*16.0)), 0, writeBuffer, payload, 4); payload+=4;
+                    Buffer.BlockCopy(BitConverter.GetBytes((float)(x * 16.0)), 0, writeBuffer, payload, 4); payload += 4;
+                    Buffer.BlockCopy(BitConverter.GetBytes((float)(y * 16.0)), 0, writeBuffer, payload, 4); payload += 4;
                     byte[] velocity = BitConverter.GetBytes((float)0);
-                    Buffer.BlockCopy(velocity, 0, writeBuffer, payload, 4); payload+=4;
-                    Buffer.BlockCopy(velocity, 0, writeBuffer, payload, 4); payload+=4;
+                    Buffer.BlockCopy(velocity, 0, writeBuffer, payload, 4); payload += 4;
+                    Buffer.BlockCopy(velocity, 0, writeBuffer, payload, 4); payload += 4;
                     writeBuffer[payload] = 0; //not on a rope
                     payloadLen += 20;
                     break;
                 case 0x10: //set player life
                     writeBuffer[payload++] = playerSlot;
                     byte[] health = BitConverter.GetBytes((Int16)400);
-                    Buffer.BlockCopy(health, 0, writeBuffer, payload, 2); payload+=2;
+                    Buffer.BlockCopy(health, 0, writeBuffer, payload, 2); payload += 2;
                     Buffer.BlockCopy(health, 0, writeBuffer, payload, 2);
                     payloadLen += 5;
                     break;
@@ -2473,7 +2477,7 @@ namespace Terrafirma
                 case 0x2a: //set mana
                     writeBuffer[payload++] = playerSlot;
                     byte[] mana = BitConverter.GetBytes((Int16)0);
-                    Buffer.BlockCopy(mana, 0, writeBuffer, payload, 2); payload+=2;
+                    Buffer.BlockCopy(mana, 0, writeBuffer, payload, 2); payload += 2;
                     Buffer.BlockCopy(mana, 0, writeBuffer, payload, 2);
                     payloadLen += 5;
                     break;
@@ -2563,7 +2567,8 @@ namespace Terrafirma
             HilightWin h = new HilightWin(items);
             if (h.ShowDialog() == true)
             {
-                foreach(var i in h.SelectedItems){
+                foreach (var i in h.SelectedItems)
+                {
                     i.isHilighting = true;
                     // also hilight the subvariants
                     hiliteVariants(i);
@@ -2599,7 +2604,7 @@ namespace Terrafirma
             if (dlg.ShowDialog() == true)
             {
                 var saveOpts = new SaveOptions();
-                saveOpts.CanUseTexture = render.Textures!=null && render.Textures.Valid;
+                saveOpts.CanUseTexture = render.Textures != null && render.Textures.Valid;
                 if (saveOpts.ShowDialog() == true)
                 {
 
@@ -2692,7 +2697,7 @@ namespace Terrafirma
 
         private void FindItem_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            Dictionary<string,List<int>> items=new Dictionary<string,List<int>>();
+            Dictionary<string, List<int>> items = new Dictionary<string, List<int>>();
             for (int i = 0; i < chests.Count; i++)
             {
                 foreach (ChestItem c in chests[i].items)
@@ -2727,8 +2732,8 @@ namespace Terrafirma
             catch (Exception ex)
             {
                 render.Textures = null;
-                UseTextures.IsEnabled=false;
-                MessageBox.Show(ex.Message,"Texture support failed");
+                UseTextures.IsEnabled = false;
+                MessageBox.Show(ex.Message, "Texture support failed");
             }
 
         }
@@ -2822,7 +2827,7 @@ namespace Terrafirma
             {
                 Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                 {
-                    serverText.Text = ((int)((float)(tilesHigh-y) * 50.0 / (float)tilesHigh)+50) + "% - Spreading light";
+                    serverText.Text = ((int)((float)(tilesHigh - y) * 50.0 / (float)tilesHigh) + 50) + "% - Spreading light";
                 }));
                 for (int x = tilesWide - 1; x >= 0; x--)
                 {
@@ -2914,6 +2919,90 @@ namespace Terrafirma
                 }
             };
             new Thread(start).Start();
+        }
+        // Quick Highlight stuffs
+        ArrayList theTiles;
+        private void AddVariants(ArrayList tiles, TileInfo info)
+        {
+            foreach (TileInfo v in info.variants)
+            {
+                if (v.name != info.name)
+                {
+                    v.isHilighting = false;
+                    tiles.Add(new HTile(v.name, v));
+                }
+                AddVariants(tiles, v);
+            }
+        }
+        private void loadHighlight()
+        {
+            ArrayList items = tileInfos.Items();
+            theTiles = new ArrayList();
+            foreach (TileInfo info in items)
+            {
+                info.isHilighting = false;
+                theTiles.Add(new HTile(info.name, info));
+                AddVariants(theTiles, info);
+            }
+            theTiles.Sort();
+            tileList.ItemsSource = theTiles;
+        }
+        private void tileList_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+            foreach (var item in e.RemovedItems)
+            {
+                (item as HTile).Info.isHilighting = false;
+                AddVariants(theTiles, (item as HTile).Info);
+            }
+            if (tileList.SelectedItems.Count == 0)
+            {
+                isHilight = false;
+            }
+            else
+            {
+                isHilight = true;
+                List<TileInfo> tinfo = new List<TileInfo>();
+                foreach (var item in tileList.SelectedItems)
+                {
+                    tinfo.Add((item as HTile).Info);
+                }
+                foreach (var i in tinfo)
+                {
+                    i.isHilighting = true;
+                    hiliteVariants(i);
+                }
+            }
+            RenderMap();
+        }
+
+        private void button2_Click_1(object sender, RoutedEventArgs e)
+        {
+            isHilight = false;
+            loadHighlight();
+        }
+    }
+    public class HTile : IComparable
+    {
+        private string name;
+        private TileInfo info;
+        public HTile(string name, TileInfo info)
+        {
+            this.name = name;
+            this.info = info;
+        }
+        public TileInfo Info
+        {
+            get { return info; }
+        }
+        public override string ToString()
+        {
+            return name;
+        }
+        int IComparable.CompareTo(object obj)
+        {
+            HTile h = (HTile)obj;
+            int r = String.Compare(this.name, h.name);
+            return r;
         }
     }
 }
