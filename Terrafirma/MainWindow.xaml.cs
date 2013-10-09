@@ -550,9 +550,9 @@ namespace Terrafirma
                 wallInfo[id].name = wallList[i].Attributes["name"].Value;
                 wallInfo[id].color = parseColor(wallList[i].Attributes["color"].Value);
             	if (wallList[i].Attributes["blend"] != null)
-					wallInfo[id].blend = parseInt(wallList[i].Attributes["blend"].Value);
+					wallInfo[id].blend = Convert.ToInt16(wallList[i].Attributes["blend"].Value);
 				else
-					wallInfo[id].blend = id;
+					wallInfo[id].blend = (Int16)id;
             }
             XmlNodeList globalList = xml.GetElementsByTagName("global");
             for (int i = 0; i < globalList.Count; i++)

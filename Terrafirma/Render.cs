@@ -248,6 +248,8 @@ namespace Terrafirma
 
                 //draw walls
 
+                Texture wallOutline = Textures.GetWallOutline(0);
+
                 py = skipy * (int)scale - (int)(scale / 2);
                 for (int y = skipy; y < blocksHigh; y++)
                 {
@@ -290,6 +292,24 @@ namespace Terrafirma
 
                             drawTexture(tex, 32, 32, tile.wallv * tex.width * 4 * 2 + tile.wallu * 4 * 2,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                            Int16 blend = wallInfo[tile.wall].blend;
+                            if (sx > 0 && tiles[sx - 1, sy].wall > 0 &&
+                                wallInfo[tiles[sx - 1, sy].wall].blend != blend)
+                                drawTexture(wallOutline, 2, 16, 0,
+                                    pixels, (int)(px + (scale / 2) - shiftx), (int)(py + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                            double pad = 14.0 * scale / 16.0;
+                            if (sx < tilesWide - 2 && tiles[sx + 1, sy].wall > 0 &&
+                                wallInfo[tiles[sx + 1, sy].wall].blend != blend)
+                                drawTexture(wallOutline, 2, 16, 14 * 4 * 2,
+                                    pixels, (int)(px + pad + (scale / 2) - shiftx), (int)(py + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                            if (sy > 0 && tiles[sx, sy - 1].wall > 0 &&
+                                wallInfo[tiles[sx, sy - 1].wall].blend != blend)
+                                drawTexture(wallOutline, 16, 2, 0,
+                                    pixels, (int)(px + (scale / 2) - shiftx), (int)(py + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                            if (sy < tilesHigh - 2 && tiles[sx, sy + 1].wall > 0 &&
+                                wallInfo[tiles[sx, sy + 1].wall].blend != blend)
+                                drawTexture(wallOutline, 16, 2, 14 * tex.width * 4 * 2,
+                                    pixels, (int)(px + (scale / 2) - shiftx), (int)(py + pad + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                         }
 
                         px += (int)scale;
@@ -1545,6 +1565,18 @@ namespace Terrafirma
                 if (bl == blend) mask |= 0x202;
                 if (br == blend) mask |= 0x101;
             }
+            //set up merge rules
+            if (tileInfos[c].canMerge)
+            {
+                if (t > -1 && tileInfos[t].canMerge) mask |= 0x80000;
+                if (b > -1 && tileInfos[b].canMerge) mask |= 0x40000;
+                if (l > -1 && tileInfos[l].canMerge) mask |= 0x20000;
+                if (r > -1 && tileInfos[r].canMerge) mask |= 0x10000;
+                if (tl > -1 && tileInfos[tl].canMerge) mask |= 0x880;
+                if (tr > -1 && tileInfos[tr].canMerge) mask |= 0x440;
+                if (bl > -1 && tileInfos[bl].canMerge) mask |= 0x220;
+                if (br > -1 && tileInfos[br].canMerge) mask |= 0x110;
+            }
 
             if (c == 32 && b == 23) mask |= 0x40000; //corrupted vines above corrupted grass
             if (c == 69 && b == 60) mask |= 0x40000; //jungle thorn above jungle grass
@@ -1601,6 +1633,8 @@ namespace Terrafirma
                 mask &= 0xf0f00;
             else
                 mask = ((mask & 0xf0000) ^ ((mask & 0xf000) << 4)) | ((mask & 0xf0) << 4);
+
+
             foreach (UVRule rule in uvRules[mask >> 16])
             {
                 if ((mask & rule.mask) == rule.val)
@@ -1616,40 +1650,29 @@ namespace Terrafirma
         private void fixWall(int x, int y, ref Tile[,] tiles)
         {
             byte t = 0, l = 0, r = 0, b = 0;
-            byte tl = 0, tr = 0, bl = 0, br = 0;
             byte c = tiles[x, y].wall;
             int set = rand.Next(0, 3) * 2;
 
             if (x > 0)
-            {
                 l = tiles[x - 1, y].wall;
-                if (y > 0)
-                    tl = tiles[x - 1, y - 1].wall;
-                if (y < tilesHigh - 1)
-                    bl = tiles[x - 1, y + 1].wall;
-            }
             if (x < tilesWide - 1)
-            {
                 r = tiles[x + 1, y].wall;
-                if (y > 0)
-                    tr = tiles[x + 1, y - 1].wall;
-                if (y < tilesHigh - 1)
-                    br = tiles[x + 1, y + 1].wall;
-            }
             if (y > 0)
                 t = tiles[x, y - 1].wall;
             if (y < tilesHigh - 1)
                 b = tiles[x, y + 1].wall;
 
+            //we don't actually care what the wall texture is, we just care if there's a wall or not.
             int mask = 0;
-            if (t == c) mask |= 0x80000;
-            if (b == c) mask |= 0x40000;
-            if (l == c) mask |= 0x20000;
-            if (r == c) mask |= 0x10000;
-            if (tl == c) mask |= 0x880;
-            if (tr == c) mask |= 0x440;
-            if (bl == c) mask |= 0x220;
-            if (br == c) mask |= 0x110;
+            if (t > 0) mask |= 0x80000;
+            if (b > 0) mask |= 0x40000;
+            if (l > 0) mask |= 0x20000;
+            if (r > 0) mask |= 0x10000;
+            if (x % 3 == 1 && y % 3 == 1) mask |= 0x300;
+            else if (x % 3 == 0 && y % 3 == 0) mask |= 0xc00;
+            else if (x % 3 == 2 && y % 3 == 1) mask |= 0x500;
+            else if (x % 3 == 1 && y % 3 == 2) mask |= 0xa00;
+            else mask |= 0xf00;
 
             foreach (UVRule rule in uvRules[mask >> 16])
             {
