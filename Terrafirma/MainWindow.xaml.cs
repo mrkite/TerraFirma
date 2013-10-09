@@ -58,7 +58,7 @@ namespace Terrafirma
         public double lightR, lightG, lightB;
         public bool transparent, solid;
         public bool isStone, isGrass;
-        public bool canMerge;
+		public bool canMerge;
         public Int16 blend;
         public int u, v, minu, maxu, minv, maxv;
         public bool isHilighting;
@@ -144,7 +144,7 @@ namespace Terrafirma
             info.solid = node.Attributes["solid"] != null;
             info.isStone = node.Attributes["isStone"] != null;
             info.isGrass = node.Attributes["isGrass"] != null;
-            info.canMerge = node.Attributes["merge"] != null;
+			info.canMerge = node.Attributes["merge"] != null;
             if (node.Attributes["blend"] != null)
                 info.blend = parseInt(node.Attributes["blend"].Value);
             else
@@ -184,7 +184,7 @@ namespace Terrafirma
     {
         public string name;
         public UInt32 color;
-        public Int16 blend;
+		public Int16 blend;
     }
     class Tile
     {
@@ -428,9 +428,9 @@ namespace Terrafirma
         Int32 groundLevel, rockLevel;
         string[] worlds;
         string currentWorld;
-        Int32 worldID = 0;
-        string[] players;
-        string player;
+		Int32 worldID=0;
+		string[] players;
+		string player;
         List<Chest> chests = new List<Chest>();
         List<Sign> signs = new List<Sign>();
         List<NPC> npcs = new List<NPC>();
@@ -551,10 +551,10 @@ namespace Terrafirma
                 int id = Convert.ToInt32(wallList[i].Attributes["num"].Value);
                 wallInfo[id].name = wallList[i].Attributes["name"].Value;
                 wallInfo[id].color = parseColor(wallList[i].Attributes["color"].Value);
-                if (wallList[i].Attributes["blend"] != null)
-                    wallInfo[id].blend = Convert.ToInt16(wallList[i].Attributes["blend"].Value);
-                else
-                    wallInfo[id].blend = (Int16)id;
+            	if (wallList[i].Attributes["blend"] != null)
+					wallInfo[id].blend = Convert.ToInt16(wallList[i].Attributes["blend"].Value);
+				else
+					wallInfo[id].blend = (Int16)id;
             }
             XmlNodeList globalList = xml.GetElementsByTagName("global");
             for (int i = 0; i < globalList.Count; i++)
@@ -1248,7 +1248,6 @@ namespace Terrafirma
                     }));
             }
         }
-
         private void addNPCToMenu(NPC npc)
         {
             string name;
@@ -1681,13 +1680,14 @@ namespace Terrafirma
                     {
                         RenderMap();
                     }));
-                };
-            new Thread(loader).Start();
-        }
-        private void SelectPlayer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = !busy;
-        }
+
+				};
+			new Thread(loader).Start();
+		}
+		private void SelectPlayer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = !busy;
+		}
         private void FogOfWar_Toggle(object sender, ExecutedRoutedEventArgs e)
         {
             if (FogOfWar.IsChecked)
@@ -2920,6 +2920,8 @@ namespace Terrafirma
             };
             new Thread(start).Start();
         }
+
+
         // Quick Highlight stuffs
         ArrayList theTiles;
         private void AddVariants(ArrayList tiles, TileInfo info)
