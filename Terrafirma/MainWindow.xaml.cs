@@ -2066,6 +2066,7 @@ namespace Terrafirma
                         killedBoss3 = (flags & 8) == 8;
                         hardMode = (flags & 16) == 16;
                         killedClown = (flags & 32) == 32;
+						killedPlantBoss = (flags & 128) == 128;
                         killedMechBoss1 = (flags2 & 1) == 1;
                         killedMechBoss2 = (flags2 & 2) == 2;
                         killedMechBoss3 = (flags2 & 4) == 4;
@@ -2075,7 +2076,6 @@ namespace Terrafirma
                         killedFrost = false;
                         killedGoblins = false;
                         killedPirates = false;
-                        killedPlantBoss = false;
                         killedQueenBee = false;
                         savedMechanic = false;
                         savedTinkerer = false;
@@ -2211,10 +2211,10 @@ namespace Terrafirma
                     break;
                 case 0x0b: //recalculate u/v
                     {
-                        int startx = BitConverter.ToInt32(messages, payload); payload += 4;
-                        int starty = BitConverter.ToInt32(messages, payload); payload += 4;
-                        int endx = BitConverter.ToInt32(messages, payload); payload += 4;
-                        int endy = BitConverter.ToInt32(messages, payload);
+                        int startx = BitConverter.ToInt16(messages, payload); payload += 4;
+                        int starty = BitConverter.ToInt16(messages, payload); payload += 4;
+                        int endx = BitConverter.ToInt16(messages, payload); payload += 2;
+                        int endy = BitConverter.ToInt16(messages, payload);
 
                         for (int y = starty; y <= endy; y++)
                             for (int x = startx; x <= endx; x++)
@@ -2270,7 +2270,14 @@ namespace Terrafirma
                         int slot = BitConverter.ToInt16(messages, payload); payload += 2;
                         float posx = BitConverter.ToSingle(messages, payload); payload += 4;
                         float posy = BitConverter.ToSingle(messages, payload); payload += 4;
-                        payload += 30; //don't care about velocity, target, ai, or direction
+						payload += 9; //skip velocity and target
+						byte flags=messages[payload++];
+						payload+=4; //skip life
+						//skip any applicable AI
+						if ((flags&32)==32) payload+=4;
+						if ((flags&16)==16) payload+=4;
+						if ((flags&8)==8) payload+=4;
+						if ((flags&4)==4) payload+=4;
                         int id = BitConverter.ToInt16(messages, payload);
                         bool found = false;
                         for (int i = 0; i < npcs.Count; i++)
