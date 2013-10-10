@@ -805,7 +805,7 @@
   <tile num="235" name="Teleporter" color="#b3bb44" hasExtra="1" solid="1" lightr="0.6" lightg="0.6" lightb="0.0" light="0.6" />
   <tile num="236" name="Heart Fruit" color="#cd733d" hasExtra="1" letLight="1" />
   <tile num="237" name="Lihzahrd Altar" color="#fff133" hasExtra="1" letLight="1" lightr="0.1" lightg="0.1" lightb="0.0" light="0.1" />
-  <tile num="238" name="Purple Flower" color="#e180ce" hasExtra="1" letLight="1" lightr="0.5" lightg="0.0" lightb="0.5" />
+  <tile num="238" name="Plantera's Bulb" color="#e180ce" hasExtra="1" letLight="1" lightr="0.5" lightg="0.0" lightb="0.5" />
   <tile num="239" name="Ingots" color="#cd8647" hasExtra="1" letLight="1" solid="1">
   	<var u="0" name="Copper Bar" color="#cd8647" />
     <var u="18" name="Tin Bar" color="#bba57c" />
@@ -1034,7 +1034,7 @@
   <wall num="109" name="Palladium Column Wall" color="#5e1911" />
   <wall num="110" name="Bubblegum Wall" color="#994996" />
   <wall num="111" name="Titanstone Wall" color="#1f1814" />
-  <wall num="112" name="Red Brick Wall" color="#320F08" />
+  <wall num="112" name="Lihzahrd Brick Wall" color="#320F08" />
 
   <prefix num="1" name="Large" />
   <prefix num="2" name="Massive" />
