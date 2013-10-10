@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2011, Sean Kasun
+Copyright (c) 2013, Sean Kasun
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -435,7 +435,7 @@ namespace Terrafirma
     /// </summary>
     public partial class MainWindow : Window
     {
-        const int MapVersion = 69;
+        const int MapVersion = 71;
         const int MaxTile = 250;
         const int MaxWall = 111;
         const int Widest = 8400;
@@ -477,7 +477,7 @@ namespace Terrafirma
         Int32 oreTier1, oreTier2, oreTier3;
 
         double gameTime;
-        bool dayNight, bloodMoon;
+        bool dayNight, bloodMoon, eclipse;
         int moonPhase;
         Int32 dungeonX, dungeonY;
         bool killedBoss1, killedBoss2, killedBoss3, killedGoblins, killedClown, killedFrost;
@@ -881,6 +881,9 @@ namespace Terrafirma
                         dayNight = b.ReadBoolean();
                         moonPhase = b.ReadInt32();
                         bloodMoon = b.ReadBoolean();
+                        eclipse = false;
+                        if (version >= 70)
+                            eclipse = b.ReadBoolean();
                         dungeonX = b.ReadInt32();
                         dungeonY = b.ReadInt32();
                         crimson = false;
@@ -967,7 +970,7 @@ namespace Terrafirma
                             if (version >= 60)
                             {
                                 b.BaseStream.Seek(4, SeekOrigin.Current);
-                                if (version >= 62)
+                                if (version >= 62) //skip wind
                                     b.BaseStream.Seek(6, SeekOrigin.Current);
                             }
                         }

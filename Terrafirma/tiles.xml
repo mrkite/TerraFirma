@@ -47,7 +47,11 @@
   <tile num="7" name="Copper Ore" color="#964316" solid="1" blend="0" />
   <tile num="8" name="Gold Ore" color="#B9A417" solid="1" blend="0" />
   <tile num="9" name="Silver Ore" color="#D9DFDF" solid="1" blend="0" />
-  <tile num="10" name="Closed Wooden Door" color="#BF8F6F" hasExtra="1" solid="1">
+  <tile num="10" name="Closed Doors" color="#BF8F6F" hasExtra="1" solid="1">
+    <var minv="1242" name="Closed Steam Punk Door" color="#8A7736" />
+    <var minv="1188" name="Closed Honey Door" color="#975D0F" />
+    <var minv="1134" name="Closed Golden Door" color="#E7B21C" />
+    <var minv="1080" name="Closed Glass Door" color="#57ADBD" />
     <var minv="1026" name="Closed Obsidian Door" color="#545454" />
     <var minv="972" name="Closed Pink Dungeon Door" color="#b05e89" />
     <var minv="918" name="Closed Green Dungeon Door" color="#526556" />
@@ -67,8 +71,13 @@
     <var minv="162" name="Closed Pearlwood Door" color="#776c51" />
     <var minv="108" name="Closed Rich Mahogany Door" color="#734144" />
     <var minv="54" name="Closed Ebonwood Door" color="#535064" />
+    <var minv="0" name="Closed Wooden Door" color="#bf8f6f" />
   </tile>
-  <tile num="11" name="Open Wooden Door" color="#946B50" hasExtra="1" letLight="1" solid="1">
+  <tile num="11" name="Open Doors" color="#946B50" hasExtra="1" letLight="1" solid="1">
+    <var minv="1242" name="Open Steam Punk Door" color="#8A7736" />
+    <var minv="1188" name="Open Honey Door" color="#975D0F" />
+    <var minv="1134" name="Open Golden Door" color="#E7B21C" />
+    <var minv="1080" name="Open Glass Door" color="#57ADBD" />
     <var minv="1026" name="Open Obsidian Door" color="#545454" />
     <var minv="972" name="Open Pink Dungeon Door" color="#b05e89" />
     <var minv="918" name="Open Green Dungeon Door" color="#526556" />
@@ -88,6 +97,7 @@
     <var minv="162" name="Open Pearlwood Door" color="#776c51" />
     <var minv="108" name="Open Rich Mahogany Door" color="#734144" />
     <var minv="54" name="Open Ebonwood Door" color="#535064" />
+    <var minv="0" name="Open Wooden Door" color="#946b50" />
   </tile>
   <tile num="12" name="Heartstone" color="#B61239" hasExtra="1" letLight="1" />
   <tile num="13" name="Bottle" color="#4EC5FC" hasExtra="1" letLight="1">
@@ -96,7 +106,13 @@
     <var u="54" name="Pink Vase" color="#F0C4D0" />
     <var u="72" name="Mug" color="#ACC0D7" />
   </tile>
-  <tile num="14" name="Wooden Table" color="#7F5C45" hasExtra="1" letLight="1">
+  <tile num="14" name="Tables" color="#7F5C45" hasExtra="1" letLight="1">
+    <var minu="1080" name="Steam Punk Table" color="#E1B45D" />
+    <var minu="1026" name="Honey Table" color="#975D0F" />
+    <var minu="972" name="Golden Table" color="#E9CB18" />
+    <var minu="918" name="Bar" color="#483420" />
+    <var minu="864" name="Banquet Table" color="#976B4B" />
+    <var minu="810" name="Glass Table" color="#57ADBD" />
     <var minu="756" name="Gothic Table" color="#667367" />
     <var minu="702" name="Obsidian Table" color="#2b2b2b" />
     <var minu="648" name="Pink Dungeon Table" color="#b05e89" />
@@ -111,8 +127,15 @@
     <var minu="162" name="Pearlwood Table" color="#8e805e" />
     <var minu="108" name="Rich Mahogany Table" color="#64383b" />
     <var minu="54" name="Ebonwood Table" color="#7d758f" />
+    <var minu="0" name="Wooden Table" color="#7f5c45" />
   </tile>
-  <tile num="15" name="Wooden Chair" color="#A2785C" hasExtra="1" letLight="1">
+  <tile num="15" name="Chairs" color="#A2785C" hasExtra="1" letLight="1">
+    <var minv="920" name="Steam Punk Chair" color="#547940" />
+    <var minv="880" name="Honey Chair" color="#FEC214" />
+    <var minv="840" name="Bar Stool" color="#725138" />
+    <var minv="800" name="Golden Toilet" color="#E9CB18" />
+    <var minv="760" name="Golden Chair" color="#E9CB18" />
+    <var minv="720" name="Glass Chair" color="#57ADBD" />
     <var minv="680" name="Gothic Chair" color="#5b665c" />
     <var minv="640" name="Obsidian Chair" color="#2b2b2b" />
     <var minv="600" name="Pink Dungeon Chair" color="#bf7da0" />
@@ -130,6 +153,7 @@
     <var minv="120" name="Rich Mahogany Chair" color="#994171" />
     <var minv="80" name="Ebonwood Chair" color="#534397" />
     <var minv="40" name="Toilet" color="#808080" />
+    <var minv="0" name="Wooden Chair" color="#a2785c" />
   </tile>
   <tile num="16" name="Iron Anvil" color="#505050" hasExtra="1" letLight="1">
     <var minu="36" name="Lead Anvil" color="#535b72" />
@@ -166,6 +190,7 @@
     <var v="198" name="Wood Shelf" color="#59554f" />
     <var v="216" name="Dungeon Shelf" color="#dbd6b5" />
     <var v="234" name="Obsidian Platform" color="#620d0d" />
+    <var v="252" name="Glass Platform" color="#57ADBD" />
   </tile>
   <tile num="20" name="Sapling" color="#1E9648" hasExtra="1" letLight="1" />
   <tile num="21" name="Chest" color="#946B50" hasExtra="1" letLight="1">
@@ -301,14 +326,18 @@
   <tile num="77" name="Hellforge" color="#EE6646" hasExtra="1" letLight="1" lightr="0.75" lightg="0.45" lightb="0.25" light="0.6" />
   <tile num="78" name="Clay Pot" color="#796E61" hasExtra="1" letLight="1" />
   <tile num="79" name="Bed" color="#5C6298" hasExtra="1" letLight="1">
-    <var minv="304" name="Obsidian Bed" color="#e12d2d" />
-    <var minv="266" name="Red Dungeon Bed" color="#b05e89" />
-    <var minv="228" name="Green Dungeon Bed" color="#69816d" />
-    <var minv="190" name="Blue Dungeon Bed" color="#454e63" />
-    <var minv="152" name="Shadewood Bed" color="#b04444" />
+    <var minv="432" name="Steam Punk Bed" color="#496937" />
+    <var minv="396" name="Honey Bed" color="#FF9C0C" />
+    <var minv="360" name="Golden Bed" color="#E9CB18" />
+    <var minv="324" name="Glass Bed" color="#C8F6FE" />
+    <var minv="288" name="Obsidian Bed" color="#e12d2d" />
+    <var minv="252" name="Red Dungeon Bed" color="#b05e89" />
+    <var minv="216" name="Green Dungeon Bed" color="#69816d" />
+    <var minv="180" name="Blue Dungeon Bed" color="#454e63" />
+    <var minv="144" name="Shadewood Bed" color="#b04444" />
     <var minv="108" name="Pearlwood Bed" color="#5c9877" />
-    <var minv="76" name="Rich Mahogany Bed" color="#33285b" />
-    <var minv="38" name="Ebonwood Bed" color="#5b2839" />
+    <var minv="72" name="Rich Mahogany Bed" color="#33285b" />
+    <var minv="36" name="Ebonwood Bed" color="#5b2839" />
   </tile>
   <tile num="80" name="Cactus" color="#497811" letLight="1" />
   <tile num="81" name="Coral" color="#e5533f" hasExtra="1" letLight="1" />
@@ -381,6 +410,93 @@
     <var u="342" name="Lost Hopes of Man Banner" color="#eebc70" />
     <var u="360" name="Obsidian Watcher Banner" color="#0d0d0d" />
     <var u="378" name="Lava Erupts Banner" color="#f34922" />
+    <var u="396" name="Angler Fish Banner" color="#94303D" />
+    <var u="414" name="Angry Nimbus Banner" color="#96A5B0" />
+    <var u="432" name="Anomura Fungus Banner" color="#7395FA" />
+    <var u="450" name="Antlion Banner" color="#D5C770" />
+    <var u="468" name="Arapaima Banner" color="#979797" />
+    <var u="486" name="Armored Skeleton Banner" color="#6580B1" />
+    <var u="504" name="Bat Banner" color="#00649C" />
+    <var u="522" name="Bird Banner" color="#E4DEC9" />
+    <var u="540" name="Black Recluse Banner" color="#2E1B19" />
+    <var u="558" name="Blood Feeder Banner" color="#C36154" />
+    <var u="576" name="Blood Jelly Banner" color="#EAC3B4" />
+    <var u="594" name="Blood Crawler Banner" color="#C87E6C" />
+    <var u="612" name="Bone Serpent Banner" color="#93936D" />
+    <var u="630" name="Bunny Banner" color="#FFFFFF" />
+    <var u="648" name="Chaos Elemental Banner" color="#CD22E8" />
+    <var u="666" name="Mimic Banner" color="#825E47" />
+    <var u="684" name="Clown Banner" color="#8A49C2" />
+    <var u="702" name="Corrupt Bunny Banner" color="#A451B5" />
+    <var u="720" name="Corrupt Goldfish Banner" color="#A452B5" />
+    <var u="738" name="Crab Banner" color="#F6A231" />
+    <var u="756" name="Crimera Banner" color="#903E3F" />
+    <var u="774" name="Crimson Axe Banner" color="#7A0013" />
+    <var u="792" name="Cursed Hammer Banner" color="#B653C9" />
+    <var u="810" name="Demon Banner" color="#C46F6F" />
+    <var u="828" name="Demon Eye Banner" color="#E15B5B" />
+    <var u="846" name="Derpling Banner" color="#56A9FB" />
+    <var u="864" name="Eater of Souls Banner" color="#584749" />
+    <var u="882" name="Enchanted Sword Banner" color="#ECC813" />
+    <var u="900" name="Zombie Eskimo Banner" color="#4B565C" />
+    <var u="918" name="Face Monster Banner" color="#864C34" />
+    <var u="936" name="Floaty Gross Banner" color="#F3CBBB" />
+    <var u="954" name="Flying Fish Banner" color="#063663" />
+    <var u="972" name="Flying Snake Banner" color="#22590D" />
+    <var u="990" name="Frankenstein Banner" color="#D3CE98" />
+    <var u="1008" name="Fungi Bulb Banner" color="#557AEB" />
+    <var u="1026" name="Fungo Fish Banner" color="#5C84FE" />
+    <var u="1044" name="Gastropod Banner" color="#EA57A2" />
+    <var u="1062" name="Goblin Archer Banner" color="#99975A" />
+    <var u="1080" name="Goblin Sorcerer Banner" color="#B1B54B" />
+    <var u="1098" name="Goblin Scout Banner" color="#80A762" />
+    <var u="1116" name="Goblin Thief Banner" color="#5E98A1" />
+    <var u="1134" name="Goblin Warrior Banner" color="#9CB987" />
+    <var u="1152" name="Goldfish Banner" color="#FDC200" />
+    <var u="1170" name="Harpy Banner" color="#002336" />
+    <var u="1188" name="Hellbat Banner" color="#BF1604" />
+    <var u="1206" name="Herpling Banner" color="#792C24" />
+    <var u="1224" name="Hornet Banner" color="#A54D7F" />
+    <var u="1242" name="Ice Elemental Banner" color="#8CDBEA" />
+    <var u="1260" name="Icy Merman Banner" color="#44A9C1" />
+    <var u="1278" name="Fire Imp Banner" color="#B06161" />
+    <var u="1296" name="Jellyfish Banner" color="#7893E4" />
+    <var u="1314" name="Jungle Creeper Banner" color="#934013" />
+    <var u="1332" name="Lihzahrd Banner" color="#84A941" />
+    <var u="1350" name="Man Eater Banner" color="#689E21" />
+    <var u="1368" name="Meteor Head Banner" color="#653448" />
+    <var u="1386" name="Moth Banner" color="#7B8213" />
+    <var u="1404" name="Mummy Banner" color="#887969" />
+    <var u="1422" name="Mushi Ladybug Banner" color="#567CEF" />
+    <var u="1440" name="Parrot Banner" color="#0E4280" />
+    <var u="1458" name="Pigron Banner" color="#F830AF" />
+    <var u="1476" name="Piranha Banner" color="#2AA172" />
+    <var u="1494" name="Pirate Banner" color="#902626" />
+    <var u="1512" name="Pixie Banner" color="#F3D785" />
+    <var u="1530" name="Raincoat Zombie Banner" color="#FCE800" />
+    <var u="1548" name="Reaper Banner" color="#121212" />
+    <var u="1566" name="Shark Banner" color="#517975" />
+    <var u="1584" name="Skeleton Banner" color="#3A6392" />
+    <var u="1602" name="Skeleton Mage Banner" color="#8B3E37" />
+    <var u="1620" name="Slime Banner" color="#2D71FD" />
+    <var u="1638" name="Snow Flinx Banner" color="#CEE4E6" />
+    <var u="1656" name="Spider Banner" color="#8E7154" />
+    <var u="1674" name="Spore Zombie Banner" color="#C2C1A5" />
+    <var u="1692" name="Swamp Thing Banner" color="#626646" />
+    <var u="1710" name="Tortoise Banner" color="#AA6846" />
+    <var u="1728" name="Toxic Sludge Banner" color="#708635" />
+    <var u="1746" name="Umbrella Slime Banner" color="#5295FD" />
+    <var u="1764" name="Unicorn Banner" color="#EEE1DA" />
+    <var u="1782" name="Vampire Banner" color="#0E0E0E" />
+    <var u="1800" name="Vulture Banner" color="#B4612C" />
+    <var u="1818" name="Nymph Banner" color="#F6AB89" />
+    <var u="1836" name="Werewolf Banner" color="#5F7891" />
+    <var u="1854" name="Wolf Banner" color="#6193A5" />
+    <var u="1872" name="World Feeder Banner" color="#7A6366" />
+    <var u="1890" name="Worm Banner" color="#8B5050" />
+    <var u="1908" name="Wraith Banner" color="#000000" />
+    <var u="1926" name="Wyvern Banner" color="#0083C4" />
+    <var u="1944" name="Zombie Banner" color="#9BA067" />
   </tile>
   <tile num="92" name="Lamp Post" color="#323232" hasExtra="1" letlight="1">
     <var u="0" maxv="18" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
@@ -918,6 +1034,7 @@
   <wall num="109" name="Palladium Column Wall" color="#5e1911" />
   <wall num="110" name="Bubblegum Wall" color="#994996" />
   <wall num="111" name="Titanstone Wall" color="#1f1814" />
+  <wall num="112" name="Red Brick Wall" color="#320F08" />
 
   <prefix num="1" name="Large" />
   <prefix num="2" name="Massive" />
@@ -2666,6 +2783,116 @@
   <item num="1612" name="Ankh Charm" />
   <item num="1613" name="Ankh Shield" />
   <item num="1614" name="Blue Flare" />
+    <item num="1615" name="Angler Fish Banner" />
+    <item num="1616" name="Angry Nimbus Banner" />
+    <item num="1617" name="Anomura Fungus Banner" />
+    <item num="1618" name="Antlion Banner" />
+    <item num="1619" name="Arapaima Banner" />
+    <item num="1620" name="Armored Skeleton Banner" />
+    <item num="1621" name="Bat Banner" />
+    <item num="1622" name="Bird Banner" />
+    <item num="1623" name="Black Recluse Banner" />
+    <item num="1624" name="Blood Feeder Banner" />
+    <item num="1625" name="Blood Jelly Banner" />
+    <item num="1626" name="Blood Crawler Banner" />
+    <item num="1627" name="Bone Serpent Banner" />
+    <item num="1628" name="Bunny Banner" />
+    <item num="1629" name="Chaos Elemental Banner" />
+    <item num="1630" name="Mimic Banner" />
+    <item num="1631" name="Clown Banner" />
+    <item num="1632" name="Corrupt Bunny Banner" />
+    <item num="1633" name="Corrupt Goldfish Banner" />
+    <item num="1634" name="Crab Banner" />
+    <item num="1635" name="Crimera Banner" />
+    <item num="1636" name="Crimson Axe Banner" />
+    <item num="1637" name="Cursed Hammer Banner" />
+    <item num="1638" name="Demon Banner" />
+    <item num="1639" name="Demon Eye Banner" />
+    <item num="1640" name="Derpling Banner" />
+    <item num="1641" name="Eater of Souls Banner" />
+    <item num="1642" name="Enchanted Sword Banner" />
+    <item num="1643" name="Zombie Eskimo Banner" />
+    <item num="1644" name="Face Monster Banner" />
+    <item num="1645" name="Floaty Gross Banner" />
+    <item num="1646" name="Flying Fish Banner" />
+    <item num="1647" name="Flying Snake Banner" />
+    <item num="1648" name="Frankenstein Banner" />
+    <item num="1649" name="Fungi Bulb Banner" />
+    <item num="1650" name="Fungo Fish Banner" />
+    <item num="1651" name="Gastropod Banner" />
+    <item num="1652" name="Goblin Archer Banner" />
+    <item num="1653" name="Goblin Sorcerer Banner" />
+    <item num="1654" name="Goblin Scout Banner" />
+    <item num="1655" name="Goblin Thief Banner" />
+    <item num="1656" name="Goblin Warrior Banner" />
+    <item num="1657" name="Goldfish Banner" />
+    <item num="1658" name="Harpy Banner" />
+    <item num="1659" name="Hellbat Banner" />
+    <item num="1660" name="Herpling Banner" />
+    <item num="1661" name="Hornet Banner" />
+    <item num="1662" name="Ice Elemental Banner" />
+    <item num="1663" name="Icy Merman Banner" />
+    <item num="1664" name="Fire Imp Banner" />
+    <item num="1665" name="Jellyfish Banner" />
+    <item num="1666" name="Jungle Creeper Banner" />
+    <item num="1667" name="Lihzahrd Banner" />
+    <item num="1668" name="Man Eater Banner" />
+    <item num="1669" name="Meteor Head Banner" />
+    <item num="1670" name="Moth Banner" />
+    <item num="1671" name="Mummy Banner" />
+    <item num="1672" name="Mushi Ladybug Banner" />
+    <item num="1673" name="Parrot Banner" />
+    <item num="1674" name="Pigron Banner" />
+    <item num="1675" name="Piranha Banner" />
+    <item num="1676" name="Pirate Banner" />
+    <item num="1677" name="Pixie Banner" />
+    <item num="1678" name="Raincoat Zombie Banner" />
+    <item num="1679" name="Reaper Banner" />
+    <item num="1680" name="Shark Banner" />
+    <item num="1681" name="Skeleton Banner" />
+    <item num="1682" name="Skeleton Mage Banner" />
+    <item num="1683" name="Slime Banner" />
+    <item num="1684" name="Snow Flinx Banner" />
+    <item num="1685" name="Spider Banner" />
+    <item num="1686" name="Spore Zombie Banner" />
+    <item num="1687" name="Swamp Thing Banner" />
+    <item num="1688" name="Tortoise Banner" />
+    <item num="1689" name="Toxic Sludge Banner" />
+    <item num="1690" name="Umbrella Slime Banner" />
+    <item num="1691" name="Unicorn Banner" />
+    <item num="1692" name="Vampire Banner" />
+    <item num="1693" name="Vulture Banner" />
+    <item num="1694" name="Nymph Banner" />
+    <item num="1695" name="Werewolf Banner" />
+    <item num="1696" name="Wolf Banner" />
+    <item num="1697" name="World Feeder Banner" />
+    <item num="1698" name="Worm Banner" />
+    <item num="1699" name="Wraith Banner" />
+    <item num="1700" name="Wyvern Banner" />
+    <item num="1701" name="Zombie Banner" />
+    <item num="1702" name="Glass Platform" />
+    <item num="1703" name="Glass Chair" />
+    <item num="1704" name="Golden Chair" />
+    <item num="1705" name="Golden Toilet" />
+    <item num="1706" name="Bar Stool" />
+    <item num="1707" name="Honey Chair" />
+    <item num="1708" name="Steam Punk Chair" />
+    <item num="1709" name="Glass Door" />
+    <item num="1710" name="Golden Door" />
+    <item num="1711" name="Honey Door" />
+    <item num="1712" name="Steam Punk Door" />
+    <item num="1713" name="Glass Table" />
+    <item num="1714" name="Banquet Table" />
+    <item num="1715" name="Bar" />
+    <item num="1716" name="Golden Table" />
+    <item num="1717" name="Honey Table" />
+    <item num="1718" name="Steam Punk Table" />
+    <item num="1719" name="Glass Bed" />
+    <item num="1720" name="Golden Bed" />
+    <item num="1721" name="Honey Bed" />
+    <item num="1722" name="Steam Punk Bed" />
+    <item num="1723" name="Living Wood Wall" />
+    <item num="1724" name="Fart in a Jar" />
 
   <global id="sky" color="#84AAF8" />
   <global id="earth" color="#583D2E" />
