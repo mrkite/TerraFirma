@@ -533,12 +533,51 @@ namespace Terrafirma
                                 drawTexture(tex, texw, texh, tile.v * tex.width * 4 + tile.u * 4,
                                     pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
                             }
+                            else if (tile.type == 80) //cactus
+                            {
+                                int cactus = -1;
+                                int cactusx = sx;
+                                int cactusy = sy;
+                                if (tile.u == 36) cactusx--;
+                                if (tile.u == 54) cactusx++;
+                                if (tile.u == 108)
+                                {
+                                    if (tile.v == 18) cactusx--;
+                                    else cactusx++;
+                                }
+                                while (cactusy<sy+20 && (!tiles[cactusx,cactusy].isActive
+                                    || tiles[cactusx, cactusy].type == 80
+                                    || !tileInfos[tiles[cactusx,cactusy].type].solid))
+                                    cactusy++;
+                                if (tiles[cactusx, cactusy].isActive)
+                                {
+                                    switch (tiles[cactusx, cactusy].type)
+                                    {
+                                        case 112: //ebonsand
+                                            cactus = 1;
+                                            break;
+                                        case 116: //pearlsand
+                                            cactus = 2;
+                                            break;
+                                        case 234: //crimsand
+                                            cactus = 3;
+                                            break;
+                                    }
+                                }
+                                Texture tex;
+                                if (cactus == -1)
+                                    tex = Textures.GetTile(tile.type);
+                                else
+                                    tex = Textures.GetCactus(cactus);
+                                drawTexture(tex, texw, texh, tile.v * tex.width * 4 + tile.u * 4,
+                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                            }
                             else
                             {
                                 Texture tex;
                                 tex = Textures.GetTile(tile.type);
 
-                                double ypad=0.0;
+                                double ypad = 0.0;
                                 if (tile.slope > 0)
                                 {
                                     if (tile.slope == 1)

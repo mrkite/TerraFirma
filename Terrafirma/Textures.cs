@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2011, Sean Kasun
+Copyright (c) 2013, Sean Kasun
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -229,6 +229,7 @@ namespace Terrafirma
         Dictionary<int, Texture> woods;
         Dictionary<int, Texture> wallOutlines;
         Dictionary<int, Texture> actuators;
+        Dictionary<int, Texture> cacti;
         string rootDir;
 
         public Textures()
@@ -252,6 +253,7 @@ namespace Terrafirma
             woods = new Dictionary<int, Texture>();
             wallOutlines = new Dictionary<int, Texture>();
             actuators = new Dictionary<int, Texture>();
+            cacti = new Dictionary<int, Texture>();
 
             // find steam
             string path="";
@@ -433,6 +435,27 @@ namespace Terrafirma
                 actuators[num] = new Texture(rootDir, name);
             }
             return actuators[num];
+        }
+        public Texture GetCactus(int num)
+        {
+            if (!cacti.ContainsKey(num))
+            {
+                string name="Tiles_80";
+                switch (num)
+                {
+                    case 1: //evil
+                        name = "Evil_Cactus";
+                        break;
+                    case 2: //good
+                        name = "Good_Cactus";
+                        break;
+                    case 3: //crimson
+                        name = "Crimson_Cactus";
+                        break;
+                }
+                cacti[num] = new Texture(rootDir, name);
+            }
+            return cacti[num];
         }
     }
 }
