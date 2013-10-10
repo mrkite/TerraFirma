@@ -228,6 +228,7 @@ namespace Terrafirma
         Dictionary<int, Texture> liquids;
         Dictionary<int, Texture> woods;
         Dictionary<int, Texture> wallOutlines;
+        Dictionary<int, Texture> actuators;
         string rootDir;
 
         public Textures()
@@ -250,6 +251,7 @@ namespace Terrafirma
             liquids = new Dictionary<int, Texture>();
             woods = new Dictionary<int, Texture>();
             wallOutlines = new Dictionary<int, Texture>();
+            actuators = new Dictionary<int, Texture>();
 
             // find steam
             string path="";
@@ -396,7 +398,11 @@ namespace Terrafirma
         {
             if (!wires.ContainsKey(num))
             {
-                string name = String.Format("Wires");
+                string name;
+                if (num == 0)
+                    name = String.Format("Wires");
+                else
+                    name = String.Format("Wires{0}", num+1);
                 wires[num] = new Texture(rootDir, name);
             }
             return wires[num];
@@ -418,6 +424,15 @@ namespace Terrafirma
                 wallOutlines[num] = new Texture(rootDir, name);
             }
             return wallOutlines[num];
+        }
+        public Texture GetActuator(int num)
+        {
+            if (!actuators.ContainsKey(num))
+            {
+                string name = String.Format("Actuator");
+                actuators[num] = new Texture(rootDir, name);
+            }
+            return actuators[num];
         }
     }
 }

@@ -651,6 +651,12 @@ namespace Terrafirma
                             drawOverlay(c, tile.isLava ? 0.85 : 0.5, tile.liquid,
                                 pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
                         }
+                        if (wires && tile.actuator)
+                        {
+                            Texture tex = Textures.GetActuator(0);
+                            drawTexture(tex, 16, 16, 0,
+                                pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                        }
                         // draw wires if necessary
                         if (wires && tile.hasRedWire)
                             drawRedWire(sx, sy, pixels,

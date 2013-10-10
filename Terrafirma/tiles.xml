@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <tiles>
   <tile num="0" name="Dirt" color="#976B4B" solid="1" />
-  <tile num="1" name="Stone" color="#808080" solid="1" blend="0" merge="1" />
+  <tile num="1" name="Stone" color="#808080" solid="1" blend="0" merge="1" isStone="1" />
   <tile num="2" name="Grass" color="#1CD85E" solid="1" blend="0" merge="1" isGrass="1" />
   <tile num="3" name="Weed" color="#1E9648" hasExtra="1" letLight="1">
     <var u="144" name="Mushroom" color="#C36927" />
