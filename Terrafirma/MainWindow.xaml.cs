@@ -1234,7 +1234,7 @@ namespace Terrafirma
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
                             QuickHiliteToggle.IsEnabled = true;
-                            render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, npcs);
+                            render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, caveBackX, caveBackStyle, jungleBackStyle, hellBackStyle, npcs);
                             loaded = true;
                             done();
                         }));
@@ -2372,7 +2372,7 @@ namespace Terrafirma
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                             {
                                 serverText.Text = "";
-                                render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, npcs);
+                                render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, caveBackX,caveBackStyle,jungleBackStyle,hellBackStyle, npcs);
                                 loaded = true;
                                 curX = spawnX;
                                 curY = spawnY;

@@ -42,7 +42,8 @@ namespace Terrafirma
         private int groundLevel, rockLevel;
         private List<NPC> npcs;
         private byte[] styles;
-        private Int32[] treeX,treeStyle;
+        private Int32[] treeX,treeStyle,caveX,caveStyle;
+        private Int32 jungleStyle, hellStyle;
 
         Random rand;
 
@@ -66,7 +67,8 @@ namespace Terrafirma
 
         public void SetWorld(Int32 tilesWide, Int32 tilesHigh,
             int groundLevel, int rockLevel, byte[] styles, 
-            Int32[] treeX, Int32[] treeStyle, List<NPC> npcs)
+            Int32[] treeX, Int32[] treeStyle, Int32[] caveX, Int32[] caveStyle,
+            Int32 jungleStyle, Int32 hellStyle, List<NPC> npcs)
         {
             this.tilesWide = tilesWide;
             this.tilesHigh = tilesHigh;
@@ -76,7 +78,24 @@ namespace Terrafirma
             this.styles = styles;
             this.treeX = treeX;
             this.treeStyle = treeStyle;
+            this.caveX = caveX;
+            this.caveStyle = caveStyle;
+            this.jungleStyle = jungleStyle;
+            this.hellStyle = hellStyle;
         }
+
+        int[] backStyles={
+            66,67,68,69,128,125,
+            70,71,68,72,128,125,
+            73,74,75,76,131,125,
+            77,78,79,80,134,125,
+            77,81,79,82,134,125,
+            83,84,85,86,137,125,
+            83,87,88,89,137,125,
+            121,122,123,124,140,125,
+            153,147,148,149,150,125,
+            146,154,155,156,157,125
+        };
 
 
         private struct Delayed
@@ -113,42 +132,6 @@ namespace Terrafirma
 
                 // draw backgrounds
 
-				/*
-					midx = middle of current view:
-					style=caveBackStyle[3];
-					if (midx<=caveBackX[0]) style=caveBackStyle[0]
-					else if (midx<=treeX[1]) style=caveBackStyle[1]
-					else if (midx<=treeX[2]) style=caveBackStyle[2]
-
-					switch (style)
-					{
-						case 0:
-							styles=[66,67,68,69,128,125];
-						case 1:
-							styles=[70,71,68,72,128,125];
-						case 2:
-							styles=[73,74,75,76,131,125];
-						case 3:
-							styles=[77,78,79,80,134,125];
-						case 4:
-							styles=[77,81,79,82,134,125];
-						case 5:
-							styles=[83,84,85,86,137,125];
-						case 6:
-							styles=[83,87,88,89,137,125];
-						case 7:
-							styles=[121,122,123,124,140,125];
-						case 8:
-							if (jungleBackStyle==0)
-								styles=[153,147,148,149,150,125];
-							else
-								styles=[146,154,155,156,157,125];
-					}
-					styles[4]+=hellBackStyle
-					styles[5]+=hellBackStyle
-				*/
-
-
                 int hellLevel = ((tilesHigh - 230) - groundLevel) / 6; //rounded
                 hellLevel = hellLevel * 6 + groundLevel - 5;
 
@@ -158,52 +141,47 @@ namespace Terrafirma
                     int sy = (int)(y + starty);
                     px = skipx * (int)scale;
 
-                    int bg = 0;
-                    int bgw = 16, bgh = 16;
+                    int bg = -1;
+                    int bgw = 128, bgh = 16;
                     int v = sy;
                     if (sy < groundLevel)
-                        bg = 0;
+                    {
+                        bg = -1;
+                        bgw = 16;
+                    }
                     else if (sy == groundLevel)
                     {
-                        bg = 1;
-                        bgw = 96;
+                        bg = 0;
                         v = sy - groundLevel;
                     }
                     else if (sy < rockLevel)
                     {
-                        bg = 2;
-                        bgw = 96;
+                        bg = 1;
                         bgh = 96;
                         v = sy - groundLevel;
                     }
                     else if (sy == rockLevel)
                     {
-                        bg = 4;
-                        bgw = 96;
+                        bg = 2;
                         v = sy - rockLevel;
                     }
                     else if (sy < hellLevel)
                     {
                         bg = 3;
-                        bgw = 96;
                         bgh = 96;
                         v = sy - rockLevel;
                     }
                     else if (sy == hellLevel)
                     {
-                        bg = 6;
-                        bgw = 96;
+                        bg = 4;
                         v = sy - hellLevel;
                     }
                     else
                     {
                         bg = 5;
-                        bgw = 96;
                         bgh = 96;
                         v = sy - hellLevel;
                     }
-
-                    Texture tex = Textures.GetBackground(bg);
 
                     for (int x = skipx; x < blocksWide; x++)
                     {
@@ -211,6 +189,18 @@ namespace Terrafirma
                         if (sx < 0 || sx >= tilesWide || sy < 0 || sy >= tilesHigh)
                             continue;
 
+                        int bgtile=0;
+                        if (bg >= 0)
+                        {
+                            int style = caveStyle[3];
+                            if (sx <= caveX[0]) style = caveStyle[0];
+                            else if (sx <= caveX[1]) style = caveStyle[1];
+                            else if (sx <= caveX[2]) style = caveStyle[2];
+                            if (style == 8 && jungleStyle != 0) style++;
+                            bgtile = backStyles[bg + style * 6];
+                            if (bg > 3) bgtile += hellStyle;
+                        }
+                        Texture tex = Textures.GetBackground(bgtile);
                         Tile tile = tiles[sx, sy];
 
                         if (light == 1)
@@ -236,7 +226,7 @@ namespace Terrafirma
 
                         int u = (sx % (bgw / 16)) * 16;
                         int vv = (v % (bgh / 16)) * 16;
-                        if (bg == 0) //sky
+                        if (bg == -1) //sky
                             vv = sy * tex.height / groundLevel;
                         drawTexture(tex, 16, 16, vv * tex.width * 4 + u * 4,
                             pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
@@ -607,7 +597,7 @@ namespace Terrafirma
                                 else
                                 {
                                     //non-platform solid tile next to a half tile
-                                    if (!tile.half && tile.type != 19 && tileInfos[tile.type].solid &&
+                                    if (!tile.half && tile.type != 19 && tileInfos[tile.type].solid && sx>0 && sx<tilesWide-2 &&
                                         (tiles[sx - 1, sy].half || tiles[sx + 1, sy].half))
                                     {
                                         if (tiles[sx - 1, sy].half && tiles[sx + 1, sy].half) //both sides
