@@ -3,82 +3,56 @@
 <?define ProductVersion="1.9.8"?>
 <?define ProductUpgradeCode="77851f13-31d3-473a-8654-5b6325fc53ab"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*"
-		Name="Terrafirma" Language="1033" Version="$(var.ProductVersion)"
-		Manufacturer="Sean Kasun"
-		UpgradeCode="$(var.ProductUpgradeCode)">
-		<Package Comments="Windows Installer Package"
-		InstallerVersion="200" Compressed="yes" />
- <Media Id="1" Cabinet="terrafirma.cab" EmbedCab="yes" />
-   <Icon Id="ProductIcon" SourceFile="Terrafirma/terrafirma.ico" />
-     <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
-        <Property Id="ARPHELPLINK" Value="http://seancode.com/terrafirma" />
-        <Property Id="ARPURLINFOABOUT" Value="http://seancode.com" />
-         <Property Id="ARPNOREPAIR" Value="1" />
-       <!--Property Id="ARPNOMODIFY" Value="1" -->
-    
-         <Upgrade Id="$(var.ProductUpgradeCode)">
-           <UpgradeVersion Minimum="$(var.ProductVersion)" OnlyDetect="yes"
-               Property="NEWESTVERSIONDETECTED" />
-           <UpgradeVersion Minimum="0.0.0" Maximum="$(var.ProductVersion)"
-              IncludeMinimum="yes" IncludeMaximum="no"
-               Property="OLDERVERSIONBEINGUPGRADED" />
-         </Upgrade>
-        <Condition Message="A newer version of this software is already installed.">
-     	NOT NEWERVERSIONDETECTED
-         </Condition>
-    
-         <Directory Id="TARGETDIR" Name="SourceDir">
-           <Directory Id="ProgramFilesFolder">
-             <Directory Id="INSTALLDIR" Name="Terrafirma">
-               <Component Id="ApplicationFiles"
-                    Guid="9fcfa381-6ed4-4a7e-aebb-a27e10b0a022">
-     			   <File Id="AppFile1"
-                       Source="Terrafirma\bin\Release\Terrafirma.exe" />
-              </Component>
-             </Directory>
-           </Directory>
-          <Directory Id="ProgramMenuFolder">
-            <Directory Id="ProgramMenuSubfolder" Name="Terrafirma">
-               <Component Id="ApplicationShortcuts"
-                   Guid="1ca398d1-d9bc-42a1-8d2a-50931f6441ca">
-                 <Shortcut Id="ApplicationShortcut1" Name="Terrafirma"
-                    Description="Terraria Map Viewer"
-                    Target="[INSTALLDIR]Terrafirma.exe"
-                    WorkingDirectory="INSTALLDIR" />
-                 <RegistryValue Root="HKCU" Key="Software\Sean Kasun\Terrafirma"
-                     Name="installed" Type="integer" Value="1" KeyPath="yes" />
-                 <RemoveFolder Id="ProgramMenuSubfolder" On="uninstall" />
-               </Component>
-             </Directory>
-           </Directory>
-		   <Directory Id="DesktopFolder" Name="Desktop" />
-			<Component Id="DesktopShortcut" Guid="3dfc2a56-9d6b-11e0-89ee-60bc4824019b">
-				<Condition>INSTALLDESKTOPSHORTCUT</Condition>
-				<CreateFolder/>
-				<RegistryKey Root="HKCU" Key="Software\Sean Kasun\Terrafirma"
-					Action="createAndRemoveOnUninstall">
-					<RegistryValue Name="DTSC" Value="1" Type="integer" KeyPath="yes" />
-				</RegistryKey>
-				<Shortcut Id="DesktopShortcut"
-					Directory="DesktopFolder"
-					Name="Terrafirma"
-					Target="[#AppFile1]"
-					WorkingDirectory="INSTALLDIR" />
-			</Component>
-         </Directory>
+	<Product Id="*" Name="Terrafirma" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Sean Kasun" UpgradeCode="$(var.ProductUpgradeCode)">
+		<Package InstallerVersion="200" Compressed="yes" />
+		<Media Id="1" Cabinet="terrafirma.cab" EmbedCab="yes" />
 
-         <InstallExecuteSequence>
-           <RemoveExistingProducts After="InstallValidate" />
-         </InstallExecuteSequence>
-     
-         <Feature Id="DefaultFeature" Level="1">
-           <ComponentRef Id="ApplicationFiles" />
-           <ComponentRef Id="ApplicationShortcuts" />
-		   <ComponentRef Id="DesktopShortcut" />
-         </Feature>
-         <Property Id="WIXUI_INSTALLDIR">INSTALLDIR</Property>
-		 <Property Id="INSTALLDESKTOPSHORTCUT" Value="1" />
-		 <UIRef Id="MyWixUI_InstallDir" />
-       </Product>
-    </Wix>
+		<Icon Id="ProductIcon" SourceFile="Terrafirma/terrafirma.ico" />
+		<Property Id="ARPPRODUCTICON" Value="ProductIcon" />
+		<Property Id="ARPHELPLINK" Value="http://seancode.com/terrafirma" />
+		<Property Id="ARPURLINFOABOUT" Value="http://seancode.com" />
+		<Property Id="ARPNOREPAIR" Value="1" />
+
+		<Upgrade Id="$(var.ProductUpgradeCode)">
+			<UpgradeVersion Minimum="$(var.ProductVersion)" OnlyDetect="yes" Property="NEWESTVERSIONDETECTED" />
+			<UpgradeVersion Minimum="0.0.0" Maximum="$(var.ProductVersion)" IncludeMinimum="yes" IncludeMaximum="no" Property="OLDERVERSIONBEINGUPGRADED" />
+		</Upgrade>
+
+		<Condition Message="A newer version of this software is already installed.">NOT NEWERVERSIONDETECTED</Condition>
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLDIR" Name="Terrafirma" />
+			</Directory>
+			<Directory Id="ProgramMenuFolder">
+				<Directory Id="ApplicationProgramsFolder" Name="Terrafirma" />
+			</Directory>
+		</Directory>
+
+		<DirectoryRef Id="INSTALLDIR">
+			<Component Id="terrafirma.exe" Guid="9fcfa381-6ed4-4a7e-aebb-a27e10b0a022">
+				<File Id="terrafirma.exe" Source="Terrafirma\bin\Release\Terrafirma.exe" KeyPath="yes" Checksum="yes" />
+			</Component>
+		</DirectoryRef>
+
+		<DirectoryRef Id="ApplicationProgramsFolder">
+			<Component Id="ApplicationShortcut" Guid="1ca398d1-d9bc-42a1-8d2a-50931f6441ca">
+				<Shortcut Id="ApplicaitonStartMenuShortcut" Name="Terrafirma" Description="Terraria Map Viewer" Target="[#terrafirma.exe]" WorkingDirectory="INSTALLDIR" />
+				<RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
+				<RegistryValue Root="HKCU" Key="Software\Sean Kasun\Terrafirma" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+			</Component>
+		</DirectoryRef>
+
+		<InstallExecuteSequence>
+			<RemoveExistingProducts After="InstallValidate" />
+		</InstallExecuteSequence>
+		
+		<Feature Id="DefaultFeature" Level="1">
+			<ComponentRef Id="terrafirma.exe" />
+			<ComponentRef Id="ApplicationShortcut" />
+		</Feature>
+		
+		<Property Id="WIXUI_INSTALLDIR">INSTALLDIR</Property>
+		<UIRef Id="MyWixUI_InstallDir" />
+	</Product>
+</Wix>
