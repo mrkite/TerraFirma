@@ -190,7 +190,7 @@ namespace Terrafirma
     {
         private UInt32 lite;
         public Int16 u, v, wallu, wallv;
-        private byte flags;
+        private UInt16 flags;
         public byte type;
         public byte wall;
         public byte liquid;
@@ -204,56 +204,56 @@ namespace Terrafirma
         {
             get
             {
-                return (flags & 0x01) == 0x01;
+                return (flags & 0x0001) == 0x0001;
             }
             set
             {
                 if (value)
-                    flags |= 0x01;
+                    flags |= 0x0001;
                 else
-                    flags &= 0xfe;
+                    flags &= 0xfffe;
             }
         }
         public bool isLava
         {
             get
             {
-                return (flags & 0x02) == 0x02;
+                return (flags & 0x0002) == 0x0002;
             }
             set
             {
                 if (value)
-                    flags |= 0x02;
+                    flags |= 0x0002;
                 else
-                    flags &= 0xfd;
+                    flags &= 0xfffd;
             }
         }
         public bool isHoney
         {
             get
             {
-                return (flags & 0x04) == 0x04;
+                return (flags & 0x0004) == 0x0004;
             }
             set
             {
                 if (value)
-                    flags |= 0x04;
+                    flags |= 0x0004;
                 else
-                    flags &= 0xfb;
+                    flags &= 0xfffb;
             }
         }
         public bool seen
         {
             get
             {
-                return (flags & 0x08) == 0x08;
+                return (flags & 0x0008) == 0x0008;
             }
             set
             {
                 if (value)
-                    flags |= 0x08;
+                    flags |= 0x0008;
                 else
-                    flags &= 0xf7;
+                    flags &= 0xfff7;
             }
         }
 
@@ -261,56 +261,84 @@ namespace Terrafirma
         {
             get
             {
-                return (flags & 0x10) == 0x10;
+                return (flags & 0x0010) == 0x0010;
             }
             set
             {
                 if (value)
-                    flags |= 0x10;
+                    flags |= 0x0010;
                 else
-                    flags &= 0xef;
+                    flags &= 0xffef;
             }
         }
         public bool hasBlueWire
         {
             get
             {
-                return (flags & 0x20) == 0x20;
+                return (flags & 0x0020) == 0x0020;
             }
             set
             {
                 if (value)
-                    flags |= 0x20;
+                    flags |= 0x0020;
                 else
-                    flags &= 0xdf;
+                    flags &= 0xffdf;
             }
         }
         public bool hasGreenWire
         {
             get
             {
-                return (flags & 0x40) == 0x40;
+                return (flags & 0x0040) == 0x0040;
             }
             set
             {
                 if (value)
-                    flags |= 0x40;
+                    flags |= 0x0040;
                 else
-                    flags &= 0xbf;
+                    flags &= 0xffbf;
             }
         }
         public bool half
         {
             get
             {
-                return (flags & 0x80) == 0x80;
+                return (flags & 0x0080) == 0x0080;
             }
             set
             {
                 if (value)
-                    flags |= 0x80;
+                    flags |= 0x0080;
                 else
-                    flags &= 0x7f;
+                    flags &= 0xff7f;
+            }
+        }
+        public bool actuator
+        {
+            get
+            {
+                return (flags & 0x0100) == 0x0100;
+            }
+            set
+            {
+                if (value)
+                    flags |= 0x0100;
+                else
+                    flags &= 0xfeff;
+            }
+        }
+        public bool inactive
+        {
+            get
+            {
+                return (flags & 0x0200) == 0x0200;
+            }
+            set
+            {
+                if (value)
+                    flags |= 0x0200;
+                else
+                    flags &= 0xfdff;
             }
         }
 
@@ -1022,6 +1050,8 @@ namespace Terrafirma
                                 tiles[x, y].hasGreenWire = false;
                                 tiles[x, y].hasBlueWire = false;
                                 tiles[x, y].half = false;
+                                tiles[x, y].actuator = false;
+                                tiles[x, y].inactive = false;
                                 tiles[x, y].slope = 0;
                                 if (version >= 33)
                                 {
@@ -1043,8 +1073,8 @@ namespace Terrafirma
                                         }
                                         if (version >= 42)
                                         {
-                                            b.ReadBoolean(); //tile actuator
-                                            b.ReadBoolean(); //tile inActive
+                                            tiles[x, y].actuator = b.ReadBoolean();
+                                            tiles[x, y].inactive = b.ReadBoolean();
                                         }
                                     }
                                 }
@@ -1068,8 +1098,8 @@ namespace Terrafirma
                                         tiles[x, r].hasBlueWire = tiles[x, y].hasBlueWire;
                                         tiles[x, r].half = tiles[x, y].half;
                                         tiles[x, r].slope = tiles[x, y].slope;
-                                        //	tiles[x, r].actuator = tiles[x, y].actuator;
-                                        //	tiles[x, r].inActive = tiles[x, y].inActive;
+                                        tiles[x, r].actuator = tiles[x, y].actuator;
+                                        tiles[x, r].inactive = tiles[x, y].inactive;
                                         tiles[x, r].color = tiles[x, y].color;
                                         tiles[x, r].wallColor = tiles[x, y].wallColor;
                                     }
@@ -1708,6 +1738,8 @@ namespace Terrafirma
             {
                 if (item.CommandParameter != e.Parameter)
                     item.IsChecked = false;
+                else
+                    item.IsChecked = true;
             }
             if (!loaded)
                 return;
@@ -2064,7 +2096,10 @@ namespace Terrafirma
                                     tiles[x, y].hasGreenWire = false;
                                     tiles[x, y].hasBlueWire = false;
                                     tiles[x, y].half = false;
+                                    tiles[x, y].actuator = false;
+                                    tiles[x, y].inactive = false;
                                     tiles[x, y].color = 0;
+                                    tiles[x, y].wallColor = 0;
                                 }
                             SendMessage(8); //request initial tile data
                         }
@@ -2100,6 +2135,8 @@ namespace Terrafirma
                             tile.isActive = (flags & 1) == 1;
                             tile.hasRedWire = (flags & 16) == 16;
                             tile.half = (flags & 32) == 32;
+                            tile.actuator = (flags & 64) == 64;
+                            tile.inactive = (flags & 128) == 128;
                             tile.hasGreenWire = (flags2 & 1) == 1;
                             tile.hasBlueWire = (flags2 & 2) == 2;
                             tile.slope = (byte)((flags2 & 0x30) >> 4);
@@ -2159,6 +2196,8 @@ namespace Terrafirma
                                 tiles[r, y].hasGreenWire = tiles[x, y].hasGreenWire;
                                 tiles[r, y].hasBlueWire = tiles[x, y].hasBlueWire;
                                 tiles[r, y].half = tiles[x, y].half;
+                                tiles[r, y].actuator = tiles[x, y].actuator;
+                                tiles[r, y].inactive = tiles[x, y].inactive;
                                 tiles[r, y].slope = tiles[x, y].slope;
                                 tiles[r, y].color = tiles[x, y].color;
                                 tiles[r, y].wallColor = tiles[x, y].wallColor;
@@ -2967,9 +3006,10 @@ namespace Terrafirma
             }
             HTile tile = (HTile)QuickHilite.SelectedItem;
             tile.Info.isHilighting = true;
-            RenderMap();
+            if (loaded)
+                RenderMap();
         }
-
+        
         private void Lighting_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch (Lighting.SelectedIndex)
@@ -2990,6 +3030,7 @@ namespace Terrafirma
                     Lighting2.IsChecked = true;
                     break;
             }
+            Properties.Settings.Default.Lighting = (byte)Lighting.SelectedIndex;
             if (loaded)
                 RenderMap();
         }

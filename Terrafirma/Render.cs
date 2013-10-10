@@ -344,6 +344,12 @@ namespace Terrafirma
                         }
                         else
                             lightR = lightG = lightB = 1.0;
+                        if (tile.inactive)
+                        {
+                            lightR *= 0.4;
+                            lightG *= 0.4;
+                            lightB *= 0.4;
+                        }
 
                         if (isHilight && (!tile.isActive || !tileInfos[tile.type, tile.u, tile.v].isHilighting))
                         {
@@ -647,10 +653,15 @@ namespace Terrafirma
                         }
                         // draw wires if necessary
                         if (wires && tile.hasRedWire)
-                        {
-                            drawWire(sx, sy, pixels,
+                            drawRedWire(sx, sy, pixels,
                                 (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, ref tiles);
-                        }
+                        if (wires && tile.hasGreenWire)
+                            drawGreenWire(sx, sy, pixels,
+                                (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, ref tiles);
+                        if (wires && tile.hasBlueWire)
+                            drawBlueWire(sx, sy, pixels,
+                                (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, ref tiles);
+                        
                         px += (int)scale;
                     }
                     py += (int)scale;
@@ -835,6 +846,8 @@ namespace Terrafirma
                             if (tile.isActive)
                             {
                                 c = tileInfos[tile.type, tile.u, tile.v].color;
+                                if (tile.inactive)
+                                    c = alphaBlend(c, 0x000000, 0.4);
                                 if (isHilight && tileInfos[tile.type, tile.u, tile.v].isHilighting)
                                     c = alphaBlend(c, 0xff88ff, 0.9);
                             }
@@ -906,7 +919,7 @@ namespace Terrafirma
             return 0;
         }
 
-        private void drawWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom, double lightR, double lightG, double lightB, ref Tile[,] tiles)
+        private void drawRedWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom, double lightR, double lightG, double lightB, ref Tile[,] tiles)
         {
             int mask = 0;
             //udlr
@@ -915,6 +928,30 @@ namespace Terrafirma
             if (sy < tilesHigh - 1 && tiles[sx, sy + 1].hasRedWire) mask |= 4; //down
             if (sy > 0 && tiles[sx, sy - 1].hasRedWire) mask |= 8; //up
             Texture tex = Textures.GetWire(0);
+            drawTexture(tex, 16, 16, uvWires[mask * 2 + 1] * tex.width * 4 + uvWires[mask * 2] * 4, pixels,
+                px, py, w, h, zoom, lightR, lightG, lightB);
+        }
+        private void drawGreenWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom, double lightR, double lightG, double lightB, ref Tile[,] tiles)
+        {
+            int mask = 0;
+            //udlr
+            if (sx < tilesWide - 1 && tiles[sx + 1, sy].hasGreenWire) mask |= 1; //right
+            if (sx > 0 && tiles[sx - 1, sy].hasGreenWire) mask |= 2; //left
+            if (sy < tilesHigh - 1 && tiles[sx, sy + 1].hasGreenWire) mask |= 4; //down
+            if (sy > 0 && tiles[sx, sy - 1].hasGreenWire) mask |= 8; //up
+            Texture tex = Textures.GetWire(1);
+            drawTexture(tex, 16, 16, uvWires[mask * 2 + 1] * tex.width * 4 + uvWires[mask * 2] * 4, pixels,
+                px, py, w, h, zoom, lightR, lightG, lightB);
+        }
+        private void drawBlueWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom, double lightR, double lightG, double lightB, ref Tile[,] tiles)
+        {
+            int mask = 0;
+            //udlr
+            if (sx < tilesWide - 1 && tiles[sx + 1, sy].hasBlueWire) mask |= 1; //right
+            if (sx > 0 && tiles[sx - 1, sy].hasBlueWire) mask |= 2; //left
+            if (sy < tilesHigh - 1 && tiles[sx, sy + 1].hasBlueWire) mask |= 4; //down
+            if (sy > 0 && tiles[sx, sy - 1].hasBlueWire) mask |= 8; //up
+            Texture tex = Textures.GetWire(2);
             drawTexture(tex, 16, 16, uvWires[mask * 2 + 1] * tex.width * 4 + uvWires[mask * 2] * 4, pixels,
                 px, py, w, h, zoom, lightR, lightG, lightB);
         }

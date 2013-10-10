@@ -24,12 +24,12 @@
                 </MenuItem>
                 <MenuItem Header="_View">
                     <MenuItem Command="w:MapCommands.Textures" Name="UseTextures" />
-                    <MenuItem Command="w:MapCommands.Houses" Name="ShowHouses" IsCheckable="True" />
-                    <MenuItem Command="w:MapCommands.Wires" Name="ShowWires" IsCheckable="True" />
+                    <MenuItem Command="w:MapCommands.Houses" Name="ShowHouses" IsCheckable="True" IsChecked="{Binding Source={StaticResource Settings}, Path=Default.ShowHouses}"/>
+                    <MenuItem Command="w:MapCommands.Wires" Name="ShowWires" IsCheckable="True" IsChecked="{Binding Source={StaticResource Settings}, Path=Default.ShowWires}"/>
                     <Separator />
                     <MenuItem Header="Select _Player" Name="Players">
                     </MenuItem>
-                    <MenuItem Command="w:MapCommands.FogOfWar" Name="FogOfWar" IsChecked="True" />
+                    <MenuItem Command="w:MapCommands.FogOfWar" Name="FogOfWar" IsChecked="{Binding Source={StaticResource Settings}, Path=Default.FogOfWar}" />
                     <Separator />
                     <MenuItem Header="Lighting">
                         <MenuItem Command="w:MapCommands.NoLight" Name="Lighting0" IsChecked="True" />
@@ -51,8 +51,8 @@
             </Menu>
             <ToolBarPanel DockPanel.Dock="Top">
                 <ToolBar>
-                    <ComboBox Name="Lighting" Margin="0" Width="120" SelectionChanged="Lighting_SelectionChanged">
-                        <ComboBoxItem IsSelected="True">No Lighting</ComboBoxItem>
+                    <ComboBox Name="Lighting" Margin="0" Width="120" SelectionChanged="Lighting_SelectionChanged" SelectedIndex="{Binding Source={StaticResource Settings}, Path=Default.Lighting}">
+                        <ComboBoxItem>No Lighting</ComboBoxItem>
                         <ComboBoxItem>Lighting</ComboBoxItem>
                         <ComboBoxItem>Color Lighting</ComboBoxItem>
                     </ComboBox>

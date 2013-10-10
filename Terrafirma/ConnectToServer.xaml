@@ -4,9 +4,9 @@
         Title="Connect To Server" Height="220" Width="300">
     <Grid>
         <Label Content="Server IP" Height="28" HorizontalAlignment="Left" Margin="12,12,0,0" Name="label1" VerticalAlignment="Top" Width="76" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="94,12,0,0" Name="serverip" VerticalAlignment="Top" Width="172" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="94,12,0,0" Name="serverip" VerticalAlignment="Top" Width="172" Text="{Binding Source={StaticResource Settings}, Path=Default.LastServer}" />
         <Label Content="Server Port" Height="28" HorizontalAlignment="Left" Margin="12,46,0,0" Name="label2" VerticalAlignment="Top" Width="76" />
-        <TextBox Height="23" HorizontalAlignment="Left" Margin="94,46,0,0" Name="serverport" VerticalAlignment="Top" Width="69" Text="7777" />
+        <TextBox Height="23" HorizontalAlignment="Left" Margin="94,46,0,0" Name="serverport" VerticalAlignment="Top" Width="69" Text="{Binding Source={StaticResource Settings}, Path=Default.LastPort}" />
         <Button Content="Connect" Height="23" HorizontalAlignment="Right" Margin="0,146,12,0" Name="button1" VerticalAlignment="Top" Width="75" Click="button1_Click" IsDefault="True" />
         <Button Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="110,146,0,0" Name="button2" VerticalAlignment="Top" Width="75" Click="button2_Click" IsCancel="True" />
         <Label Content="Warning!  This is highly experimental!" Height="29" HorizontalAlignment="Left" Margin="12,80,0,0" Name="label3" VerticalAlignment="Top" Width="254" FontWeight="Bold" Foreground="#FFA70D0D" />
