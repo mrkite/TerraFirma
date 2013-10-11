@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- Increase product version each release.. and that's the only change -->
-<?define ProductVersion="1.9.8"?>
+<?define ProductVersion="2.0.0.0"?>
 <?define ProductUpgradeCode="77851f13-31d3-473a-8654-5b6325fc53ab"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Product Id="*" Name="Terrafirma" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Sean Kasun" UpgradeCode="$(var.ProductUpgradeCode)">
@@ -31,15 +31,12 @@
 
 		<DirectoryRef Id="INSTALLDIR">
 			<Component Id="terrafirma.exe" Guid="9fcfa381-6ed4-4a7e-aebb-a27e10b0a022">
-				<File Id="terrafirma.exe" Source="Terrafirma\bin\Release\Terrafirma.exe" KeyPath="yes" Checksum="yes" />
-			</Component>
-		</DirectoryRef>
-
-		<DirectoryRef Id="ApplicationProgramsFolder">
-			<Component Id="ApplicationShortcut" Guid="1ca398d1-d9bc-42a1-8d2a-50931f6441ca">
-				<Shortcut Id="ApplicaitonStartMenuShortcut" Name="Terrafirma" Description="Terraria Map Viewer" Target="[#terrafirma.exe]" WorkingDirectory="INSTALLDIR" />
-				<RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
-				<RegistryValue Root="HKCU" Key="Software\Sean Kasun\Terrafirma" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+				<File Id="terrafirma.exe" Source="Terrafirma\bin\Release\Terrafirma.exe" KeyPath="yes" Checksum="yes">
+					<Shortcut Id="ApplicationShortcut" Directory="ApplicationProgramsFolder" Advertise="yes" Name="Terrafirma" WorkingDirectory="INSTALLDIR" Icon="icon.exe">
+						<Icon Id="icon.exe" SourceFile="Terrafirma\bin\Release\Terrafirma.exe" />
+					</Shortcut>
+				</File>
+				<RemoveFolder Id="DeleteShortcutFolder" Directory="ApplicationProgramsFolder" On="uninstall" />
 			</Component>
 		</DirectoryRef>
 
@@ -49,7 +46,6 @@
 		
 		<Feature Id="DefaultFeature" Level="1">
 			<ComponentRef Id="terrafirma.exe" />
-			<ComponentRef Id="ApplicationShortcut" />
 		</Feature>
 		
 		<Property Id="WIXUI_INSTALLDIR">INSTALLDIR</Property>

@@ -433,7 +433,7 @@ namespace Terrafirma
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IDisposable
     {
         const int MapVersion = 71;
         const int MaxTile = 250;
@@ -456,9 +456,9 @@ namespace Terrafirma
         Int32 groundLevel, rockLevel;
         string[] worlds;
         string currentWorld;
-		Int32 worldID=0;
-		string[] players;
-		string player;
+        Int32 worldID = 0;
+        string[] players;
+        string player;
         List<Chest> chests = new List<Chest>();
         List<Sign> signs = new List<Sign>();
         List<NPC> npcs = new List<NPC>();
@@ -579,10 +579,10 @@ namespace Terrafirma
                 int id = Convert.ToInt32(wallList[i].Attributes["num"].Value);
                 wallInfo[id].name = wallList[i].Attributes["name"].Value;
                 wallInfo[id].color = parseColor(wallList[i].Attributes["color"].Value);
-            	if (wallList[i].Attributes["blend"] != null)
-					wallInfo[id].blend = Convert.ToInt16(wallList[i].Attributes["blend"].Value);
-				else
-					wallInfo[id].blend = (Int16)id;
+                if (wallList[i].Attributes["blend"] != null)
+                    wallInfo[id].blend = Convert.ToInt16(wallList[i].Attributes["blend"].Value);
+                else
+                    wallInfo[id].blend = (Int16)id;
             }
             XmlNodeList globalList = xml.GetElementsByTagName("global");
             for (int i = 0; i < globalList.Count; i++)
@@ -698,7 +698,7 @@ namespace Terrafirma
                 if (v.name != info.name)
                 {
                     v.isHilighting = true;
-                    quickItems.Add(new HTile(v.name,v));
+                    quickItems.Add(new HTile(v.name, v));
                 }
                 addVariants(quickItems, v);
             }
@@ -1756,13 +1756,13 @@ namespace Terrafirma
                         RenderMap();
                     }));
 
-				};
-			new Thread(loader).Start();
-		}
-		private void SelectPlayer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = !busy;
-		}
+                };
+            new Thread(loader).Start();
+        }
+        private void SelectPlayer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !busy;
+        }
         private void FogOfWar_Toggle(object sender, ExecutedRoutedEventArgs e)
         {
             if (FogOfWar.IsChecked)
@@ -1842,6 +1842,7 @@ namespace Terrafirma
                 }
 
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                _disposed = false;
                 System.Net.IPAddress[] ips;
                 try
                 {
@@ -2066,7 +2067,7 @@ namespace Terrafirma
                         killedBoss3 = (flags & 8) == 8;
                         hardMode = (flags & 16) == 16;
                         killedClown = (flags & 32) == 32;
-						killedPlantBoss = (flags & 128) == 128;
+                        killedPlantBoss = (flags & 128) == 128;
                         killedMechBoss1 = (flags2 & 1) == 1;
                         killedMechBoss2 = (flags2 & 2) == 2;
                         killedMechBoss3 = (flags2 & 4) == 4;
@@ -2270,14 +2271,14 @@ namespace Terrafirma
                         int slot = BitConverter.ToInt16(messages, payload); payload += 2;
                         float posx = BitConverter.ToSingle(messages, payload); payload += 4;
                         float posy = BitConverter.ToSingle(messages, payload); payload += 4;
-						payload += 9; //skip velocity and target
-						byte flags=messages[payload++];
-						payload+=4; //skip life
-						//skip any applicable AI
-						if ((flags&32)==32) payload+=4;
-						if ((flags&16)==16) payload+=4;
-						if ((flags&8)==8) payload+=4;
-						if ((flags&4)==4) payload+=4;
+                        payload += 9; //skip velocity and target
+                        byte flags = messages[payload++];
+                        payload += 4; //skip life
+                        //skip any applicable AI
+                        if ((flags & 32) == 32) payload += 4;
+                        if ((flags & 16) == 16) payload += 4;
+                        if ((flags & 8) == 8) payload += 4;
+                        if ((flags & 4) == 4) payload += 4;
                         int id = BitConverter.ToInt16(messages, payload);
                         bool found = false;
                         for (int i = 0; i < npcs.Count; i++)
@@ -2382,7 +2383,7 @@ namespace Terrafirma
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                             {
                                 serverText.Text = "";
-                                render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, caveBackX,caveBackStyle,jungleBackStyle,hellBackStyle, npcs);
+                                render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, caveBackX, caveBackStyle, jungleBackStyle, hellBackStyle, npcs);
                                 loaded = true;
                                 curX = spawnX;
                                 curY = spawnY;
@@ -3011,7 +3012,7 @@ namespace Terrafirma
         {
             foreach (object obj in QuickHilite.Items)
             {
-                HTile info=(HTile)obj;
+                HTile info = (HTile)obj;
                 info.Info.isHilighting = false;
             }
             HTile tile = (HTile)QuickHilite.SelectedItem;
@@ -3019,7 +3020,7 @@ namespace Terrafirma
             if (loaded)
                 RenderMap();
         }
-        
+
         private void Lighting_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch (Lighting.SelectedIndex)
@@ -3043,6 +3044,28 @@ namespace Terrafirma
             Properties.Settings.Default.Lighting = (byte)Lighting.SelectedIndex;
             if (loaded)
                 RenderMap();
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+
+            // Use SupressFinalize in case a subclass 
+            // of this type implements a finalizer.
+            GC.SuppressFinalize(this);
+        }
+        private bool _disposed;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    if (socket != null)
+                        socket.Dispose();
+                }
+                socket = null;
+                _disposed = true;
+            }
         }
     }
 }
