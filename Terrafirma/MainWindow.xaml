@@ -56,7 +56,20 @@
                         <ComboBoxItem>Lighting</ComboBoxItem>
                         <ComboBoxItem>Color Lighting</ComboBoxItem>
                     </ComboBox>
-                    <ComboBox Width="120" Name="QuickHilite" SelectionChanged="QuickHilite_SelectionChanged" />
+                    <ComboBox Width="120" Name="QuickHilite" IsEditable="True">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Height="20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"></ColumnDefinition>
+                                        <ColumnDefinition></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Path=Info.IsHilighting}" Checked="HighlightCheckBox_Checked" Unchecked="HighlightCheckBox_Checked"></CheckBox>
+                                    <TextBlock Grid.Column="1"  VerticalAlignment="Center" Text="{Binding Name}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                     <CheckBox Name="QuickHiliteToggle" Content="Highlight" Height="22" VerticalAlignment="Top" IsEnabled="False" Checked="QuickHiliteToggle_Checked" Unchecked="QuickHiliteToggle_Unchecked"/>
                 </ToolBar>
             </ToolBarPanel>
