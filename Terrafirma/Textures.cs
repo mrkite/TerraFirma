@@ -55,6 +55,7 @@ namespace Terrafirma
         public Texture(string path, string xnb)
         {
             string fn = GetName(path, xnb);
+
             if (fn == null)
                 throw new Exception(String.Format("Couldn't locate {0}", xnb));
             using (BinaryReader b = new BinaryReader(File.Open(fn, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))

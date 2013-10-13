@@ -227,7 +227,7 @@ namespace Terrafirma
                         int u = (sx % (bgw / 16)) * 16;
                         int vv = (v % (bgh / 16)) * 16;
                         if (bg == -1) //sky
-                            vv = sy * tex.height / groundLevel;
+                            vv = sy * (tex.height-16) / groundLevel;
                         drawTexture(tex, 16, 16, vv * tex.width * 4 + u * 4,
                             pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
 

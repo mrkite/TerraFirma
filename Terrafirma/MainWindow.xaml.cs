@@ -437,7 +437,7 @@ namespace Terrafirma
     {
         const int MapVersion = 71;
         const int MaxTile = 250;
-        const int MaxWall = 111;
+        const int MaxWall = 112;
         const int Widest = 8400;
         const int Highest = 2400;
 
@@ -768,33 +768,38 @@ namespace Terrafirma
                 Players.IsEnabled = false;
             }
 
-
-
+            bool defplr = false;
             for (int i = 0; i < players.Length; i++)
             {
                 MenuItem item = new MenuItem();
                 //decrypt player file to get the name
 
-                RijndaelManaged encscheme = new RijndaelManaged();
-                encscheme.Padding = PaddingMode.None;
-                byte[] key = new UnicodeEncoding().GetBytes("h3y_gUyZ");
-                FileStream inp = new FileStream(players[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                CryptoStream crypt = new CryptoStream(inp, encscheme.CreateDecryptor(key, key), CryptoStreamMode.Read);
-                using (BinaryReader b = new BinaryReader(crypt))
+                try
                 {
-                    b.ReadUInt32(); //skip player version
-                    item.Header = b.ReadString();
+                    RijndaelManaged encscheme = new RijndaelManaged();
+                    encscheme.Padding = PaddingMode.None;
+                    byte[] key = new UnicodeEncoding().GetBytes("h3y_gUyZ");
+                    FileStream inp = new FileStream(players[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    CryptoStream crypt = new CryptoStream(inp, encscheme.CreateDecryptor(key, key), CryptoStreamMode.Read);
+                    using (BinaryReader b = new BinaryReader(crypt))
+                    {
+                        b.ReadUInt32(); //skip player version
+                        item.Header = b.ReadString();
+                    }
+                    item.Command = MapCommands.SelectPlayer;
+                    item.CommandParameter = i;
+                    item.IsCheckable = true;
+                    CommandBindings.Add(new CommandBinding(MapCommands.SelectPlayer, SelectPlayer));
+                    Players.Items.Add(item);
+                    if (!defplr)
+                    {
+                        player = players[i];
+                        item.IsChecked = true;
+                        defplr = true;
+                    }
                 }
-
-                item.Command = MapCommands.SelectPlayer;
-                item.CommandParameter = i;
-                item.IsCheckable = true;
-                CommandBindings.Add(new CommandBinding(MapCommands.SelectPlayer, SelectPlayer));
-                Players.Items.Add(item);
-                if (i == 0)
+                catch (Exception) //old player files aren't encrypted.. just skip them
                 {
-                    player = players[i];
-                    item.IsChecked = true;
                 }
             }
         }
@@ -1230,7 +1235,10 @@ namespace Terrafirma
                             MessageBox.Show("Found problems with the map: " + invalid + "\nIt may not display properly.", "Warning");
                         }));
                     }
-
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                    {
+                        serverText.Text = "Loading Fog of War...";
+                    }));
                     //load player's map
                     loadPlayerMap();
 
@@ -1261,31 +1269,49 @@ namespace Terrafirma
             new Thread(loadThread).Start();
         }
 
+        private void noFogOfWar()
+        {
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+            {
+                FogOfWar.IsChecked = false;
+            }));
+        }
+
         private void loadPlayerMap()
         {
             for (int x = 0; x < tilesWide; x++)
                 for (int y = 0; y < tilesHigh; y++)
                     tiles[x, y].seen = false;
-
+            if (player == null)
+            {
+                noFogOfWar();
+                return;
+            }
             try
             {
                 string path = Path.Combine(player.Substring(0, player.Length - 4), string.Concat(worldID, ".map"));
                 if (!File.Exists(path))
+                {
+                    noFogOfWar();
                     return;
+                }
                 using (BinaryReader b = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
                     int version = b.ReadInt32();
                     if (version > MapVersion) //new map format
-                        throw new Exception("Unsupported map version: " + version);
+                        throw new Exception("Unsupported fog of war version: " + version);
                     string title = b.ReadString();
-                    b.BaseStream.Seek(12, SeekOrigin.Current); //skip worldid and bounds
-                    for (int x = 0; x < tilesWide; x++)
+                    b.BaseStream.Seek(4, SeekOrigin.Current); //skip worldid
+                    Int32 mapTilesHigh = b.ReadInt32();
+                    Int32 mapTilesWide = b.ReadInt32();
+                    for (int x = 0; x < mapTilesWide; x++)
                     {
-                        for (int y = 0; y < tilesHigh; y++)
+                        for (int y = 0; y < mapTilesHigh; y++)
                         {
                             if (b.ReadBoolean())
                             {
-                                tiles[x, y].seen = true;
+                                if (y<tilesHigh && x<tilesWide)
+                                    tiles[x, y].seen = true;
                                 byte type = b.ReadByte();
                                 byte light = b.ReadByte();
                                 byte misc = b.ReadByte();
@@ -1295,14 +1321,18 @@ namespace Terrafirma
                                 if (light == 255)
                                 {
                                     for (int r = y + 1; r < y + 1 + rle; r++)
-                                        tiles[x, r].seen = true;
+                                    {
+                                        if (r<tilesHigh && x<tilesWide)
+                                            tiles[x, r].seen = true;
+                                    }
                                 }
                                 else
                                 {
                                     for (int r = y + 1; r < y + 1 + rle; r++)
                                     {
                                         light = b.ReadByte();
-                                        tiles[x, r].seen = true;
+                                        if (r<tilesHigh && x<tilesWide)
+                                            tiles[x, r].seen = true;
                                     }
                                 }
                                 y += rle;
@@ -1317,6 +1347,7 @@ namespace Terrafirma
             {
                 Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                     {
+                        FogOfWar.IsChecked = false;
                         MessageBox.Show(e.Message);
                     }));
             }
@@ -1408,9 +1439,9 @@ namespace Terrafirma
                     UseTextures.IsChecked && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked,
                     FogOfWar.IsChecked, ref tiles);
             }
-            catch (System.NotSupportedException e)
+            catch (System.Exception e)
             {
-                MessageBox.Show(e.ToString(), "Not supported");
+                MessageBox.Show(e.Message);
             }
 
             //draw map here with curX,curY,curScale
@@ -2595,6 +2626,8 @@ namespace Terrafirma
                 {
                     if (!sentSections[x, y])
                     {
+                        System.Console.WriteLine("Fetching {0}x{1}", x, y);
+                        sentSections[x, y] = true;
                         SendMessage(0x0d, "", x * 200, y * 150);
                         foundOne = true;
                     }
@@ -2713,10 +2746,17 @@ namespace Terrafirma
                     }
                     pixels = new byte[wd * ht * 4];
 
-                    render.Draw(wd, ht, startx, starty, sc,
-                        ref pixels, false, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
-                        saveOpts.UseTextures && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked,
-                        FogOfWar.IsChecked, ref tiles);
+                    try
+                    {
+                        render.Draw(wd, ht, startx, starty, sc,
+                            ref pixels, false, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
+                            saveOpts.UseTextures && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked,
+                            FogOfWar.IsChecked, ref tiles);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
 
                     BitmapSource source = BitmapSource.Create(wd, ht, 96.0, 96.0,
                         PixelFormats.Bgr32, null, pixels, wd * 4);
