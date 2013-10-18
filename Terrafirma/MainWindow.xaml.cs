@@ -2626,7 +2626,7 @@ namespace Terrafirma
                 {
                     if (!sentSections[x, y])
                     {
-                        System.Console.WriteLine("Fetching {0}x{1}", x, y);
+                        //System.Console.WriteLine("Fetching {0}x{1}", x, y);
                         sentSections[x, y] = true;
                         SendMessage(0x0d, "", x * 200, y * 150);
                         foundOne = true;
