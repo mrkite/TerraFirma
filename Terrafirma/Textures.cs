@@ -126,16 +126,10 @@ namespace Terrafirma
                     d.ReadString(); //name of reader
                     d.ReadInt32(); //reader version
                 }
-                do
-                {
-                    b7 = d.ReadByte();
-                } while ((b7 & 0x80) == 0x80); //skip number of shared resources
+                while ((d.ReadByte() & 0x80) == 0x80) ; //skip # shared resources
                 // we should probably verify that the reader is the correct one.. if this isn't a
                 // texture 2d, we're totally screwed here.
-                do
-                {
-                    b7 = d.ReadByte();
-                } while ((b7 & 0x80) == 0x80); //skip type ID
+                while ((d.ReadByte() & 0x80) == 0x80) ; //skip type ID
                 int format = d.ReadInt32();
                 width = d.ReadInt32();
                 height = d.ReadInt32();
