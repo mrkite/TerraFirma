@@ -657,13 +657,19 @@ namespace Terrafirma
                                         }
                                         else
                                         {
+                                            byte col = tile.color;
+                                            // use grass shader?
+                                            if (col > 0 && col < 13 && (tile.type == 0 || tile.type == 2 || tile.type == 5 ||
+                                                tile.type == 23 || tile.type == 59 || tile.type == 60 || tile.type == 70 ||
+                                                tile.type == 109 || tile.type == 199))
+                                                col += 27;
                                             ypad = ((double)toppad + (tile.half ? 8.0 : 0.0)) * scale / 16.0;
                                             if (flip)
                                                 drawTextureFlip(tex, texw - 1, texh, tile.v * tex.width * 4 + tile.u * 4,
-            pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+            pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, col);
                                             else
                                                 drawTexture(tex, texw, texh - (tile.half ? 8 : 0), tile.v * tex.width * 4 + tile.u * 4,
-                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, col);
                                         }
                                     }
                                 }
@@ -1300,7 +1306,14 @@ namespace Terrafirma
                     red = green = blue = (byte)((max + min) * 0.15);
                     break;
                 case 26: //Silver
-                    red=green=blue=(byte)((min*0.3+max*0.7)*(-(max*min/2.0)-2.0));
+                    {
+                        double dmax = max / 255.0;
+                        double dmin = min / 255.0;
+                        double intensity = (dmax * 0.7 + dmin * 0.3) * (2.0 - (dmax + dmin) / 2.0);
+                        if (intensity > 1.0) intensity = 1.0;
+                        if (intensity < 0.0) intensity = 0.0;
+                        red = green = blue = (byte)(intensity*255);
+                    }
                     break;
                 case 27: //Grey
                     red = green = blue = (byte)((max + min) / 2);
