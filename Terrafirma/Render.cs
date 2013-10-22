@@ -736,7 +736,7 @@ namespace Terrafirma
 
                     if (tile.type == 128) //armor
                     {
-                        int dy = 8;
+                        double dy = 8.0;
                         int au = tile.u % 100;
                         int armor = tile.u / 100;
                         switch (tile.v)
@@ -745,32 +745,38 @@ namespace Terrafirma
                                 tex = Textures.GetArmorHead(armor);
                                 texw = 40;
                                 texh = 36;
-                                dy = 12;
+                                dy = 12.0 * scale / 16.0;
                                 break;
                             case 18: //body
                                 tex = Textures.GetArmorBody(armor);
                                 texw = 40;
                                 texh = 54;
-                                dy = 28;
+                                dy = 28.0 * scale / 16.0;
                                 break;
                             default: //legs
                                 tex = Textures.GetArmorLegs(armor);
                                 texw = 40;
                                 texh = 54;
-                                dy = 44;
+                                dy = 44.0 * scale / 16.0;
                                 break;
                         }
                         if (au >= 36) //reverse
                             drawTexture(tex, texw, texh, 0,
-                                pixels, delay.px - 4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB,0);
+                                pixels, (int)(delay.px - 4.0 * scale / 16.0), (int)(delay.py - dy), width, height, scale / 16.0, lightR, lightG, lightB, 0);
                         else
                             drawTextureFlip(tex, texw, texh, 0,
-                                pixels, delay.px - 4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB,0);
+                                pixels, (int)(delay.px - 4 * scale / 16.0), (int)(delay.py - dy), width, height, scale / 16.0, lightR, lightG, lightB, 0);
                     }
                     else if (tile.type == 5) //tree leaves
                     {
                         drawLeaves(tile.u, tile.v, delay.sx, delay.sy,
                                    pixels, delay.px, delay.py, width, height, scale / 16.0, lightR, lightG, lightB, ref tiles);
+                    }
+                    else if (tile.type == 237) //lihzahrd altar
+                    {
+                        tex = Textures.GetTile(tile.type);
+                        drawTexture(tex, texw, texh, 0,
+                            pixels, delay.px, delay.py, width, height, scale / 16.0, lightR, lightG, lightB, 0);
                     }
                 }
 
@@ -804,7 +810,7 @@ namespace Terrafirma
                         Texture tex = Textures.GetNPC(npc.sprite);
                         px = (int)(skipx + npc.x / 16 - (int)startx) * (int)scale - (int)(scale / 4);
                         py = (int)(skipy + npc.y / 16 - (int)starty) * (int)scale - (int)(scale / 4);
-                        drawTexture(tex, 40, 56, 0, pixels,
+                        drawTexture(tex, tex.width, 56, 0, pixels,
                             (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB,0);
                     }
                     if (houses && npc.num != 0)
@@ -1180,7 +1186,7 @@ namespace Terrafirma
         {
             if (paint > 27) //grass colors
             {
-                //skip grass part
+                //skip nongrass part
                 if (blue * 0.5 < green && green * 0.5 < blue &&
                     red * 0.3 < blue && red * 0.8 > blue &&
                     red * 0.8 > green && red * 0.3 < green)
