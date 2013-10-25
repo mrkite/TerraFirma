@@ -48,6 +48,8 @@
   <tile num="8" name="Gold Ore" color="#B9A417" solid="1" blend="0" />
   <tile num="9" name="Silver Ore" color="#D9DFDF" solid="1" blend="0" />
   <tile num="10" name="Closed Doors" color="#BF8F6F" hasExtra="1" solid="1">
+    <var minv="1350" name="Closed Spooky Door" color="#775C8A" />
+    <var minv="1296" name="Closed Pumpkin Door" color="#FAAC0F" />
     <var minv="1242" name="Closed Steam Punk Door" color="#8A7736" />
     <var minv="1188" name="Closed Honey Door" color="#975D0F" />
     <var minv="1134" name="Closed Golden Door" color="#E7B21C" />
@@ -74,6 +76,8 @@
     <var minv="0" name="Closed Wooden Door" color="#bf8f6f" />
   </tile>
   <tile num="11" name="Open Doors" color="#946B50" hasExtra="1" letLight="1" solid="1">
+    <var minv="1350" name="Open Spooky Door" color="#775C8A" />
+    <var minv="1296" name="Open Pumpkin Door" color="#FAAC0F" />
     <var minv="1242" name="Open Steam Punk Door" color="#8A7736" />
     <var minv="1188" name="Open Honey Door" color="#975D0F" />
     <var minv="1134" name="Open Golden Door" color="#E7B21C" />
@@ -107,6 +111,8 @@
     <var u="72" name="Mug" color="#ACC0D7" />
   </tile>
   <tile num="14" name="Tables" color="#7F5C45" hasExtra="1" letLight="1">
+    <var minu="1188" name="Spooky Table" color="#644E74" />
+    <var minu="1134" name="Pumpkin Table" color="#FAAC0F" />
     <var minu="1080" name="Steam Punk Table" color="#E1B45D" />
     <var minu="1026" name="Honey Table" color="#975D0F" />
     <var minu="972" name="Golden Table" color="#E9CB18" />
@@ -130,6 +136,8 @@
     <var minu="0" name="Wooden Table" color="#7f5c45" />
   </tile>
   <tile num="15" name="Chairs" color="#A2785C" hasExtra="1" letLight="1">
+    <var minv="1000" name="Spooky Chair" color="#775C8A" />
+    <var minv="960" name="Pumpkin Chair" color="#196606" />
     <var minv="920" name="Steam Punk Chair" color="#547940" />
     <var minv="880" name="Honey Chair" color="#FEC214" />
     <var minv="840" name="Bar Stool" color="#725138" />
@@ -160,6 +168,8 @@
   </tile>
   <tile num="17" name="Furnace" color="#636363" hasExtra="1" letLight="1" lightr="0.83" lightg="0.6" lightb="0.5" light="0.75" />
   <tile num="18" name="Work Bench" color="#7F5C45" hasExtra="1" letLight="1">
+    <var minu="612" name="Spooky Work Bench" color="#4F3E5C" />
+    <var minu="576" name="Pumpkin Work Bench" color="#EB9617" />
     <var minu="540" name="Gothic Work Bench" color="#455247" />
     <var minu="504" name="Obsidian Work Bench" color="#545454" />
     <var minu="468" name="Pink Dungeon Work Bench" color="#bf7da0" />
@@ -191,6 +201,8 @@
     <var v="216" name="Dungeon Shelf" color="#dbd6b5" />
     <var v="234" name="Obsidian Platform" color="#620d0d" />
     <var v="252" name="Glass Platform" color="#57ADBD" />
+    <var v="270" name="Pumpkin Platform" color="#FAAC0F" />
+    <var v="288" name="Spooky Platform" color="#644E74" />
   </tile>
   <tile num="20" name="Sapling" color="#1E9648" hasExtra="1" letLight="1" />
   <tile num="21" name="Chest" color="#946B50" hasExtra="1" letLight="1">
@@ -250,12 +262,30 @@
     <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
   </tile>
   <tile num="34" name="Copper Chandelier" color="#B75819" hasExtra="1" letLight="1">
+    <var minv="324" name="Jackelier" color="#D15D1A">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="270" name="Platinum Chandelier" color="#8097B8">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="216" name="Tungsten Chandelier" color="#7A907E">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="162" name="Tin Chandelier" color="#817D5D">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="108" name="Gold Chandelier" color="#B9A417">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="54" name="Silver Chandelier" color="#9EADAE">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
     <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
   </tile>
-  <tile num="35" name="Silver Chandelier" color="#C1CACB" hasExtra="1" letLight="1">
-    <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+  <tile num="35" name="Jack 'O Lantern" color="#EAAD53" hasExtra="1" letLight="1">
+    <var maxu="36" lightr="0.75" lightg="0.6" lightb="0.3" light="1.0" />
   </tile>
-  <tile num="36" name="Gold Chandelier" color="#B9A417" hasExtra="1" letLight="1">
+  <tile num="36" name="Haunted Gold Chandelier" color="#465BE8" hasExtra="1" letLight="1">
     <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
   </tile>
   <tile num="37" name="Meteorite" color="#685654" solid="1" blend="0" lightr="0.56" lightg="0.43" lightb="0.15" light="0.5" />
@@ -264,6 +294,9 @@
   <tile num="40" name="Clay" color="#925144" solid="1" blend="0" />
   <tile num="41" name="Blue Brick" color="#454E63" solid="1" blend="0" merge="1" />
   <tile num="42" name="Chain Lantern" color="#F99851" hasExtra="1" letLight="1">
+    <var minv="288" name="Hanging Jack 'O Lantern" color="#E28221">
+      <var u="0" lightr="0.7" lightg="0.7" lightb="0.9" light="0.75" />
+    </var>
     <var minv="252" name="Star in a Bottle" color="#feffe2">
       <var u="0" lightr="0.7" lightg="0.7" lightb="0.9" light="0.75" />
     </var>
@@ -508,7 +541,9 @@
   <tile num="95" name="Chinese Lantern" color="#F87800" hasExtra="1" letLight="1">
     <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.8" light="0.9" />
   </tile>
-  <tile num="96" name="Cooking Pot" color="#606060" hasExtra="1" letLight="1" />
+  <tile num="96" name="Cooking Pot" color="#606060" hasExtra="1" letLight="1">
+    <var minu="36" name="Cauldron" />
+  </tile>
   <tile num="97" name="Safe" color="#808080" hasExtra="1" letLight="1" />
   <tile num="98" name="Skull Lantern" color="#B2B28A" hasExtra="1" letLight="1">
     <var v="0" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
@@ -691,13 +726,13 @@
   <tile num="167" name="Lead Ore" color="#2f3e57" solid="1" blend="0" />
   <tile num="168" name="Tungsten Ore" color="#5a7d53" solid="1" blend="0" />
   <tile num="169" name="Platinum Ore" color="#8097b8" solid="1" blend="0" />
-  <tile num="170" name="Tin Chandelier" color="#817d5d" hasExtra="1" letLight="1">
+  <tile num="170" name="Haunted Tin Chandelier" color="#445A83" hasExtra="1" letLight="1">
     <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
   </tile>
-  <tile num="171" name="Tungsten Chandelier" color="#7a907e" hasExtra="1" letLight="1">
+  <tile num="171" name="Haunted Tungsten Chandelier" color="#614E62" hasExtra="1" letLight="1">
     <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
   </tile>
-  <tile num="172" name="Platinum Chandelier" color="#8097b8" hasExtra="1" letLight="1">
+  <tile num="172" name="Haunted Platinum Chandelier" color="#4A3D26" hasExtra="1" letLight="1">
     <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
   </tile>
   <tile num="173" name="Platinum Candelabra" color="#8097b8" hasExtra="1" letLight="1">
@@ -830,6 +865,8 @@
     <var u="360" name="Shroomite Bar" color="#2814ea" />
   </tile>
   <tile num="240" name="Picture" color="#634732" hasExtra="1" letLight="1">
+    <var minv="54" minu="54" name="Pumpking Trophy" color="#453E66" />
+    <var minv="54" minu="0" name="Mourning Wood Trophy" color="#574D80" />
     <var minu="1890" name="Rare Enchantment" color="#3454BE" />
     <var minu="1836" name="Crowno Devours His Lunch" color="#98874F" />
     <var minu="1782" name="The Merchant" color="#593101" />
@@ -869,6 +906,11 @@
   </tile>
   <tile num="241" name="Catacomb" color="#4d4a48" hasExtra="1" letLight="1" />
   <tile num="242" name="Picture" color="#454b45" hasExtra="1" letLight="1">
+    <var minv="1512" name="Morbid Curiosity" color="#3F0303" />
+    <var minv="1440" name="Hallow's Eve" color="#B22A01" />
+    <var minv="1368" name="Blood Moon Countess" color="#1A193D" />
+    <var minv="1296" name="Bitter Harvest" color="#E08E10" />
+    <var minv="1224" name="Jacking Skeletron" color="#111A36" />
     <var minv="1152" name="The Creation of the Guide" color="#c7c7bf" />
     <var minv="1080" name="Trio Super Heroes" color="#AE650E" />
     <var minv="1008" name="Lake of Fire" color="#E2781B" />
@@ -921,7 +963,13 @@
   <tile num="247" name="Autohammer" color="#696969" hasExtra="1" letLight="1" />
   <tile num="248" name="Palladium Column" color="#e1623f" solid="1" merge="1" />
   <tile num="249" name="Bubblegum" color="#df23dc" solid="1" merge="1" />
-  <tile num="250" name="Titanstone" color="#636169" solid="1" merge="1" />
+  <tile num="250" name="Titanstone" color="#636169" solid="1" blend="0" merge="1" />
+  <tile num="251" name="Pumpkin" color="#FAAC0F" solid="1" blend="0" />
+  <tile num="252" name="Hay" color="#D7BA36" solid="1" blend="0" merge="1" />
+  <tile num="253" name="Spooky Wood" color="#4F3E5C" solid="1" blend="0" merge="1" />
+  <tile num="254" name="Pumpkin Seed" color="#1E9648" hasExtra="1" letLight="1">
+    <var minu="142" name="Pumpkin Plant" color="#FAAC0F" />
+  </tile>
 
   <wall num="1" name="Stone Wall" color="#343434" />
   <wall num="2" name="Dirt Wall" color="#583D2E" />
@@ -1035,6 +1083,9 @@
   <wall num="110" name="Bubblegum Wall" color="#994996" />
   <wall num="111" name="Titanstone Wall" color="#1f1814" />
   <wall num="112" name="Lihzahrd Brick Wall" color="#320F08" />
+  <wall num="113" name="Pumpkin Wall" color="#803700" />
+  <wall num="114" name="Hay Wall" color="#745E19" />
+  <wall num="115" name="Spooky Wood Wall" color="#33243F" />
 
   <prefix num="1" name="Large" />
   <prefix num="2" name="Massive" />
@@ -2893,6 +2944,139 @@
     <item num="1722" name="Steam Punk Bed" />
     <item num="1723" name="Living Wood Wall" />
     <item num="1724" name="Fart in a Jar" />
+  <item num="1725" name="Pumpkin" />
+  <item num="1726" name="Pumpkin Wall" />
+  <item num="1727" name="Hay" />
+  <item num="1728" name="Hay Wall" />
+  <item num="1729" name="Spooky Wood" />
+  <item num="1730" name="Spooky Wood Wall" />
+  <item num="1731" name="Pumpkin Helmet" />
+  <item num="1732" name="Pumpkin Breastplate" />
+  <item num="1733" name="Pumpkin Leggings" />
+  <item num="1734" name="Candy Apple" />
+  <item num="1735" name="Soul Cake" />
+  <item num="1736" name="Nurse Hat" />
+  <item num="1737" name="Nurse Shirt" />
+  <item num="1738" name="Nurse Pants" />
+  <item num="1739" name="Wizard's Hat" />
+  <item num="1740" name="Guy Fawkes Mask" />
+  <item num="1741" name="Dye Trader Robe" />
+  <item num="1742" name="Steam Punk Goggles" />
+  <item num="1743" name="Cyborg Helmet" />
+  <item num="1744" name="Cyborg Shirt" />
+  <item num="1745" name="Cyborg Pants" />
+  <item num="1746" name="Creeper Mask" />
+  <item num="1747" name="Creeper Shirt" />
+  <item num="1748" name="Creeper Pants" />
+  <item num="1749" name="Cat Mask" />
+  <item num="1750" name="Cat Shirt" />
+  <item num="1751" name="Cat Pants" />
+  <item num="1752" name="Ghost Mask" />
+  <item num="1753" name="Ghost Shirt" />
+  <item num="1754" name="Pumpkin Mask" />
+  <item num="1755" name="Pumpkin Shirt" />
+  <item num="1756" name="Pumpkin Pants" />
+  <item num="1757" name="Robot Mask" />
+  <item num="1758" name="Robot Shirt" />
+  <item num="1759" name="Robot Pants" />
+  <item num="1760" name="Unicorn Mask" />
+  <item num="1761" name="Unicorn Shirt" />
+  <item num="1762" name="Unicorn Pants" />
+  <item num="1763" name="Vampire Mask" />
+  <item num="1764" name="Vampire Shirt" />
+  <item num="1765" name="Vampire Pants" />
+  <item num="1766" name="Witch Hat" />
+  <item num="1767" name="Leprechaun Hat" />
+  <item num="1768" name="Leprechaun Shirt" />
+  <item num="1769" name="Leprechaun Pants" />
+  <item num="1770" name="Pixie Shirt" />
+  <item num="1771" name="Pixie Pants" />
+  <item num="1772" name="Princess Hat" />
+  <item num="1773" name="Princess Dress" />
+  <item num="1774" name="Goodie Bag" />
+  <item num="1775" name="Witch Dress" />
+  <item num="1776" name="Witch Boots" />
+  <item num="1777" name="Bride of Frankenstein Mask" />
+  <item num="1778" name="Bride of Frankenstein Dress" />
+  <item num="1779" name="Karate Tortoise Mask" />
+  <item num="1780" name="Karate Tortoise Shirt" />
+  <item num="1781" name="Karate Tortoise Pants" />
+  <item num="1782" name="Candy Corn Rifle" />
+  <item num="1783" name="Candy Corn" />
+  <item num="1784" name="Jack 'O Lantern Launcher" />
+  <item num="1785" name="Explosive Jack 'O Lantern" />
+  <item num="1786" name="Sickle" />
+  <item num="1787" name="Pumpkin Pie" />
+  <item num="1788" name="Scarecrow Hat" />
+  <item num="1789" name="Scarecrow Shirt" />
+  <item num="1790" name="Scarecrow Pants" />
+  <item num="1791" name="Cauldron" />
+  <item num="1792" name="Pumpkin Chair" />
+  <item num="1793" name="Pumpkin Door" />
+  <item num="1794" name="Pumpkin Table" />
+  <item num="1795" name="Pumpkin Work Bench" />
+  <item num="1796" name="Pumpkin Platform" />
+  <item num="1797" name="Tattered Fairy Wings" />
+  <item num="1798" name="Spider Egg" />
+  <item num="1799" name="Magical Pumpkin Seed" />
+  <item num="1800" name="Bat Hook" />
+  <item num="1801" name="Bat Scepter" />
+  <item num="1802" name="Raven Staff" />
+  <item num="1803" name="Jungle Key Mold" />
+  <item num="1804" name="Corruption Key Mold" />
+  <item num="1805" name="Crimson Key Mold" />
+  <item num="1806" name="Hallowed Key Mold" />
+  <item num="1807" name="Frozen Key Mold" />
+  <item num="1808" name="Hanging Jack 'O Lantern" />
+  <item num="1809" name="Rotten Egg" />
+  <item num="1810" name="Unlucky Yarn" />
+  <item num="1811" name="Black Fairy Dust" />
+  <item num="1812" name="Jackelier" />
+  <item num="1813" name="Jack 'O Lantern" />
+  <item num="1814" name="Spooky Chair" />
+  <item num="1815" name="Spooky Door" />
+  <item num="1816" name="Spooky Table" />
+  <item num="1817" name="Spooky Work Bench" />
+  <item num="1818" name="Spooky Platform" />
+  <item num="1819" name="Reaper Hood" />
+  <item num="1820" name="Reaper Robe" />
+  <item num="1821" name="Fox Mask" />
+  <item num="1822" name="Fox Shirt" />
+  <item num="1823" name="Fox Pants" />
+  <item num="1824" name="Cat Ears" />
+  <item num="1825" name="Bloody Machete" />
+  <item num="1826" name="The Horseman's Blade" />
+  <item num="1827" name="Bladed Glove" />
+  <item num="1828" name="Pumpkin Seed" />
+  <item num="1829" name="Spooky Hook" />
+  <item num="1830" name="Spooky Wings" />
+  <item num="1831" name="Spooky Twig" />
+  <item num="1832" name="Spooky Helmet" />
+  <item num="1833" name="Spooky Breastplate" />
+  <item num="1834" name="Spooky Leggings" />
+  <item num="1835" name="Stake Launcher" />
+  <item num="1836" name="Stake" />
+  <item num="1837" name="Cursed Sapling" />
+  <item num="1838" name="Space Creature Mask" />
+  <item num="1839" name="Space Creature Shirt" />
+  <item num="1840" name="Space Creature Pants" />
+  <item num="1841" name="Wolf Mask" />
+  <item num="1842" name="Wolf Shirt" />
+  <item num="1843" name="Wolf Pants" />
+  <item num="1844" name="Pumpkin Moon Medallion" />
+  <item num="1845" name="Necromantic Scroll" />
+  <item num="1846" name="Jacking Skeletron" />
+  <item num="1847" name="Bitter Harvest" />
+  <item num="1848" name="Blood Moon Countess" />
+  <item num="1849" name="Hallow's Eve" />
+  <item num="1850" name="Morbid Curiosity" />
+  <item num="1851" name="Treasure Hunter Shirt" />
+  <item num="1852" name="Treasure Hunter Pants" />
+  <item num="1853" name="Dryad Coverings" />
+  <item num="1854" name="Dryad Loincloth" />
+  <item num="1855" name="Mourning Wood Trophy" />
+  <item num="1856" name="Pumpking Trophy" />
+  <item num="1857" name="Jack 'O Lantern Mask" />
 
   <global id="sky" color="#84AAF8" />
   <global id="earth" color="#583D2E" />

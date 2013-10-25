@@ -380,7 +380,7 @@ namespace Terrafirma
                                 tile.type == 185 || tile.type == 186 || tile.type == 187 || tile.type == 207 ||
                                 tile.type == 210 || tile.type == 215 || tile.type == 217 || tile.type == 218 ||
                                 tile.type == 219 || tile.type == 220 || tile.type == 231 || tile.type == 233 ||
-                                tile.type == 243 || tile.type == 244 || tile.type == 247) //small items have a gap
+                                tile.type == 243 || tile.type == 244 || tile.type == 247 || tile.type == 254) //small items have a gap
                                 toppad = 2;
                             if (tile.type == 33 || tile.type == 49 || tile.type == 174) //candles
                                 toppad = -4;
