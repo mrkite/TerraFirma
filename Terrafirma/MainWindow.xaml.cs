@@ -2775,6 +2775,16 @@ namespace Terrafirma
             e.CanExecute = loaded;
         }
 
+        private void About_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            AboutWin about=new AboutWin();
+            about.ShowDialog();
+        }
+        private void About_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
         private void JumpToDungeon_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             curX = dungeonX;

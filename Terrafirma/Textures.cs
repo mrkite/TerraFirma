@@ -264,22 +264,21 @@ namespace Terrafirma
             actuators = new Dictionary<int, Texture>();
             cacti = new Dictionary<int, Texture>();
 
-            // find steam
-            string path="";
-            Microsoft.Win32.RegistryKey key;
-            key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\\Valve\\Steam");
-            if (key!=null)
-                path = key.GetValue("SteamPath") as string;
+            // find terraria install
+            SteamConfig steam = new SteamConfig();
+            string path=null;
+            if (steam.Ready)
+                path = steam.Get("Software/Valve/Steam/apps/105600/InstallDir");
 
             //no steam key, let's try the default
-            if (path.Equals("") || !Directory.Exists(path))
+            if (path==null || !Directory.Exists(path))
             {
                 path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
                 path = Path.Combine(path, "Steam");
+                path = Path.Combine(path, "steamapps");
+                path = Path.Combine(path, "common");
+                path = Path.Combine(path, "terraria");
             }
-            path = Path.Combine(path, "steamapps");
-            path = Path.Combine(path, "common");
-            path = Path.Combine(path, "terraria");
             path = Path.Combine(path, "Content");
             path = Path.Combine(path, "Images");
             if (Directory.Exists(path))

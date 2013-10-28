@@ -1,0 +1,12 @@
+﻿<Window x:Class="Terrafirma.AboutWin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AboutWin" Height="201.493" Width="268.657" ResizeMode="NoResize">
+    <Grid>
+        <Button Content="Close" HorizontalAlignment="Left" Margin="176,140,0,0" VerticalAlignment="Top" Width="75" IsDefault="True" Click="Button_Click"/>
+        <Label x:Name="Version" Content="Terrafirma" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="241" FontWeight="Bold" FontFamily="Segoe UI Black"/>
+        <Label x:Name="Copyright" Content="Copyright" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" Width="241" FontStretch="Condensed" FontStyle="Italic" FontSize="10"/>
+        <TextBlock x:Name="Description" HorizontalAlignment="Left" Margin="10,72,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="63" Width="241"/>
+
+    </Grid>
+</Window>

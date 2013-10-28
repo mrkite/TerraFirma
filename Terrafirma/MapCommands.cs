@@ -76,5 +76,7 @@ namespace Terrafirma
             "Jump to Dungeon", "JumpToDungeon", typeof(MapCommands));
         public static readonly RoutedUICommand FindItem = new RoutedUICommand(
             "Find Item", "FindItem", typeof(MapCommands));
+        public static readonly RoutedUICommand About = new RoutedUICommand(
+            "About Terrafirma...", "About", typeof(MapCommands));
     }
 }
