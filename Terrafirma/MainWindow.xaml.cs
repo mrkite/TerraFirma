@@ -435,7 +435,7 @@ namespace Terrafirma
     /// </summary>
     public partial class MainWindow : Window, IDisposable
     {
-        const int MapVersion = 72;
+        const int MapVersion = 73;
         const int MaxTile = 254;
         const int MaxWall = 115;
         const int Widest = 8400;

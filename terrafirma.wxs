@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- Increase product version each release.. and that's the only change -->
-<?define ProductVersion="2.1.0.0"?>
+<?define ProductVersion="2.1.1.0"?>
 <?define ProductUpgradeCode="77851f13-31d3-473a-8654-5b6325fc53ab"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Product Id="*" Name="Terrafirma" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Sean Kasun" UpgradeCode="$(var.ProductUpgradeCode)">
@@ -33,7 +33,7 @@
 			<Component Id="terrafirma.exe" Guid="9fcfa381-6ed4-4a7e-aebb-a27e10b0a022">
 				<File Id="terrafirma.exe" Source="Terrafirma\bin\Release\Terrafirma.exe" KeyPath="yes" Checksum="yes">
 					<Shortcut Id="ApplicationShortcut" Directory="ApplicationProgramsFolder" Advertise="yes" Name="Terrafirma" WorkingDirectory="INSTALLDIR" Icon="icon.exe">
-						<Icon Id="icon.exe" SourceFile="Terrafirma\bin\Release\Terrafirma.exe" />
+						<Icon Id="icon.exe" SourceFile="Terrafirma\terrafirma.ico" />
 					</Shortcut>
 				</File>
 				<RemoveFolder Id="DeleteShortcutFolder" Directory="ApplicationProgramsFolder" On="uninstall" />

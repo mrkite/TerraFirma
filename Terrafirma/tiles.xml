@@ -294,6 +294,9 @@
   <tile num="40" name="Clay" color="#925144" solid="1" blend="0" />
   <tile num="41" name="Blue Brick" color="#454E63" solid="1" blend="0" merge="1" />
   <tile num="42" name="Chain Lantern" color="#F99851" hasExtra="1" letLight="1">
+    <var minv="324" name="Heart Lantern" color="#F57FAE">
+      <var u="0" lightr="0.7" lightg="0.7" lightb="0.9" light="0.75" />
+    </var>
     <var minv="288" name="Hanging Jack 'O Lantern" color="#E28221">
       <var u="0" lightr="0.7" lightg="0.7" lightb="0.9" light="0.75" />
     </var>
@@ -3077,6 +3080,15 @@
   <item num="1855" name="Mourning Wood Trophy" />
   <item num="1856" name="Pumpking Trophy" />
   <item num="1857" name="Jack 'O Lantern Mask" />
+  <item num="1858" name="Sniper Scope" />
+  <item num="1859" name="Heart Lantern" />
+  <item num="1860" name="Jellyfish Diving Gear" />
+  <item num="1861" name="Arctic Diving Gear" />
+  <item num="1862" name="Frostspark Boots" />
+  <item num="1863" name="Fart in a Balloon" />
+  <item num="1864" name="Papyrus Scarab" />
+  <item num="1865" name="Celestial Stone" />
+  <item num="1866" name="Hoverboard" />
 
   <global id="sky" color="#84AAF8" />
   <global id="earth" color="#583D2E" />
