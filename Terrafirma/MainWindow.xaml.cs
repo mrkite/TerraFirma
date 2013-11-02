@@ -457,9 +457,9 @@ namespace Terrafirma
     /// </summary>
     public partial class MainWindow : Window, IDisposable
     {
-        const int MapVersion = 71;
-        const int MaxTile = 250;
-        const int MaxWall = 112;
+        const int MapVersion = 73;
+        const int MaxTile = 254;
+        const int MaxWall = 115;
         const int Widest = 8400;
         const int Highest = 2400;
 
@@ -2804,6 +2804,16 @@ namespace Terrafirma
         private void MapLoaded(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = loaded;
+        }
+
+        private void About_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            AboutWin about=new AboutWin();
+            about.ShowDialog();
+        }
+        private void About_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
         }
 
         private void JumpToDungeon_Executed(object sender, ExecutedRoutedEventArgs e)

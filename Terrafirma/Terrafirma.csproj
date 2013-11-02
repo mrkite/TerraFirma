@@ -91,6 +91,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AboutWin.xaml.cs">
+      <DependentUpon>AboutWin.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ConnectToServer.xaml.cs">
       <DependentUpon>ConnectToServer.xaml</DependentUpon>
     </Compile>
@@ -112,10 +115,15 @@
     <Compile Include="SignPopup.xaml.cs">
       <DependentUpon>SignPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SteamConfig.cs" />
     <Compile Include="Textures.cs" />
     <Compile Include="WorldStats.xaml.cs">
       <DependentUpon>WorldStats.xaml</DependentUpon>
     </Compile>
+    <Page Include="AboutWin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ChestPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

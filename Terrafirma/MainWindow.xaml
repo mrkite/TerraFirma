@@ -48,6 +48,9 @@
                     <MenuItem Header="NPCs" IsEnabled="False" Name="NPCs" />
                     <MenuItem Command="w:MapCommands.FindItem" />
                 </MenuItem>
+                <MenuItem Header="_Help">
+                    <MenuItem Command="w:MapCommands.About" />
+                </MenuItem>
             </Menu>
             <ToolBarPanel DockPanel.Dock="Top">
                 <ToolBar>
@@ -148,5 +151,8 @@
         <CommandBinding Command="w:MapCommands.FindItem"
                         Executed="FindItem_Executed"
                         CanExecute="MapLoaded" />
+        <CommandBinding Command="w:MapCommands.About"
+                        Executed="About_Executed"
+                        CanExecute="About_CanExecute" />
     </Window.CommandBindings>
 </Window>

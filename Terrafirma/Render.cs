@@ -380,7 +380,7 @@ namespace Terrafirma
                                 tile.type == 185 || tile.type == 186 || tile.type == 187 || tile.type == 207 ||
                                 tile.type == 210 || tile.type == 215 || tile.type == 217 || tile.type == 218 ||
                                 tile.type == 219 || tile.type == 220 || tile.type == 231 || tile.type == 233 ||
-                                tile.type == 243 || tile.type == 244 || tile.type == 247) //small items have a gap
+                                tile.type == 243 || tile.type == 244 || tile.type == 247 || tile.type == 254) //small items have a gap
                                 toppad = 2;
                             if (tile.type == 33 || tile.type == 49 || tile.type == 174) //candles
                                 toppad = -4;
@@ -439,6 +439,106 @@ namespace Terrafirma
 
                             if (tile.type == 103) //bowl
                                 if (tile.u == 18) texw = 14;
+
+                            //solid tile adjacent to water
+                            if (tileInfos[tile.type].solid && (tiles[sx - 1, sy].liquid > 0 ||
+                                tiles[sx + 1, sy].liquid > 0 || tiles[sx, sy - 1].liquid > 0 ||
+                                tiles[sx, sy + 1].liquid > 0))
+                            {
+                                byte waterMask = 0;
+                                double sideLevel = 0.0;
+                                int v = 4;
+                                int waterw = 16;
+                                int waterh = 16;
+                                double xpad = 0.0;
+                                double ypad = 0.0;
+                                //lrtb
+                                int mask = 0;
+                                Tile edge;
+                                if ((edge = tiles[sx - 1, sy]).liquid > 0)
+                                {
+                                    sideLevel = edge.liquid;
+                                    mask |= 8; //left
+                                    if (edge.isLava)
+                                        waterMask |= 2;
+                                    else if (edge.isHoney)
+                                        waterMask |= 4;
+                                    else
+                                        waterMask |= 1;
+                                }
+                                if ((edge = tiles[sx + 1, sy]).liquid > 0)
+                                {
+                                    sideLevel = edge.liquid;
+                                    mask |= 4; //right
+                                    if (edge.isLava)
+                                        waterMask |= 2;
+                                    else if (edge.isHoney)
+                                        waterMask |= 4;
+                                    else
+                                        waterMask |= 1;
+                                }
+                                if ((edge = tiles[sx, sy - 1]).liquid > 0)
+                                {
+                                    mask |= 2; //top
+                                    if (edge.isLava)
+                                        waterMask |= 2;
+                                    else if (edge.isHoney)
+                                        waterMask |= 4;
+                                    else
+                                        waterMask |= 1;
+                                }
+                                else if (!edge.isActive || !tileInfos[edge.type].solid)
+                                    v = 0; // water has a ripple
+                                if ((edge = tiles[sx, sy + 1]).liquid > 0)
+                                {
+                                    if (edge.liquid > 240)
+                                        mask |= 1; //bottom is high enough
+                                    if (edge.isLava)
+                                        waterMask |= 2;
+                                    else if (edge.isHoney)
+                                        waterMask |= 4;
+                                    else
+                                        waterMask |= 1;
+                                }
+                                if ((waterMask & 3) != 3) //don't render if water *and* lava
+                                {
+                                    int waterid = 0; //water
+                                    if ((waterMask & 2) == 2) //lava
+                                        waterid = 1;
+                                    if ((waterMask & 4) == 4) //honey
+                                        waterid = 11;
+                                    if ((mask & 0xc) != 0 && (mask & 1) == 1) //bottom and any side?
+                                        mask |= 0xc; //same as both sides
+                                    if (tile.half || tile.slope > 0) //half block or slope?
+                                        mask |= 0x10;
+                                    sideLevel = (256 - sideLevel) / 32.0;
+                                    if (mask == 2) //hlrTb
+                                        waterh = 4;
+                                    else if (mask == 0x12) //HlrTb
+                                        waterh = 12;
+                                    else if ((mask & 0xf) == 1) //lrtB
+                                    {
+                                        waterh = 4;
+                                        ypad = 12.0 * scale / 16.0;
+                                    }
+                                    else if ((mask & 2) != 2) //t
+                                    {
+                                        waterh = (int)(16 - sideLevel * 2);
+                                        ypad = sideLevel * 2.0 * scale / 16.0;
+                                        if ((mask & 0x1c) == 0x8) //!half Lr
+                                            waterw = 4;
+                                        if ((mask & 0x1c) == 0x4) //!half lR
+                                        {
+                                            waterw = 4;
+                                            xpad = 12 * scale / 16.0;
+                                        }
+                                    }
+                                    double alpha = waterid == 0 ? 0.5 : 0.85;
+                                    Texture tex = Textures.GetLiquid(waterid);
+                                    drawTextureAlpha(tex, waterw, waterh, v * tex.width * 4,
+                                        pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, 0, alpha);
+                                }
+                            }
 
                             if (tile.type == 5 && tile.v >= 198 && tile.u >= 22) //tree leaves
                             {
@@ -676,15 +776,23 @@ namespace Terrafirma
                             }
                         }
                         // draw liquid
-                        if (tile.liquid > 0)
+                        if (tile.liquid > 0 && (!tile.isActive || !tileInfos[tile.type].solid))
                         {
-                            UInt32 c = tile.isLava ? lavaColor : tile.isHoney ? honeyColor : waterColor;
-                            uint r = (uint)((c >> 16) * lightR);
-                            uint g = (uint)(((c >> 8) & 0xff) * lightG);
-                            uint b = (uint)((c & 0xff) * lightB);
-                            c = (r << 16) | (g << 8) | b;
-                            drawOverlay(c, tile.isLava ? 0.85 : 0.5, tile.liquid,
-                                pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0);
+                            int waterLevel = (int)((255 - tile.liquid) / 16.0);
+                            int waterid = 0;
+                            if (tile.isLava) waterid = 1;
+                            if (tile.isHoney) waterid = 11;
+                            double alpha = waterid == 0 ? 0.5 : 0.85;
+                            int waterh = 16 - waterLevel;
+                            int v = 0;
+                            double ypad = waterLevel * scale / 16.0;
+                            //water above, no ripple
+                            if (tiles[sx, sy - 1].liquid > 32 || (tiles[sx,sy-1].isActive && tileInfos[tiles[sx,sy-1].type].solid))
+                                v = 4;
+
+                            Texture tex = Textures.GetLiquid(waterid);
+                            drawTextureAlpha(tex, 16, waterh, v * tex.width * 4,
+                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, 0, alpha);
                         }
                         if (wires && tile.actuator)
                         {
@@ -736,7 +844,7 @@ namespace Terrafirma
 
                     if (tile.type == 128) //armor
                     {
-                        int dy = 8;
+                        double dy = 8.0;
                         int au = tile.u % 100;
                         int armor = tile.u / 100;
                         switch (tile.v)
@@ -745,32 +853,38 @@ namespace Terrafirma
                                 tex = Textures.GetArmorHead(armor);
                                 texw = 40;
                                 texh = 36;
-                                dy = 12;
+                                dy = 12.0 * scale / 16.0;
                                 break;
                             case 18: //body
                                 tex = Textures.GetArmorBody(armor);
                                 texw = 40;
                                 texh = 54;
-                                dy = 28;
+                                dy = 28.0 * scale / 16.0;
                                 break;
                             default: //legs
                                 tex = Textures.GetArmorLegs(armor);
                                 texw = 40;
                                 texh = 54;
-                                dy = 44;
+                                dy = 44.0 * scale / 16.0;
                                 break;
                         }
                         if (au >= 36) //reverse
                             drawTexture(tex, texw, texh, 0,
-                                pixels, delay.px - 4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB,0);
+                                pixels, (int)(delay.px - 4.0 * scale / 16.0), (int)(delay.py - dy), width, height, scale / 16.0, lightR, lightG, lightB, 0);
                         else
                             drawTextureFlip(tex, texw, texh, 0,
-                                pixels, delay.px - 4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB,0);
+                                pixels, (int)(delay.px - 4 * scale / 16.0), (int)(delay.py - dy), width, height, scale / 16.0, lightR, lightG, lightB, 0);
                     }
                     else if (tile.type == 5) //tree leaves
                     {
                         drawLeaves(tile.u, tile.v, delay.sx, delay.sy,
                                    pixels, delay.px, delay.py, width, height, scale / 16.0, lightR, lightG, lightB, ref tiles);
+                    }
+                    else if (tile.type == 237) //lihzahrd altar
+                    {
+                        tex = Textures.GetTile(tile.type);
+                        drawTexture(tex, texw, texh, 0,
+                            pixels, delay.px, delay.py, width, height, scale / 16.0, lightR, lightG, lightB, 0);
                     }
                 }
 
@@ -804,7 +918,7 @@ namespace Terrafirma
                         Texture tex = Textures.GetNPC(npc.sprite);
                         px = (int)(skipx + npc.x / 16 - (int)startx) * (int)scale - (int)(scale / 4);
                         py = (int)(skipy + npc.y / 16 - (int)starty) * (int)scale - (int)(scale / 4);
-                        drawTexture(tex, 40, 56, 0, pixels,
+                        drawTexture(tex, tex.width, 56, 0, pixels,
                             (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB,0);
                     }
                     if (houses && npc.num != 0)
@@ -1081,7 +1195,10 @@ namespace Terrafirma
                     continue;
                 }
                 int t = tofs + (int)(y / zoom) * tex.width * 4;
-                if (t >= tex.data.Length) continue;
+                //if we go off the end of the texture (like with water)
+                //we should duplicate the last line.
+                while (t >= tex.data.Length)
+                    t -= tex.width * 4;
                 int b = bofs;
                 for (int x = 0; x < tw; x++)
                 {
@@ -1113,6 +1230,58 @@ namespace Terrafirma
                         pixels[b++] = (byte)(red * lightR);
                         pixels[b++] = 0xff;
                     }
+                }
+                bofs += w * 4;
+            }
+        }
+        void drawTextureAlpha(Texture tex, int bw, int bh, int tofs,
+            byte[] pixels, int px, int py,
+            int w, int h, double zoom, double lightR, double lightG, double lightB, byte paint, double alpha)
+        {
+            int tw = (int)(bw * zoom + 0.5);
+            int th = (int)(bh * zoom + 0.5);
+            int skipx = 0, skipy = 0;
+            if (px < 0) skipx = -px;
+            if (px + tw >= w) tw = w - px;
+            if (bw <= 0) return;
+            if (py < 0) skipy = -py;
+            if (py + th >= h) th = h - py;
+            if (bh <= 0) return;
+
+            int bofs = py * w * 4 + px * 4;
+            for (int y = 0; y < th; y++)
+            {
+                if (y < skipy)
+                {
+                    bofs += w * 4;
+                    continue;
+                }
+                int t = tofs + (int)(y / zoom) * tex.width * 4;
+                //if we go off the end of the texture (like with water)
+                //we should duplicate the last line.
+                while (t >= tex.data.Length)
+                    t -= tex.width * 4;
+                int b = bofs;
+                for (int x = 0; x < tw; x++)
+                {
+                    int tx = t + (int)(x / zoom) * 4;
+                    if (x < skipx || tex.data[tx + 3] == 0)
+                    {
+                        b += 4;
+                        continue;
+                    }
+                    byte blue = tex.data[tx++];
+                    byte green = tex.data[tx++];
+                    byte red = tex.data[tx++];
+                    if (paint > 0)
+                        applyPaint(paint, ref red, ref green, ref blue);
+                    UInt32 c = (uint)(blue * lightB) | ((uint)(green * lightG) << 8) | ((uint)(red * lightR) << 16);
+                    UInt32 orig = (UInt32)(pixels[b] | (pixels[b + 1] << 8) | (pixels[b + 2] << 16));
+                    orig = alphaBlend(orig, c, alpha);
+                    pixels[b++] = (byte)(orig & 0xff);
+                    pixels[b++] = (byte)((orig >> 8) & 0xff);
+                    pixels[b++] = (byte)((orig >> 16) & 0xff);
+                    pixels[b++] = 0xff;
                 }
                 bofs += w * 4;
             }
@@ -1180,7 +1349,7 @@ namespace Terrafirma
         {
             if (paint > 27) //grass colors
             {
-                //skip grass part
+                //skip nongrass part
                 if (blue * 0.5 < green && green * 0.5 < blue &&
                     red * 0.3 < blue && red * 0.8 > blue &&
                     red * 0.8 > green && red * 0.3 < green)
