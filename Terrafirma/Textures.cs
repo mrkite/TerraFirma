@@ -55,6 +55,7 @@ namespace Terrafirma
         public Texture(string path, string xnb)
         {
             string fn = GetName(path, xnb);
+
             if (fn == null)
                 throw new Exception(String.Format("Couldn't locate {0}", xnb));
             using (BinaryReader b = new BinaryReader(File.Open(fn, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
@@ -111,16 +112,24 @@ namespace Terrafirma
             using (BinaryReader d = new BinaryReader(s))
             {
                 // skip readers
-                int numReaders = d.ReadByte();
+                int numReaders = 0;
+                int bits = 0;
+                byte b7;
+                do
+                {
+                    b7 = d.ReadByte();
+                    numReaders |= (b7 & 0x7f) << bits;
+                    bits += 7;
+                } while ((b7 & 0x80) == 0x80);
                 for (int i = 0; i < numReaders; i++)
                 {
                     d.ReadString(); //name of reader
                     d.ReadInt32(); //reader version
                 }
-                d.ReadByte(); //padding
-                d.ReadByte(); //reader index
+                while ((d.ReadByte() & 0x80) == 0x80) ; //skip # shared resources
                 // we should probably verify that the reader is the correct one.. if this isn't a
                 // texture 2d, we're totally screwed here.
+                while ((d.ReadByte() & 0x80) == 0x80) ; //skip type ID
                 int format = d.ReadInt32();
                 width = d.ReadInt32();
                 height = d.ReadInt32();

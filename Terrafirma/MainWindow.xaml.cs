@@ -455,11 +455,11 @@ namespace Terrafirma
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IDisposable
     {
         const int MapVersion = 71;
         const int MaxTile = 250;
-        const int MaxWall = 111;
+        const int MaxWall = 112;
         const int Widest = 8400;
         const int Highest = 2400;
 
@@ -478,9 +478,9 @@ namespace Terrafirma
         Int32 groundLevel, rockLevel;
         string[] worlds;
         string currentWorld;
-		Int32 worldID=0;
-		string[] players;
-		string player;
+        Int32 worldID = 0;
+        string[] players;
+        string player;
         List<Chest> chests = new List<Chest>();
         List<Sign> signs = new List<Sign>();
         List<NPC> npcs = new List<NPC>();
@@ -601,10 +601,10 @@ namespace Terrafirma
                 int id = Convert.ToInt32(wallList[i].Attributes["num"].Value);
                 wallInfo[id].name = wallList[i].Attributes["name"].Value;
                 wallInfo[id].color = parseColor(wallList[i].Attributes["color"].Value);
-            	if (wallList[i].Attributes["blend"] != null)
-					wallInfo[id].blend = Convert.ToInt16(wallList[i].Attributes["blend"].Value);
-				else
-					wallInfo[id].blend = (Int16)id;
+                if (wallList[i].Attributes["blend"] != null)
+                    wallInfo[id].blend = Convert.ToInt16(wallList[i].Attributes["blend"].Value);
+                else
+                    wallInfo[id].blend = (Int16)id;
             }
             XmlNodeList globalList = xml.GetElementsByTagName("global");
             for (int i = 0; i < globalList.Count; i++)
@@ -799,33 +799,38 @@ namespace Terrafirma
                 Players.IsEnabled = false;
             }
 
-
-
+            bool defplr = false;
             for (int i = 0; i < players.Length; i++)
             {
                 MenuItem item = new MenuItem();
                 //decrypt player file to get the name
 
-                RijndaelManaged encscheme = new RijndaelManaged();
-                encscheme.Padding = PaddingMode.None;
-                byte[] key = new UnicodeEncoding().GetBytes("h3y_gUyZ");
-                FileStream inp = new FileStream(players[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                CryptoStream crypt = new CryptoStream(inp, encscheme.CreateDecryptor(key, key), CryptoStreamMode.Read);
-                using (BinaryReader b = new BinaryReader(crypt))
+                try
                 {
-                    b.ReadUInt32(); //skip player version
-                    item.Header = b.ReadString();
+                    RijndaelManaged encscheme = new RijndaelManaged();
+                    encscheme.Padding = PaddingMode.None;
+                    byte[] key = new UnicodeEncoding().GetBytes("h3y_gUyZ");
+                    FileStream inp = new FileStream(players[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    CryptoStream crypt = new CryptoStream(inp, encscheme.CreateDecryptor(key, key), CryptoStreamMode.Read);
+                    using (BinaryReader b = new BinaryReader(crypt))
+                    {
+                        b.ReadUInt32(); //skip player version
+                        item.Header = b.ReadString();
+                    }
+                    item.Command = MapCommands.SelectPlayer;
+                    item.CommandParameter = i;
+                    item.IsCheckable = true;
+                    CommandBindings.Add(new CommandBinding(MapCommands.SelectPlayer, SelectPlayer));
+                    Players.Items.Add(item);
+                    if (!defplr)
+                    {
+                        player = players[i];
+                        item.IsChecked = true;
+                        defplr = true;
+                    }
                 }
-
-                item.Command = MapCommands.SelectPlayer;
-                item.CommandParameter = i;
-                item.IsCheckable = true;
-                CommandBindings.Add(new CommandBinding(MapCommands.SelectPlayer, SelectPlayer));
-                Players.Items.Add(item);
-                if (i == 0)
+                catch (Exception) //old player files aren't encrypted.. just skip them
                 {
-                    player = players[i];
-                    item.IsChecked = true;
                 }
             }
         }
@@ -1261,7 +1266,10 @@ namespace Terrafirma
                             MessageBox.Show("Found problems with the map: " + invalid + "\nIt may not display properly.", "Warning");
                         }));
                     }
-
+                    Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                    {
+                        serverText.Text = "Loading Fog of War...";
+                    }));
                     //load player's map
                     loadPlayerMap();
 
@@ -1292,31 +1300,49 @@ namespace Terrafirma
             new Thread(loadThread).Start();
         }
 
+        private void noFogOfWar()
+        {
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+            {
+                FogOfWar.IsChecked = false;
+            }));
+        }
+
         private void loadPlayerMap()
         {
             for (int x = 0; x < tilesWide; x++)
                 for (int y = 0; y < tilesHigh; y++)
                     tiles[x, y].seen = false;
-
+            if (player == null)
+            {
+                noFogOfWar();
+                return;
+            }
             try
             {
                 string path = Path.Combine(player.Substring(0, player.Length - 4), string.Concat(worldID, ".map"));
                 if (!File.Exists(path))
+                {
+                    noFogOfWar();
                     return;
+                }
                 using (BinaryReader b = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
                     int version = b.ReadInt32();
                     if (version > MapVersion) //new map format
-                        throw new Exception("Unsupported map version: " + version);
+                        throw new Exception("Unsupported fog of war version: " + version);
                     string title = b.ReadString();
-                    b.BaseStream.Seek(12, SeekOrigin.Current); //skip worldid and bounds
-                    for (int x = 0; x < tilesWide; x++)
+                    b.BaseStream.Seek(4, SeekOrigin.Current); //skip worldid
+                    Int32 mapTilesHigh = b.ReadInt32();
+                    Int32 mapTilesWide = b.ReadInt32();
+                    for (int x = 0; x < mapTilesWide; x++)
                     {
-                        for (int y = 0; y < tilesHigh; y++)
+                        for (int y = 0; y < mapTilesHigh; y++)
                         {
                             if (b.ReadBoolean())
                             {
-                                tiles[x, y].seen = true;
+                                if (y<tilesHigh && x<tilesWide)
+                                    tiles[x, y].seen = true;
                                 byte type = b.ReadByte();
                                 byte light = b.ReadByte();
                                 byte misc = b.ReadByte();
@@ -1326,14 +1352,18 @@ namespace Terrafirma
                                 if (light == 255)
                                 {
                                     for (int r = y + 1; r < y + 1 + rle; r++)
-                                        tiles[x, r].seen = true;
+                                    {
+                                        if (r<tilesHigh && x<tilesWide)
+                                            tiles[x, r].seen = true;
+                                    }
                                 }
                                 else
                                 {
                                     for (int r = y + 1; r < y + 1 + rle; r++)
                                     {
                                         light = b.ReadByte();
-                                        tiles[x, r].seen = true;
+                                        if (r<tilesHigh && x<tilesWide)
+                                            tiles[x, r].seen = true;
                                     }
                                 }
                                 y += rle;
@@ -1348,6 +1378,7 @@ namespace Terrafirma
             {
                 Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                     {
+                        FogOfWar.IsChecked = false;
                         MessageBox.Show(e.Message);
                     }));
             }
@@ -1439,9 +1470,9 @@ namespace Terrafirma
                     UseTextures.IsChecked && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked,
                     FogOfWar.IsChecked, ref tiles);
             }
-            catch (System.NotSupportedException e)
+            catch (System.Exception e)
             {
-                MessageBox.Show(e.ToString(), "Not supported");
+                MessageBox.Show(e.Message);
             }
 
             //draw map here with curX,curY,curScale
@@ -1787,13 +1818,13 @@ namespace Terrafirma
                         RenderMap();
                     }));
 
-				};
-			new Thread(loader).Start();
-		}
-		private void SelectPlayer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = !busy;
-		}
+                };
+            new Thread(loader).Start();
+        }
+        private void SelectPlayer_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !busy;
+        }
         private void FogOfWar_Toggle(object sender, ExecutedRoutedEventArgs e)
         {
             if (FogOfWar.IsChecked)
@@ -1873,6 +1904,7 @@ namespace Terrafirma
                 }
 
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                _disposed = false;
                 System.Net.IPAddress[] ips;
                 try
                 {
@@ -2097,7 +2129,7 @@ namespace Terrafirma
                         killedBoss3 = (flags & 8) == 8;
                         hardMode = (flags & 16) == 16;
                         killedClown = (flags & 32) == 32;
-						killedPlantBoss = (flags & 128) == 128;
+                        killedPlantBoss = (flags & 128) == 128;
                         killedMechBoss1 = (flags2 & 1) == 1;
                         killedMechBoss2 = (flags2 & 2) == 2;
                         killedMechBoss3 = (flags2 & 4) == 4;
@@ -2301,14 +2333,14 @@ namespace Terrafirma
                         int slot = BitConverter.ToInt16(messages, payload); payload += 2;
                         float posx = BitConverter.ToSingle(messages, payload); payload += 4;
                         float posy = BitConverter.ToSingle(messages, payload); payload += 4;
-						payload += 9; //skip velocity and target
-						byte flags=messages[payload++];
-						payload+=4; //skip life
-						//skip any applicable AI
-						if ((flags&32)==32) payload+=4;
-						if ((flags&16)==16) payload+=4;
-						if ((flags&8)==8) payload+=4;
-						if ((flags&4)==4) payload+=4;
+                        payload += 9; //skip velocity and target
+                        byte flags = messages[payload++];
+                        payload += 4; //skip life
+                        //skip any applicable AI
+                        if ((flags & 32) == 32) payload += 4;
+                        if ((flags & 16) == 16) payload += 4;
+                        if ((flags & 8) == 8) payload += 4;
+                        if ((flags & 4) == 4) payload += 4;
                         int id = BitConverter.ToInt16(messages, payload);
                         bool found = false;
                         for (int i = 0; i < npcs.Count; i++)
@@ -2413,7 +2445,7 @@ namespace Terrafirma
                         Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                             {
                                 serverText.Text = "";
-                                render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, caveBackX,caveBackStyle,jungleBackStyle,hellBackStyle, npcs);
+                                render.SetWorld(tilesWide, tilesHigh, groundLevel, rockLevel, styles, treeX, treeStyle, caveBackX, caveBackStyle, jungleBackStyle, hellBackStyle, npcs);
                                 loaded = true;
                                 curX = spawnX;
                                 curY = spawnY;
@@ -2625,6 +2657,8 @@ namespace Terrafirma
                 {
                     if (!sentSections[x, y])
                     {
+                        //System.Console.WriteLine("Fetching {0}x{1}", x, y);
+                        sentSections[x, y] = true;
                         SendMessage(0x0d, "", x * 200, y * 150);
                         foundOne = true;
                     }
@@ -2743,10 +2777,17 @@ namespace Terrafirma
                     }
                     pixels = new byte[wd * ht * 4];
 
-                    render.Draw(wd, ht, startx, starty, sc,
-                        ref pixels, false, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
-                        saveOpts.UseTextures && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked,
-                        FogOfWar.IsChecked, ref tiles);
+                    try
+                    {
+                        render.Draw(wd, ht, startx, starty, sc,
+                            ref pixels, false, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
+                            saveOpts.UseTextures && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked,
+                            FogOfWar.IsChecked, ref tiles);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
 
                     BitmapSource source = BitmapSource.Create(wd, ht, 96.0, 96.0,
                         PixelFormats.Bgr32, null, pixels, wd * 4);
@@ -3043,7 +3084,8 @@ namespace Terrafirma
 
         private void QuickHilite_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(((ComboBox)sender).SelectedItem is HTile){
+            if (((ComboBox)sender).SelectedItem is HTile)
+            {
                 foreach (object obj in QuickHilite.Items)
                 {
                     HTile info = (HTile)obj;
@@ -3052,10 +3094,15 @@ namespace Terrafirma
                 HTile tile = (HTile)QuickHilite.SelectedItem;
                 tile.Info.isHilighting = true;
                 if (loaded)
-                    RenderMap();   
+                    RenderMap();
+                foreach (object obj in QuickHilite.Items)
+                {
+                    HTile info = (HTile)obj;
+                    info.Info.isHilighting = false;
+                }
             }
         }
-        
+
         private void Lighting_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch (Lighting.SelectedIndex)
@@ -3080,7 +3127,6 @@ namespace Terrafirma
             if (loaded)
                 RenderMap();
         }
-
         private void HighlightCheckBox_Checked(object sender, RoutedEventArgs e)
         {
             int hilited = 0;
@@ -3097,6 +3143,28 @@ namespace Terrafirma
             QuickHilite.Focus();
             if (loaded)
                 RenderMap();
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+
+            // Use SupressFinalize in case a subclass 
+            // of this type implements a finalizer.
+            GC.SuppressFinalize(this);
+        }
+        private bool _disposed;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    if (socket != null)
+                        socket.Dispose();
+                }
+                socket = null;
+                _disposed = true;
+            }
         }
     }
 }

@@ -227,9 +227,9 @@ namespace Terrafirma
                         int u = (sx % (bgw / 16)) * 16;
                         int vv = (v % (bgh / 16)) * 16;
                         if (bg == -1) //sky
-                            vv = sy * tex.height / groundLevel;
+                            vv = sy * (tex.height-16) / groundLevel;
                         drawTexture(tex, 16, 16, vv * tex.width * 4 + u * 4,
-                            pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                            pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, 0);
 
                         px += (int)scale;
                     }
@@ -281,25 +281,25 @@ namespace Terrafirma
                                 lightR = lightG = lightB = 0.0;
 
                             drawTexture(tex, 32, 32, tile.wallv * tex.width * 4 * 2 + tile.wallu * 4 * 2,
-                                pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.wallColor);
                             Int16 blend = wallInfo[tile.wall].blend;
                             if (sx > 0 && tiles[sx - 1, sy].wall > 0 &&
                                 wallInfo[tiles[sx - 1, sy].wall].blend != blend)
                                 drawTexture(wallOutline, 2, 16, 0,
-                                    pixels, (int)(px + (scale / 2) - shiftx), (int)(py + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                    pixels, (int)(px + (scale / 2) - shiftx), (int)(py + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB, 0);
                             double pad = 14.0 * scale / 16.0;
                             if (sx < tilesWide - 2 && tiles[sx + 1, sy].wall > 0 &&
                                 wallInfo[tiles[sx + 1, sy].wall].blend != blend)
                                 drawTexture(wallOutline, 2, 16, 14 * 4 * 2,
-                                    pixels, (int)(px + pad + (scale / 2) - shiftx), (int)(py + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                    pixels, (int)(px + pad + (scale / 2) - shiftx), (int)(py + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB,0);
                             if (sy > 0 && tiles[sx, sy - 1].wall > 0 &&
                                 wallInfo[tiles[sx, sy - 1].wall].blend != blend)
                                 drawTexture(wallOutline, 16, 2, 0,
-                                    pixels, (int)(px + (scale / 2) - shiftx), (int)(py + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                    pixels, (int)(px + (scale / 2) - shiftx), (int)(py + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB,0);
                             if (sy < tilesHigh - 2 && tiles[sx, sy + 1].wall > 0 &&
                                 wallInfo[tiles[sx, sy + 1].wall].blend != blend)
                                 drawTexture(wallOutline, 16, 2, 14 * tex.width * 4 * 2,
-                                    pixels, (int)(px + (scale / 2) - shiftx), (int)(py + pad + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                    pixels, (int)(px + (scale / 2) - shiftx), (int)(py + pad + (scale / 2) - shifty), width, height, scale / 16.0, lightR, lightG, lightB,0);
                         }
 
                         px += (int)scale;
@@ -455,7 +455,7 @@ namespace Terrafirma
                                 //draw armor stand
                                 Texture tex = Textures.GetTile(tile.type);
                                 drawTexture(tex, texw, texh, tile.v * tex.width * 4 + au * 4,
-                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB,tile.color);
                                 //draw armor
                                 int armor = tile.u / 100;
                                 if (armor > 0)
@@ -521,7 +521,7 @@ namespace Terrafirma
                                 else
                                     tex = Textures.GetWood(wood);
                                 drawTexture(tex, texw, texh, tile.v * tex.width * 4 + tile.u * 4,
-                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB,tile.color);
                             }
                             else if (tile.type == 80) //cactus
                             {
@@ -560,7 +560,7 @@ namespace Terrafirma
                                 else
                                     tex = Textures.GetCactus(cactus);
                                 drawTexture(tex, texw, texh, tile.v * tex.width * 4 + tile.u * 4,
-                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                             }
                             else
                             {
@@ -577,7 +577,7 @@ namespace Terrafirma
                                             double xpad = ((double)i * 2.0) * scale / 16.0;
                                             ypad = ((double)toppad + (double)i * 2.0) * scale / 16.0;
                                             drawTexture(tex, 2, 14 - i * 2, tile.v * tex.width * 4 + (tile.u + i * 2) * 4,
-                                                pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                         }
                                     }
                                     if (tile.slope == 2)
@@ -587,12 +587,12 @@ namespace Terrafirma
                                             double xpad = (14 - (double)i * 2.0) * scale / 16.0;
                                             ypad = ((double)toppad + (double)i * 2.0) * scale / 16.0;
                                             drawTexture(tex, 2, 14 - i * 2, tile.v * tex.width * 4 + (tile.u + 14 - i * 2) * 4,
-                                                pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                         }
                                     }
                                     ypad = ((double)toppad + 14.0) * scale / 16.0;
                                     drawTexture(tex, 16, 2, (tile.v + 14) * tex.width * 4 + tile.u * 4,
-                                        pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                        pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                 }
                                 else
                                 {
@@ -604,33 +604,33 @@ namespace Terrafirma
                                         {
                                             ypad = ((double)toppad + 8.0) * scale / 16.0;
                                             drawTexture(tex, texw, 8, (tile.v + 8) * tex.width * 4 + tile.u * 4,
-                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                             ypad = (double)toppad * scale / 16.0;
                                             drawTexture(tex, 16, 8, 126 * 4,
-                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                         }
                                         else
                                         {
                                             ypad = ((double)toppad + 8.0) * scale / 16.0;
                                             drawTexture(tex, texw, 8, (tile.v + 8) * tex.width * 4 + tile.u * 4,
-                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                             if (tiles[sx - 1, sy].half) //left side
                                             {
                                                 double xpad = 4 * scale / 16.0;
                                                 ypad = (double)toppad * scale / 16.0;
                                                 drawTexture(tex, texw - 4, texh, tile.v * tex.width * 4 + (tile.u + 4) * 4,
-                                                    pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                    pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                                 drawTexture(tex, 4, 8, 126 * 4,
-                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                             }
                                             else //right side
                                             {
                                                 ypad = (double)toppad * scale / 16.0;
                                                 drawTexture(tex, texw - 4, texh, tile.v * tex.width * 4 + tile.u * 4,
-                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                                 double xpad = 12 * scale / 16.0;
                                                 drawTexture(tex, 4, 8, 138 * 4,
-                                                    pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                    pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                             }
                                         }
                                     }
@@ -644,26 +644,32 @@ namespace Terrafirma
                                             if (tile.type == 19) //platform
                                             {
                                                 drawTexture(tex, texw, texh, tile.v * tex.width * 4 + tile.u * 4,
-                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                             }
                                             else
                                             {
                                                 drawTexture(tex, texw, texh - 12, tile.v * tex.width * 4 + tile.u * 4,
-                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                                 ypad = ((double)toppad + 12.0) * scale / 16.0;
                                                 drawTexture(tex, texw, 4, 66 * tex.width * 4 + 144 * 4,
-                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                    pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                             }
                                         }
                                         else
                                         {
+                                            byte col = tile.color;
+                                            // use grass shader?
+                                            if (col > 0 && col < 13 && (tile.type == 0 || tile.type == 2 || tile.type == 5 ||
+                                                tile.type == 23 || tile.type == 59 || tile.type == 60 || tile.type == 70 ||
+                                                tile.type == 109 || tile.type == 199))
+                                                col += 27;
                                             ypad = ((double)toppad + (tile.half ? 8.0 : 0.0)) * scale / 16.0;
                                             if (flip)
                                                 drawTextureFlip(tex, texw - 1, texh, tile.v * tex.width * 4 + tile.u * 4,
-            pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+            pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, col);
                                             else
                                                 drawTexture(tex, texw, texh - (tile.half ? 8 : 0), tile.v * tex.width * 4 + tile.u * 4,
-                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                                pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, col);
                                         }
                                     }
                                 }
@@ -684,7 +690,7 @@ namespace Terrafirma
                         {
                             Texture tex = Textures.GetActuator(0);
                             drawTexture(tex, 16, 16, 0,
-                                pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, 0);
                         }
                         // draw wires if necessary
                         if (wires && tile.hasRedWire)
@@ -756,10 +762,10 @@ namespace Terrafirma
                         }
                         if (au >= 36) //reverse
                             drawTexture(tex, texw, texh, 0,
-                                pixels, delay.px - 4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB);
+                                pixels, delay.px - 4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB,0);
                         else
                             drawTextureFlip(tex, texw, texh, 0,
-                                pixels, delay.px - 4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB);
+                                pixels, delay.px - 4, delay.py - dy, width, height, scale / 16.0, lightR, lightG, lightB,0);
                     }
                     else if (tile.type == 5) //tree leaves
                     {
@@ -799,7 +805,7 @@ namespace Terrafirma
                         px = (int)(skipx + npc.x / 16 - (int)startx) * (int)scale - (int)(scale / 4);
                         py = (int)(skipy + npc.y / 16 - (int)starty) * (int)scale - (int)(scale / 4);
                         drawTexture(tex, 40, 56, 0, pixels,
-                            (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                            (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB,0);
                     }
                     if (houses && npc.num != 0)
                     {
@@ -841,12 +847,12 @@ namespace Terrafirma
                             int npx = (int)(px - tex.width * scale / 32.0);
                             int npy = (int)(py - tex.height * scale / 32.0);
                             drawTexture(tex, 32, 40, 0, pixels,
-                                (int)(npx - shiftx), (int)(npy - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                (int)(npx - shiftx), (int)(npy - shifty), width, height, scale / 16.0, lightR, lightG, lightB,0);
                             tex = Textures.GetNPCHead(npc.num);
                             npx = (int)(px - tex.width * scale / 32.0);
                             npy = (int)(py - tex.height * scale / 32.0);
                             drawTexture(tex, tex.width, tex.height, 0, pixels,
-                                (int)(npx - shiftx), (int)(npy - shifty), width, height, scale / 16.0, lightR, lightG, lightB);
+                                (int)(npx - shiftx), (int)(npy - shifty), width, height, scale / 16.0, lightR, lightG, lightB,0);
                         }
                     }
                 }
@@ -964,7 +970,7 @@ namespace Terrafirma
             if (sy > 0 && tiles[sx, sy - 1].hasRedWire) mask |= 8; //up
             Texture tex = Textures.GetWire(0);
             drawTexture(tex, 16, 16, uvWires[mask * 2 + 1] * tex.width * 4 + uvWires[mask * 2] * 4, pixels,
-                px, py, w, h, zoom, lightR, lightG, lightB);
+                px, py, w, h, zoom, lightR, lightG, lightB,0);
         }
         private void drawGreenWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom, double lightR, double lightG, double lightB, ref Tile[,] tiles)
         {
@@ -976,7 +982,7 @@ namespace Terrafirma
             if (sy > 0 && tiles[sx, sy - 1].hasGreenWire) mask |= 8; //up
             Texture tex = Textures.GetWire(1);
             drawTexture(tex, 16, 16, uvWires[mask * 2 + 1] * tex.width * 4 + uvWires[mask * 2] * 4, pixels,
-                px, py, w, h, zoom, lightR, lightG, lightB);
+                px, py, w, h, zoom, lightR, lightG, lightB,0);
         }
         private void drawBlueWire(int sx, int sy, byte[] pixels, int px, int py, int w, int h, double zoom, double lightR, double lightG, double lightB, ref Tile[,] tiles)
         {
@@ -988,7 +994,7 @@ namespace Terrafirma
             if (sy > 0 && tiles[sx, sy - 1].hasBlueWire) mask |= 8; //up
             Texture tex = Textures.GetWire(2);
             drawTexture(tex, 16, 16, uvWires[mask * 2 + 1] * tex.width * 4 + uvWires[mask * 2] * 4, pixels,
-                px, py, w, h, zoom, lightR, lightG, lightB);
+                px, py, w, h, zoom, lightR, lightG, lightB,0);
         }
 
         private void drawLeaves(int u, int v, int sx, int sy,
@@ -1011,14 +1017,14 @@ namespace Terrafirma
                     {
                         variant += (sx % 3) * 3;
                         drawTexture(tex, 80, 140, variant * 82 * 4, pixels,
-                            px - (int)(30 * zoom), py - (int)(124 * zoom), w, h, zoom, lightR, lightG, lightB);
+                            px - (int)(30 * zoom), py - (int)(124 * zoom), w, h, zoom, lightR, lightG, lightB,0);
                     }
                     else if (leafType == 2 || leafType==11 || leafType==13) //jungle
                         drawTexture(tex, 114, 96, variant * 116 * 4, pixels,
-                            px - (int)(46 * zoom), py - (int)(80 * zoom), w, h, zoom, lightR, lightG, lightB);
+                            px - (int)(46 * zoom), py - (int)(80 * zoom), w, h, zoom, lightR, lightG, lightB,0);
                     else
                         drawTexture(tex, 80, 80, variant * 82 * 4, pixels,
-                            px - (int)(30 * zoom), py - (int)(62 * zoom), w, h, zoom, lightR, lightG, lightB);
+                            px - (int)(30 * zoom), py - (int)(62 * zoom), w, h, zoom, lightR, lightG, lightB,0);
                     break;
                 case 44: //left branch
                     leafType = findCorruptGrass(sx + 1, sy, ref tiles);
@@ -1026,7 +1032,7 @@ namespace Terrafirma
                     if (leafType == 3) //hallowed
                         variant += (sx % 3) * 3;
                     drawTexture(tex, 40, 40, variant * 42 * tex.width * 4, pixels,
-                        px - (int)(22 * zoom), py - (int)(12 * zoom), w, h, zoom, lightR, lightG, lightB);
+                        px - (int)(22 * zoom), py - (int)(12 * zoom), w, h, zoom, lightR, lightG, lightB,0);
                     break;
                 case 66: //right branch
                     leafType = findCorruptGrass(sx - 1, sy, ref tiles);
@@ -1034,7 +1040,7 @@ namespace Terrafirma
                     if (leafType == 3) //hallowed
                         variant += (sx % 3) * 3;
                     drawTexture(tex, 40, 40, variant * 42 * tex.width * 4 + 42 * 4, pixels,
-                        px, py - (int)(12 * zoom), w, h, zoom, lightR, lightG, lightB);
+                        px, py - (int)(12 * zoom), w, h, zoom, lightR, lightG, lightB,0);
                     break;
             }
         }
@@ -1049,12 +1055,12 @@ namespace Terrafirma
                 variant = 2;
             Texture tex = Textures.GetShroomTop(0);
             drawTexture(tex, 60, 42, variant * 62 * 4, pixels,
-                px - (int)(22 * zoom), py - (int)(26 * zoom), w, h, zoom, lightR, lightG, lightB);
+                px - (int)(22 * zoom), py - (int)(26 * zoom), w, h, zoom, lightR, lightG, lightB,0);
         }
 
         void drawTexture(Texture tex, int bw, int bh, int tofs,
             byte[] pixels, int px, int py,
-            int w, int h, double zoom, double lightR, double lightG, double lightB)
+            int w, int h, double zoom, double lightR, double lightG, double lightB,byte paint)
         {
             int tw = (int)(bw * zoom+0.5);
             int th = (int)(bh * zoom+0.5);
@@ -1085,11 +1091,16 @@ namespace Terrafirma
                         b += 4;
                         continue;
                     }
-                    if (tex.data[tx + 3] < 255) //alpha blend, damn
+                    byte blue = tex.data[tx++];
+                    byte green = tex.data[tx++];
+                    byte red = tex.data[tx++];
+                    if (paint > 0)
+                        applyPaint(paint, ref red, ref green, ref blue);
+                    if (tex.data[tx] < 255) //alpha blend, damn
                     {
-                        UInt32 c = (uint)(tex.data[tx] * lightB) | ((uint)(tex.data[tx + 1] * lightG) << 8) | ((uint)(tex.data[tx + 2] * lightR) << 16);
+                        UInt32 c = (uint)(blue * lightB) | ((uint)(green * lightG) << 8) | ((uint)(red * lightR) << 16);
                         UInt32 orig = (UInt32)(pixels[b] | (pixels[b + 1] << 8) | (pixels[b + 2] << 16));
-                        orig = alphaBlend(orig, c, tex.data[tx + 3] / 255.0);
+                        orig = alphaBlend(orig, c, tex.data[tx] / 255.0);
                         pixels[b++] = (byte)(orig & 0xff);
                         pixels[b++] = (byte)((orig >> 8) & 0xff);
                         pixels[b++] = (byte)((orig >> 16) & 0xff);
@@ -1097,9 +1108,9 @@ namespace Terrafirma
                     }
                     else
                     {
-                        pixels[b++] = (byte)(tex.data[tx++] * lightB);
-                        pixels[b++] = (byte)(tex.data[tx++] * lightG);
-                        pixels[b++] = (byte)(tex.data[tx++] * lightR);
+                        pixels[b++] = (byte)(blue * lightB);
+                        pixels[b++] = (byte)(green * lightG);
+                        pixels[b++] = (byte)(red * lightR);
                         pixels[b++] = 0xff;
                     }
                 }
@@ -1108,7 +1119,7 @@ namespace Terrafirma
         }
         void drawTextureFlip(Texture tex, int bw, int bh, int tofs,
             byte[] pixels, int px, int py,
-            int w, int h, double zoom, double lightR, double lightG, double lightB)
+            int w, int h, double zoom, double lightR, double lightG, double lightB,byte paint)
         {
             int tw = (int)(bw * zoom +0.5);
             int th = (int)(bh * zoom +0.5);
@@ -1139,11 +1150,16 @@ namespace Terrafirma
                         b += 4;
                         continue;
                     }
-                    if (tex.data[tx + 3] < 255) //alpha blend
+                    byte blue = tex.data[tx++];
+                    byte green = tex.data[tx++];
+                    byte red = tex.data[tx++];
+                    if (paint > 0)
+                        applyPaint(paint, ref red, ref green, ref blue);
+                    if (tex.data[tx] < 255) //alpha blend
                     {
-                        UInt32 c = (uint)(tex.data[tx] * lightB) | ((uint)(tex.data[tx + 1] * lightG) << 8) | ((uint)(tex.data[tx + 2] * lightR) << 16);
+                        UInt32 c = (uint)(blue * lightB) | ((uint)(green * lightG) << 8) | ((uint)(red * lightR) << 16);
                         UInt32 orig = (UInt32)(pixels[b] | (pixels[b + 1] << 8) | (pixels[b + 2] << 16));
-                        orig = alphaBlend(orig, c, tex.data[tx + 3] / 255.0);
+                        orig = alphaBlend(orig, c, tex.data[tx] / 255.0);
                         pixels[b++] = (byte)(orig & 0xff);
                         pixels[b++] = (byte)((orig >> 8) & 0xff);
                         pixels[b++] = (byte)((orig >> 16) & 0xff);
@@ -1151,13 +1167,157 @@ namespace Terrafirma
                     }
                     else
                     {
-                        pixels[b++] = (byte)(tex.data[tx++] * lightB);
-                        pixels[b++] = (byte)(tex.data[tx++] * lightG);
-                        pixels[b++] = (byte)(tex.data[tx++] * lightR);
+                        pixels[b++] = (byte)(blue * lightB);
+                        pixels[b++] = (byte)(green * lightG);
+                        pixels[b++] = (byte)(red * lightR);
                         pixels[b++] = 0xff;
                     }
                 }
                 bofs += w * 4;
+            }
+        }
+        void applyPaint(byte paint, ref byte red, ref byte green, ref byte blue)
+        {
+            if (paint > 27) //grass colors
+            {
+                //skip grass part
+                if (blue * 0.5 < green && green * 0.5 < blue &&
+                    red * 0.3 < blue && red * 0.8 > blue &&
+                    red * 0.8 > green && red * 0.3 < green)
+                    return;
+                paint -= 27;
+            }
+
+            byte max = red > green ? red : green;
+            byte min = red < green ? red : green;
+            if (blue > max) max = blue;
+            if (blue < min) min = blue;
+            switch (paint)
+            {
+                case 1: //Red
+                    red = max;
+                    green = blue = min;
+                    break;
+                case 2: //Orange
+                    red = max;
+                    green = (byte)((max + min) / 2);
+                    blue = min;
+                    break;
+                case 3: //Yellow
+                    red = green = max;
+                    blue = min;
+                    break;
+                case 4: //Lime
+                    red = (byte)((max + min) / 2);
+                    green = max;
+                    blue = min;
+                    break;
+                case 5: //Green
+                    red = blue = min;
+                    green = max;
+                    break;
+                case 6: //Teal
+                    red = min;
+                    green = max;
+                    blue = (byte)((max + min) / 2);
+                    break;
+                case 7: //Cyan
+                    red = min;
+                    green = blue = max;
+                    break;
+                case 8: //SkyBlue
+                    red = min;
+                    green = (byte)((max + min) / 2);
+                    blue = max;
+                    break;
+                case 9: //Blue
+                    red = green = min;
+                    blue = max;
+                    break;
+                case 10: //Purple
+                    red = (byte)((max + min) / 2);
+                    green = min;
+                    blue = max;
+                    break;
+                case 11: //Violet
+                    red = blue = max;
+                    green = min;
+                    break;
+                case 12: //Pink
+                    red = max;
+                    green = min;
+                    blue = (byte)((max + min) / 2);
+                    break;
+                case 13: //DeepRed
+                    red = max;
+                    green = blue = (byte)(min * 0.4);
+                    break;
+                case 14: //DeepOrange
+                    red = max;
+                    green = (byte)((max + min * 0.4) / 2);
+                    blue = (byte)(min * 0.4);
+                    break;
+                case 15: //DeepYellow
+                    red = green = max;
+                    blue = (byte)(min * 0.4);
+                    break;
+                case 16: //DeepLime
+                    red = (byte)((max + min * 0.4) / 2);
+                    green = max;
+                    blue = (byte)(min * 0.4);
+                    break;
+                case 17: //DeepGreen
+                    red = blue = (byte)(min * 0.4);
+                    green = max;
+                    break;
+                case 18: //DeepTeal
+                    red = (byte)(min * 0.4);
+                    green = max;
+                    blue = (byte)((max + min * 0.4) / 2);
+                    break;
+                case 19: //DeepCyan
+                    red = (byte)(min * 0.4);
+                    green = blue = max;
+                    break;
+                case 20: //DeepSkyBlue
+                    red = (byte)(min * 0.4);
+                    green = (byte)((max + min * 0.4) / 2);
+                    blue = max;
+                    break;
+                case 21: //DeepBlue
+                    red = green = (byte)(min * 0.4);
+                    blue = max;
+                    break;
+                case 22: //DeepPurple
+                    red = (byte)((max + min * 0.4) / 2);
+                    green = (byte)(min * 0.4);
+                    blue = max;
+                    break;
+                case 23: //DeepViolet
+                    red = blue = max;
+                    green = (byte)(min * 0.4);
+                    break;
+                case 24: //DeepPink
+                    red = max;
+                    green = (byte)(min * 0.4);
+                    blue = (byte)((max + min * 0.4) / 2);
+                    break;
+                case 25: //Black
+                    red = green = blue = (byte)((max + min) * 0.15);
+                    break;
+                case 26: //Silver
+                    {
+                        double dmax = max / 255.0;
+                        double dmin = min / 255.0;
+                        double intensity = (dmax * 0.7 + dmin * 0.3) * (2.0 - (dmax + dmin) / 2.0);
+                        if (intensity > 1.0) intensity = 1.0;
+                        if (intensity < 0.0) intensity = 0.0;
+                        red = green = blue = (byte)(intensity*255);
+                    }
+                    break;
+                case 27: //Grey
+                    red = green = blue = (byte)((max + min) / 2);
+                    break;
             }
         }
         void drawOverlay(UInt32 color, double alpha, int amount, byte[] pixels, int px, int py, int w, int h, double zoom)

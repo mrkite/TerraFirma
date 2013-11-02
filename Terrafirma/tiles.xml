@@ -803,7 +803,7 @@
   <tile num="233" name="Plant" color="#6bb600" hasExtra="1" letLight="1" />
   <tile num="234" name="Crimsand" color="#4d4c42" solid="1" blend="0" merge="1" />
   <tile num="235" name="Teleporter" color="#b3bb44" hasExtra="1" solid="1" lightr="0.6" lightg="0.6" lightb="0.0" light="0.6" />
-  <tile num="236" name="Heart Fruit" color="#cd733d" hasExtra="1" letLight="1" />
+  <tile num="236" name="Life Fruit" color="#cd733d" hasExtra="1" letLight="1" />
   <tile num="237" name="Lihzahrd Altar" color="#fff133" hasExtra="1" letLight="1" lightr="0.1" lightg="0.1" lightb="0.0" light="0.1" />
   <tile num="238" name="Plantera's Bulb" color="#e180ce" hasExtra="1" letLight="1" lightr="0.5" lightg="0.0" lightb="0.5" />
   <tile num="239" name="Ingots" color="#cd8647" hasExtra="1" letLight="1" solid="1">
