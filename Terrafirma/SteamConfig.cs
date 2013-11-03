@@ -25,7 +25,7 @@ namespace Terrafirma
                 MatchCollection matches = keyRegex.Matches(line);
                 if (matches.Count == 0) //corrupt
                     return;
-                Name = matches[0].Value.Trim('\"');
+                Name = matches[0].Value.Trim('\"').ToLower();
                 if (matches.Count > 1) //value is a string
                     Value = matches[1].Value.Trim('\"').Replace(@"\\","\\");
                 line = lines.Peek();

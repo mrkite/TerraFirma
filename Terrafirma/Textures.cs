@@ -268,7 +268,7 @@ namespace Terrafirma
             SteamConfig steam = new SteamConfig();
             string path=null;
             if (steam.Ready)
-                path = steam.Get("Software/Valve/Steam/apps/105600/InstallDir");
+                path = steam.Get("software/valve/steam/apps/105600/installdir");
 
             //no steam key, let's try the default
             if (path==null || !Directory.Exists(path))
