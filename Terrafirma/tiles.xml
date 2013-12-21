@@ -48,6 +48,7 @@
   <tile num="8" name="Gold Ore" color="#B9A417" solid="1" blend="0" />
   <tile num="9" name="Silver Ore" color="#D9DFDF" solid="1" blend="0" />
   <tile num="10" name="Closed Doors" color="#BF8F6F" hasExtra="1" solid="1">
+    <var minv="1404" name="Closed Pine Door" color="#3D1504" />
     <var minv="1350" name="Closed Spooky Door" color="#775C8A" />
     <var minv="1296" name="Closed Pumpkin Door" color="#FAAC0F" />
     <var minv="1242" name="Closed Steam Punk Door" color="#8A7736" />
@@ -76,6 +77,7 @@
     <var minv="0" name="Closed Wooden Door" color="#bf8f6f" />
   </tile>
   <tile num="11" name="Open Doors" color="#946B50" hasExtra="1" letLight="1" solid="1">
+    <var minv="1404" name="Open Pine Door" color="#3D1504" />
     <var minv="1350" name="Open Spooky Door" color="#775C8A" />
     <var minv="1296" name="Open Pumpkin Door" color="#FAAC0F" />
     <var minv="1242" name="Open Steam Punk Door" color="#8A7736" />
@@ -111,6 +113,7 @@
     <var u="72" name="Mug" color="#ACC0D7" />
   </tile>
   <tile num="14" name="Tables" color="#7F5C45" hasExtra="1" letLight="1">
+    <var minu="1242" name="Pine Table" color="#5E3216" />
     <var minu="1188" name="Spooky Table" color="#644E74" />
     <var minu="1134" name="Pumpkin Table" color="#FAAC0F" />
     <var minu="1080" name="Steam Punk Table" color="#E1B45D" />
@@ -136,6 +139,7 @@
     <var minu="0" name="Wooden Table" color="#7f5c45" />
   </tile>
   <tile num="15" name="Chairs" color="#A2785C" hasExtra="1" letLight="1">
+    <var minv="1040" name="Pine Chair" color="#003216" />
     <var minv="1000" name="Spooky Chair" color="#775C8A" />
     <var minv="960" name="Pumpkin Chair" color="#196606" />
     <var minv="920" name="Steam Punk Chair" color="#547940" />
@@ -285,9 +289,7 @@
   <tile num="35" name="Jack 'O Lantern" color="#EAAD53" hasExtra="1" letLight="1">
     <var maxu="36" lightr="0.75" lightg="0.6" lightb="0.3" light="1.0" />
   </tile>
-  <tile num="36" name="Haunted Gold Chandelier" color="#465BE8" hasExtra="1" letLight="1">
-    <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
-  </tile>
+  <tile num="36" name="Present" color="#C22E32" hasExtra="1" letLight="1" />
   <tile num="37" name="Meteorite" color="#685654" solid="1" blend="0" lightr="0.56" lightg="0.43" lightb="0.15" light="0.5" />
   <tile num="38" name="Gray Brick" color="#8C8C8C" solid="1" blend="0" merge="1" />
   <tile num="39" name="Red Brick" color="#C37057" solid="1" blend="0" merge="1" />
@@ -677,6 +679,24 @@
   </tile>
   <tile num="138" name="Boulder" color="#636363" hasExtra="1" solid="1" />
   <tile num="139" name="Music Box" color="#996343" hasExtra="1" letLight="1">
+    <var minv="1080" name="Music Box (Frost Moon)" />
+    <var minv="1044" name="Music Box (Alt Underground)" />
+    <var minv="1008" name="Music Box (Pumpkin Moon)" />
+    <var minv="972" name="Music Box (Mushrooms)" />
+    <var minv="936" name="Music Box (Eclipse)" />
+    <var minv="900" name="Music Box (Temple)" />
+    <var minv="864" name="Music Box (Boss 5)" />
+    <var minv="828" name="Music Box (Plantera)" />
+    <var minv="792" name="Music Box (Dungeon)" />
+    <var minv="756" name="Music Box (Ocean)" />
+    <var minv="720" name="Music Box (Desert)" />
+    <var minv="684" name="Music Box (Ice)" />
+    <var minv="648" name="Music Box (Rain)" />
+    <var minv="612" name="Music Box (Alt Overworld Day)" />
+    <var minv="576" name="Music Box (Boss 4)" />
+    <var minv="540" name="Music Box (Crimson)" />
+    <var minv="504" name="Music Box (Space)" />
+    <var minv="468" name="Music Box (Snow)" />
     <var minv="432" name="Music Box (Boss 3)" />
     <var minv="396" name="Music Box (Underground Hallow)" />
     <var minv="360" name="Music Box (Boss 2)" />
@@ -729,12 +749,8 @@
   <tile num="167" name="Lead Ore" color="#2f3e57" solid="1" blend="0" />
   <tile num="168" name="Tungsten Ore" color="#5a7d53" solid="1" blend="0" />
   <tile num="169" name="Platinum Ore" color="#8097b8" solid="1" blend="0" />
-  <tile num="170" name="Haunted Tin Chandelier" color="#445A83" hasExtra="1" letLight="1">
-    <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
-  </tile>
-  <tile num="171" name="Haunted Tungsten Chandelier" color="#614E62" hasExtra="1" letLight="1">
-    <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
-  </tile>
+  <tile num="170" name="Pine Tree Block" color="#003F2C" solid="1" letLight="1" />
+  <tile num="171" name="Christmas Tree" color="#269660" hasExtra="1" letLight="1" />
   <tile num="172" name="Haunted Platinum Chandelier" color="#4A3D26" hasExtra="1" letLight="1">
     <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
   </tile>
@@ -868,6 +884,9 @@
     <var u="360" name="Shroomite Bar" color="#2814ea" />
   </tile>
   <tile num="240" name="Picture" color="#634732" hasExtra="1" letLight="1">
+    <var minv="54" minu="216" name="Everscream Trophy" color="#E85156" />
+    <var minv="54" minu="162" name="Santa-NK1 Trophy" color="#D2D2D2" />
+    <var minv="54" minu="108" name="Ice Queen Trophy" color="#AFD8DA" />
     <var minv="54" minu="54" name="Pumpking Trophy" color="#453E66" />
     <var minv="54" minu="0" name="Mourning Wood Trophy" color="#574D80" />
     <var minu="1890" name="Rare Enchantment" color="#3454BE" />
@@ -944,6 +963,7 @@
     <var minu="0" name="Waldo" color="#FFFFFD" />
   </tile>
   <tile num="246" name="Picture" color="#6d5332" hasExtra="1" letLight="1">
+    <var minv="648" name="Holly" color="#1CD85E" />
     <var minv="612" name="Flowing Magma" color="#D64D34" />
     <var minv="576" name="Living Gore" color="#983640" />
     <var minv="540" name="Sky Guardian" color="#6778A5" />
@@ -1089,6 +1109,16 @@
   <wall num="113" name="Pumpkin Wall" color="#803700" />
   <wall num="114" name="Hay Wall" color="#745E19" />
   <wall num="115" name="Spooky Wood Wall" color="#33243F" />
+  <wall num="116" name="Christmas Tree Wallpaper" color="#5A1B1C" />
+  <wall num="117" name="Ornament Wallpaper" color="#7D7A71" />
+  <wall num="118" name="Candy Cane Wallpaper" color="#073112" />
+  <wall num="119" name="Festive Wallpaper" color="#69181B" />
+  <wall num="120" name="Stars Wallpaper" color="#111F41" />
+  <wall num="121" name="Squiggles Wallpaper" color="#C6C3B7" />
+  <wall num="122" name="Snowflake Wallpaper" color="#6E6E7E" />
+  <wall num="123" name="Krampus Horn Wallpaper" color="#85755F" />
+  <wall num="124" name="Bluegreen Wallpaper" color="#100340" />
+  <wall num="125" name="Grinch Finger Wallpaper" color="#748352" />
 
   <prefix num="1" name="Large" />
   <prefix num="2" name="Massive" />
@@ -3089,6 +3119,105 @@
   <item num="1864" name="Papyrus Scarab" />
   <item num="1865" name="Celestial Stone" />
   <item num="1866" name="Hoverboard" />
+  <item num="1867" name="Candy Cane" />
+  <item num="1868" name="Sugar Plum" />
+  <item num="1869" name="Present" />
+  <item num="1870" name="Red Ryder" />
+  <item num="1871" name="Festive Wings" />
+  <item num="1872" name="Pine Tree Block" />
+  <item num="1873" name="Christmas Tree" />
+  <item num="1874" name="Star Topper 1" />
+  <item num="1875" name="Star Topper 2" />
+  <item num="1876" name="Star Topper 3" />
+  <item num="1877" name="Bow Topper" />
+  <item num="1878" name="White Garland" />
+  <item num="1879" name="White and Red Garland" />
+  <item num="1880" name="Red Garland" />
+  <item num="1881" name="Red and Green Garland" />
+  <item num="1882" name="Green Garland" />
+  <item num="1883" name="Green and White Garland" />
+  <item num="1884" name="Multicolored Bulb" />
+  <item num="1885" name="Red Bulb" />
+  <item num="1886" name="Yellow Bulb" />
+  <item num="1887" name="Green Bulb" />
+  <item num="1888" name="Red and Green Bulb" />
+  <item num="1889" name="Yellow and Green Bulb" />
+  <item num="1890" name="Red and Yellow Bulb" />
+  <item num="1891" name="White Bulb" />
+  <item num="1892" name="White and Red Bulb" />
+  <item num="1893" name="White and Yellow Bulb" />
+  <item num="1894" name="White and Green Bulb" />
+  <item num="1895" name="Multicolored Lights" />
+  <item num="1896" name="Red Lights" />
+  <item num="1897" name="Green Lights" />
+  <item num="1898" name="Blue Lights" />
+  <item num="1899" name="Yellow Lights" />
+  <item num="1900" name="Red and Yellow Lights" />
+  <item num="1901" name="Red and Green Lights" />
+  <item num="1902" name="Yellow and Green Lights" />
+  <item num="1903" name="Blue and Green Lights" />
+  <item num="1904" name="Red and Blue Lights" />
+  <item num="1905" name="Blue and Yellow Lights" />
+  <item num="1906" name="Giant Bow" />
+  <item num="1907" name="Reindeer Antlers" />
+  <item num="1908" name="Holly" />
+  <item num="1909" name="Candy Cane Sword" />
+  <item num="1910" name="Elf Melter" />
+  <item num="1911" name="Christmas Pudding" />
+  <item num="1912" name="Eggnog" />
+  <item num="1913" name="Star Anise" />
+  <item num="1914" name="Reindeer Bells" />
+  <item num="1915" name="Candy cane Hook" />
+  <item num="1916" name="Christmas Hook" />
+  <item num="1917" name="Candy Cane Pickaxe" />
+  <item num="1918" name="Fruitcake Chakram" />
+  <item num="1919" name="Sugar Cookie" />
+  <item num="1920" name="Gingerbread Cookie" />
+  <item num="1921" name="Hand Warmer" />
+  <item num="1922" name="Coal" />
+  <item num="1923" name="Toolbox" />
+  <item num="1924" name="Pine Door" />
+  <item num="1925" name="Pine Chair" />
+  <item num="1926" name="Pine Table" />
+  <item num="1927" name="Dog Whistle" />
+  <item num="1928" name="Christmas Tree Sword" />
+  <item num="1929" name="Chain Gun" />
+  <item num="1930" name="Razorpine" />
+  <item num="1931" name="Blizzard Staff" />
+  <item num="1932" name="Mrs. Clause Hat" />
+  <item num="1933" name="Mrs. Clause Shirt" />
+  <item num="1934" name="Mrs. Clause Heels" />
+  <item num="1935" name="Parka Hood" />
+  <item num="1936" name="Parka Coat" />
+  <item num="1937" name="Parka Pants" />
+  <item num="1938" name="Snow Hat" />
+  <item num="1939" name="Ugly Sweater" />
+  <item num="1940" name="Tree Mask" />
+  <item num="1941" name="Tree Shirt" />
+  <item num="1942" name="Tree Trunks" />
+  <item num="1943" name="Elf Hat" />
+  <item num="1944" name="Elf Shirt" />
+  <item num="1945" name="Elf Pants" />
+  <item num="1946" name="Snowman Cannon" />
+  <item num="1947" name="North Pole" />
+  <item num="1948" name="Christmas Tree Wallpaper" />
+  <item num="1949" name="Ornament Wallpaper" />
+  <item num="1950" name="Candy Cane Wallpaper" />
+  <item num="1951" name="Festive Wallpaper" />
+  <item num="1952" name="Stars Wallpaper" />
+  <item num="1953" name="Squiggles Wallpaper" />
+  <item num="1954" name="Snowflake Wallpaper" />
+  <item num="1955" name="Krampus Horn Wallpaper" />
+  <item num="1956" name="Bluegreen Wallpaper" />
+  <item num="1957" name="Grinch Finger Wallpaper" />
+  <item num="1958" name="Naughty Present" />
+  <item num="1959" name="Baby Grinch Mischief's Whistle" />
+  <item num="1960" name="Ice Queen Trophy" />
+  <item num="1961" name="Santa-NK1 Trophy" />
+  <item num="1962" name="Everscream Trophy" />
+  <item num="1963" name="Music Box (Pumpkin Moon)" />
+  <item num="1964" name="Music Box (Alt Underground)" />
+  <item num="1965" name="Music Box (Frost Moon)" />
 
   <global id="sky" color="#84AAF8" />
   <global id="earth" color="#583D2E" />

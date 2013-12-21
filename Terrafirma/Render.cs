@@ -662,6 +662,42 @@ namespace Terrafirma
                                 drawTexture(tex, texw, texh, tile.v * tex.width * 4 + tile.u * 4,
                                     pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                             }
+                            else if (tile.type == 171) //christmas tree
+                            {
+                                int topper = tile.v & 0x7;
+                                int garland = (tile.v >> 3) & 0x7;
+                                int ornaments = (tile.v >> 6) & 0xf;
+                                int lights = (tile.v >> 10) & 0xf;
+
+                                Texture tex = Textures.GetTile(tile.type); //base tree
+                                drawTexture(tex, 64, 128, 0,
+                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+
+                                if (topper > 0)
+                                {
+                                    tex = Textures.GetXmasTree(3);
+                                    drawTexture(tex, 64, 128, 66 * (topper - 1) * 4,
+                                        pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+                                }
+                                if (garland > 0)
+                                {
+                                    tex = Textures.GetXmasTree(1);
+                                    drawTexture(tex, 64, 128, 66 * (garland - 1) * 4,
+                                        pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+                                }
+                                if (ornaments > 0)
+                                {
+                                    tex = Textures.GetXmasTree(2);
+                                    drawTexture(tex, 64, 128, 66 * (ornaments - 1) * 4,
+                                        pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+                                }
+                                if (lights > 0)
+                                {
+                                    tex = Textures.GetXmasTree(4);
+                                    drawTexture(tex, 64, 128, 66 * (lights - 1) * 4,
+                                        pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+                                }
+                            }
                             else
                             {
                                 Texture tex;
@@ -697,7 +733,7 @@ namespace Terrafirma
                                 else
                                 {
                                     //non-platform solid tile next to a half tile
-                                    if (!tile.half && tile.type != 19 && tileInfos[tile.type].solid && sx>0 && sx<tilesWide-2 &&
+                                    if (!tile.half && tile.type != 19 && tileInfos[tile.type].solid && sx > 0 && sx < tilesWide - 2 &&
                                         (tiles[sx - 1, sy].half || tiles[sx + 1, sy].half))
                                     {
                                         if (tiles[sx - 1, sy].half && tiles[sx + 1, sy].half) //both sides

@@ -239,6 +239,7 @@ namespace Terrafirma
         Dictionary<int, Texture> wallOutlines;
         Dictionary<int, Texture> actuators;
         Dictionary<int, Texture> cacti;
+        Dictionary<int, Texture> xmasTrees;
         string rootDir;
 
         public Textures()
@@ -263,6 +264,7 @@ namespace Terrafirma
             wallOutlines = new Dictionary<int, Texture>();
             actuators = new Dictionary<int, Texture>();
             cacti = new Dictionary<int, Texture>();
+            xmasTrees = new Dictionary<int, Texture>();
 
             // find terraria install
             SteamConfig steam = new SteamConfig();
@@ -443,6 +445,15 @@ namespace Terrafirma
                 actuators[num] = new Texture(rootDir, name);
             }
             return actuators[num];
+        }
+        public Texture GetXmasTree(int num)
+        {
+            if (!xmasTrees.ContainsKey(num))
+            {
+                string name = String.Format("Xmas_{0}", num);
+                xmasTrees[num] = new Texture(rootDir, name);
+            }
+            return xmasTrees[num];
         }
         public Texture GetCactus(int num)
         {

@@ -435,9 +435,9 @@ namespace Terrafirma
     /// </summary>
     public partial class MainWindow : Window, IDisposable
     {
-        const int MapVersion = 73;
+        const int MapVersion = 77;
         const int MaxTile = 254;
-        const int MaxWall = 115;
+        const int MaxWall = 125;
         const int Widest = 8400;
         const int Highest = 2400;
 
@@ -999,7 +999,7 @@ namespace Terrafirma
                                         foundInvalid = true;
                                         invalid = String.Format("{0} is not a valid tile type", tiles[x, y].type);
                                     }
-                                    else if (tileInfos[tiles[x, y].type].hasExtra)
+                                    else if (tileInfos[tiles[x, y].type].hasExtra || (version<72 && tiles[x,y].type==170))
                                     {
                                         // torches and platforms didn't have extra in older versions.
                                         if ((version < 28 && tiles[x, y].type == 4) ||
