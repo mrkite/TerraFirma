@@ -1,9 +1,9 @@
 ﻿<Window x:Class="Terrafirma.FindItem"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Find Item" Height="300" Width="300">
+        Title="Find Item" Height="495" Width="295" Icon="/Terrafirma;component/terrafirma.ico">
     <Grid>
-        <TreeView Margin="10,10,90,10" Name="ItemTree" SelectedItemChanged="ItemTree_SelectedItemChanged">
+        <TreeView Margin="12,41" Name="ItemTree" SelectedItemChanged="ItemTree_SelectedItemChanged">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Value}">
                     <HierarchicalDataTemplate.ItemTemplate>
@@ -15,7 +15,9 @@
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
-        <Button Name="FindButton" Content="Find" Margin="0,0,10,10" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" IsDefault="True" IsEnabled="False" Click="FindButton_Click"/>
-        <Button Name="CancelButton" Content="Cancel" Margin="0,0,10,35" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" IsCancel="True" Click="CancelButton_Click"/>
+        <Button Name="FindButton" Content="Find" Margin="0,0,12,12" Height="23" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" IsDefault="True" IsEnabled="False" Click="FindButton_Click"/>
+        <Button Name="CancelButton" Content="Close" Margin="0,0,93,12" Height="23" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" IsCancel="True" Click="CancelButton_Click"/>
+        <TextBox Height="23" HorizontalAlignment="Stretch" Margin="12,12,93,0" Name="ItemFilter" VerticalAlignment="Top" TextChanged="ItemFilter_TextChanged" KeyDown="ItemFilter_KeyDown" />
+        <Button Content="Clear Filter" Height="23" HorizontalAlignment="Right" Margin="0,12,12,0" Name="ClearFilter" VerticalAlignment="Top" Width="75" Click="ClearFilter_Click" />
     </Grid>
 </Window>

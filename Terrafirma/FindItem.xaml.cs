@@ -37,6 +37,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Timers;
 
 namespace Terrafirma
 {
@@ -64,7 +65,18 @@ namespace Terrafirma
             }
         }
 
-        Dictionary<string, List<ChestLeaf>> source;
+        // Event handler when find item button is clicked
+        public event FindItemClickedHandler Clicked;
+
+        private Dictionary<string, List<ChestLeaf>> source;
+        private bool filtered = false;
+
+        // Typing delay timer for textbox
+        private Timer delay;
+        private int delayTime = 1000;
+        private bool elapsed = false;
+        private bool pressed = false;
+
         public FindItem(Dictionary<string,List<int>> items)
         {
             InitializeComponent();
@@ -79,18 +91,26 @@ namespace Terrafirma
                     num++;
                 }
             }
+            source.OrderBy(k => k.Key);
             ItemTree.ItemsSource = source.OrderBy(k => k.Key);
+
+            delay = new Timer(delayTime);
+            delay.Elapsed += new ElapsedEventHandler(delay_Elapsed);
+            
+            ItemFilter.Focus();
         }
 
         private void FindButton_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = true;
-            this.Close();
+            // Don't close this window
+            if (Clicked != null) {
+                Clicked(SelectedChest);
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = false;
+            Clicked = null;
             this.Close();
         }
 
@@ -98,6 +118,7 @@ namespace Terrafirma
         {
             FindButton.IsEnabled = true;
         }
+
         public int SelectedChest
         {
             get
@@ -110,5 +131,64 @@ namespace Terrafirma
                 return ((KeyValuePair<string, List<ChestLeaf>>)ItemTree.SelectedItem).Value.First().Id;
             }
         }
+
+        // Filter items
+        private void Filter() {
+            if (elapsed || !pressed) {
+                elapsed = false;
+                pressed = false;
+
+                if (String.IsNullOrWhiteSpace(ItemFilter.Text)) {
+                    ItemTree.ItemsSource = source.OrderBy(k => k.Key);
+                    filtered = false;
+                } else {
+                    ItemTree.ItemsSource = source.Where((t) => { return t.Key.ToLower().Contains(ItemFilter.Text.ToLower()); });
+                    filtered = true;
+                }
+            }
+        }
+
+        private void ItemFilter_TextChanged(object sender, TextChangedEventArgs e) {
+            // We need to handle backspace or delete pressed event in this method
+            if (Keyboard.IsKeyDown(Key.Back)) {
+                OnKeyPressed();
+            }
+            // Always call filter even when it will not fired actually
+            Filter();
+            e.Handled = true;
+        }
+
+        private void ClearFilter_Click(object sender, RoutedEventArgs e) {
+            ItemFilter.Text = "";
+        }
+
+        private void delay_Elapsed(object sender, ElapsedEventArgs e) {
+            delay.Stop();
+            elapsed = true;
+
+            // Have to call filter method with invoke call
+            this.Dispatcher.Invoke((Action)(() => {
+                Filter();
+            }));
+        }
+
+        private void ItemFilter_KeyDown(object sender, KeyEventArgs e) {
+            OnKeyPressed();
+        }
+
+        private void OnKeyPressed() {
+            if (!delay.Enabled) {
+                // Start when not starting
+                delay.Start();
+            } else {
+                // Reset when already started
+                delay.Stop();
+                delay.Start();
+            }
+
+            pressed = true;
+        }
     }
+
+    public delegate void FindItemClickedHandler(int selectedChest);
 }

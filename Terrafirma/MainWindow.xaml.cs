@@ -1432,17 +1432,11 @@ namespace Terrafirma
 
             double startx = curX - (curWidth / (2 * curScale));
             double starty = curY - (curHeight / (2 * curScale));
-            try
-            {
-                render.Draw(curWidth, curHeight, startx, starty, curScale, ref bits,
-                    isHilight, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
-                    UseTextures.IsChecked && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked,
-                    FogOfWar.IsChecked, ref tiles);
-            }
-            catch (System.Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+
+            render.Draw(curWidth, curHeight, startx, starty, curScale, ref bits,
+                isHilight, Lighting1.IsChecked ? 1 : Lighting2.IsChecked ? 2 : 0,
+                UseTextures.IsChecked && curScale > 2.0, ShowHouses.IsChecked, ShowWires.IsChecked,
+                FogOfWar.IsChecked, ref tiles);
 
             //draw map here with curX,curY,curScale
             mapbits.WritePixels(rect, bits, curWidth * 4, 0);
@@ -2836,13 +2830,13 @@ namespace Terrafirma
             }
 
             FindItem fi = new FindItem(items);
-            if (fi.ShowDialog() == true)
+            fi.Clicked += (id) =>
             {
-                int id = fi.SelectedChest;
                 curX = chests[id].x;
                 curY = chests[id].y;
-                RenderMap();
-            }
+                RenderMap();                
+            };
+            fi.Show();
         }
 
         private void initWindow(object sender, EventArgs e)
