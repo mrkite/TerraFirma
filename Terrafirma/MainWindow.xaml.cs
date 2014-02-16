@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2013, Sean Kasun
+Copyright (c) 2014, Sean Kasun
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -191,7 +191,7 @@ namespace Terrafirma
         private UInt32 lite;
         public Int16 u, v, wallu, wallv;
         private UInt16 flags;
-        public byte type;
+        public UInt16 type;
         public byte wall;
         public byte liquid;
 
@@ -410,6 +410,7 @@ namespace Terrafirma
     {
         public Int32 x { get; set; }
         public Int32 y { get; set; }
+        public String name { get; set; }
         public ChestItem[] items;
     }
     struct Sign
@@ -435,7 +436,7 @@ namespace Terrafirma
     /// </summary>
     public partial class MainWindow : Window, IDisposable
     {
-        const int MapVersion = 77;
+        const int MapVersion = 93;
         const int MaxTile = 254;
         const int MaxWall = 125;
         const int Widest = 8400;
@@ -552,7 +553,8 @@ namespace Terrafirma
 										new FriendlyNPC("Cyborg", 209, 16, 14),
 										new FriendlyNPC("Painter", 227, 17, 15),
 										new FriendlyNPC("Witch Doctor", 228, 18, 16),
-										new FriendlyNPC("Pirate", 229, 19, 17)
+										new FriendlyNPC("Pirate", 229, 19, 17),
+                                        new FriendlyNPC("NoIdea", 353, 19, 17)
                                    };
 
 
@@ -745,7 +747,13 @@ namespace Terrafirma
 
                 using (BinaryReader b = new BinaryReader(File.Open(worlds[i], FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
-                    b.ReadUInt32(); //skip map version
+                    UInt32 v=b.ReadUInt32();
+                    if (v > 87)
+                    {
+                        b.ReadInt16(); //skip # of section pointers, we just want the 1st one
+                        Int32 ofs = b.ReadInt32();
+                        b.BaseStream.Position = ofs;
+                    }
                     item.Header = b.ReadString();
                 }
                 item.Command = MapCommands.OpenWorld;
@@ -820,6 +828,639 @@ namespace Terrafirma
         }
 
         delegate void Del();
+
+        private bool LoadNewMap(BinaryReader b, int version, out string invalid)
+        {
+            Int16 numSections = b.ReadInt16();
+            int[] sections = new int[numSections];
+            for (int i = 0; i < numSections; i++)
+                sections[i] = b.ReadInt32();
+            Int16 numTiles = b.ReadInt16();
+            byte mask = 0x80;
+            byte bits = 0;
+            bool[] extra = new bool[numTiles];
+            for (int i = 0; i < numTiles; i++)
+            {
+                if (mask == 0x80)
+                {
+                    bits = b.ReadByte();
+                    mask = 1;
+                }
+                else
+                    mask <<= 1;
+                extra[i] = (bits & mask) == mask;
+            }
+            b.BaseStream.Position = sections[0]; //skip any unknown data in world file header
+            LoadHeader(b, version);
+            b.BaseStream.Position = sections[1]; //skip to tiles
+            if (!LoadTiles(b, version, extra, out invalid))
+                return true;
+            b.BaseStream.Position = sections[2]; //skip to chests
+            LoadChests(b, version);
+            b.BaseStream.Position = sections[3]; //skip to signs
+            LoadSigns(b);
+            b.BaseStream.Position = sections[4]; //skip to npcs
+            LoadNPCs(b, version);
+            return false;
+        }
+
+        private bool LoadOldMap(BinaryReader b, int version, out string invalid)
+        {
+            LoadHeader(b, version);
+            if (!LoadOldTiles(b, version, out invalid))
+                return true;
+            LoadOldChests(b, version);
+            LoadOldSigns(b);
+            LoadNPCs(b, version);
+            return false;
+        }
+
+        private void LoadHeader(BinaryReader b, int version)
+        {
+            string title = b.ReadString();
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+            {
+                Title = title;
+            }));
+            worldID = b.ReadInt32();
+            b.BaseStream.Seek(16, SeekOrigin.Current); //skip bounds
+            tilesHigh = b.ReadInt32();
+            tilesWide = b.ReadInt32();
+            moonType = 0;
+            if (version >= 63)
+                moonType = b.ReadByte();
+            treeX[0] = treeX[1] = treeX[2] = 0;
+            treeStyle[0] = treeStyle[1] = treeStyle[2] = treeStyle[3] = 0;
+            if (version >= 44)
+            {
+                treeX[0] = b.ReadInt32();
+                treeX[1] = b.ReadInt32();
+                treeX[2] = b.ReadInt32();
+                treeStyle[0] = b.ReadInt32();
+                treeStyle[1] = b.ReadInt32();
+                treeStyle[2] = b.ReadInt32();
+                treeStyle[3] = b.ReadInt32();
+            }
+            caveBackX[0] = caveBackX[1] = caveBackX[2] = 0;
+            caveBackStyle[0] = caveBackStyle[1] = caveBackStyle[2] = caveBackStyle[3] = 0;
+            iceBackStyle = jungleBackStyle = hellBackStyle = 0;
+            if (version >= 60)
+            {
+                caveBackX[0] = b.ReadInt32();
+                caveBackX[1] = b.ReadInt32();
+                caveBackX[2] = b.ReadInt32();
+                caveBackStyle[0] = b.ReadInt32();
+                caveBackStyle[1] = b.ReadInt32();
+                caveBackStyle[2] = b.ReadInt32();
+                caveBackStyle[3] = b.ReadInt32();
+                iceBackStyle = b.ReadInt32();
+                if (version >= 61)
+                {
+                    jungleBackStyle = b.ReadInt32();
+                    hellBackStyle = b.ReadInt32();
+                }
+            }
+            spawnX = b.ReadInt32();
+            spawnY = b.ReadInt32();
+            groundLevel = (int)b.ReadDouble();
+            rockLevel = (int)b.ReadDouble();
+            gameTime = b.ReadDouble();
+            dayNight = b.ReadBoolean();
+            moonPhase = b.ReadInt32();
+            bloodMoon = b.ReadBoolean();
+            eclipse = false;
+            if (version >= 70)
+                eclipse = b.ReadBoolean();
+            dungeonX = b.ReadInt32();
+            dungeonY = b.ReadInt32();
+            crimson = false;
+            if (version >= 56)
+                crimson = b.ReadBoolean();
+            killedBoss1 = b.ReadBoolean();
+            killedBoss2 = b.ReadBoolean();
+            killedBoss3 = b.ReadBoolean();
+            killedQueenBee = false;
+            if (version >= 66)
+                killedQueenBee = b.ReadBoolean();
+            killedMechBoss1 = killedMechBoss2 = killedMechBoss3 = killedMechBossAny = false;
+            if (version >= 44)
+            {
+                killedMechBoss1 = b.ReadBoolean();
+                killedMechBoss2 = b.ReadBoolean();
+                killedMechBoss3 = b.ReadBoolean();
+                killedMechBossAny = b.ReadBoolean();
+            }
+            killedPlantBoss = killedGolemBoss = false;
+            if (version >= 64)
+            {
+                killedPlantBoss = b.ReadBoolean();
+                killedGolemBoss = b.ReadBoolean();
+            }
+            savedTinkerer = savedWizard = savedMechanic = killedGoblins = killedClown = killedFrost = killedPirates = false;
+            if (version >= 29)
+            {
+                savedTinkerer = b.ReadBoolean();
+                savedWizard = b.ReadBoolean();
+                if (version >= 34)
+                    savedMechanic = b.ReadBoolean();
+                killedGoblins = b.ReadBoolean();
+                if (version >= 32)
+                    killedClown = b.ReadBoolean();
+                if (version >= 37)
+                    killedFrost = b.ReadBoolean();
+                if (version >= 56)
+                    killedPirates = b.ReadBoolean();
+            }
+            smashedOrb = b.ReadBoolean();
+            meteorSpawned = b.ReadBoolean();
+            shadowOrbCount = b.ReadByte();
+            altarsSmashed = 0;
+            hardMode = false;
+            if (version >= 23)
+            {
+                altarsSmashed = b.ReadInt32();
+                hardMode = b.ReadBoolean();
+            }
+            goblinsDelay = b.ReadInt32();
+            goblinsSize = b.ReadInt32();
+            goblinsType = b.ReadInt32();
+            goblinsX = b.ReadDouble();
+
+            isRaining = false;
+            rainTime = 0;
+            maxRain = 0.0F;
+            oreTier1 = 107;
+            oreTier2 = 108;
+            oreTier3 = 111;
+            if (version >= 23 && altarsSmashed == 0)
+                oreTier1 = oreTier2 = oreTier3 = -1;
+            if (version >= 53)
+            {
+                isRaining = b.ReadBoolean();
+                rainTime = b.ReadInt32();
+                maxRain = b.ReadSingle();
+                if (version >= 54)
+                {
+                    oreTier1 = b.ReadInt32();
+                    oreTier2 = b.ReadInt32();
+                    oreTier3 = b.ReadInt32();
+                }
+            }
+            if (version >= 55)
+            {
+                int numstyles = 3;
+                if (version >= 60)
+                    numstyles = 8;
+                for (int i = 0; i < numstyles; i++)
+                    styles[i] = b.ReadByte();
+                //skip clouds
+                if (version >= 60)
+                {
+                    b.BaseStream.Seek(4, SeekOrigin.Current);
+                    if (version >= 62) //skip wind
+                        b.BaseStream.Seek(6, SeekOrigin.Current);
+                }
+            }
+
+            ResizeMap();
+        }
+
+        private bool LoadOldTiles(BinaryReader b, int version, out string invalid)
+        {
+            invalid = "";
+            for (int x = 0; x < tilesWide; x++)
+            {
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                {
+                    serverText.Text = ((int)((float)x * 100.0 / (float)tilesWide)) + "% - Reading tiles";
+                }));
+                for (int y = 0; y < tilesHigh; y++)
+                {
+                    tiles[x, y].isActive = b.ReadBoolean();
+                    if (tiles[x, y].isActive)
+                    {
+                        if (version <= 77)
+                            tiles[x, y].type = b.ReadByte();
+                        else
+                            tiles[x, y].type = b.ReadUInt16();
+                        if (tiles[x, y].type > MaxTile) // something screwy in the map
+                        {
+                            tiles[x, y].isActive = false;
+                            invalid = String.Format("{0} is not a valid tile type", tiles[x, y].type);
+                            return false;
+                        }
+                        else if (tileInfos[tiles[x, y].type].hasExtra || (version < 72 && tiles[x, y].type == 170))
+                        {
+                            // torches and platforms didn't have extra in older versions.
+                            if ((version < 28 && tiles[x, y].type == 4) ||
+                                (version < 40 && tiles[x, y].type == 19))
+                            {
+                                tiles[x, y].u = -1;
+                                tiles[x, y].v = -1;
+                            }
+                            else
+                            {
+                                tiles[x, y].u = b.ReadInt16();
+                                tiles[x, y].v = b.ReadInt16();
+                                if (tiles[x, y].type == 144) //timer
+                                    tiles[x, y].v = 0;
+                            }
+                        }
+                        else
+                        {
+                            tiles[x, y].u = -1;
+                            tiles[x, y].v = -1;
+                        }
+
+                        if (version >= 48 && b.ReadBoolean())
+                        {
+                            tiles[x, y].color = b.ReadByte();
+                        }
+                    }
+                    if (version <= 25)
+                        b.ReadBoolean(); //skip obsolete hasLight
+                    if (b.ReadBoolean())
+                    {
+                        tiles[x, y].wall = b.ReadByte();
+                        if (tiles[x, y].wall > MaxWall)  // bad wall
+                        {
+                            invalid = String.Format("{0} is not a valid wall type", tiles[x, y].wall);
+                            tiles[x, y].wall = 0;
+                            return false;
+                        }
+                        if (version >= 48 && b.ReadBoolean())
+                            tiles[x, y].wallColor = b.ReadByte();
+                        tiles[x, y].wallu = -1;
+                        tiles[x, y].wallv = -1;
+                    }
+                    else
+                        tiles[x, y].wall = 0;
+                    if (b.ReadBoolean())
+                    {
+                        tiles[x, y].liquid = b.ReadByte();
+                        tiles[x, y].isLava = b.ReadBoolean();
+                        if (version >= 51)
+                            tiles[x, y].isHoney = b.ReadBoolean();
+                    }
+                    else
+                        tiles[x, y].liquid = 0;
+                    tiles[x, y].hasRedWire = false;
+                    tiles[x, y].hasGreenWire = false;
+                    tiles[x, y].hasBlueWire = false;
+                    tiles[x, y].half = false;
+                    tiles[x, y].actuator = false;
+                    tiles[x, y].inactive = false;
+                    tiles[x, y].slope = 0;
+                    if (version >= 33)
+                    {
+                        tiles[x, y].hasRedWire = b.ReadBoolean();
+                        if (version >= 43)
+                        {
+                            tiles[x, y].hasGreenWire = b.ReadBoolean();
+                            tiles[x, y].hasBlueWire = b.ReadBoolean();
+                        }
+                        if (version >= 41)
+                        {
+                            tiles[x, y].half = b.ReadBoolean();
+                            if (version >= 49)
+                                tiles[x, y].slope = b.ReadByte();
+                            if (!tileInfos[tiles[x, y].type].solid)
+                            {
+                                tiles[x, y].half = false;
+                                tiles[x, y].slope = 0;
+                            }
+                            if (version >= 42)
+                            {
+                                tiles[x, y].actuator = b.ReadBoolean();
+                                tiles[x, y].inactive = b.ReadBoolean();
+                            }
+                        }
+                    }
+                    if (version >= 25) //RLE
+                    {
+                        int rle = b.ReadInt16();
+                        for (int r = y + 1; r < y + 1 + rle; r++)
+                        {
+                            tiles[x, r].isActive = tiles[x, y].isActive;
+                            tiles[x, r].type = tiles[x, y].type;
+                            tiles[x, r].u = tiles[x, y].u;
+                            tiles[x, r].v = tiles[x, y].v;
+                            tiles[x, r].wall = tiles[x, y].wall;
+                            tiles[x, r].wallu = -1;
+                            tiles[x, r].wallv = -1;
+                            tiles[x, r].liquid = tiles[x, y].liquid;
+                            tiles[x, r].isLava = tiles[x, y].isLava;
+                            tiles[x, r].isHoney = tiles[x, y].isHoney;
+                            tiles[x, r].hasRedWire = tiles[x, y].hasRedWire;
+                            tiles[x, r].hasGreenWire = tiles[x, y].hasGreenWire;
+                            tiles[x, r].hasBlueWire = tiles[x, y].hasBlueWire;
+                            tiles[x, r].half = tiles[x, y].half;
+                            tiles[x, r].slope = tiles[x, y].slope;
+                            tiles[x, r].actuator = tiles[x, y].actuator;
+                            tiles[x, r].inactive = tiles[x, y].inactive;
+                            tiles[x, r].color = tiles[x, y].color;
+                            tiles[x, r].wallColor = tiles[x, y].wallColor;
+                        }
+                        y += rle;
+                    }
+                }
+            }
+            return true;
+        }
+
+        private bool LoadTiles(BinaryReader b, int version, bool[] extra, out string invalid)
+        {
+            invalid = "";
+            for (int x = 0; x < tilesWide; x++)
+            {
+                Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+                {
+                    serverText.Text = ((int)((float)x * 100.0 / (float)tilesWide)) + "% - Reading tiles";
+                }));
+                for (int y = 0; y < tilesHigh; y++)
+                {
+                    byte flags1 = b.ReadByte();
+                    byte flags2 = 0;
+                    byte flags3 = 0;
+                    if ((flags1 & 1) == 1) //has flags2
+                    {
+                        flags2 = b.ReadByte();
+                        if ((flags2 & 1) == 1) //has flags3
+                            flags3 = b.ReadByte();
+                    }
+                    tiles[x, y].isActive = (flags1 & 2) == 2;
+                    if (tiles[x, y].isActive)
+                    {
+                        tiles[x, y].type = b.ReadByte();
+                        if ((flags1 & 0x20) == 0x20) //2-byte type
+                            tiles[x, y].type |= (UInt16)(b.ReadByte() << 8);
+
+                        if (extra[tiles[x, y].type])
+                        {
+                            tiles[x, y].u = b.ReadInt16();
+                            tiles[x, y].v = b.ReadInt16();
+                        }
+                        else
+                        {
+                            tiles[x, y].u = -1;
+                            tiles[x, y].v = -1;
+                        }
+                        if ((flags3 & 0x8) == 0x8)
+                            tiles[x, y].color = b.ReadByte();
+                    }
+                    if ((flags1 & 4) == 4) //wall
+                    {
+                        tiles[x, y].wall = b.ReadByte();
+                        if ((flags3 & 0x10) == 0x10)
+                            tiles[x, y].wallColor = b.ReadByte();
+                        tiles[x, y].wallu = -1;
+                        tiles[x, y].wallv = -1;
+                    }
+                    else
+                        tiles[x, y].wall = 0;
+                    if ((flags1 & 0x18) != 0)
+                    {
+                        tiles[x, y].liquid = b.ReadByte();
+                        tiles[x, y].isLava = (flags1 & 0x18) == 0x10;
+                        tiles[x, y].isHoney = (flags1 & 0x18) == 0x18;
+                    }
+                    else
+                        tiles[x, y].liquid = 0;
+                    tiles[x, y].hasRedWire = (flags2 & 2) == 2;
+                    tiles[x, y].hasGreenWire = (flags2 & 4) == 4;
+                    tiles[x, y].hasBlueWire = (flags2 & 8) == 8;
+                    int slope = (flags2 >> 4) & 7;
+                    tiles[x, y].half = slope == 1;
+                    tiles[x, y].slope = (byte)(slope > 1 ? slope - 1 : 0);
+                    if (!tileInfos[tiles[x, y].type].solid)
+                    {
+                        tiles[x, y].half = false;
+                        tiles[x, y].slope = 0;
+                    }
+                    tiles[x, y].actuator = (flags3 & 2) == 2;
+                    tiles[x, y].inactive = (flags3 & 4) == 4;
+
+                    int rle = 0;
+                    switch (flags1 >> 6)
+                    {
+                        case 1: // 1 byte
+                            rle = b.ReadByte();
+                            break;
+                        case 2: // 2 bytes
+                            rle = b.ReadInt16();
+                            break;
+                    }
+                    for (int r = y + 1; r < y + 1 + rle; r++)
+                    {
+                        tiles[x, r].isActive = tiles[x, y].isActive;
+                        tiles[x, r].type = tiles[x, y].type;
+                        tiles[x, r].u = tiles[x, y].u;
+                        tiles[x, r].v = tiles[x, y].v;
+                        tiles[x, r].wall = tiles[x, y].wall;
+                        tiles[x, r].wallu = -1;
+                        tiles[x, r].wallv = -1;
+                        tiles[x, r].liquid = tiles[x, y].liquid;
+                        tiles[x, r].isLava = tiles[x, y].isLava;
+                        tiles[x, r].isHoney = tiles[x, y].isHoney;
+                        tiles[x, r].hasRedWire = tiles[x, y].hasRedWire;
+                        tiles[x, r].hasGreenWire = tiles[x, y].hasGreenWire;
+                        tiles[x, r].hasBlueWire = tiles[x, y].hasBlueWire;
+                        tiles[x, r].half = tiles[x, y].half;
+                        tiles[x, r].slope = tiles[x, y].slope;
+                        tiles[x, r].actuator = tiles[x, y].actuator;
+                        tiles[x, r].inactive = tiles[x, y].inactive;
+                        tiles[x, r].color = tiles[x, y].color;
+                        tiles[x, r].wallColor = tiles[x, y].wallColor;
+                    }
+                    y += rle;
+                }
+            }
+            return true;
+        }
+
+        private void LoadOldChests(BinaryReader b, int version)
+        {
+            int itemsPerChest = 40;
+            if (version < 58)
+                itemsPerChest = 20;
+            chests.Clear();
+            for (int i = 0; i < 1000; i++)
+            {
+                if (b.ReadBoolean())
+                {
+                    Chest chest = new Chest();
+                    chest.items = new ChestItem[itemsPerChest];
+                    chest.x = b.ReadInt32();
+                    chest.y = b.ReadInt32();
+                    if (version >= 85)
+                        chest.name = b.ReadString();
+                    for (int ii = 0; ii < itemsPerChest; ii++)
+                    {
+                        if (version < 59)
+                            chest.items[ii].stack = b.ReadByte();
+                        else
+                            chest.items[ii].stack = b.ReadInt16();
+                        if (chest.items[ii].stack > 0)
+                        {
+                            string name = "Unknown";
+                            if (version >= 38) //item names not stored
+                            {
+                                Int32 itemid = b.ReadInt32();
+                                if (itemid < 0)
+                                {
+                                    itemid = -itemid;
+                                    if (itemid < itemNames2.Length)
+                                        name = itemNames2[itemid];
+                                }
+                                else if (itemid < itemNames.Length)
+                                    name = itemNames[itemid];
+                            }
+                            else
+                                name = b.ReadString();
+                            string prefix = "";
+                            if (version >= 36) //item prefixes
+                            {
+                                int pfx = b.ReadByte();
+                                if (pfx < prefixes.Length)
+                                    prefix = prefixes[pfx];
+                            }
+                            chest.items[ii].name = name;
+                            chest.items[ii].prefix = prefix;
+                        }
+                    }
+                    chests.Add(chest);
+                }
+            }
+        }
+        private void LoadChests(BinaryReader b, int version)
+        {
+            int numChests = b.ReadInt16();
+            int itemsPerChest = b.ReadInt16();
+            chests.Clear();
+            for (int i = 0; i < numChests; i++)
+            {
+                Chest chest = new Chest();
+                chest.items = new ChestItem[itemsPerChest];
+                chest.x = b.ReadInt32();
+                chest.y = b.ReadInt32();
+                chest.name = b.ReadString();
+                for (int ii = 0; ii < itemsPerChest; ii++)
+                {
+                    chest.items[ii].stack = b.ReadInt16();
+                    if (chest.items[ii].stack > 0)
+                    {
+                        string name = "Unknown";
+                        Int32 itemid = b.ReadInt32();
+                        if (itemid < 0)
+                        {
+                            itemid = -itemid;
+                            if (itemid < itemNames2.Length)
+                                name = itemNames2[itemid];
+                        }
+                        else if (itemid < itemNames.Length)
+                            name = itemNames[itemid];
+                        string prefix = "";
+
+                        int pfx = b.ReadByte();
+                        if (pfx < prefixes.Length)
+                            prefix = prefixes[pfx];
+
+                        chest.items[ii].name = name;
+                        chest.items[ii].prefix = prefix;
+                    }
+                }
+                chests.Add(chest);
+            }
+        }
+
+        private void LoadOldSigns(BinaryReader b)
+        {
+            signs.Clear();
+            for (int i = 0; i < 1000; i++)
+            {
+                if (b.ReadBoolean())
+                {
+                    Sign sign = new Sign();
+                    sign.text = b.ReadString();
+                    sign.x = b.ReadInt32();
+                    sign.y = b.ReadInt32();
+                    signs.Add(sign);
+                }
+            }
+        }
+        private void LoadSigns(BinaryReader b)
+        {
+            int numSigns = b.ReadInt16();
+            signs.Clear();
+            for (int i = 0; i < numSigns; i++)
+            {
+                Sign sign = new Sign();
+                sign.text = b.ReadString();
+                sign.x = b.ReadInt32();
+                sign.y = b.ReadInt32();
+                signs.Add(sign);
+            }
+        }
+
+        private void LoadNPCs(BinaryReader b, int version)
+        {
+            npcs.Clear();
+            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
+            {
+                NPCs.Items.Clear();
+                serverText.Text = "Loading NPCs...";
+            }));
+            while (b.ReadBoolean())
+            {
+                NPC npc = new NPC();
+                npc.title = b.ReadString();
+                npc.name = "";
+                if (version >= 83)
+                    npc.name = b.ReadString();
+                npc.x = b.ReadSingle();
+                npc.y = b.ReadSingle();
+                npc.isHomeless = b.ReadBoolean();
+                npc.homeX = b.ReadInt32();
+                npc.homeY = b.ReadInt32();
+
+                npc.order = -1;
+                npc.num = 0;
+                npc.sprite = 0;
+                for (int i = 0; i < friendlyNPCs.Length; i++)
+                    if (friendlyNPCs[i].title == npc.title)
+                    {
+                        npc.sprite = friendlyNPCs[i].id;
+                        npc.num = friendlyNPCs[i].num;
+                        npc.order = friendlyNPCs[i].order;
+                    }
+
+                npcs.Add(npc);
+                addNPCToMenu(npc);
+            }
+            if (version >= 31 && version <= 83) //read npcs
+            {
+                int numNames = 9;
+                if (version >= 34)
+                    numNames++;
+                if (version >= 65)
+                    numNames += 8;
+                if (version >= 79)
+                    numNames++;
+                for (int i = 0; i < numNames; i++)
+                {
+                    string name = b.ReadString();
+                    for (int j = 0; j < npcs.Count; j++)
+                    {
+                        if (npcs[j].order == i)
+                        {
+                            npcs[j].name = name;
+                            addNPCToMenu(npcs[j]);
+                        }
+                    }
+                }
+            }
+        }
+
         private void Load(string world, Del done)
         {
             ThreadStart loadThread = delegate()
@@ -833,400 +1474,12 @@ namespace Terrafirma
                     using (BinaryReader b = new BinaryReader(File.Open(world, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                     {
                         int version = b.ReadInt32(); //now we care about the version
-                        if (version > MapVersion) // new map format
+                        if (version > MapVersion)
                             throw new Exception("Unsupported map version: " + version);
-                        string title = b.ReadString();
-                        Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
-                        {
-                            Title = title;
-                        }));
-                        worldID = b.ReadInt32();
-                        b.BaseStream.Seek(16, SeekOrigin.Current); //skip bounds
-                        tilesHigh = b.ReadInt32();
-                        tilesWide = b.ReadInt32();
-                        moonType = 0;
-                        if (version >= 63)
-                            moonType = b.ReadByte();
-                        treeX[0] = treeX[1] = treeX[2] = 0;
-                        treeStyle[0] = treeStyle[1] = treeStyle[2] = treeStyle[3] = 0;
-                        if (version >= 44)
-                        {
-                            treeX[0] = b.ReadInt32();
-                            treeX[1] = b.ReadInt32();
-                            treeX[2] = b.ReadInt32();
-                            treeStyle[0] = b.ReadInt32();
-                            treeStyle[1] = b.ReadInt32();
-                            treeStyle[2] = b.ReadInt32();
-                            treeStyle[3] = b.ReadInt32();
-                        }
-                        caveBackX[0] = caveBackX[1] = caveBackX[2] = 0;
-                        caveBackStyle[0] = caveBackStyle[1] = caveBackStyle[2] = caveBackStyle[3] = 0;
-                        iceBackStyle = jungleBackStyle = hellBackStyle = 0;
-                        if (version >= 60)
-                        {
-                            caveBackX[0] = b.ReadInt32();
-                            caveBackX[1] = b.ReadInt32();
-                            caveBackX[2] = b.ReadInt32();
-                            caveBackStyle[0] = b.ReadInt32();
-                            caveBackStyle[1] = b.ReadInt32();
-                            caveBackStyle[2] = b.ReadInt32();
-                            caveBackStyle[3] = b.ReadInt32();
-                            iceBackStyle = b.ReadInt32();
-                            if (version >= 61)
-                            {
-                                jungleBackStyle = b.ReadInt32();
-                                hellBackStyle = b.ReadInt32();
-                            }
-                        }
-                        spawnX = b.ReadInt32();
-                        spawnY = b.ReadInt32();
-                        groundLevel = (int)b.ReadDouble();
-                        rockLevel = (int)b.ReadDouble();
-                        gameTime = b.ReadDouble();
-                        dayNight = b.ReadBoolean();
-                        moonPhase = b.ReadInt32();
-                        bloodMoon = b.ReadBoolean();
-                        eclipse = false;
-                        if (version >= 70)
-                            eclipse = b.ReadBoolean();
-                        dungeonX = b.ReadInt32();
-                        dungeonY = b.ReadInt32();
-                        crimson = false;
-                        if (version >= 56)
-                            crimson = b.ReadBoolean();
-                        killedBoss1 = b.ReadBoolean();
-                        killedBoss2 = b.ReadBoolean();
-                        killedBoss3 = b.ReadBoolean();
-                        killedQueenBee = false;
-                        if (version >= 66)
-                            killedQueenBee = b.ReadBoolean();
-                        killedMechBoss1 = killedMechBoss2 = killedMechBoss3 = killedMechBossAny = false;
-                        if (version >= 44)
-                        {
-                            killedMechBoss1 = b.ReadBoolean();
-                            killedMechBoss2 = b.ReadBoolean();
-                            killedMechBoss3 = b.ReadBoolean();
-                            killedMechBossAny = b.ReadBoolean();
-                        }
-                        killedPlantBoss = killedGolemBoss = false;
-                        if (version >= 64)
-                        {
-                            killedPlantBoss = b.ReadBoolean();
-                            killedGolemBoss = b.ReadBoolean();
-                        }
-                        savedTinkerer = savedWizard = savedMechanic = killedGoblins = killedClown = killedFrost = killedPirates = false;
-                        if (version >= 29)
-                        {
-                            savedTinkerer = b.ReadBoolean();
-                            savedWizard = b.ReadBoolean();
-                            if (version >= 34)
-                                savedMechanic = b.ReadBoolean();
-                            killedGoblins = b.ReadBoolean();
-                            if (version >= 32)
-                                killedClown = b.ReadBoolean();
-                            if (version >= 37)
-                                killedFrost = b.ReadBoolean();
-                            if (version >= 56)
-                                killedPirates = b.ReadBoolean();
-                        }
-                        smashedOrb = b.ReadBoolean();
-                        meteorSpawned = b.ReadBoolean();
-                        shadowOrbCount = b.ReadByte();
-                        altarsSmashed = 0;
-                        hardMode = false;
-                        if (version >= 23)
-                        {
-                            altarsSmashed = b.ReadInt32();
-                            hardMode = b.ReadBoolean();
-                        }
-                        goblinsDelay = b.ReadInt32();
-                        goblinsSize = b.ReadInt32();
-                        goblinsType = b.ReadInt32();
-                        goblinsX = b.ReadDouble();
-
-                        isRaining = false;
-                        rainTime = 0;
-                        maxRain = 0.0F;
-                        oreTier1 = 107;
-                        oreTier2 = 108;
-                        oreTier3 = 111;
-                        if (version >= 23 && altarsSmashed == 0)
-                            oreTier1 = oreTier2 = oreTier3 = -1;
-                        if (version >= 53)
-                        {
-                            isRaining = b.ReadBoolean();
-                            rainTime = b.ReadInt32();
-                            maxRain = b.ReadSingle();
-                            if (version >= 54)
-                            {
-                                oreTier1 = b.ReadInt32();
-                                oreTier2 = b.ReadInt32();
-                                oreTier3 = b.ReadInt32();
-                            }
-                        }
-                        if (version >= 55)
-                        {
-                            int numstyles = 3;
-                            if (version >= 60)
-                                numstyles = 8;
-                            for (int i = 0; i < numstyles; i++)
-                                styles[i] = b.ReadByte();
-                            //skip clouds
-                            if (version >= 60)
-                            {
-                                b.BaseStream.Seek(4, SeekOrigin.Current);
-                                if (version >= 62) //skip wind
-                                    b.BaseStream.Seek(6, SeekOrigin.Current);
-                            }
-                        }
-
-                        ResizeMap();
-                        for (int x = 0; x < tilesWide; x++)
-                        {
-                            Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
-                            {
-                                serverText.Text = ((int)((float)x * 100.0 / (float)tilesWide)) + "% - Reading tiles";
-                            }));
-                            for (int y = 0; y < tilesHigh; y++)
-                            {
-                                tiles[x, y].isActive = b.ReadBoolean();
-                                if (tiles[x, y].isActive)
-                                {
-                                    tiles[x, y].type = b.ReadByte();
-                                    if (tiles[x, y].type > MaxTile) // something screwy in the map
-                                    {
-                                        tiles[x, y].isActive = false;
-                                        foundInvalid = true;
-                                        invalid = String.Format("{0} is not a valid tile type", tiles[x, y].type);
-                                    }
-                                    else if (tileInfos[tiles[x, y].type].hasExtra || (version<72 && tiles[x,y].type==170))
-                                    {
-                                        // torches and platforms didn't have extra in older versions.
-                                        if ((version < 28 && tiles[x, y].type == 4) ||
-                                            (version < 40 && tiles[x, y].type == 19))
-                                        {
-                                            tiles[x, y].u = -1;
-                                            tiles[x, y].v = -1;
-                                        }
-                                        else
-                                        {
-                                            tiles[x, y].u = b.ReadInt16();
-                                            tiles[x, y].v = b.ReadInt16();
-                                            if (tiles[x, y].type == 144) //timer
-                                                tiles[x, y].v = 0;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        tiles[x, y].u = -1;
-                                        tiles[x, y].v = -1;
-                                    }
-
-                                    if (version >= 48 && b.ReadBoolean())
-                                    {
-                                        tiles[x, y].color = b.ReadByte();
-                                    }
-                                }
-                                if (version <= 25)
-                                    b.ReadBoolean(); //skip obsolete hasLight
-                                if (b.ReadBoolean())
-                                {
-                                    tiles[x, y].wall = b.ReadByte();
-                                    if (tiles[x, y].wall > MaxWall)  // bad wall
-                                    {
-                                        foundInvalid = true;
-                                        invalid = String.Format("{0} is not a valid wall type", tiles[x, y].wall);
-                                        tiles[x, y].wall = 0;
-                                    }
-                                    if (version >= 48 && b.ReadBoolean())
-                                        tiles[x, y].wallColor = b.ReadByte();
-                                    tiles[x, y].wallu = -1;
-                                    tiles[x, y].wallv = -1;
-                                }
-                                else
-                                    tiles[x, y].wall = 0;
-                                if (b.ReadBoolean())
-                                {
-                                    tiles[x, y].liquid = b.ReadByte();
-                                    tiles[x, y].isLava = b.ReadBoolean();
-                                    if (version >= 51)
-                                        tiles[x, y].isHoney = b.ReadBoolean();
-                                }
-                                else
-                                    tiles[x, y].liquid = 0;
-                                tiles[x, y].hasRedWire = false;
-                                tiles[x, y].hasGreenWire = false;
-                                tiles[x, y].hasBlueWire = false;
-                                tiles[x, y].half = false;
-                                tiles[x, y].actuator = false;
-                                tiles[x, y].inactive = false;
-                                tiles[x, y].slope = 0;
-                                if (version >= 33)
-                                {
-                                    tiles[x, y].hasRedWire = b.ReadBoolean();
-                                    if (version >= 43)
-                                    {
-                                        tiles[x, y].hasGreenWire = b.ReadBoolean();
-                                        tiles[x, y].hasBlueWire = b.ReadBoolean();
-                                    }
-                                    if (version >= 41)
-                                    {
-                                        tiles[x, y].half = b.ReadBoolean();
-                                        if (version >= 49)
-                                            tiles[x, y].slope = b.ReadByte();
-                                        if (!tileInfos[tiles[x, y].type].solid)
-                                        {
-                                            tiles[x, y].half = false;
-                                            tiles[x, y].slope = 0;
-                                        }
-                                        if (version >= 42)
-                                        {
-                                            tiles[x, y].actuator = b.ReadBoolean();
-                                            tiles[x, y].inactive = b.ReadBoolean();
-                                        }
-                                    }
-                                }
-                                if (version >= 25) //RLE
-                                {
-                                    int rle = b.ReadInt16();
-                                    for (int r = y + 1; r < y + 1 + rle; r++)
-                                    {
-                                        tiles[x, r].isActive = tiles[x, y].isActive;
-                                        tiles[x, r].type = tiles[x, y].type;
-                                        tiles[x, r].u = tiles[x, y].u;
-                                        tiles[x, r].v = tiles[x, y].v;
-                                        tiles[x, r].wall = tiles[x, y].wall;
-                                        tiles[x, r].wallu = -1;
-                                        tiles[x, r].wallv = -1;
-                                        tiles[x, r].liquid = tiles[x, y].liquid;
-                                        tiles[x, r].isLava = tiles[x, y].isLava;
-                                        tiles[x, r].isHoney = tiles[x, y].isHoney;
-                                        tiles[x, r].hasRedWire = tiles[x, y].hasRedWire;
-                                        tiles[x, r].hasGreenWire = tiles[x, y].hasGreenWire;
-                                        tiles[x, r].hasBlueWire = tiles[x, y].hasBlueWire;
-                                        tiles[x, r].half = tiles[x, y].half;
-                                        tiles[x, r].slope = tiles[x, y].slope;
-                                        tiles[x, r].actuator = tiles[x, y].actuator;
-                                        tiles[x, r].inactive = tiles[x, y].inactive;
-                                        tiles[x, r].color = tiles[x, y].color;
-                                        tiles[x, r].wallColor = tiles[x, y].wallColor;
-                                    }
-                                    y += rle;
-                                }
-                            }
-                        }
-                        int itemsPerChest = 40;
-                        if (version < 58)
-                            itemsPerChest = 20;
-                        chests.Clear();
-                        for (int i = 0; i < 1000; i++)
-                        {
-                            if (b.ReadBoolean())
-                            {
-                                Chest chest = new Chest();
-                                chest.items = new ChestItem[itemsPerChest];
-                                chest.x = b.ReadInt32();
-                                chest.y = b.ReadInt32();
-                                for (int ii = 0; ii < itemsPerChest; ii++)
-                                {
-                                    if (version < 59)
-                                        chest.items[ii].stack = b.ReadByte();
-                                    else
-                                        chest.items[ii].stack = b.ReadInt16();
-                                    if (chest.items[ii].stack > 0)
-                                    {
-                                        string name = "Unknown";
-                                        if (version >= 38) //item names not stored
-                                        {
-                                            Int32 itemid = b.ReadInt32();
-                                            if (itemid < 0)
-                                            {
-                                                itemid = -itemid;
-                                                if (itemid < itemNames2.Length)
-                                                    name = itemNames2[itemid];
-                                            }
-                                            else if (itemid < itemNames.Length)
-                                                name = itemNames[itemid];
-                                        }
-                                        else
-                                            name = b.ReadString();
-                                        string prefix = "";
-                                        if (version >= 36) //item prefixes
-                                        {
-                                            int pfx = b.ReadByte();
-                                            if (pfx < prefixes.Length)
-                                                prefix = prefixes[pfx];
-                                        }
-                                        chest.items[ii].name = name;
-                                        chest.items[ii].prefix = prefix;
-                                    }
-                                }
-                                chests.Add(chest);
-                            }
-                        }
-                        signs.Clear();
-                        for (int i = 0; i < 1000; i++)
-                        {
-                            if (b.ReadBoolean())
-                            {
-                                Sign sign = new Sign();
-                                sign.text = b.ReadString();
-                                sign.x = b.ReadInt32();
-                                sign.y = b.ReadInt32();
-                                signs.Add(sign);
-                            }
-                        }
-                        npcs.Clear();
-                        Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
-                        {
-                            NPCs.Items.Clear();
-                            serverText.Text = "Loading NPCs...";
-                        }));
-                        while (b.ReadBoolean())
-                        {
-                            NPC npc = new NPC();
-                            npc.title = b.ReadString();
-                            npc.name = "";
-                            npc.x = b.ReadSingle();
-                            npc.y = b.ReadSingle();
-                            npc.isHomeless = b.ReadBoolean();
-                            npc.homeX = b.ReadInt32();
-                            npc.homeY = b.ReadInt32();
-
-                            npc.order = -1;
-                            npc.num = 0;
-                            npc.sprite = 0;
-                            for (int i = 0; i < friendlyNPCs.Length; i++)
-                                if (friendlyNPCs[i].title == npc.title)
-                                {
-                                    npc.sprite = friendlyNPCs[i].id;
-                                    npc.num = friendlyNPCs[i].num;
-                                    npc.order = friendlyNPCs[i].order;
-                                }
-
-                            npcs.Add(npc);
-                            addNPCToMenu(npc);
-                        }
-                        if (version >= 31) //read npcs
-                        {
-                            int numNames = 9;
-                            if (version >= 34)
-                                numNames++;
-                            if (version >= 65)
-                                numNames += 8;
-                            for (int i = 0; i < numNames; i++)
-                            {
-                                string name = b.ReadString();
-                                for (int j = 0; j < npcs.Count; j++)
-                                {
-                                    if (npcs[j].order == i)
-                                    {
-                                        npcs[j].name = name;
-                                        addNPCToMenu(npcs[j]);
-                                    }
-                                }
-                            }
-                        }
+                        if (version > 87) //new map format
+                            foundInvalid = LoadNewMap(b, version, out invalid);
+                        else
+                            foundInvalid = LoadOldMap(b, version, out invalid);
                     }
                     if (foundInvalid)
                     {
@@ -1240,7 +1493,7 @@ namespace Terrafirma
                         serverText.Text = "Loading Fog of War...";
                     }));
                     //load player's map
-                    loadPlayerMap();
+                    //loadPlayerMap();
 
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {

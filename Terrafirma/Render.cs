@@ -1885,7 +1885,7 @@ namespace Terrafirma
         {
             int t = -1, l = -1, r = -1, b = -1;
             int tl = -1, tr = -1, bl = -1, br = -1;
-            byte c = tiles[x, y].type;
+            UInt16 c = tiles[x, y].type;
             Int16 u;
             int set = rand.Next(0, 3) * 2;
 
