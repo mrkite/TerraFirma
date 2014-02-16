@@ -40,6 +40,9 @@
     <var v="242" name="Ichor Torch" color="#601f1f">
       <var maxu="66" lightr="1.25" lightg="1.25" lightb="0.8" light="1.0" />
     </var>
+    <var v="242" name="Ultrabright Torch" color="#C34343">
+      <var maxu="66" lightr="0.75" lightg="1.28" lightb="1.2" light="1.0" />
+    </var>
     <var maxu="66" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
   </tile>
   <tile num="5" name="Tree" color="#976B4B" hasExtra="1" letLight="1" />
@@ -48,6 +51,8 @@
   <tile num="8" name="Gold Ore" color="#B9A417" solid="1" blend="0" />
   <tile num="9" name="Silver Ore" color="#D9DFDF" solid="1" blend="0" />
   <tile num="10" name="Closed Doors" color="#BF8F6F" hasExtra="1" solid="1">
+    <var minv="1512" name="Closed Dynasty Door" color="#3E7776" />
+    <var minv="1458" name="Closed Frozen Door" color="#90C3E8" />
     <var minv="1404" name="Closed Pine Door" color="#3D1504" />
     <var minv="1350" name="Closed Spooky Door" color="#775C8A" />
     <var minv="1296" name="Closed Pumpkin Door" color="#FAAC0F" />
@@ -77,6 +82,8 @@
     <var minv="0" name="Closed Wooden Door" color="#bf8f6f" />
   </tile>
   <tile num="11" name="Open Doors" color="#946B50" hasExtra="1" letLight="1" solid="1">
+    <var minv="1512" name="Open Dynasty Door" color="#3E7776" />
+    <var minv="1458" name="Open Frozen Door" color="#90C3E8" />
     <var minv="1404" name="Open Pine Door" color="#3D1504" />
     <var minv="1350" name="Open Spooky Door" color="#775C8A" />
     <var minv="1296" name="Open Pumpkin Door" color="#FAAC0F" />
@@ -111,8 +118,14 @@
     <var u="36" name="Mana Potion" color="#4350FF" />
     <var u="54" name="Pink Vase" color="#F0C4D0" />
     <var u="72" name="Mug" color="#ACC0D7" />
+    <var u="90" name="Dynasty Cup" color="#606FA6" />
+    <var u="108" name="Wine Glass" color="#57ADBD" />
+    <var u="126" name="Honey Cup" color="#FF9C0C" />
+    <var u="144" name="Chalice" color="#B7924B" />
   </tile>
   <tile num="14" name="Tables" color="#7F5C45" hasExtra="1" letLight="1">
+    <var minu="1350" name="Dynasty Table" color="#745354" />
+    <var minu="1296" name="Frozen Table" color="#90C3E8" />
     <var minu="1242" name="Pine Table" color="#5E3216" />
     <var minu="1188" name="Spooky Table" color="#644E74" />
     <var minu="1134" name="Pumpkin Table" color="#FAAC0F" />
@@ -139,6 +152,8 @@
     <var minu="0" name="Wooden Table" color="#7f5c45" />
   </tile>
   <tile num="15" name="Chairs" color="#A2785C" hasExtra="1" letLight="1">
+    <var minv="1120" name="Frozen Chair" color="#90C3E8" />
+    <var minv="1080" name="Dynasty Chair" color="#8A5959" />
     <var minv="1040" name="Pine Chair" color="#003216" />
     <var minv="1000" name="Spooky Chair" color="#775C8A" />
     <var minv="960" name="Pumpkin Chair" color="#196606" />
@@ -172,6 +187,10 @@
   </tile>
   <tile num="17" name="Furnace" color="#636363" hasExtra="1" letLight="1" lightr="0.83" lightg="0.6" lightb="0.5" light="0.75" />
   <tile num="18" name="Work Bench" color="#7F5C45" hasExtra="1" letLight="1">
+    <var minu="756" name="Steampunk Work Bench" color="#B7924B" />
+    <var minu="720" name="Frozen Work Bench" color="#90C3E8" />
+    <var minu="684" name="Honey Work Bench" color="#FF9C0C" />
+    <var minu="648" name="Dynasty Work Bench" color="#9F6262" />
     <var minu="612" name="Spooky Work Bench" color="#4F3E5C" />
     <var minu="576" name="Pumpkin Work Bench" color="#EB9617" />
     <var minu="540" name="Gothic Work Bench" color="#455247" />
@@ -210,6 +229,9 @@
   </tile>
   <tile num="20" name="Sapling" color="#1E9648" hasExtra="1" letLight="1" />
   <tile num="21" name="Chest" color="#946B50" hasExtra="1" letLight="1">
+    <var minu="1080" name="Steampunk Chest" color="#78553C" />
+    <var minu="1044" name="Honey Chest" color="#FF9C0C" />
+    <var minu="1008" name="Dynasty Chest" color="#8A5959" />
     <var minu="972" name="Locked Frozen Chest" color="#008dca" />
     <var minu="936" name="Locked Hallowed Chest" color="#297885" />
     <var minu="900" name="Locked Crimson Chest" color="#a52548" />
@@ -263,9 +285,99 @@
     <var v="66" name="Pink Dungeon Candle" color="#bf7da0">
       <var u="0" lightr="0.2" lightg="0.75" lightb="1.0" light="1.0" />
     </var>
+    <var v="88" name="Cactus Candle" color="#D04478">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var v="110" name="Ebonwood Candle" color="#5D4DAD">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var v="132" name="Flesh Candle" color="#D9CE7C">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var v="154" name="Glass Candle" color="#C8F6FE">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var v="176" name="Frozen Candle" color="#2898F0">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var v="198" name="Rich Mahogany Candle" color="#915155">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var v="220" name="Pearlwood Candle" color="#4DAD80">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var v="242" name="Lihzahrd Candle" color="#8D3800">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var v="264" name="Skyware Candle" color="#00A0D2">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var v="286" name="Pumpkin Candle" color="#E28221">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var v="308" name="Living Wood Candle" color="#956A4B">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="0.6" light="1.0" />
+    </var>
+    <var v="330" name="Shadewood Candle" color="#687986">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var v="352" name="Golden Candle" color="#E9CB18">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var v="374" name="Dynasty Candle" color="#857D6D">
+      <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
     <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
   </tile>
   <tile num="34" name="Copper Chandelier" color="#B75819" hasExtra="1" letLight="1">
+    <var minv="1188" name="Large Dynasty Lantern" color="#938B79">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="1134" name="Bone Chandelier" color="#81815F">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="1080" name="Golden Chandelier" color="#E9CB18">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="1026" name="Shadewood Chandelier" color="#586B79">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="972" name="Living Wood Chandelier" color="#825C41">
+      <var maxu="54" lightr="1.0" lightg="1.0" lightb="0.6" light="1.0" />
+    </var>
+    <var minv="918" name="Glass Chandelier" color="#57ADBD">
+      <var maxu="54" lightr="0.75" lightg="0.9" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="864" name="Spooky Chandelier" color="#775C8A">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="810" name="Skyware Chandelier" color="#E7B21C">
+      <var maxu="54" lightr="1.0" lightg="1.0" lightb="0.7" light="1.0" />
+    </var>
+    <var minv="756" name="Lihzahrd Chandelier" color="#8D3800">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="702" name="Pearlwood Chandelier" color="#AA9A74">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="648" name="Rich Mahogany Chandelier" color="#A36368">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="594" name="Frozen Chandelier" color="#90C3E8">
+      <var maxu="54" lightr="0.75" lightg="0.9" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="540" name="Honey Chandelier" color="#FF9C0C">
+      <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+    </var>
+    <var minv="486" name="Flesh Chandelier" color="#691F37">
+      <var maxu="54" lightr="1.0" lightg="0.6" lightb="0.6" light="1.0" />
+    </var>
+    <var minv="432" name="Ebonwood Chandelier" color="#7563CB">
+      <var maxu="54" lightr="0.85" lightg="0.6" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="378" name="Cactus Chandelier" color="#1F544A">
+      <var maxu="54" lightr="0.95" lightg="0.95" lightb="0.5" light="1.0" />
+    </var>
     <var minv="324" name="Jackelier" color="#D15D1A">
       <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
     </var>
@@ -296,6 +408,57 @@
   <tile num="40" name="Clay" color="#925144" solid="1" blend="0" />
   <tile num="41" name="Blue Brick" color="#454E63" solid="1" blend="0" merge="1" />
   <tile num="42" name="Chain Lantern" color="#F99851" hasExtra="1" letLight="1">
+    <var minv="936" name="Dynasty Lantern" color="#3B8C6E">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="900" name="Bone Lantern" color="#96966F">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="864" name="Golden Lantern" color="#E7B21C">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="828" name="Shadewood Lantern" color="#B04444">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="792" name="Living Wood Lantern" color="#527F0C">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="756" name="Spooky Lantern" color="#D15D1A">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="720" name="Skyware Lantern" color="#E9CB18">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="684" name="Lihzahrd Lantern" color="#964A10">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="648" name="Frozen Lantern" color="#61A7E8">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="612" name="Pearlwood Lantern" color="#419972">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="576" name="Rich Mahogany Lantern" color="#894D51">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="540" name="Glass Lantern" color="#57ADBD">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="504" name="Steampunk Lantern" color="#808080">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="468" name="Honey Lantern" color="#C86C10">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="432" name="Flesh Lantern" color="#745E61">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="396" name="Ebonwood Lantern" color="#7563CB">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="360" name="Cactus Lantern" color="#D87098">
+      <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+    </var>
     <var minv="324" name="Heart Lantern" color="#F57FAE">
       <var u="0" lightr="0.7" lightg="0.7" lightb="0.9" light="0.75" />
     </var>
@@ -364,6 +527,15 @@
   <tile num="77" name="Hellforge" color="#EE6646" hasExtra="1" letLight="1" lightr="0.75" lightg="0.45" lightb="0.25" light="0.6" />
   <tile num="78" name="Clay Pot" color="#796E61" hasExtra="1" letLight="1" />
   <tile num="79" name="Bed" color="#5C6298" hasExtra="1" letLight="1">
+    <var minv="756" name="Dynasty Bed" color="#8A5959" />
+    <var minv="720" name="Bone Bed" color="#C5B7A6" />
+    <var minv="684" name="Living Wood Bed" color="#476D0B" />
+    <var minv="648" name="Spooky Bed" color="#775C8A" />
+    <var minv="612" name="Skyware Bed" color="#00A0D2" />
+    <var minv="576" name="Lihzahrd Bed" color="#964A10" />
+    <var minv="540" name="Frozen Bed" color="#B8DBF0" />
+    <var minv="504" name="Flesh Bed" color="#BF5D7E" />
+    <var minv="468" name="Cactus Bed" color="#60940E" />
     <var minv="432" name="Steam Punk Bed" color="#496937" />
     <var minv="396" name="Honey Bed" color="#FF9C0C" />
     <var minv="360" name="Golden Bed" color="#E9CB18" />
@@ -412,6 +584,12 @@
   </tile>
   <tile num="86" name="Loom" color="#7F5C45" hasExtra="1" letLight="1" />
   <tile num="87" name="Piano" color="#584430" hasExtra="1" letLight="1">
+    <var minu="540" name="Steampunk Piano" color="#78553C" />
+    <var minu="486" name="Honey Piano" color="#FEC214" />
+    <var minu="432" name="Glass Piano" color="#C8F6FE" />
+    <var minu="378" name="Frozen Piano" color="#B8DBF0" />
+    <var minu="324" name="Flesh Piano" color="#9E1F2D" />
+    <var minu="270" name="Living Wood Piano" color="#906850" />
     <var minu="216" name="Shadewood Piano" color="#4b5563" />
     <var minu="162" name="Pearlwood Piano" color="#605f4f" />
     <var minu="108" name="Rich Mahogany Piano" color="#583032" />
@@ -424,7 +602,24 @@
     <var minu="54" name="Ebonwood Dresser" color="#68647e" />
   </tile>
   <tile num="89" name="Bench" color="#B18567" hasExtra="1" letLight="1" />
-  <tile num="90" name="Bathtub" color="#606060" hasExtra="1" letLight="1" />
+  <tile num="90" name="Bathtub" color="#606060" hasExtra="1" letLight="1">
+    <var minv="576" name="Dynasty Bathtub" color="#9F6262" />
+    <var minv="540" name="Bone Bathtub" color="#96966F" />
+    <var minv="504" name="Shadewood Bathtub" color="#5C7180" />
+    <var minv="468" name="Living Wood Bathtub" color="#476D0B" />
+    <var minv="432" name="Steampunk Bathtub" color="#E1B45D" />
+    <var minv="396" name="Honey Bathtub" color="#FEC214" />
+    <var minv="360" name="Spooky Bathtub" color="#644E74" />
+    <var minv="324" name="Skyware Bathtub" color="#E9CB18" />
+    <var minv="288" name="Lihzahrd Bathtub" color="#964A10" />
+    <var minv="252" name="Pearlwood Bathtub" color="#AA9A74" />
+    <var minv="216" name="Rich Mahogany Bathtub" color="#A36368" />
+    <var minv="180" name="Frozen Bathtub" color="#90C3E8" />
+    <var minv="144" name="Glass Bathtub" color="#57ADBD" />
+    <var minv="108" name="Flesh Bathtub" color="#5F5F5F" />
+    <var minv="72" name="Ebonwood Bathtub" color="#68647E" />
+    <var minv="36" name="Cactus Bathtub" color="#497811" />
+  </tile>
   <tile num="91" name="Banner" color="#188008" hasExtra="1" letLight="1">
     <var u="0" name="Red Banner" color="#790C0E" />
     <var u="18" name="Green Banner" color="#187808" />
@@ -540,6 +735,57 @@
     <var u="0" maxv="18" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
   </tile>
   <tile num="93" name="Tiki Torch" color="#503B2F" hasExtra="1" letLight="1">
+    <var minv="918" name="Dynasty Lamp" color="#455359">
+      <var u="0" v="918" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+    </var>
+    <var minv="864" name="Bone Lamp" color="#96966F">
+      <var u="0" v="864" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+    </var>
+    <var minv="810" name="Golden Lamp" color="#E9CB18">
+      <var u="0" v="810" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+    </var>
+    <var minv="756" name="Shadewood Lamp" color="#374651">
+      <var u="0" v="756" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+    </var>
+    <var minv="702" name="Living Wood Lamp" color="#825C41">
+      <var u="0" v="702" lightr="1.0" lightg="1.0" lightb="0.6" light="1.0" />
+    </var>
+    <var minv="648" name="Steampunk Lamp" color="#496937">
+      <var u="0" v="648" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+    </var>
+    <var minv="594" name="Honey Lamp" color="#FF9C0C">
+      <var u="0" v="594" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+    </var>
+    <var minv="540" name="Spooky Lamp" color="#4F3E5C">
+      <var u="0" v="540" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+    </var>
+    <var minv="486" name="Skyware Lamp" color="#007FA6">
+      <var u="0" v="486" lightr="1.0" lightg="1.0" lightb="0.7" light="1.0" />
+    </var>
+    <var minv="432" name="Lihzahrd Lamp" color="#8D3800">
+      <var u="0" v="432" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+    </var>
+    <var minv="378" name="Pearlwood Lamp" color="#C0B08A">
+      <var u="0" v="378" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+    </var>
+    <var minv="324" name="Rich Mahogany Lamp" color="#915155">
+      <var u="0" v="324" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+    </var>
+    <var minv="270" name="Frozen Lamp" color="#90C3E8">
+      <var u="0" v="270" lightr="0.75" lightg="0.9" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="216" name="Glass Lamp" color="#C8F6FE">
+      <var u="0" v="216" lightr="0.75" lightg="0.9" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="162" name="Flesh Lamp" color="#D9CE7C">
+      <var u="0" v="162" lightr="0.75" lightg="1.0" lightb="0.6" light="1.0" />
+    </var>
+    <var minv="108" name="Ebonwood Lamp" color="#5D4DAD">
+      <var u="0" v="108" lightr="0.85" lightg="0.6" lightb="1.0" light="1.0" />
+    </var>
+    <var minv="54" name="Cactus Lamp" color="#497811">
+      <var u="0" v="54" lightr="0.95" lightg="0.95" lightb="0.5" light="1.0" />
+    </var>
     <var u="0" v="0" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
   </tile>
   <tile num="94" name="Keg" color="#A87858" hasExtra="1" letLight="1" />
@@ -555,9 +801,77 @@
   </tile>
   <tile num="99" name="Trash Can" color="#808080" hasExtra="1" letLight="1" />
   <tile num="100" name="Candelabra" color="#CCB548" hasExtra="1" letLight="1">
+    <var minv="612" name="Large Dynasty Candle" color="#857D6D">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="576" name="Bone Candelabra" color="#81815F">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="540" name="Golden Candelabra" color="#E9CB18">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="504" name="Shadewood Candelabra" color="#495D6A">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="468" name="Living Wood Candelabra" color="#956A4B">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="432" name="Spooky Candelabra" color="#644E74">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="396" name="Skyware Candelabra" color="#006887">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="360" name="Lihzahrd Candelabra" color="#8D3800">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="324" name="Frozen Candelabra" color="#B8DBF0">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="288" name="Pearlwood Candelabra" color="#AA9A74">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="252" name="Rich Mahogany Candelabra" color="#915155">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="216" name="Glass Candelabra" color="#C8F6FE">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="180" name="Steampunk Candelabra" color="#4D4C4D">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="144" name="Honey Candelabra" color="#FF9C0C">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="108" name="Flesh Candelabra" color="#676767">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="72" name="Ebonwood Candelabra" color="#6F344A">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
+    <var minv="36" name="Cactus Candelabra" color="#60940E">
+      <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+    </var>
     <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
   </tile>
   <tile num="101" name="Bookcase" color="#B08460" hasExtra="1" letLight="1">
+    <var minu="1188" name="Dynasty Bookcase" color="#E8E2D4" />
+    <var minu="1134" name="Bone Bookcase" color="#96966F" />
+    <var minu="1080" name="Golden Bookcase" color="#E9CB18" />
+    <var minu="1026" name="Shadewood Bookcase" color="#586B79" />
+    <var minu="972" name="Living Wood Bookcase" color="#825C41" />
+    <var minu="918" name="Frozen Bookcase" color="#B8DBF0" />
+    <var minu="864" name="Lihzahrd Bookcase" color="#964A10" />
+    <var minu="810" name="Skyware Bookcase" color="#006C8C" />
+    <var minu="756" name="Spooky Bookcase" color="#4F3E5C" />
+    <var minu="702" name="Pearlwood Bookcase" color="#AA9A74" />
+    <var minu="648" name="Rich Mahogany Bookcase" color="#915155" />
+    <var minu="594" name="Glass Bookcase" color="#57ADBD" />
+    <var minu="540" name="Steampunk Bookcase" color="#785840" />
+    <var minu="486" name="Honey Bookcase" color="#975D0F" />
+    <var minu="432" name="Flesh Bookcase" color="#9E1F2D" />
+    <var minu="378" name="Ebonwood Bookcase" color="#625F77" />
+    <var minu="324" name="Cactus Bookcase" color="#497811" />
     <var minu="270" name="Gothic Bookcase" color="#667367" />
     <var minu="216" name="Obsidian Bookcase" color="#646464" />
     <var minu="162" name="Pink Dungeon Bookcase" color="#b05e89" />
@@ -565,8 +879,18 @@
     <var minu="54" name="Blue Dungeon Bookcase" color="#9d8f79" />
   </tile>
   <tile num="102" name="Throne" color="#780C08" hasExtra="1" letLight="1" />
-  <tile num="103" name="Bowl" color="#8D624D" hasExtra="1" letLight="1" />
-  <tile num="104" name="Grandfather Clock" color="#946B50" hasExtra="1" letLight="1" />
+  <tile num="103" name="Bowl" color="#8D624D" hasExtra="1" letLight="1">
+    <var minu="108" name="Glass Bowl" color="#57ADBD" />
+    <var minu="72" name="Fancy Dishes" color="#DED6CB" />
+    <var minu="36" name="Dynasty Bowl" color="#606FA6" />
+  </tile>
+  <tile num="104" name="Grandfather Clock" color="#946B50" hasExtra="1" letLight="1">
+    <var minu="180" name="Steampunk Grandfather Clock" color="#B7924B" />
+    <var minu="144" name="Honey Grandfather Clock" color="#FF9C0C" />
+    <var minu="108" name="Glass Grandfather Clock" color="#C8F6FE" />
+    <var minu="72" name="Golden Grandfather Clock" color="#E9CB18" />
+    <var minu="36" name="Dynasty Grandfather Clock" color="#745354" />
+  </tile>
   <tile num="105" name="Statue" color="#282828" hasExtra="1" letLight="1">
     <var minu="1764" name="Obsidian Vase" color="#545454" />
     <var minu="1728" name="Pink Dungeon Vase" color="#b97197" />
@@ -884,6 +1208,11 @@
     <var u="360" name="Shroomite Bar" color="#2814ea" />
   </tile>
   <tile num="240" name="Picture" color="#634732" hasExtra="1" letLight="1">
+    <var minv="54" minu="486" name="Sword Rack" color="#403028" />
+    <var minv="54" minu="432" name="Spear Rack" color="#403028" />
+    <var minv="54" minu="378" name="Helmet Rack" color="#403028" />
+    <var minv="54" minu="324" name="Carpentry Rack" color="#403028" />
+    <var minv="54" minu="270" name="Blacksmith Rack" color="#403028" />
     <var minv="54" minu="216" name="Everscream Trophy" color="#E85156" />
     <var minv="54" minu="162" name="Santa-NK1 Trophy" color="#D2D2D2" />
     <var minv="54" minu="108" name="Ice Queen Trophy" color="#AFD8DA" />
@@ -928,6 +1257,9 @@
   </tile>
   <tile num="241" name="Catacomb" color="#4d4a48" hasExtra="1" letLight="1" />
   <tile num="242" name="Picture" color="#454b45" hasExtra="1" letLight="1">
+    <var minv="1728" name="Zebra Skin" color="#CBD4DD" />
+    <var minv="1656" name="Leopard Skin" color="#9E733C" />
+    <var minv="1584" name="Tiger Skin" color="#D36D0A" />
     <var minv="1512" name="Morbid Curiosity" color="#3F0303" />
     <var minv="1440" name="Hallow's Eve" color="#B22A01" />
     <var minv="1368" name="Blood Moon Countess" color="#1A193D" />
@@ -993,6 +1325,65 @@
   <tile num="254" name="Pumpkin Seed" color="#1E9648" hasExtra="1" letLight="1">
     <var minu="142" name="Pumpkin Plant" color="#FAAC0F" />
   </tile>
+  <tile num="255" name="Amethyst Block" color="#6B319A" solid="1" />
+  <tile num="256" name="Topaz Block" color="#9A9431" solid="1" />
+  <tile num="257" name="Sapphire Block" color="#31319A" solid="1" />
+  <tile num="258" name="Emerald Block" color="#319A44" solid="1" />
+  <tile num="259" name="Ruby Block" color="#9A314D" solid="1" />
+  <tile num="260" name="Diamond Block" color="#555976" solid="1" />
+  <tile num="261" name="Amber Block" color="#9A5331" solid="1" />
+  <tile num="262" name="Amethyst Gemspark Block" color="#DD4FFF" solid="1" lightr="0.75" lightg="0.0" lightb="0.75" light="0.7" />
+  <tile num="263" name="Topaz Gemspark Block" color="#FAFF4F" solid="1" lightr="0.75" lightg="0.75" lightb="0.0" light="0.7" />
+  <tile num="264" name="Sapphire Gemspark Block" color="#4F66FF" solid="1" lightr="0.0" lightg="0.0" lightb="0.75" light="0.7" />
+  <tile num="265" name="Emerald Gemspark Block" color="#4FFF59" solid="1" lightr="0.0" lightg="0.75" lightb="0.0" light="0.7" />
+  <tile num="266" name="Ruby Gemspark Block" color="#FF4F4F" solid="1" lightr="0.75" lightg="0.0" lightb="0.0" light="0.7" />
+  <tile num="267" name="Diamond Gemspark Block" color="#F0F0F7" solid="1" lightr="0.75" lightg="0.75" lightb="0.75" light="0.7" />
+  <tile num="268" name="Amber Gemspark Block" color="#FF914F" solid="1" lightr="0.75" lightg="0.375" lightb="0.0" light="0.7" />
+  <tile num="269" name="Womannequin" color="#906850" letLight="1" />
+  <tile num="270" name="Firefly in a Bottle" color="#3E6350" letLight="1" lightr="0.73" lightg="1.0" lightb="0.41" light="0.6" />
+  <tile num="271" name="Lightning Bug in a Bottle" color="#4BA8AF" letLight="1" lightr="0.45" lightg="0.95" lightb="1.0" light="0.6" />
+  <tile num="272" name="Iron Plating" color="#434343" solid="1" />
+  <tile num="273" name="Stone Slab" color="#636363" solid="1" />
+  <tile num="274" name="Sandstone Slab" color="#D3C66F" solid="1" />
+  <tile num="275" name="Bunny Cage" color="#3E7994" letLight="1" />
+  <tile num="276" name="Squirrel Cage" color="#3E7994" letLight="1" />
+  <tile num="277" name="Mallard Duck Cage" color="#3E7994" letLight="1" />
+  <tile num="278" name="Duck Cage" color="#3E7994" letLight="1" />
+  <tile num="279" name="Bird Cage" color="#3E7994" letLight="1" />
+  <tile num="280" name="Blue Jay Cage" color="#3E7994" letLight="1" />
+  <tile num="281" name="Cardinal Cage" color="#3E7994" letLight="1" />
+  <tile num="282" name="Fish Bowl" color="#0839B5" letLight="1" />
+  <tile num="283" name="Heavy Work Bench" color="#332E29" letLight="1" />
+  <tile num="284" name="Copper Plating" color="#B75819" solid="1" />
+  <tile num="285" name="Snail Cage" color="#3E7994" letLight="1" />
+  <tile num="286" name="Glowing Snail Cage" color="#3E7994" letLight="1" lightr="0.1" lightg="0.2" lightb="0.7" light="0.4" />
+  <tile num="287" name="Ammo Box" color="#40660D" letLight="1" />
+  <tile num="288" name="Monarch Butterfly Jar" color="#B7BBD8" letLight="1" />
+  <tile num="289" name="Purple Emperor Butterfly Jar" color="#B7BBD8" letLight="1" />
+  <tile num="290" name="Red Admiral Butterfly Jar" color="#B7BBD8" letLight="1" />
+  <tile num="291" name="Ulysses Butterfly Jar" color="#B7BBD8" letLight="1" />
+  <tile num="292" name="Sulphur Butterfly Jar" color="#B7BBD8" letLight="1" />
+  <tile num="293" name="Tree Nymph Butterfly Jar" color="#B7BBD8" letLight="1" />
+  <tile num="294" name="Zebra Swallowtail Butterfly Jar" color="#B7BBD8" letLight="1" />
+  <tile num="295" name="Julia Butterfly Jar" color="#B7BBD8" letLight="1" />
+  <tile num="296" name="Scorpion Cage" color="#3E7994" letLight="1" />
+  <tile num="297" name="Black Scorpion Cage" color="#3E7994" letLight="1" />
+  <tile num="298" name="Frog Cage" color="#3E7994" letLight="1" />
+  <tile num="299" name="Mouse Cage" color="#3E7994" letLight="1" />
+  <tile num="300" name="Bone Welder" color="#81815F" letLight="1" />
+  <tile num="301" name="Flesh Cloning Vat" color="#DEECAF" letLight="1" />
+  <tile num="302" name="Glass Kiln" color="#C1CACB" letLight="1" />
+  <tile num="303" name="Lihzahrd Furnace" color="#8D3800" letLight="1" />
+  <tile num="304" name="Living Loom" color="#345401" letLight="1" />
+  <tile num="305" name="Sky Mill" color="#007FA6" letLight="1" />
+  <tile num="306" name="Ice Machine" color="#687799" letLight="1" />
+  <tile num="307" name="Steampunk Boiler" color="#808080" letLight="1" />
+  <tile num="308" name="Honey Dispenser" color="#73450C" letLight="1" />
+  <tile num="309" name="Penguin Cage" color="#3E7994" letLight="1" />
+  <tile num="310" name="Worm Cage" color="#3E7994" letLight="1" />
+  <tile num="311" name="Dynasty Wood" color="#874C1F" solid="1" blend="0" />
+  <tile num="312" name="Red Dynasty Shingles" color="#B4443E" solid="1" />
+  <tile num="313" name="Blue Dynasty Shingles" color="#599BA8" solid="1" />
 
   <wall num="1" name="Stone Wall" color="#343434" />
   <wall num="2" name="Dirt Wall" color="#583D2E" />
@@ -1119,6 +1510,25 @@
   <wall num="123" name="Krampus Horn Wallpaper" color="#85755F" />
   <wall num="124" name="Bluegreen Wallpaper" color="#100340" />
   <wall num="125" name="Grinch Finger Wallpaper" color="#748352" />
+  <wall num="126" name="Fancy Grey Wallpaper" color="#8F919D" />
+  <wall num="127" name="Ice Floe Wallpaper" color="#8CB9E2" />
+  <wall num="128" name="Music Wallpaper" color="#6F1975" />
+  <wall num="129" name="Purple Rain Wallpaper" color="#311B91" />
+  <wall num="130" name="Rainbow Wallpaper" color="#6505C1" />
+  <wall num="131" name="Sparkle Stone Wallpaper" color="#575E7D" />
+  <wall num="132" name="Starlit Heaven Wallpaper" color="#060606" />
+  <wall num="133" name="Bubble Wallpaper" color="#4D3FA9" />
+  <wall num="134" name="Copper Pipe Wallpaper" color="#C25C17" />
+  <wall num="135" name="Ducky Wallpaper" color="#177FA8" />
+  <wall num="136" name="Waterfall Wall" color="#285697" />
+  <wall num="137" name="Lavafall Wall" color="#B7210F" />
+  <wall num="138" name="Ebonwood Fence" color="#9989A5" />
+  <wall num="139" name="Rich Mahogany Fence" color="#A36368" />
+  <wall num="140" name="Pearlwood Fence" color="#776C51" />
+  <wall num="141" name="Shadewood Fence" color="#586976" />
+  <wall num="142" name="White Dynasty Wall" color="#E0DACC" />
+  <wall num="143" name="Blue Dynasty Wall" color="#516863" />
+  <wall num="144" name="Arcane Rune Wall" color="#3E1C57" />
 
   <prefix num="1" name="Large" />
   <prefix num="2" name="Massive" />
@@ -3218,6 +3628,329 @@
   <item num="1963" name="Music Box (Pumpkin Moon)" />
   <item num="1964" name="Music Box (Alt Underground)" />
   <item num="1965" name="Music Box (Frost Moon)" />
+  <item num="1966" name="Brown Paint" />
+  <item num="1967" name="Shadow Paint" />
+  <item num="1968" name="Negative Paint" />
+  <item num="1969" name="Team Dye" />
+  <item num="1970" name="Amethyst Gemspark Block" />
+  <item num="1971" name="Topaz Gemspark Block" />
+  <item num="1972" name="Sapphire Gemspark Block" />
+  <item num="1973" name="Emerald Gemspark Block" />
+  <item num="1974" name="Ruby Gemspark Block" />
+  <item num="1975" name="Diamond Gemspark Block" />
+  <item num="1976" name="Amber Gemspark Block" />
+  <item num="1977" name="Life Hair Dye" />
+  <item num="1978" name="Mana Hair Dye" />
+  <item num="1979" name="Depth Hair Dye" />
+  <item num="1980" name="Money Hair Dye" />
+  <item num="1981" name="Time Hair Dye" />
+  <item num="1982" name="Team Hair Dye" />
+  <item num="1983" name="Biome Hair Dye" />
+  <item num="1984" name="Party Hair Dye" />
+  <item num="1985" name="Rainbow Hair Dye" />
+  <item num="1986" name="Speed Hair Dye" />
+  <item num="1987" name="Angel Halo" />
+  <item num="1988" name="Fez" />
+  <item num="1989" name="Womannequin" />
+  <item num="1990" name="Hair Dye Remover" />
+  <item num="1991" name="Bug Net" />
+  <item num="1992" name="Firefly" />
+  <item num="1993" name="Firefly in a Bottle" />
+  <item num="1994" name="Monarch Butterfly" />
+  <item num="1995" name="Purple Emperor Butterfly" />
+  <item num="1996" name="Red Admiral Butterfly" />
+  <item num="1997" name="Ulysses Butterfly" />
+  <item num="1998" name="Sulphur Butterfly" />
+  <item num="1999" name="Tree Nymph Butterfly" />
+  <item num="2000" name="Zebra Swallowtail Butterfly" />
+  <item num="2001" name="Julia Butterfly" />
+  <item num="2002" name="Worm" />
+  <item num="2003" name="Mouse" />
+  <item num="2004" name="Lightning Bug" />
+  <item num="2005" name="Lightning Bug in a Bottle" />
+  <item num="2006" name="Snail" />
+  <item num="2007" name="Glowing Snail" />
+  <item num="2008" name="Fancy Grey Wallpaper" />
+  <item num="2009" name="Ice Floe Wallpaper" />
+  <item num="2010" name="Music Wallpaper" />
+  <item num="2011" name="Purple Rain Wallpaper" />
+  <item num="2012" name="Rainbow Wallpaper" />
+  <item num="2013" name="Sparkle Stone Wallpaper" />
+  <item num="2014" name="Starlit Heaven Wallpaper" />
+  <item num="2015" name="Bird" />
+  <item num="2016" name="Blue Jay" />
+  <item num="2017" name="Cardinal" />
+  <item num="2018" name="Squirrel" />
+  <item num="2019" name="Bunny" />
+  <item num="2020" name="Cactus Bookcase" />
+  <item num="2021" name="Ebonwood Bookcase" />
+  <item num="2022" name="Flesh Bookcase" />
+  <item num="2023" name="Honey Bookcase" />
+  <item num="2024" name="Steampunk Bookcase" />
+  <item num="2025" name="Glass Bookcase" />
+  <item num="2026" name="Rich Mahogany Bookcase" />
+  <item num="2027" name="Pearlwood Bookcase" />
+  <item num="2028" name="Spooky Bookcase" />
+  <item num="2029" name="Skyware Bookcase" />
+  <item num="2030" name="Lihzahrd Bookcase" />
+  <item num="2031" name="Frozen Bookcase" />
+  <item num="2032" name="Cactus Lantern" />
+  <item num="2033" name="Ebonwood Lantern" />
+  <item num="2034" name="Flesh Lantern" />
+  <item num="2035" name="Honey Lantern" />
+  <item num="2036" name="Steampunk Lantern" />
+  <item num="2037" name="Glass Lantern" />
+  <item num="2038" name="Rich Mahogany Lantern" />
+  <item num="2039" name="Pearlwood Lantern" />
+  <item num="2040" name="Frozen Lantern" />
+  <item num="2041" name="Lihzahrd Lantern" />
+  <item num="2042" name="Skyware Lantern" />
+  <item num="2043" name="Spooky Lantern" />
+  <item num="2044" name="Frozen Door" />
+  <item num="2045" name="Cactus Candle" />
+  <item num="2046" name="Ebonwood Candle" />
+  <item num="2047" name="Flesh Candle" />
+  <item num="2048" name="Glass Candle" />
+  <item num="2049" name="Frozen Candle" />
+  <item num="2050" name="Rich Mahogany Candle" />
+  <item num="2051" name="Pearlwood Candle" />
+  <item num="2052" name="Lihzahrd Candle" />
+  <item num="2053" name="Skyware Candle" />
+  <item num="2054" name="Pumpkin Candle" />
+  <item num="2055" name="Cactus Chandelier" />
+  <item num="2056" name="Ebonwood Chandelier" />
+  <item num="2057" name="Flesh Chandelier" />
+  <item num="2058" name="Honey Chandelier" />
+  <item num="2059" name="Frozen Chandelier" />
+  <item num="2060" name="Rich Mahogany Chandelier" />
+  <item num="2061" name="Pearlwood Chandelier" />
+  <item num="2062" name="Lihzahrd Chandelier" />
+  <item num="2063" name="Skyware Chandelier" />
+  <item num="2064" name="Spooky Chandelier" />
+  <item num="2065" name="Glass Chandelier" />
+  <item num="2066" name="Cactus Bed" />
+  <item num="2067" name="Flesh Bed" />
+  <item num="2068" name="Frozen Bed" />
+  <item num="2069" name="Lihzahrd Bed" />
+  <item num="2070" name="Skyware Bed" />
+  <item num="2071" name="Spooky Bed" />
+  <item num="2072" name="Cactus Bathtub" />
+  <item num="2073" name="Ebonwood Bathtub" />
+  <item num="2074" name="Flesh Bathtub" />
+  <item num="2075" name="Glass Bathtub" />
+  <item num="2076" name="Frozen Bathtub" />
+  <item num="2077" name="Rich Mahogany Bathtub" />
+  <item num="2078" name="Pearlwood Bathtub" />
+  <item num="2079" name="Lihzahrd Bathtub" />
+  <item num="2080" name="Skyware Bathtub" />
+  <item num="2081" name="Spooky Bathtub" />
+  <item num="2082" name="Cactus Lamp" />
+  <item num="2083" name="Ebonwood Lamp" />
+  <item num="2084" name="Flesh Lamp" />
+  <item num="2085" name="Glass Lamp" />
+  <item num="2086" name="Frozen Lamp" />
+  <item num="2087" name="Rich Mahogany Lamp" />
+  <item num="2088" name="Pearlwood Lamp" />
+  <item num="2089" name="Lihzahrd Lamp" />
+  <item num="2090" name="Skyware Lamp" />
+  <item num="2091" name="Spooky Lamp" />
+  <item num="2092" name="Cactus Candelabra" />
+  <item num="2093" name="Ebonwood Candelabra" />
+  <item num="2094" name="Flesh Candelabra" />
+  <item num="2095" name="Honey Candelabra" />
+  <item num="2096" name="Steampunk Candelabra" />
+  <item num="2097" name="Glass Candelabra" />
+  <item num="2098" name="Rich Mahogany Candelabra" />
+  <item num="2099" name="Pearlwood Candelabra" />
+  <item num="2100" name="Frozen Candelabra" />
+  <item num="2101" name="Lihzahrd Candelabra" />
+  <item num="2102" name="Skyware Candelabra" />
+  <item num="2103" name="Spooky Candelabra" />
+  <item num="2104" name="Brain of Cthulu Mask" />
+  <item num="2105" name="Wall of Flesh Mask" />
+  <item num="2106" name="Twin Mask" />
+  <item num="2107" name="Skeletron Prime Mask" />
+  <item num="2108" name="Queen Bee Mask" />
+  <item num="2109" name="Plantera Mask" />
+  <item num="2110" name="Golem Mask" />
+  <item num="2111" name="Eater of Worlds Mask" />
+  <item num="2112" name="Eye of Cthulu Mask" />
+  <item num="2113" name="Destroyer Mask" />
+  <item num="2114" name="Blacksmith Rack" />
+  <item num="2115" name="Carpentry Rack" />
+  <item num="2116" name="Helmet Rack" />
+  <item num="2117" name="Spear Rack" />
+  <item num="2118" name="Sword Rack" />
+  <item num="2119" name="Stone Slab" />
+  <item num="2120" name="Sandstone Slab" />
+  <item num="2121" name="Frog" />
+  <item num="2122" name="Mallard Duck" />
+  <item num="2123" name="Duck" />
+  <item num="2124" name="Honey Bathtub" />
+  <item num="2125" name="Steampunk Bathtub" />
+  <item num="2126" name="Living Wood Bathtub" />
+  <item num="2127" name="Shadewood Bathtub" />
+  <item num="2128" name="Bone Bathtub" />
+  <item num="2129" name="Honey Lamp" />
+  <item num="2130" name="Steampunk Lamp" />
+  <item num="2131" name="Living Wood Lamp" />
+  <item num="2132" name="Shadewood Lamp" />
+  <item num="2133" name="Golden Lamp" />
+  <item num="2134" name="Bone Lamp" />
+  <item num="2135" name="Living Wood Bookcase" />
+  <item num="2136" name="Shadewood Bookcase" />
+  <item num="2137" name="Golden Bookcase" />
+  <item num="2138" name="Bone Bookcase" />
+  <item num="2139" name="Living Wood Bed" />
+  <item num="2140" name="Bone Bed" />
+  <item num="2141" name="Living Wood Chandelier" />
+  <item num="2142" name="Shadewood Chandelier" />
+  <item num="2143" name="Golden Chandelier" />
+  <item num="2144" name="Bone Chandelier" />
+  <item num="2145" name="Living Wood Lantern" />
+  <item num="2146" name="Shadewood Lantern" />
+  <item num="2147" name="Golden Lantern" />
+  <item num="2148" name="Bone Lantern" />
+  <item num="2149" name="Living Wood Candelabra" />
+  <item num="2150" name="Shadewood Candelabra" />
+  <item num="2151" name="Golden Candelabra" />
+  <item num="2152" name="Bone Candelabra" />
+  <item num="2153" name="Living Wood Candle" />
+  <item num="2154" name="Shadewood Candle" />
+  <item num="2155" name="Golden Candle" />
+  <item num="2156" name="Black Scorpion" />
+  <item num="2157" name="Scorpion" />
+  <item num="2158" name="Bubble Wallpaper" />
+  <item num="2159" name="Copper Pipe Wallpaper" />
+  <item num="2160" name="Ducky Wallpaper" />
+  <item num="2161" name="Frost Core" />
+  <item num="2162" name="Bunny Cage" />
+  <item num="2163" name="Squirrel Cage" />
+  <item num="2164" name="Mallard Duck Cage" />
+  <item num="2165" name="Duck Cage" />
+  <item num="2166" name="Bird Cage" />
+  <item num="2167" name="Blue Jay Cage" />
+  <item num="2168" name="Cardinal Cage" />
+  <item num="2169" name="Waterfall Wall" />
+  <item num="2170" name="Lavafall Wall" />
+  <item num="2171" name="Crimson Seeds" />
+  <item num="2172" name="Heavy Work Bench" />
+  <item num="2173" name="Copper Plating" />
+  <item num="2174" name="Snail Cage" />
+  <item num="2175" name="Glowing Snail Cage" />
+  <item num="2176" name="Shroomite Digging Claw" />
+  <item num="2177" name="Ammo Box" />
+  <item num="2178" name="Monarch Butterfly Jar" />
+  <item num="2179" name="Purple Emperor Butterfly Jar" />
+  <item num="2180" name="Red Admiral Butterfly Jar" />
+  <item num="2181" name="Ulysses Butterfly Jar" />
+  <item num="2182" name="Sulphur Butterfly Jar" />
+  <item num="2183" name="Tree Nymph Butterfly Jar" />
+  <item num="2184" name="Zebra Swallowtail Butterfly Jar" />
+  <item num="2185" name="Julia Butterfly Jar" />
+  <item num="2186" name="Scorpion Cage" />
+  <item num="2187" name="Black Scorpion Cage" />
+  <item num="2188" name="Venom Staff" />
+  <item num="2189" name="Spectre Mask" />
+  <item num="2190" name="Frog Cage" />
+  <item num="2191" name="Mouse Cage" />
+  <item num="2192" name="Bone Welder" />
+  <item num="2193" name="Flesh Cloning Vat" />
+  <item num="2194" name="Glass Kiln" />
+  <item num="2195" name="Lihzahrd Furnace" />
+  <item num="2196" name="Living Loom" />
+  <item num="2197" name="Sky Mill" />
+  <item num="2198" name="Ice Machine" />
+  <item num="2199" name="Beetle Helmet" />
+  <item num="2200" name="Beetle Scale Mail" />
+  <item num="2201" name="Beetle Shell" />
+  <item num="2202" name="Beetle Leggings" />
+  <item num="2203" name="Steampunk Boiler" />
+  <item num="2204" name="Honey Dispenser" />
+  <item num="2205" name="Penguin" />
+  <item num="2206" name="Penguin Cage" />
+  <item num="2207" name="Worm Cage" />
+  <item num="2208" name="Terrarium" />
+  <item num="2209" name="Super Mana Potion" />
+  <item num="2210" name="Ebonwood Fence" />
+  <item num="2211" name="Rich Mahogany Fence" />
+  <item num="2212" name="Pearlwood Fence" />
+  <item num="2213" name="Shadewood Fence" />
+  <item num="2214" name="Brick Layer" />
+  <item num="2215" name="Extendo Grip" />
+  <item num="2216" name="Paint Sprayer" />
+  <item num="2217" name="Portable Cement Mixer" />
+  <item num="2218" name="Beetle Husk" />
+  <item num="2219" name="Celestial Magnet" />
+  <item num="2220" name="Celestial Emblem" />
+  <item num="2221" name="Celestial Cuffs" />
+  <item num="2222" name="Peddler's Hat" />
+  <item num="2223" name="Pulse Bow" />
+  <item num="2224" name="Large Dynasty Lantern" />
+  <item num="2225" name="Dynasty Lamp" />
+  <item num="2226" name="Dynasty Lantern" />
+  <item num="2227" name="Large Dynasty Candle" />
+  <item num="2228" name="Dynasty Chair" />
+  <item num="2229" name="Dynasty Work Bench" />
+  <item num="2230" name="Dynasty Chest" />
+  <item num="2231" name="Dynasty Bed" />
+  <item num="2232" name="Dynasty Bathtub" />
+  <item num="2233" name="Dynasty Bookcase" />
+  <item num="2234" name="Dynasty Cup" />
+  <item num="2235" name="Dynasty Bowl" />
+  <item num="2236" name="Dynasty Candle" />
+  <item num="2237" name="Dynasty Grandfather Clock" />
+  <item num="2238" name="Golden Grandfather Clock" />
+  <item num="2239" name="Glass Grandfather Clock" />
+  <item num="2240" name="Honey Grandfather Clock" />
+  <item num="2241" name="Steampunk Grandfather Clock" />
+  <item num="2242" name="Fancy Dishes" />
+  <item num="2243" name="Glass Bowl" />
+  <item num="2244" name="Wine Glass" />
+  <item num="2245" name="Living Wood Piano" />
+  <item num="2246" name="Flesh Piano" />
+  <item num="2247" name="Frozen Piano" />
+  <item num="2248" name="Frozen Table" />
+  <item num="2249" name="Honey Chest" />
+  <item num="2250" name="Steampunk Chest" />
+  <item num="2251" name="Honey Work Bench" />
+  <item num="2252" name="Frozen Work Bench" />
+  <item num="2253" name="Steampunk Work Bench" />
+  <item num="2254" name="Glass Piano" />
+  <item num="2255" name="Honey Piano" />
+  <item num="2256" name="Steampunk Piano" />
+  <item num="2257" name="Honey Cup" />
+  <item num="2258" name="Chalice" />
+  <item num="2259" name="Dynasty Table" />
+  <item num="2260" name="Dynasty Wood" />
+  <item num="2261" name="Red Dynasty Shingles" />
+  <item num="2262" name="Blue Dynasty Shingles" />
+  <item num="2263" name="White Dynasty Wall" />
+  <item num="2264" name="Blue Dynasty Wall" />
+  <item num="2265" name="Dynasty Door" />
+  <item num="2266" name="Sake" />
+  <item num="2267" name="Pad Thai" />
+  <item num="2268" name="Pho" />
+  <item num="2269" name="Revolver" />
+  <item num="2270" name="Gatligator" />
+  <item num="2271" name="Arcane Rune Wall" />
+  <item num="2272" name="Water Gun" />
+  <item num="2273" name="Katana" />
+  <item num="2274" name="Ultrabright Torch" />
+  <item num="2275" name="Magic Hat" />
+  <item num="2276" name="Diamond Ring" />
+  <item num="2277" name="Gi" />
+  <item num="2278" name="Kimono" />
+  <item num="2279" name="Gypsy Robe" />
+  <item num="2280" name="Beetle Wings" />
+  <item num="2281" name="Tiger Skin" />
+  <item num="2282" name="Leopard Skin" />
+  <item num="2283" name="Zebra Skin" />
+  <item num="2284" name="Crimson Cloak" />
+  <item num="2285" name="Mysterious Cape" />
+  <item num="2286" name="Red Cape" />
+  <item num="2287" name="Winter Cape" />
+  <item num="2288" name="Frozen Chair" />
 
   <global id="sky" color="#84AAF8" />
   <global id="earth" color="#583D2E" />

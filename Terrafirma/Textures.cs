@@ -232,6 +232,7 @@ namespace Terrafirma
         Dictionary<int, Texture> banners;
         Dictionary<int, Texture> armorHeads;
         Dictionary<int, Texture> armorBodies;
+        Dictionary<int, Texture> femaleBodies;
         Dictionary<int, Texture> armorLegs;
         Dictionary<int, Texture> wires;
         Dictionary<int, Texture> liquids;
@@ -257,6 +258,7 @@ namespace Terrafirma
             banners = new Dictionary<int, Texture>();
             armorHeads = new Dictionary<int, Texture>();
             armorBodies = new Dictionary<int, Texture>();
+            femaleBodies = new Dictionary<int, Texture>();
             armorLegs = new Dictionary<int, Texture>();
             wires = new Dictionary<int, Texture>();
             liquids = new Dictionary<int, Texture>();
@@ -396,6 +398,15 @@ namespace Terrafirma
                 armorBodies[num] = new Texture(rootDir, name);
             }
             return armorBodies[num];
+        }
+        public Texture GetFemaleBody(int num)
+        {
+            if (!femaleBodies.ContainsKey(num))
+            {
+                string name = String.Format("Female_Body_{0}", num);
+                femaleBodies[num] = new Texture(rootDir, name);
+            }
+            return femaleBodies[num];
         }
         public Texture GetArmorLegs(int num)
         {

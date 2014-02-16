@@ -554,7 +554,7 @@ namespace Terrafirma
 										new FriendlyNPC("Painter", 227, 17, 15),
 										new FriendlyNPC("Witch Doctor", 228, 18, 16),
 										new FriendlyNPC("Pirate", 229, 19, 17),
-                                        new FriendlyNPC("NoIdea", 353, 19, 17)
+                                        new FriendlyNPC("Stylist", 353, 20, 18)
                                    };
 
 
@@ -1761,7 +1761,21 @@ namespace Terrafirma
                     if (tiles[sx, sy].liquid > 0)
                         label = tiles[sx, sy].isLava ? "Lava" : tiles[sx, sy].isHoney ? "Honey" : "Water";
                     if (tiles[sx, sy].isActive)
+                    {
                         label = tileInfos[tiles[sx, sy].type, tiles[sx, sy].u, tiles[sx, sy].v].name;
+                        if (tiles[sx, sy].type == 21) //chest, let's find its name
+                        {
+                            foreach (Chest c in chests)
+                            {
+                                if ((c.x == sx || c.x + 1 == sx) && (c.y == sy || c.y + 1 == sy))
+                                {
+                                    if (c.name.Length>0)
+                                        label += " (" + c.name + ")";
+                                    break;
+                                }
+                            }
+                        }
+                    }
                     if (FogOfWar.IsChecked && !tiles[sx, sy].seen)
                         label = "Murky blackness";
                     statusText.Text = String.Format("{0},{1} {2}", sx, sy, label);

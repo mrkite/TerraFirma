@@ -549,7 +549,7 @@ namespace Terrafirma
                                 delay.sy = sy;
                                 delayed.Add(delay);
                             }
-                            else if (tile.type == 128) //armor
+                            else if (tile.type == 128 || tile.type==269) //armor
                             {
                                 int au = tile.u % 100;
                                 //draw armor stand
@@ -716,7 +716,7 @@ namespace Terrafirma
                                                 pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                         }
                                     }
-                                    if (tile.slope == 2)
+                                    else if (tile.slope == 2)
                                     {
                                         for (int i = 0; i < 8; i++)
                                         {
@@ -726,9 +726,38 @@ namespace Terrafirma
                                                 pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                                         }
                                     }
-                                    ypad = ((double)toppad + 14.0) * scale / 16.0;
-                                    drawTexture(tex, 16, 2, (tile.v + 14) * tex.width * 4 + tile.u * 4,
-                                        pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+                                    else if (tile.slope == 3)
+                                    {
+                                        for (int i = 0; i < 8; i++)
+                                        {
+                                            double xpad = ((double)i * 2.0) * scale / 16.0;
+                                            ypad = (double)toppad * scale / 16.0;
+                                            drawTexture(tex, 2, 16 - i * 2, (tile.v + i * 2) * tex.width * 4 + (tile.u + i * 2) * 4,
+                                                pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        for (int i = 0; i < 8; i++)
+                                        {
+                                            double xpad = (14 - (double)i * 2.0) * scale / 16.0;
+                                            ypad = (double)toppad * scale / 16.0;
+                                            drawTexture(tex, 2, 16 - i * 2, (tile.v + i * 2) * tex.width * 4 + (tile.u + 14 - i * 2) * 4,
+                                                pixels, (int)(px + xpad - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+                                        }
+                                    }
+                                    if (tile.slope < 3)
+                                    {
+                                        ypad = ((double)toppad + 14.0) * scale / 16.0;
+                                        drawTexture(tex, 16, 2, (tile.v + 14) * tex.width * 4 + tile.u * 4,
+                                            pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+                                    }
+                                    else
+                                    {
+                                        ypad = (double)toppad * scale / 16.0;
+                                        drawTexture(tex, 16, 2, tile.v * tex.width * 4 + tile.u * 4,
+                                            pixels, (int)(px - shiftx), (int)(py + ypad - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+                                    }
                                 }
                                 else
                                 {
@@ -878,7 +907,7 @@ namespace Terrafirma
                     if (fogofwar && !tile.seen)
                         lightR = lightG = lightB = 0.0;
 
-                    if (tile.type == 128) //armor
+                    if (tile.type == 128 || tile.type==269) //armor
                     {
                         double dy = 8.0;
                         int au = tile.u % 100;
@@ -892,7 +921,11 @@ namespace Terrafirma
                                 dy = 12.0 * scale / 16.0;
                                 break;
                             case 18: //body
-                                tex = Textures.GetArmorBody(armor);
+                                tex = null;
+                                if (tile.type == 269) //female
+                                    tex = Textures.GetFemaleBody(armor);
+                                if (tex==null)
+                                    tex = Textures.GetArmorBody(armor);
                                 texw = 40;
                                 texh = 54;
                                 dy = 28.0 * scale / 16.0;
