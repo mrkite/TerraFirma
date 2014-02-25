@@ -436,7 +436,7 @@ namespace Terrafirma
     /// </summary>
     public partial class MainWindow : Window, IDisposable
     {
-        const int MapVersion = 93;
+        const int MapVersion = 94;
         const int MaxTile = 254;
         const int MaxWall = 125;
         const int Widest = 8400;
@@ -1491,9 +1491,11 @@ namespace Terrafirma
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                     {
                         serverText.Text = "Loading Fog of War...";
+                        //FogOfWar.IsChecked = false;
                     }));
+                    
                     //load player's map
-                    //loadPlayerMap();
+                    loadPlayerMap();
 
                     Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate()
                         {
@@ -1557,42 +1559,52 @@ namespace Terrafirma
                     b.BaseStream.Seek(4, SeekOrigin.Current); //skip worldid
                     Int32 mapTilesHigh = b.ReadInt32();
                     Int32 mapTilesWide = b.ReadInt32();
-                    for (int x = 0; x < mapTilesWide; x++)
+                    if (version <= 91)
                     {
-                        for (int y = 0; y < mapTilesHigh; y++)
+                        for (int x = 0; x < mapTilesWide; x++)
                         {
-                            if (b.ReadBoolean())
+                            for (int y = 0; y < mapTilesHigh; y++)
                             {
-                                if (y<tilesHigh && x<tilesWide)
-                                    tiles[x, y].seen = true;
-                                byte type = b.ReadByte();
-                                byte light = b.ReadByte();
-                                byte misc = b.ReadByte();
-                                byte misc2 = 0;
-                                if (version >= 50) misc2 = b.ReadByte();
-                                int rle = b.ReadInt16();
-                                if (light == 255)
+                                if (b.ReadBoolean())
                                 {
-                                    for (int r = y + 1; r < y + 1 + rle; r++)
+                                    if (y < tilesHigh && x < tilesWide)
+                                        tiles[x, y].seen = true;
+                                    UInt16 type = (version <= 77) ? b.ReadByte() : b.ReadUInt16();
+                                    byte light = b.ReadByte();
+                                    byte misc = b.ReadByte();
+                                    byte misc2 = 0;
+                                    if (version >= 50) misc2 = b.ReadByte();
+                                    int rle = b.ReadInt16();
+                                    if (light == 255)
                                     {
-                                        if (r<tilesHigh && x<tilesWide)
-                                            tiles[x, r].seen = true;
+                                        for (int r = y + 1; r < y + 1 + rle; r++)
+                                        {
+                                            if (r < tilesHigh && x < tilesWide)
+                                                tiles[x, r].seen = true;
+                                        }
                                     }
+                                    else
+                                    {
+                                        for (int r = y + 1; r < y + 1 + rle; r++)
+                                        {
+                                            light = b.ReadByte();
+                                            if (r < tilesHigh && x < tilesWide)
+                                                tiles[x, r].seen = true;
+                                        }
+                                    }
+                                    y += rle;
                                 }
                                 else
-                                {
-                                    for (int r = y + 1; r < y + 1 + rle; r++)
-                                    {
-                                        light = b.ReadByte();
-                                        if (r<tilesHigh && x<tilesWide)
-                                            tiles[x, r].seen = true;
-                                    }
-                                }
-                                y += rle;
+                                    y += b.ReadInt16(); //skip
                             }
-                            else
-                                y += b.ReadInt16(); //skip
                         }
+                    }
+                    else //version 2
+                    {
+                        //disabled
+                        for (int y = 0; y < mapTilesHigh; y++)
+                            for (int x = 0; x < mapTilesWide; x++)
+                                tiles[x, y].seen = true;
                     }
                 }
             }
@@ -2121,6 +2133,10 @@ namespace Terrafirma
 
         private void ConnectToServer_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            MessageBox.Show("Network support temporarily disabled.. sorry.");
+            return;
+
+
             //we should disconnect if connected.
 
             ConnectToServer c = new ConnectToServer();

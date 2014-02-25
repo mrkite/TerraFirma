@@ -274,7 +274,16 @@ namespace Terrafirma
             if (steam.Ready)
                 path = steam.Get("software/valve/steam/apps/105600/installdir");
 
-            //no steam key, let's try the default
+            //no steam key, no terraria found inside config. let's check for the base steam folder
+            if ((path == null || !Directory.Exists(path)) && steam.Ready)
+            {
+                path = steam.Get("software/valve/steam/baseinstallfolder_1");
+                path = Path.Combine(path, "steamapps");
+                path = Path.Combine(path, "common");
+                path = Path.Combine(path, "terraria");
+            }
+
+            //still nothing, let's try the default
             if (path==null || !Directory.Exists(path))
             {
                 path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
