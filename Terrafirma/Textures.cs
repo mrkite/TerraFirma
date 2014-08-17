@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2013, Sean Kasun
+Copyright (c) 2014, Sean Kasun
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -241,6 +241,7 @@ namespace Terrafirma
         Dictionary<int, Texture> actuators;
         Dictionary<int, Texture> cacti;
         Dictionary<int, Texture> xmasTrees;
+        Dictionary<int, Texture> items;
         string rootDir;
 
         public Textures()
@@ -267,6 +268,7 @@ namespace Terrafirma
             actuators = new Dictionary<int, Texture>();
             cacti = new Dictionary<int, Texture>();
             xmasTrees = new Dictionary<int, Texture>();
+            items = new Dictionary<int, Texture>();
 
             // find terraria install
             SteamConfig steam = new SteamConfig();
@@ -474,6 +476,15 @@ namespace Terrafirma
                 xmasTrees[num] = new Texture(rootDir, name);
             }
             return xmasTrees[num];
+        }
+        public Texture GetItem(int num)
+        {
+            if (!items.ContainsKey(num))
+            {
+                string name = String.Format("Item_{0}", num);
+                items[num] = new Texture(rootDir, name);
+            }
+            return items[num];
         }
         public Texture GetCactus(int num)
         {

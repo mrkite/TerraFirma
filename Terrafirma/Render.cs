@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2011, Sean Kasun
+Copyright (c) 2014, Sean Kasun
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -568,6 +568,25 @@ namespace Terrafirma
                                     delayed.Add(delay);
                                 }
                             }
+                            else if (tile.type == 334) //weapon rack
+                            {
+                                int au = tile.u % 5000;
+                                //draw weapon rack
+                                Texture tex = Textures.GetTile(tile.type);
+                                drawTexture(tex, texw, texh, tile.v * tex.width * 4 + au * 4,
+                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
+                                //draw weapon
+                                int weapon = tile.u / 5000;
+                                if (weapon > 0)
+                                {
+                                    Delayed delay = new Delayed();
+                                    delay.sx = sx;
+                                    delay.sy = sy;
+                                    delay.px = (int)(px - shiftx);
+                                    delay.py = (int)(py - shifty);
+                                    delayed.Add(delay);
+                                }
+                            }
                             else if (tile.type == 237 && tile.u == 18 && tile.v == 0) //lihzahrd altar
                             {
                                 Delayed delay = new Delayed();
@@ -621,7 +640,7 @@ namespace Terrafirma
                                 else
                                     tex = Textures.GetWood(wood);
                                 drawTexture(tex, texw, texh, tile.v * tex.width * 4 + tile.u * 4,
-                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB,tile.color);
+                                    pixels, (int)(px - shiftx), (int)(py - shifty), width, height, scale / 16.0, lightR, lightG, lightB, tile.color);
                             }
                             else if (tile.type == 80) //cactus
                             {
@@ -635,9 +654,9 @@ namespace Terrafirma
                                     if (tile.v == 18) cactusx--;
                                     else cactusx++;
                                 }
-                                while (cactusy<sy+20 && (!tiles[cactusx,cactusy].isActive
+                                while (cactusy < sy + 20 && (!tiles[cactusx, cactusy].isActive
                                     || tiles[cactusx, cactusy].type == 80
-                                    || !tileInfos[tiles[cactusx,cactusy].type].solid))
+                                    || !tileInfos[tiles[cactusx, cactusy].type].solid))
                                     cactusy++;
                                 if (tiles[cactusx, cactusy].isActive)
                                 {
@@ -943,6 +962,20 @@ namespace Terrafirma
                         else
                             drawTextureFlip(tex, texw, texh, 0,
                                 pixels, (int)(delay.px - 4 * scale / 16.0), (int)(delay.py - dy), width, height, scale / 16.0, lightR, lightG, lightB, 0);
+                    }
+                    else if (tile.type == 334) //weapon rack
+                    {
+                        tex = Textures.GetItem(tile.u % 5000 - 100);
+                        texw = tex.width;
+                        texh = tex.height;
+                        double dy = 8.0;
+                        double dx = 24.0;
+                        if (tile.u / 5000 >= 3)
+                            drawTextureFlip(tex, texw, texh, 0,
+                                pixels, (int)(delay.px - dx * scale / 16.0), (int)(delay.py - dy), width, height, scale / 16.0, lightR, lightG, lightB, 0);
+                        else
+                            drawTexture(tex, texw, texh, 0,
+                                pixels, (int)(delay.px - dx * scale / 16.0), (int)(delay.py - dy), width, height, scale / 16.0, lightR, lightG, lightB, 0);
                     }
                     else if (tile.type == 5) //tree leaves
                     {
@@ -2060,6 +2093,17 @@ namespace Terrafirma
                 if (tr > -1) mask |= 0x440;
                 if (bl > -1) mask |= 0x220;
                 if (br > -1) mask |= 0x110;
+            }
+            if (tileInfos[c].isPile)
+            {
+                if (t > -1 && tileInfos[t].isPile) mask |= 0x80000;
+                if (b > -1 && tileInfos[b].isPile) mask |= 0x40000;
+                if (l > -1 && tileInfos[l].isPile) mask |= 0x20000;
+                if (r > -1 && tileInfos[r].isPile) mask |= 0x10000;
+                if (tl > -1 && tileInfos[tl].isPile) mask |= 0x880;
+                if (tr > -1 && tileInfos[tr].isPile) mask |= 0x440;
+                if (bl > -1 && tileInfos[bl].isPile) mask |= 0x220;
+                if (br > -1 && tileInfos[br].isPile) mask |= 0x110;
             }
 
             if (tileInfos[c].isGrass) //do grasses

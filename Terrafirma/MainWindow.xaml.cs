@@ -58,7 +58,7 @@ namespace Terrafirma
         public double lightR, lightG, lightB;
         public bool transparent, solid;
         public bool isStone, isGrass;
-		public bool canMerge;
+		public bool canMerge, isPile;
         public Int16 blend;
         public int u, v, minu, maxu, minv, maxv;
         public bool isHilighting;
@@ -145,6 +145,7 @@ namespace Terrafirma
             info.isStone = node.Attributes["isStone"] != null;
             info.isGrass = node.Attributes["isGrass"] != null;
 			info.canMerge = node.Attributes["merge"] != null;
+            info.isPile = node.Attributes["pile"] != null;
             if (node.Attributes["blend"] != null)
                 info.blend = parseInt(node.Attributes["blend"].Value);
             else
@@ -436,9 +437,9 @@ namespace Terrafirma
     /// </summary>
     public partial class MainWindow : Window, IDisposable
     {
-        const int MapVersion = 94;
-        const int MaxTile = 254;
-        const int MaxWall = 125;
+        const int MapVersion = 102;
+        const int MaxTile = 339;
+        const int MaxWall = 171;
         const int Widest = 8400;
         const int Highest = 2400;
 
@@ -476,6 +477,7 @@ namespace Terrafirma
         Int32 rainTime;
         float maxRain;
         Int32 oreTier1, oreTier2, oreTier3;
+        bool savedAngler;
 
         double gameTime;
         bool dayNight, bloodMoon, eclipse;
@@ -1006,6 +1008,7 @@ namespace Terrafirma
                     oreTier3 = b.ReadInt32();
                 }
             }
+
             if (version >= 55)
             {
                 int numstyles = 3;
@@ -1020,6 +1023,19 @@ namespace Terrafirma
                     if (version >= 62) //skip wind
                         b.BaseStream.Seek(6, SeekOrigin.Current);
                 }
+            }
+
+            savedAngler = false;
+
+            if (version >= 95) //skip angler
+            {
+                int numAnglers = b.ReadInt32();
+                for (int i = 0; i < numAnglers; i++)
+                    b.ReadString();
+                if (version >= 99) //saved angler
+                    savedAngler = b.ReadBoolean();
+                if (version >= 101) //has angler quest
+                    b.ReadInt32();
             }
 
             ResizeMap();
