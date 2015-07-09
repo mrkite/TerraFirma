@@ -40,9 +40,18 @@
     <var v="242" name="Ichor Torch" color="#601f1f">
       <var maxu="66" lightr="1.25" lightg="1.25" lightb="0.8" light="1.0" />
     </var>
-    <var v="242" name="Ultrabright Torch" color="#C34343">
+    <var v="264" name="Ultrabright Torch" color="#C34343">
       <var maxu="66" lightr="0.75" lightg="1.28" lightb="1.2" light="1.0" />
     </var>
+	<var v="286" name="Bone Torch" color="#B2B28A">
+		<var maxu="66" lightr="0.75" lightg="1.28" lightb="1.2" light="1.0" />
+	</var>
+	<var v="308" name="Rainbow Torch" color="#803BBE">
+		<var maxu="66" lightr="0.75" lightg="1.28" lightb="1.2" light="1.0" />
+	</var>
+	<var v="330" name="Pink Torch" color="#E51ECA">
+		<var maxu="66" lightr="0.75" lightg="1.28" lightb="1.2" light="1.0" />
+	</var>
     <var maxu="66" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
   </tile>
   <tile num="5" name="Tree" color="#976B4B" hasExtra="1" letLight="1" />
@@ -51,6 +60,10 @@
   <tile num="8" name="Gold Ore" color="#B9A417" solid="1" blend="0" />
   <tile num="9" name="Silver Ore" color="#D9DFDF" solid="1" blend="0" />
   <tile num="10" name="Closed Doors" color="#BF8F6F" hasExtra="1" solid="1">
+	<var minv="1890" name="Closed Marble Door" color="#A8B2CC" />
+	<var minv="1836" name="Closed Granite Door" color="#191736" />
+	<var minv="1782" name="Closed Meteorite Door" color="#7F74C2" />
+	<var minv="1728" name="Closed Martian Door" color="#D2D2D2" />
     <var minv="1674" name="Closed Slime Door" color="#326ADB" />
     <var minv="1620" name="Closed Boreal Wood Door" color="#604D40" />
     <var minv="1566" name="Closed Palm Wood Door" color="#B68D56" />
@@ -85,6 +98,10 @@
     <var minv="0" name="Closed Wooden Door" color="#bf8f6f" />
   </tile>
   <tile num="11" name="Open Doors" color="#946B50" hasExtra="1" letLight="1" solid="1">
+	<var minv="1890" name="Open Marble Door" color="#A8B2CC" />
+	<var minv="1836" name="Open Granite Door" color="#191736" />
+	<var minv="1782" name="Open Meteorite Door" color="#7F74C2" />
+	<var minv="1728" name="Open Martian Door" color="#D2D2D2" />
     <var minv="1674" name="Open Slime Door" color="#326ADB" />
     <var minv="1620" name="Open Boreal Wood Door" color="#604D40" />
     <var minv="1566" name="Open Palm Wood Door" color="#B68D56" />
@@ -130,9 +147,13 @@
     <var u="144" name="Chalice" color="#B7924B" />
   </tile>
   <tile num="14" name="Tables" color="#7F5C45" hasExtra="1" letLight="1">
-    <var minu="1620" name="" color="#497811" />
-    <var minu="1566" name="Cactus Table" color="#326ADB" />
-    <var minu="1512" name="Slime Table" color="#3D3129" />
+	<var minu="1836" name="Marble Table" color="#A8B2CC" />
+	<var minu="1782" name="Granite Table" color="#191736" />
+	<var minu="1728" name="Meteorite Table" color="#7F74C2" />
+	<var minu="1674" name="Martian Table" color="#629AB3" />
+    <var minu="1620" name="Cactus Table" color="#497811" />
+    <var minu="1566" name="Slime Table" color="#326ADB" />
+    <var minu="1512" name="Boreal Wood Table" color="#3D3129" />
     <var minu="1458" name="Mushroom Table" color="#B6AF82" />
     <var minu="1404" name="Palm Wood Table" color="#C6AA68" />
     <var minu="1350" name="Dynasty Table" color="#745354" />
@@ -163,6 +184,10 @@
     <var minu="0" name="Wooden Table" color="#7f5c45" />
   </tile>
   <tile num="15" name="Chairs" color="#A2785C" hasExtra="1" letLight="1">
+	<var minv="1400" name="Marble Chair" color="#B8C3CD" />
+	<var minv="1360" name="Granite Chair" color="#665BA6" />
+	<var minv="1320" name="Meteorite Chair" color="#5C59A1" />
+	<var minv="1280" name="Martian Chair" color="#629AB3" />
     <var minv="1240" name="Slime Chair" color="#326ADB" />
     <var minv="1200" name="Boreal Wood Chair" color="#6B5647" />
     <var minv="1160" name="Palm Wood Chair" color="#8F6D3F" />
@@ -201,9 +226,14 @@
   </tile>
   <tile num="17" name="Furnace" color="#636363" hasExtra="1" letLight="1" lightr="0.83" lightg="0.6" lightb="0.5" light="0.75" />
   <tile num="18" name="Work Bench" color="#7F5C45" hasExtra="1" letLight="1">
-    <var minu="900" name="Living Wood Work Bench" color="#B18567" />
-    <var minu="864" name="Glass Work Bench" color="#3E7994" />
-    <var minu="828" name="Skyware Work Bench" color="#00A0D2" />
+	<var minu="1080" name="Marble Work Bench" color="#C3CEE3" />
+	<var minu="1044" name="Granite Work Bench" color="#3735A6" />
+	<var minu="1008" name="Meteorite Work Bench" color="#7F74C2" />
+	<var minu="972" name="Martian Work Bench" color="#629AB3" />
+    <var minu="936" name="Living Wood Work Bench" color="#B18567" />
+    <var minu="900" name="Glass Work Bench" color="#3E7994" />
+    <var minu="864" name="Skyware Work Bench" color="#00A0D2" />
+	<var minu="828" name="Boreal Wood Work Bench" color="#604D40" />
     <var minu="792" name="Palm Wood Work Bench" color="#C6AA68" />
     <var minu="756" name="Steampunk Work Bench" color="#B7924B" />
     <var minu="720" name="Frozen Work Bench" color="#90C3E8" />
@@ -253,9 +283,17 @@
     <var v="414" name="Living Wood Platform" color="#486C13" />
     <var v="432" name="Honey Platform" color="#FEC214" />
     <var v="450" name="Cactus Platform" color="#60940E" />
+	<var v="468" name="Martian Platform" color="#D2D2D2" />
+	<var v="486" name="Meteorite Platform" color="#5C59A1" />
+	<var v="504" name="Granite Platform" color="#4C6FDD" />
+	<var v="522" name="Marble Platform" color="#FFF9B7" />
   </tile>
   <tile num="20" name="Sapling" color="#1E9648" hasExtra="1" letLight="1" />
   <tile num="21" name="Chest" color="#946B50" hasExtra="1" letLight="1">
+	<var minu="1836" name="Marble Chest" color="#A8B2CC" />
+	<var minu="1800" name="Granite Chest" color="#221F47" />
+	<var minu="1764" name="Meteorite Chest" color="#FCA722" />
+	<var minu="1728" name="Martian Chest" color="#61C8E1" />
     <var minu="1692" name="Glass Chest" color="#C8F6FE" />
     <var minu="1656" name="Spooky Chest" color="#644E74" />
     <var minu="1620" name="Pumpkin Chest" color="#FAAC0F" />
@@ -395,9 +433,33 @@
     <var v="550" name="Obsidian Candle" color="#2B2B2B">
       <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
     </var>
+	<var v="572" name="Martian Hover Candle" color="#CBF5F7">
+		<var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+	</var>
+	<var v="594" name="Meteorite Candle" color="#FCA722">
+		<var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+	</var>
+	<var v="616" name="Granite Candle" color="#938ED6">
+		<var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+	</var>
+	<var v="638" name="Marble Candle" color="#CCB548">
+		<var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+	</var>
     <var u="0" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
   </tile>
   <tile num="34" name="Copper Chandelier" color="#B75819" hasExtra="1" letLight="1">
+	<var minv="1944" name="Marble Chandelier" color="#8A91AA">
+		<var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+	</var>
+	<var minv="1890" name="Granite Chandelier" color="#938ED6">
+		<var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+	</var>
+	<var minv="1836" name="Meteorite Chandelier" color="#FB7B2D">
+		<var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+	</var>
+	<var minv="1782" name="Martian Chandelier" color="#61C8E1">
+		<var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
+	</var>
     <var minv="1728" name="Obsidian Chandelier" color="#545454">
       <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.8" light="1.0" />
     </var>
@@ -506,6 +568,18 @@
   <tile num="40" name="Clay" color="#925144" solid="1" blend="0" />
   <tile num="41" name="Blue Brick" color="#454E63" solid="1" blend="0" merge="1" />
   <tile num="42" name="Chain Lantern" color="#F99851" hasExtra="1" letLight="1">
+	<var minv="1296" name="Marble Lantern" color="#A8B2CC">
+		<var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+	</var>
+	<var minv="1260" name="Granite Lantern" color="#665BA6">
+		<var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+	</var>
+	<var minv="1224" name="Meteorite Lantern" color="#FCA722">
+		<var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+	</var>
+	<var minv="1188" name="Martian Lantern" color="#61C8E1">
+		<var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
+	</var>
     <var minv="1152" name="Obsidian Lantern" color="#545454">
       <var u="0" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
     </var>
@@ -643,6 +717,10 @@
   <tile num="77" name="Hellforge" color="#EE6646" hasExtra="1" letLight="1" lightr="0.75" lightg="0.45" lightb="0.25" light="0.6" />
   <tile num="78" name="Clay Pot" color="#796E61" hasExtra="1" letLight="1" />
   <tile num="79" name="Bed" color="#5C6298" hasExtra="1" letLight="1">
+	<var minv="1080" name="Marble Bed" color="#B8C3CD" />
+	<var minv="1044" name="Granite Bed" color="#2C2479" />
+	<var minv="1008" name="Meteorite Bed" color="#FCA722" />
+	<var minv="972" name="Martian Bed" color="#629AB3" />
     <var minv="936" name="Pumpkin Bed" color="#EB9617" />
     <var minv="900" name="Slime Bed" color="#3879FF" />
     <var minv="864" name="Boreal Wood Bed" color="#6E6F87" />
@@ -700,14 +778,23 @@
     <var u="108" name="Shiverthorn blossom" color="#2898F0" />
   </tile>
   <tile num="85" name="Tombstone" color="#c0c0c0" hasExtra="1" letLight="1">
+	<var minu="360" name="Golden Headstone" color="#CCB548" />
+	<var minu="324" name="Golden Gravestone" color="#CCB548" />
+	<var minu="288" name="Golden Grave Marker" color="#CCB548" />
+	<var minu="252" name="Golden Tombstone" color="#CCB548" />
+	<var minu="216" name="Golden Cross Grave Marker" color="#CCB548" />
+	<var minu="180" name="Obelisk" color="#000000" />
+	<var minu="144" name="Gravestone" color="#b0b0b0" />
+	<var minu="108" name="Headstone" color="#969696" />
+	<var minu="72" name="Cross Grave Marker" color="#af744b" />
     <var minu="36" name="Grave Marker" color="#bc8763" />
-    <var minu="72" name="Cross Grave Marker" color="#af744b" />
-    <var minu="108" name="Headstone" color="#969696" />
-    <var minu="144" name="Gravestone" color="#b0b0b0" />
-    <var minu="180" name="Obelisk" color="#000000" />
   </tile>
   <tile num="86" name="Loom" color="#7F5C45" hasExtra="1" letLight="1" />
   <tile num="87" name="Piano" color="#584430" hasExtra="1" letLight="1">
+	<var minu="1566" name="Marble Piano" color="#A8B2CC" />
+	<var minu="1512" name="Granite Piano" color="#3735A6" />
+	<var minu="1458" name="Meteorite Piano" color="#5C59A1" />
+	<var minu="1404" name="Martian Piano" color="#629AB3" />
     <var minu="1350" name="Pumpkin Piano" color="#CF7611" />
     <var minu="1296" name="Slime Piano" color="#326ADB" />
     <var minu="1242" name="Boreal Wood Piano" color="#554439" />
@@ -735,6 +822,10 @@
     <var minu="54" name="Ebonwood Piano" color="#373245" />
   </tile>
   <tile num="88" name="Dresser" color="#906850" hasExtra="1" letLight="1">
+	<var minu="1458" name="Marble Dresser" color="#7B8198" />
+	<var minu="1404" name="Granite Dresser" color="#272245" />
+	<var minu="1350" name="Meteorite Dresser" color="#7F74C2" />
+	<var minu="1296" name="Martian Dresser" color="#629AB3" />
     <var minu="1242" name="Flesh Dresser" color="#9E1F2D" />
     <var minu="1188" name="Glass Dresser" color="#C8F6FE" />
     <var minu="1134" name="Steampunk Dresser" color="#906850" />
@@ -760,6 +851,10 @@
     <var minu="54" name="Ebonwood Dresser" color="#68647e" />
   </tile>
   <tile num="89" name="Bench" color="#B18567" hasExtra="1" letLight="1">
+	<var minu="1728" name="Marble Sofa" color="#B8C3CD" />
+	<var minu="1674" name="Granite Sofa" color="#2D2255" />
+	<var minu="1620" name="Meteorite Sofa" color="#DB3E07" />
+	<var minu="1566" name="Martian Sofa" color="#7B7B7B" />
     <var minu="1512" name="Living Wood Sofa" color="#476D0B" />
     <var minu="1458" name="Frozen Sofa" color="#90C3E8" />
     <var minu="1404" name="Flesh Sofa" color="#5B151D" />
@@ -791,6 +886,10 @@
 
   </tile>
   <tile num="90" name="Bathtub" color="#606060" hasExtra="1" letLight="1">
+	<var minv="1080" name="Marble Bathtub" color="#707392" />
+	<var minv="1044" name="Granite Bathtub" color="#413B6B" />
+	<var minv="1008" name="Meteorite Bathtub" color="#7F74C2" />
+	<var minv="972" name="Martian Bathtub" color="#61C8E1" />
     <var minv="936" name="Golden Bathtub" color="#E9CB18" />
     <var minv="900" name="Obsidian Bathtub" color="#545454" />
     <var minv="864" name="Pumpkin Bathtub" color="#EB9617" />
@@ -819,120 +918,295 @@
     <var minv="36" name="Cactus Bathtub" color="#497811" />
   </tile>
   <tile num="91" name="Banner" color="#188008" hasExtra="1" letLight="1">
-    <var u="0" name="Red Banner" color="#790C0E" />
-    <var u="18" name="Green Banner" color="#187808" />
-    <var u="36" name="Blue Banner" color="#0C5379" />
-    <var u="54" name="Yellow Banner" color="#786C08" />
-    <var u="72" name="Ankh Banner" color="#d69e32" />
-    <var u="90" name="Snake Banner" color="#785808" />
-    <var u="108" name="Omega Banner" color="#786b08" />
-    <var u="126" name="World Banner" color="#1f61e5" />
-    <var u="144" name="Sun Banner" color="#ddc017" />
-    <var u="162" name="Gravity Banner" color="#6e0ade" />
-    <var u="180" name="Marching Bones Banner" color="#66342d" />
-    <var u="198" name="Necromantic Sign" color="#1d1d57" />
-    <var u="216" name="Rusted Company Standard" color="#c0b3a2" />
-    <var u="234" name="Ragged Brotherhood Sigil" color="#96433c" />
-    <var u="252" name="Molten Legion Flag" color="#f1731b" />
-    <var u="270" name="Diabolic Sigil" color="#c8b9a8" />
-    <var u="288" name="Hellbound Banner" color="#af5151" />
-    <var u="306" name="Hell Hammer Banner" color="#2c2c2c" />
-    <var u="324" name="Helltower Banner" color="#f54a22" />
-    <var u="342" name="Lost Hopes of Man Banner" color="#eebc70" />
-    <var u="360" name="Obsidian Watcher Banner" color="#0d0d0d" />
-    <var u="378" name="Lava Erupts Banner" color="#f34922" />
-    <var u="396" name="Angler Fish Banner" color="#94303D" />
-    <var u="414" name="Angry Nimbus Banner" color="#96A5B0" />
-    <var u="432" name="Anomura Fungus Banner" color="#7395FA" />
-    <var u="450" name="Antlion Banner" color="#D5C770" />
-    <var u="468" name="Arapaima Banner" color="#979797" />
-    <var u="486" name="Armored Skeleton Banner" color="#6580B1" />
-    <var u="504" name="Bat Banner" color="#00649C" />
-    <var u="522" name="Bird Banner" color="#E4DEC9" />
-    <var u="540" name="Black Recluse Banner" color="#2E1B19" />
-    <var u="558" name="Blood Feeder Banner" color="#C36154" />
-    <var u="576" name="Blood Jelly Banner" color="#EAC3B4" />
-    <var u="594" name="Blood Crawler Banner" color="#C87E6C" />
-    <var u="612" name="Bone Serpent Banner" color="#93936D" />
-    <var u="630" name="Bunny Banner" color="#FFFFFF" />
-    <var u="648" name="Chaos Elemental Banner" color="#CD22E8" />
-    <var u="666" name="Mimic Banner" color="#825E47" />
-    <var u="684" name="Clown Banner" color="#8A49C2" />
-    <var u="702" name="Corrupt Bunny Banner" color="#A451B5" />
-    <var u="720" name="Corrupt Goldfish Banner" color="#A452B5" />
-    <var u="738" name="Crab Banner" color="#F6A231" />
-    <var u="756" name="Crimera Banner" color="#903E3F" />
-    <var u="774" name="Crimson Axe Banner" color="#7A0013" />
-    <var u="792" name="Cursed Hammer Banner" color="#B653C9" />
-    <var u="810" name="Demon Banner" color="#C46F6F" />
-    <var u="828" name="Demon Eye Banner" color="#E15B5B" />
-    <var u="846" name="Derpling Banner" color="#56A9FB" />
-    <var u="864" name="Eater of Souls Banner" color="#584749" />
-    <var u="882" name="Enchanted Sword Banner" color="#ECC813" />
-    <var u="900" name="Zombie Eskimo Banner" color="#4B565C" />
-    <var u="918" name="Face Monster Banner" color="#864C34" />
-    <var u="936" name="Floaty Gross Banner" color="#F3CBBB" />
-    <var u="954" name="Flying Fish Banner" color="#063663" />
-    <var u="972" name="Flying Snake Banner" color="#22590D" />
-    <var u="990" name="Frankenstein Banner" color="#D3CE98" />
-    <var u="1008" name="Fungi Bulb Banner" color="#557AEB" />
-    <var u="1026" name="Fungo Fish Banner" color="#5C84FE" />
-    <var u="1044" name="Gastropod Banner" color="#EA57A2" />
-    <var u="1062" name="Goblin Archer Banner" color="#99975A" />
-    <var u="1080" name="Goblin Sorcerer Banner" color="#B1B54B" />
-    <var u="1098" name="Goblin Scout Banner" color="#80A762" />
-    <var u="1116" name="Goblin Thief Banner" color="#5E98A1" />
-    <var u="1134" name="Goblin Warrior Banner" color="#9CB987" />
-    <var u="1152" name="Goldfish Banner" color="#FDC200" />
-    <var u="1170" name="Harpy Banner" color="#002336" />
-    <var u="1188" name="Hellbat Banner" color="#BF1604" />
-    <var u="1206" name="Herpling Banner" color="#792C24" />
-    <var u="1224" name="Hornet Banner" color="#A54D7F" />
-    <var u="1242" name="Ice Elemental Banner" color="#8CDBEA" />
-    <var u="1260" name="Icy Merman Banner" color="#44A9C1" />
-    <var u="1278" name="Fire Imp Banner" color="#B06161" />
-    <var u="1296" name="Jellyfish Banner" color="#7893E4" />
-    <var u="1314" name="Jungle Creeper Banner" color="#934013" />
-    <var u="1332" name="Lihzahrd Banner" color="#84A941" />
-    <var u="1350" name="Man Eater Banner" color="#689E21" />
-    <var u="1368" name="Meteor Head Banner" color="#653448" />
-    <var u="1386" name="Moth Banner" color="#7B8213" />
-    <var u="1404" name="Mummy Banner" color="#887969" />
-    <var u="1422" name="Mushi Ladybug Banner" color="#567CEF" />
-    <var u="1440" name="Parrot Banner" color="#0E4280" />
-    <var u="1458" name="Pigron Banner" color="#F830AF" />
-    <var u="1476" name="Piranha Banner" color="#2AA172" />
-    <var u="1494" name="Pirate Banner" color="#902626" />
-    <var u="1512" name="Pixie Banner" color="#F3D785" />
-    <var u="1530" name="Raincoat Zombie Banner" color="#FCE800" />
-    <var u="1548" name="Reaper Banner" color="#121212" />
-    <var u="1566" name="Shark Banner" color="#517975" />
-    <var u="1584" name="Skeleton Banner" color="#3A6392" />
-    <var u="1602" name="Skeleton Mage Banner" color="#8B3E37" />
-    <var u="1620" name="Slime Banner" color="#2D71FD" />
-    <var u="1638" name="Snow Flinx Banner" color="#CEE4E6" />
-    <var u="1656" name="Spider Banner" color="#8E7154" />
-    <var u="1674" name="Spore Zombie Banner" color="#C2C1A5" />
-    <var u="1692" name="Swamp Thing Banner" color="#626646" />
-    <var u="1710" name="Tortoise Banner" color="#AA6846" />
-    <var u="1728" name="Toxic Sludge Banner" color="#708635" />
-    <var u="1746" name="Umbrella Slime Banner" color="#5295FD" />
-    <var u="1764" name="Unicorn Banner" color="#EEE1DA" />
-    <var u="1782" name="Vampire Banner" color="#0E0E0E" />
-    <var u="1800" name="Vulture Banner" color="#B4612C" />
-    <var u="1818" name="Nymph Banner" color="#F6AB89" />
-    <var u="1836" name="Werewolf Banner" color="#5F7891" />
-    <var u="1854" name="Wolf Banner" color="#6193A5" />
-    <var u="1872" name="World Feeder Banner" color="#7A6366" />
-    <var u="1890" name="Worm Banner" color="#8B5050" />
-    <var u="1908" name="Wraith Banner" color="#000000" />
-    <var u="1926" name="Wyvern Banner" color="#0083C4" />
-    <var u="1944" name="Zombie Banner" color="#9BA067" />
+    <var maxv="52" u="0" name="Red Banner" color="#790C0E" />
+    <var maxv="52" u="18" name="Green Banner" color="#187808" />
+    <var maxv="52" u="36" name="Blue Banner" color="#0C5379" />
+    <var maxv="52" u="54" name="Yellow Banner" color="#786C08" />
+    <var maxv="52" u="72" name="Ankh Banner" color="#d69e32" />
+    <var maxv="52" u="90" name="Snake Banner" color="#785808" />
+    <var maxv="52" u="108" name="Omega Banner" color="#786b08" />
+    <var maxv="52" u="126" name="World Banner" color="#1f61e5" />
+    <var maxv="52" u="144" name="Sun Banner" color="#ddc017" />
+    <var maxv="52" u="162" name="Gravity Banner" color="#6e0ade" />
+    <var maxv="52" u="180" name="Marching Bones Banner" color="#66342d" />
+    <var maxv="52" u="198" name="Necromantic Sign" color="#1d1d57" />
+    <var maxv="52" u="216" name="Rusted Company Standard" color="#c0b3a2" />
+    <var maxv="52" u="234" name="Ragged Brotherhood Sigil" color="#96433c" />
+    <var maxv="52" u="252" name="Molten Legion Flag" color="#f1731b" />
+    <var maxv="52" u="270" name="Diabolic Sigil" color="#c8b9a8" />
+    <var maxv="52" u="288" name="Hellbound Banner" color="#af5151" />
+    <var maxv="52" u="306" name="Hell Hammer Banner" color="#2c2c2c" />
+    <var maxv="52" u="324" name="Helltower Banner" color="#f54a22" />
+    <var maxv="52" u="342" name="Lost Hopes of Man Banner" color="#eebc70" />
+    <var maxv="52" u="360" name="Obsidian Watcher Banner" color="#0d0d0d" />
+    <var maxv="52" u="378" name="Lava Erupts Banner" color="#f34922" />
+    <var maxv="52" u="396" name="Angler Fish Banner" color="#94303D" />
+    <var maxv="52" u="414" name="Angry Nimbus Banner" color="#96A5B0" />
+    <var maxv="52" u="432" name="Anomura Fungus Banner" color="#7395FA" />
+    <var maxv="52" u="450" name="Antlion Banner" color="#D5C770" />
+    <var maxv="52" u="468" name="Arapaima Banner" color="#979797" />
+    <var maxv="52" u="486" name="Armored Skeleton Banner" color="#6580B1" />
+    <var maxv="52" u="504" name="Bat Banner" color="#00649C" />
+    <var maxv="52" u="522" name="Bird Banner" color="#E4DEC9" />
+    <var maxv="52" u="540" name="Black Recluse Banner" color="#2E1B19" />
+    <var maxv="52" u="558" name="Blood Feeder Banner" color="#C36154" />
+    <var maxv="52" u="576" name="Blood Jelly Banner" color="#EAC3B4" />
+    <var maxv="52" u="594" name="Blood Crawler Banner" color="#C87E6C" />
+    <var maxv="52" u="612" name="Bone Serpent Banner" color="#93936D" />
+    <var maxv="52" u="630" name="Bunny Banner" color="#FFFFFF" />
+    <var maxv="52" u="648" name="Chaos Elemental Banner" color="#CD22E8" />
+    <var maxv="52" u="666" name="Mimic Banner" color="#825E47" />
+    <var maxv="52" u="684" name="Clown Banner" color="#8A49C2" />
+    <var maxv="52" u="702" name="Corrupt Bunny Banner" color="#A451B5" />
+    <var maxv="52" u="720" name="Corrupt Goldfish Banner" color="#A452B5" />
+    <var maxv="52" u="738" name="Crab Banner" color="#F6A231" />
+    <var maxv="52" u="756" name="Crimera Banner" color="#903E3F" />
+    <var maxv="52" u="774" name="Crimson Axe Banner" color="#7A0013" />
+    <var maxv="52" u="792" name="Cursed Hammer Banner" color="#B653C9" />
+    <var maxv="52" u="810" name="Demon Banner" color="#C46F6F" />
+    <var maxv="52" u="828" name="Demon Eye Banner" color="#E15B5B" />
+    <var maxv="52" u="846" name="Derpling Banner" color="#56A9FB" />
+    <var maxv="52" u="864" name="Eater of Souls Banner" color="#584749" />
+    <var maxv="52" u="882" name="Enchanted Sword Banner" color="#ECC813" />
+    <var maxv="52" u="900" name="Zombie Eskimo Banner" color="#4B565C" />
+    <var maxv="52" u="918" name="Face Monster Banner" color="#864C34" />
+    <var maxv="52" u="936" name="Floaty Gross Banner" color="#F3CBBB" />
+    <var maxv="52" u="954" name="Flying Fish Banner" color="#063663" />
+    <var maxv="52" u="972" name="Flying Snake Banner" color="#22590D" />
+    <var maxv="52" u="990" name="Frankenstein Banner" color="#D3CE98" />
+    <var maxv="52" u="1008" name="Fungi Bulb Banner" color="#557AEB" />
+    <var maxv="52" u="1026" name="Fungo Fish Banner" color="#5C84FE" />
+    <var maxv="52" u="1044" name="Gastropod Banner" color="#EA57A2" />
+    <var maxv="52" u="1062" name="Goblin Archer Banner" color="#99975A" />
+    <var maxv="52" u="1080" name="Goblin Sorcerer Banner" color="#B1B54B" />
+    <var maxv="52" u="1098" name="Goblin Scout Banner" color="#80A762" />
+    <var maxv="52" u="1116" name="Goblin Thief Banner" color="#5E98A1" />
+    <var maxv="52" u="1134" name="Goblin Warrior Banner" color="#9CB987" />
+    <var maxv="52" u="1152" name="Goldfish Banner" color="#FDC200" />
+    <var maxv="52" u="1170" name="Harpy Banner" color="#002336" />
+    <var maxv="52" u="1188" name="Hellbat Banner" color="#BF1604" />
+    <var maxv="52" u="1206" name="Herpling Banner" color="#792C24" />
+    <var maxv="52" u="1224" name="Hornet Banner" color="#A54D7F" />
+    <var maxv="52" u="1242" name="Ice Elemental Banner" color="#8CDBEA" />
+    <var maxv="52" u="1260" name="Icy Merman Banner" color="#44A9C1" />
+    <var maxv="52" u="1278" name="Fire Imp Banner" color="#B06161" />
+    <var maxv="52" u="1296" name="Jellyfish Banner" color="#7893E4" />
+    <var maxv="52" u="1314" name="Jungle Creeper Banner" color="#934013" />
+    <var maxv="52" u="1332" name="Lihzahrd Banner" color="#84A941" />
+    <var maxv="52" u="1350" name="Man Eater Banner" color="#689E21" />
+    <var maxv="52" u="1368" name="Meteor Head Banner" color="#653448" />
+    <var maxv="52" u="1386" name="Moth Banner" color="#7B8213" />
+    <var maxv="52" u="1404" name="Mummy Banner" color="#887969" />
+    <var maxv="52" u="1422" name="Mushi Ladybug Banner" color="#567CEF" />
+    <var maxv="52" u="1440" name="Parrot Banner" color="#0E4280" />
+    <var maxv="52" u="1458" name="Pigron Banner" color="#F830AF" />
+    <var maxv="52" u="1476" name="Piranha Banner" color="#2AA172" />
+    <var maxv="52" u="1494" name="Pirate Banner" color="#902626" />
+    <var maxv="52" u="1512" name="Pixie Banner" color="#F3D785" />
+    <var maxv="52" u="1530" name="Raincoat Zombie Banner" color="#FCE800" />
+    <var maxv="52" u="1548" name="Reaper Banner" color="#121212" />
+    <var maxv="52" u="1566" name="Shark Banner" color="#517975" />
+    <var maxv="52" u="1584" name="Skeleton Banner" color="#3A6392" />
+    <var maxv="52" u="1602" name="Skeleton Mage Banner" color="#8B3E37" />
+    <var maxv="52" u="1620" name="Slime Banner" color="#2D71FD" />
+    <var maxv="52" u="1638" name="Snow Flinx Banner" color="#CEE4E6" />
+    <var maxv="52" u="1656" name="Spider Banner" color="#8E7154" />
+    <var maxv="52" u="1674" name="Spore Zombie Banner" color="#C2C1A5" />
+    <var maxv="52" u="1692" name="Swamp Thing Banner" color="#626646" />
+    <var maxv="52" u="1710" name="Tortoise Banner" color="#AA6846" />
+    <var maxv="52" u="1728" name="Toxic Sludge Banner" color="#708635" />
+    <var maxv="52" u="1746" name="Umbrella Slime Banner" color="#5295FD" />
+    <var maxv="52" u="1764" name="Unicorn Banner" color="#EEE1DA" />
+    <var maxv="52" u="1782" name="Vampire Banner" color="#0E0E0E" />
+    <var maxv="52" u="1800" name="Vulture Banner" color="#B4612C" />
+    <var maxv="52" u="1818" name="Nymph Banner" color="#F6AB89" />
+    <var maxv="52" u="1836" name="Werewolf Banner" color="#5F7891" />
+    <var maxv="52" u="1854" name="Wolf Banner" color="#6193A5" />
+    <var maxv="52" u="1872" name="World Feeder Banner" color="#7A6366" />
+    <var maxv="52" u="1890" name="Worm Banner" color="#8B5050" />
+    <var maxv="52" u="1908" name="Wraith Banner" color="#000000" />
+    <var maxv="52" u="1926" name="Wyvern Banner" color="#0083C4" />
+    <var maxv="52" u="1944" name="Zombie Banner" color="#9BA067" />
+	<var maxv="52" u="1962" name="Angry Trapper Banner" color="#D6AD38" />
+	<var maxv="52" u="1980" name="Armored Viking Banner" color="#A98C61" />
+	<var maxv="106" u="0" name="Black Slime Banner" color="#5F5F5F" />
+	<var maxv="106" u="18" name="Blue Armored Bones Banner" color="#29486B" />
+	<var maxv="106" u="36" name="Blue Cultist Archer Banner" color="#506CCF" />
+	<var maxv="106" u="54" name="Blue Cultist Caster Banner" color="#506CCF" />
+	<var maxv="106" u="72" name="Blue Cultist Fighter Banner" color="#506CCF" />
+	<var maxv="106" u="90" name="Bone Lee Banner" color="#0F1014" />
+	<var maxv="106" u="108" name="Clinger Banner" color="#927679" />
+	<var maxv="106" u="126" name="Cochineal Beetle Banner" color="#751C17" />
+	<var maxv="106" u="144" name="Corrupt Penguin Banner" color="#272657" />
+	<var maxv="106" u="162" name="Corrupt Slime Banner" color="#6159A4" />
+	<var maxv="106" u="180" name="Corruptor Banner" color="#7E6669" />
+	<var maxv="106" u="198" name="Crimslime Banner" color="#86373B" />
+	<var maxv="106" u="216" name="Cursed Skull Banner" color="#81815F" />
+	<var maxv="106" u="234" name="Cyan Beetle Banner" color="#224980" />
+	<var maxv="106" u="252" name="Devourer Banner" color="#927679" />
+	<var maxv="106" u="270" name="Diabolist Banner" color="#5D0F0D" />
+	<var maxv="106" u="288" name="Doctor Bones Banner" color="#8D9277" />
+	<var maxv="106" u="306" name="Dungeon Slime Banner" color="#756CB7" />
+	<var maxv="106" u="324" name="Dungeon Spirit Banner" color="#C4F7FF" />
+	<var maxv="106" u="342" name="Elf Archer Banner" color="#2A9460" />
+	<var maxv="106" u="360" name="Elf Copter Banner" color="#77598E" />
+	<var maxv="106" u="378" name="Eyezor Banner" color="#7F846B" />
+	<var maxv="106" u="396" name="Flocko Banner" color="#B4EAED" />
+	<var maxv="106" u="414" name="Ghost Banner" color="#DED7DE" />
+	<var maxv="106" u="432" name="Giant Bat Banner" color="#005B8F" />
+	<var maxv="106" u="450" name="Giant Cursed Skull Banner" color="#726A4F" />
+	<var maxv="106" u="468" name="Giant Flying Fox Banner" color="#6E8200" />
+	<var maxv="106" u="486" name="Gingerbread Man Banner" color="#D69F31" />
+	<var maxv="106" u="504" name="Goblin Archer Banner" color="#609BA4" />
+	<var maxv="106" u="522" name="Green Slime Banner" color="#2CF878" />
+	<var maxv="106" u="540" name="Headless Horseman Banner" color="#504899" />
+	<var maxv="106" u="558" name="Hell Armored Bones Banner" color="#96271D" />
+	<var maxv="106" u="576" name="Hellhound Banner" color="#453E66" />
+	<var maxv="106" u="594" name="Hoppin' Jack Banner" color="#E28221" />
+	<var maxv="106" u="612" name="Ice Bat Banner" color="#0072A0" />
+	<var maxv="106" u="630" name="Ice Golem Banner" color="#1AACA7" />
+	<var maxv="106" u="648" name="Ice Slime Banner" color="#61C8E1" />
+	<var maxv="106" u="666" name="Ichor Sticker Banner" color="#CC8688" />
+	<var maxv="106" u="684" name="Illuminant Bat Banner" color="#AD18C4" />
+	<var maxv="106" u="702" name="Illuminant Slime Banner" color="#CF2EE6" />
+	<var maxv="106" u="720" name="Jungle Bat Banner" color="#9A5700" />
+	<var maxv="106" u="738" name="Jungle Slime Banner" color="#5B972F" />
+	<var maxv="106" u="756" name="Krampus Banner" color="#B8A38C" />
+	<var maxv="106" u="774" name="Lac Beetle Banner" color="#A32615" />
+	<var maxv="106" u="792" name="Lava Bat Banner" color="#680900" />
+	<var maxv="106" u="810" name="Lava Slime Banner" color="#E21803" />
+	<var maxv="106" u="828" name="Martian Brainscrambler Banner" color="#8FB596" />
+	<var maxv="106" u="846" name="Martian Drone Banner" color="#A5A5A5" />
+	<var maxv="106" u="864" name="Martian Engineer Banner" color="#B8C892" />
+	<var maxv="106" u="882" name="Martian Gigazapper Banner" color="#7B7B7B" />
+	<var maxv="106" u="900" name="Martian Gray Grunt Banner" color="#A5A5A5" />
+	<var maxv="106" u="918" name="Martian Officer Banner" color="#BD847A" />
+	<var maxv="106" u="936" name="Martian Raygunner Banner" color="#8EA459" />
+	<var maxv="106" u="954" name="Martian Scutlix Gunner Banner" color="#8EA459" />
+	<var maxv="106" u="972" name="Martian Tesla Turret Banner" color="#61C8E1" />
+	<var maxv="106" u="990" name="Mister Stabby Banner" color="#E1F2F1" />
+	<var maxv="106" u="1008" name="Mother Slime Banner" color="#3B3B3B" />
+	<var maxv="106" u="1026" name="Necromancer Banner" color="#19105D" />
+	<var maxv="106" u="1044" name="Nutcracker Banner" color="#FFAB8A" />
+	<var maxv="106" u="1062" name="Paladin Banner" color="#B7A21D" />
+	<var maxv="106" u="1080" name="Penguin Banner" color="#2B2B2B" />
+	<var maxv="106" u="1098" name="Pinky Banner" color="#FF4DAE" />
+	<var maxv="106" u="1116" name="Poltergeist Banner" color="#C6C7C6" />
+	<var maxv="106" u="1134" name="Possessed Armor Banner" color="#3D285E" />
+	<var maxv="106" u="1152" name="Present Mimic Banner" color="#168045" />
+	<var maxv="106" u="1170" name="Purple Slime Banner" color="#BB2CF8" />
+	<var maxv="106" u="1188" name="Ragged Caster Banner" color="#B55047" />
+	<var maxv="106" u="1206" name="Rainbow Slime Banner" color="#24DD43" />
+	<var maxv="106" u="1224" name="Raven Banner" color="#251B4F" />
+	<var maxv="106" u="1242" name="Red Slime Banner" color="#FF2D41" />
+	<var maxv="106" u="1260" name="Rune Wizard Banner" color="#B7A259" />
+	<var maxv="106" u="1278" name="Rusty Armored Bones Banner" color="#373737" />
+	<var maxv="106" u="1296" name="Scarecrow Banner" color="#818181" />
+	<var maxv="106" u="1314" name="Scutlix Banner" color="#318B66" />
+	<var maxv="106" u="1332" name="Skeleton Archer Banner" color="#357439" />
+	<var maxv="106" u="1350" name="Skeleton Commando Banner" color="#8D1015" />
+	<var maxv="106" u="1368" name="Skeleton Sniper Banner" color="#2E303A" />
+	<var maxv="106" u="1386" name="Slimer Banner" color="#736CC0" />
+	<var maxv="106" u="1404" name="Snatcher Banner" color="#689E21" />
+	<var maxv="106" u="1422" name="Snow Balla Banner" color="#E1F2F1" />
+	<var maxv="106" u="1440" name="Snowman Gangsta Banner" color="#E1F2F1" />
+	<var maxv="106" u="1458" name="Spiked Ice Slime Banner" color="#3AAAC4" />
+	<var maxv="106" u="1476" name="Spiked Jungle Slime Banner" color="#5B972F" />
+	<var maxv="106" u="1494" name="Splinterling Banner" color="#453E66" />
+	<var maxv="106" u="1512" name="Squid Banner" color="#E5C1C3" />
+	<var maxv="106" u="1530" name="Tactical Skeleton Banner" color="#24375B" />
+	<var maxv="106" u="1548" name="The Groom Banner" color="#8C9176" />
+	<var maxv="106" u="1566" name="Tim Banner" color="#6D4442" />
+	<var maxv="106" u="1584" name="Undead Miner Banner" color="#807A16" />
+	<var maxv="106" u="1602" name="Undead Viking Banner" color="#D2C6AB" />
+	<var maxv="106" u="1620" name="White Cultist Archer Banner" color="#C5B7A6" />
+	<var maxv="106" u="1638" name="White Cultist Caster Banner" color="#C5B7A6" />
+	<var maxv="106" u="1656" name="White Cultist Fighter Banner" color="#C5B7A6" />
+	<var maxv="106" u="1674" name="Yellow Slime Banner" color="#FFF52D" />
+	<var maxv="106" u="1692" name="Yeti Banner" color="#EE825A" />
+	<var maxv="106" u="1710" name="Zombie Elf Banner" color="#991C0C" />
+	<var maxv="106" u="1728" name="Goblin Summoner Banner" color="#58A86E" />
+	<var maxv="106" u="1746" name="Salamander Banner" color="#2C9A61" />
+	<var maxv="106" u="1764" name="Giant Shelly Banner" color="#910AAE" />
+	<var maxv="106" u="1782" name="Crawdad Banner" color="#790004" />
+	<var maxv="106" u="1800" name="Fritz Banner" color="#82966F" />
+	<var maxv="106" u="1818" name="Creature From The Deep Banner" color="#6B8668" />
+	<var maxv="106" u="1836" name="Dr. Man Fly Banner" color="#685B83" />
+	<var maxv="106" u="1854" name="Mothron Banner" color="#D0C8A0" />
+	<var maxv="106" u="1872" name="Severed Hand Banner" color="#E1E699" />
+	<var maxv="106" u="1890" name="The Possessed Banner" color="#CCC793" />
+	<var maxv="106" u="1908" name="Butcher Banner" color="#D77E93" />
+	<var maxv="106" u="1926" name="Psycho Banner" color="#EADCD6" />
+	<var maxv="106" u="1944" name="Deadly Sphere Banner" color="#72767F" />
+	<var maxv="106" u="1962" name="Nailhead Banner" color="#FFF4EF" />
+	<var maxv="106" u="1980" name="Poisonous Spore Banner" color="#765984" />
+	<var maxv="160" u="0" name="Medusa Banner" color="#D7B069" />
+	<var maxv="160" u="18" name="Hoplite Banner" color="#D7B069" />
+	<var maxv="160" u="36" name="Granite Elemental Banner" color="#322E68" />
+	<var maxv="160" u="54" name="Grolem Banner" color="#4F4B86" />
+	<var maxv="160" u="72" name="Blood Zombie Banner" color="#FF6464" />
+	<var maxv="160" u="90" name="Drippler Banner" color="#E94545" />
+	<var maxv="160" u="108" name="Tomb Crawler Banner" color="#EBBA7B" />
+	<var maxv="160" u="126" name="Dune Splicer Banner" color="#EBBA7B" />
+	<var maxv="160" u="144" name="Antlion Swarmer Banner" color="#D15D1A" />
+	<var maxv="160" u="162" name="Antlion Charger Banner" color="#D15D1A" />
+	<var maxv="160" u="180" name="Ghoul Banner" color="#EBBA7B" />
+	<var maxv="160" u="198" name="Lamia Banner" color="#9D574B" />
+	<var maxv="160" u="216" name="Desert Spirit Banner" color="#C97BBB" />
+	<var maxv="160" u="234" name="Basilisk Banner" color="#BD9460" />
+	<var maxv="160" u="252" name="Ravager Scorpion Banner" color="#694D73" />
+	<var maxv="160" u="270" name="Stardust Soldier Banner" color="#88E2FF" />
+	<var maxv="160" u="288" name="Milkyway Weaver Banner" color="#8B7A84" />
+	<var maxv="160" u="306" name="Flow Invader Banner" color="#23C8FE" />
+	<var maxv="160" u="324" name="Twinkle Popper Banner" color="#7A6668" />
+	<var maxv="160" u="342" name="Small Star Cell Banner" color="#88E2FF" />
+	<var maxv="160" u="360" name="Star Cell Banner" color="#88E2FF" />
+	<var maxv="160" u="378" name="Corite Banner" color="#AF9385" />
+	<var maxv="160" u="396" name="Sroller Banner" color="#936857" />
+	<var maxv="160" u="414" name="Crawltipede Banner" color="#AF9385" />
+	<var maxv="160" u="432" name="Drakomire Rider Banner" color="#FDDD03" />
+	<var maxv="160" u="450" name="Drakomire Banner" color="#AF9385" />
+	<var maxv="160" u="468" name="Solar Solenian Banner" color="#FF9F39" />
+	<var maxv="160" u="486" name="Nebula Soldier Banner" color="#A057EA" />
+	<var maxv="160" u="504" name="Nebula Headcrab Banner" color="#A057EA" />
+	<var maxv="160" u="522" name="Nebula Floater Banner" color="#A057EA" />
+	<var maxv="160" u="540" name="Nebula Beast Banner" color="#A057EA" />
+	<var maxv="160" u="558" name="Alien Larva Banner" color="#DDD3C1" />
+	<var maxv="160" u="576" name="Alien Queen Banner" color="#B9A57F" />
+	<var maxv="160" u="594" name="Alien Hornet Banner" color="#B9A57F" />
+	<var maxv="160" u="612" name="Vortex Soldier Banner" color="#21A08D" />
+	<var maxv="160" u="630" name="Vortex Rifleman Banner" color="#22DD97" />
+	<var maxv="160" u="648" name="Pirate Captain Banner" color="#A32A2A" />
+	<var maxv="160" u="666" name="Pirate Deadeye Banner" color="#514E5C" />
+	<var maxv="160" u="684" name="Pirate Corsair Banner" color="#A6A083" />
+	<var maxv="160" u="702" name="Pirate Crossbower Banner" color="#2D2E74" />
+	<var maxv="160" u="720" name="Martian Walker Banner" color="#A5A5A5" />
+	<var maxv="160" u="738" name="Red Devil Banner" color="#E62828" />
+	<var maxv="160" u="756" name="Pink Jellyfish Banner" color="#CA69BF" />
+	<var maxv="160" u="774" name="Green Jellyfish Banner" color="#76E381" />
+	<var maxv="160" u="792" name="Dark Mummy Banner" color="#A87EA4" />
+	<var maxv="160" u="810" name="Light Mummy Banner" color="#DDA1A0" />
+	<var maxv="160" u="828" name="Angry Bones Banner" color="#A1A17B" />
+	<var maxv="160" u="846" name="Ice Tortois Banner" color="#6C7090" />
+	<var maxv="160" u="864" name="Sand Slime Banner" color="#D4C064" />
+	<var maxv="160" u="882" name="Sea Snail Banner" color="#DDBB8E" />
   </tile>
   <tile num="92" name="Lamp Post" color="#323232" hasExtra="1" letlight="1">
     <var u="0" maxv="18" lightr="1.0" lightg="1.0" lightb="1.0" light="1.0" />
   </tile>
   <tile num="93" name="Tiki Torch" color="#503B2F" hasExtra="1" letLight="1">
+	<var minv="1620" name="Marble Lamp" color="#707392">
+		<var u="0" v="1620" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+	</var>
+	<var minv="1566" name="Granite Lamp" color="#938ED6">
+		<var u="0" v="1566" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+	</var>
+	<var minv="1512" name="Meteorite Lamp" color="#FB7B2D">
+		<var u="0" v="1512" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+	</var>
+	<var minv="1458" name="Martian Lamppost" color="#629AB3">
+		<var u="0" v="1458" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
+	</var>
     <var minv="1404" name="Pink Dungeon Lamp" color="#BF7DA0">
       <var u="0" v="1404" lightr="1.0" lightg="0.97" lightb="0.85" light="1.0" />
     </var>
@@ -1026,6 +1300,18 @@
   </tile>
   <tile num="99" name="Trash Can" color="#808080" hasExtra="1" letLight="1" />
   <tile num="100" name="Candelabra" color="#CCB548" hasExtra="1" letLight="1">
+	<var minv="1080" name="Marble Candelabra" color="#C3CEE3">
+		<var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+	</var>
+	<var minv="1044" name="Granite Candelabra" color="#6C59E7">
+		<var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+	</var>
+	<var minv="1008" name="Meteorite Candelabra" color="#FCA722">
+		<var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+	</var>
+	<var minv="972" name="Martian Table Lamp" color="#629AB3">
+		<var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+	</var>
     <var minv="936" name="Pumpkin Candelabra" color="#EB9617">
       <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
     </var>
@@ -1107,6 +1393,10 @@
     <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
   </tile>
   <tile num="101" name="Bookcase" color="#B08460" hasExtra="1" letLight="1">
+	<var minu="1674" name="Marble Bookcase" color="#A93E17" />
+	<var minu="1620" name="Granite Bookcase" color="#648FF6" />
+	<var minu="1566" name="Meteorite Bookcase" color="#DB3E07" />
+	<var minu="1512" name="Martian Holobookcase" color="#629AB3" />
     <var minu="1458" name="Pumpkin Bookcase" color="#EB9617" />
     <var minu="1404" name="Slime Bookcase" color="#3879FF" />
     <var minu="1350" name="Boreal Wood Bookcase" color="#554439" />
@@ -1142,6 +1432,10 @@
     <var minu="36" name="Dynasty Bowl" color="#606FA6" />
   </tile>
   <tile num="104" name="Grandfather Clock" color="#946B50" hasExtra="1" letLight="1">
+	<var minu="972" name="Marble Clock" color="#C3CEE3" />
+	<var minu="936" name="Granite Clock" color="#272245" />
+	<var minu="900" name="Meteorite Clock" color="#DB3E07" />
+	<var minu="864" name="Martian Astro Clock" color="#629AB3" />
     <var minu="828" name="Sunplate Clock" color="#007FA6" />
     <var minu="792" name="Spooky Clock" color="#4F3E5C" />
     <var minu="756" name="Shadewood Clock" color="#627683" />
@@ -1279,6 +1573,12 @@
   </tile>
   <tile num="138" name="Boulder" color="#636363" hasExtra="1" solid="1" />
   <tile num="139" name="Music Box" color="#996343" hasExtra="1" letLight="1">
+	<var minv="1332" name="Music Box (Goblins)" />
+	<var minv="1296" name="Music Box (Towers)" />
+	<var minv="1260" name="Music Box (Hell)" />
+	<var minv="1224" name="Music Box (Pirate Invasion)" />
+	<var minv="1188" name="Music Box (Martian Madness)" />
+	<var minv="1152" name="Music Box (Lunar Boss)" />
     <var minv="1116" name="Music Box (Underground Crimson)" />
     <var minv="1080" name="Music Box (Frost Moon)" />
     <var minv="1044" name="Music Box (Alt Underground)" />
@@ -1352,9 +1652,40 @@
   <tile num="169" name="Platinum Ore" color="#8097b8" solid="1" blend="0" />
   <tile num="170" name="Pine Tree Block" color="#003F2C" solid="1" letLight="1" />
   <tile num="171" name="Christmas Tree" color="#269660" hasExtra="1" letLight="1" />
-  <tile num="172" name="Haunted Platinum Chandelier" color="#4A3D26" hasExtra="1" letLight="1">
-    <var maxu="54" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
+  <tile num="172" name="Wooden Sink" color="#8C6850" hasExtra="1" letLight="1">
+	<var minv="1178" name="Marble Sink" color="#C3CEE3" />
+	<var minv="1140" name="Granite Sink" color="#221F47" />
+	<var minv="1102" name="Meteorite Sink" color="#5C59A1" />
+	<var minv="1064" name="Martian Sink" color="#61C7E0" />
+	<var minv="1026" name="Cactus Sink" color="#476D0B" />
+	<var minv="988" name="Slime Sink" color="#3879FF" />
+	<var minv="950" name="Boreal Wood Sink" color="#604D40" />
+	<var minv="912" name="Mushroom Sink" color="#5F6EFF" />
+	<var minv="874" name="Palm Wood Sink" color="#B68D56" />
+	<var minv="836" name="Dynasty Sink" color="#8A5959" />
+	<var minv="798" name="Frozen Sink" color="#90C3E8" />
+	<var minv="760" name="Spooky Sink" color="#775C8A" />
+	<var minv="722" name="Pumpkin Sink" color="#FAAC0F" />
+	<var minv="684" name="Steampunk Sink" color="#E1B45D" />
+	<var minv="646" name="Honey Sink" color="#FEC214" />
+	<var minv="608" name="Golden Sink" color="#E9CB18" />
+	<var minv="570" name="Glass Sink" color="#C8F6FE" />
+	<var minv="532" name="Metal Sink" color="#6E6E6E" />
+	<var minv="494" name="Obsidian Sink" color="#454545" />
+	<var minv="456" name="Pink Dungeon Sink" color="#B05E89" />
+	<var minv="418" name="Green Dungeon Sink" color="#69816D" />
+	<var minv="380" name="Blue Dungeon Sink" color="#454E63" />
+	<var minv="342" name="Lihzahrd Sink" color="#8D3800" />
+	<var minv="304" name="Shadewood Sink" color="#485660" />
+	<var minv="266" name="Skyware Sink" color="#E7B21C" />
+	<var minv="228" name="Living Wood Sink" color="#345401" />
+	<var minv="190" name="Flesh Sink" color="#715D5D" />
+	<var minv="152" name="Bone Sink" color="#B2B28A" />
+	<var minv="114" name="Pearlwood Sink" color="#AA9A74" />
+	<var minv="76" name="Rich Mahogany Sink" color="#A36368" />
+	<var minv="38" name="Ebonwood Sink" color="#535064" />
   </tile>
+  
   <tile num="173" name="Platinum Candelabra" color="#8097b8" hasExtra="1" letLight="1">
     <var maxu="36" lightr="1.0" lightg="0.95" lightb="0.65" light="1.0" />
   </tile>
@@ -1417,6 +1748,7 @@
   </tile>
   <tile num="208" name="Shadewood" color="#687986" solid="1" blend="0" merge="1" />
   <tile num="209" name="Cannon" color="#676767" hasExtra="1" letLight="1">
+	<var minu="144" name="Confetti Cannon" color="#005A49" />
     <var minu="72" name="Bunny Cannon" color="#f0f0f0" />
   </tile>
   <tile num="210" name="Land Mine" color="#ed1c24" hasExtra="1" letLight="1" />
@@ -1424,7 +1756,13 @@
   <tile num="212" name="Snowball Launcher" color="#f5f5f5" hasExtra="1" letLight="1" />
   <tile num="213" name="Rope" color="#897843" letLight="1" />
   <tile num="214" name="Chain" color="#676767" letLight="1" />
-  <tile num="215" name="Campfire" color="#fd3e03" hasExtra="1" letLight="1" lightr="1.14" lightg="0.54" lightb="0.34" light="1.139" />
+  <tile num="215" name="Campfire" color="#fd3e03" hasExtra="1" letLight="1" lightr="1.14" lightg="0.54" lightb="0.34" light="1.139">
+	<var minu="270" name="Rainbow Campfire" color="#3B7ABE" />
+	<var minu="216" name="Ichor Campfire" color="#EAE400" />
+	<var minu="162" name="Frozen Campfire" color="#A1FFFD" />
+	<var minu="108" name="Demon Campfire" color="#694ACA" />
+	<var minu="54" name="Cursed Campfire" color="#B3FC00" />
+  </tile>
   <tile num="216" name="Red Rocket" color="#be303e" hasExtra="1" letLight="1">
     <var minv="120" name="Yellow Rocket" color="#ffcc39" />
     <var minv="80" name="Blue Rocket" color="#2e3192" />
@@ -1449,6 +1787,10 @@
     <var u="170" name="Lime Kelp" color="#2d4400" />
     <var u="204" name="Pink Prickly Pear" color="#d87098" />
     <var u="238" name="Orange Bloodroot" color="#b04747" />
+	<var u="272" name="Strange Plant" color="#322242" />
+	<var u="326" name="Strange Plant" color="#EB8902" />
+	<var u="380" name="Strange Plant" color="#299887" />
+	<var u="434" name="Strange Plant" color="#9B002F" />
   </tile>
   <tile num="228" name="Dye Vat" color="#a87858" hasExtra="1" letLight="1" />
   <tile num="229" name="Honey" color="#ff9c0c" solid="1" blend="0" merge="1" />
@@ -1483,8 +1825,14 @@
     <var u="324" name="Hallowed Bar" color="#fae888" />
     <var u="342" name="Crimtane Bar" color="#9c3436" />
     <var u="360" name="Shroomite Bar" color="#2814ea" />
+	<var u="378" name="Spectre Bar" color="#8CEEFF" />
+	<var u="396" name="Luminite" color="#9AF8E0" />
   </tile>
   <tile num="240" name="Picture" color="#634732" hasExtra="1" letLight="1">
+	<var minv="54" minu="1242" name="Moon Lord Trophy" color="#22DD97" />
+	<var minv="54" minu="1188" name="Flying Dutchman Trophy" color="#323232" />
+	<var minv="54" minu="1134" name="Martian Saucer Trophy" color="#208DA8" />
+	<var minv="54" minu="1080" name="Ancient Cultist Trophy" color="#EFEBEF" />
     <var minv="54" minu="1026" name="Duke Fishron Trophy" color="#70F8C9" />
     <var minv="54" minu="972" name="King Slime Trophy" color="#4B7ADF" />
     <var minv="54" minu="918" name="Sharkteeth Trophy" color="#CCCC9F" />
@@ -1544,6 +1892,16 @@
   </tile>
   <tile num="241" name="Catacomb" color="#4d4a48" hasExtra="1" letLight="1" />
   <tile num="242" name="Picture" color="#454b45" hasExtra="1" letLight="1">
+	<var minu="108" minv="648" name="Not a Kid, nor a Squid" color="#B9A57F" />
+	<var minu="108" minv="576" name="The Season" color="#576175" />
+	<var minu="108" minv="504" name="Snowfellas" color="#CE4F4F" />
+	<var minu="108" minv="432" name="Cursed Saint" color="#A896F2" />
+	<var minu="108" minv="360" name="Cold Snap" color="#3F5FDF" />
+	<var minu="108" minv="288" name="Acorns" color="#3FBDFB" />
+	<var minu="108" minv="216" name="Sparky" color="#24221F" />
+	<var minu="108" minv="144" name="The Truth Is Up There" color="#3F5FDF" />
+	<var minu="108" minv="72" name="Martia Lisa" color="#8EA459" />
+	<var minu="108" name="Castle Marsberg" color="#AF3F36" />
     <var minv="1872" name="Pillagin Me Pixels" color="#73D5E4" />
     <var minv="1800" name="Treasure Map" color="#C7A67F" />
     <var minv="1728" name="Zebra Skin" color="#CBD4DD" />
@@ -1673,7 +2031,6 @@
   <tile num="311" name="Dynasty Wood" color="#874C1F" solid="1" blend="0" />
   <tile num="312" name="Red Dynasty Shingles" color="#B4443E" solid="1" />
   <tile num="313" name="Blue Dynasty Shingles" color="#599BA8" solid="1" />
-
   <tile num="314" name="Minecart Tracks" color="#A3A6A8" hasExtra="1" letLight="1">
     <var minu="72" name="Booster Track" />
     <var minu="36" name="Pressure Plate Track" />
@@ -1742,7 +2099,109 @@
   </tile>
   <tile num="338" name="Firework Fountain" color="#19C762" hasExtra="1" letLight="1" />
   <tile num="339" name="Grasshopper Cage" color="#57ADBD" hasExtra="1" letLight="1" />
-
+  <tile num="340" name="Living Cursed Fire Block" color="#B3FC00" letLight="1" lightr="0.85" lightg="0.5" lightb="0.3" light="0.8" />
+  <tile num="341" name="Living Demon Fire Block" color="#660CD4" letLight="1" lightr="0.85" lightg="0.5" lightb="0.3" light="0.8" />
+  <tile num="342" name="Living Frost Fire Block" color="#00BAF2" letLight="1" lightr="0.85" lightg="0.5" lightb="0.3" light="0.8" />
+  <tile num="343" name="Living Ichor Block" color="#FECA50" letLight="1" lightr="0.85" lightg="0.5" lightb="0.3" light="0.8" />
+  <tile num="344" name="Living Ultrabright Fire Block" color="#83FCF5" letLight="1" lightr="0.85" lightg="0.5" lightb="0.3" light="0.8" />
+  <tile num="345" name="Honeyfall Block" color="#FF9C0C" solid="1" />
+  <tile num="346" name="Chlorophyte Brick" color="#246133" solid="1" blend="0" merge="1" />
+  <tile num="347" name="Crimtane Brick" color="#A42A49" solid="1" blend="0" merge="1" />
+  <tile num="348" name="Shroomite Plating" color="#2215A4" solid="1" blend="0" merge="1" />
+  <tile num="349" name="Shroomite" color="#37589D" hasExtra="1" letLight="1" />
+  <tile num="350" name="Martian Conduit Plating" color="#629AB3" solid="1" blend="0" merge="1" />
+  <tile num="351" name="Smoke Block" color="#191919" solid="1" />
+  <tile num="352" name="Roots" color="#883231" letLight="1" />
+  <tile num="353" name="Vine Rope" color="#1E9648" letLight="1" />
+  <tile num="354" name="Bewitching Table" color="#4C2200" hasExtra="1" letLight="1" />
+  <tile num="355" name="Alchemy Table" color="#6D4E47" hasExtra="1" letLight="1" />
+  <tile num="356" name="Sundial" color="#006887" hasExtra="1" />
+  <tile num="357" name="Marble Block" color="#A8B2CC" solid="1" />
+  <tile num="358" name="Gold Bird Cage" color="#CBB349" hasExtra="1" letLight="1" />
+  <tile num="359" name="Gold Bunny Cage" color="#CBB349" hasExtra="1" letLight="1" />
+  <tile num="360" name="Gold Butterfly Jar" color="#CBB349" hasExtra="1" letLight="1" />
+  <tile num="361" name="Gold Frog Cage" color="#CBB349" hasExtra="1" letLight="1" />
+  <tile num="362" name="Gold Grasshopper Cage" color="#CBB349" hasExtra="1" letLight="1" />
+  <tile num="363" name="Gold Mouse Cage" color="#CBB349" hasExtra="1" letLight="1" />
+  <tile num="364" name="Gold Worm Cage" color="#CBB349" hasExtra="1" letLight="1" />
+  <tile num="365" name="Silk Rope" color="#757FB9" letLight="1" />
+  <tile num="366" name="Web Rope" color="#DFE8E9" letLight="1" />
+  <tile num="367" name="Marble" color="#C3CEE3" solid="1" blend="0" merge="1" />
+  <tile num="368" name="Granite" color="#322E68" solid="1" blend="0" merge="1" />
+  <tile num="369" name="Granite Block" color="#221F47" solid="1" blend="0" merge="1" />
+  <tile num="370" name="Meteorite Brick" color="#7F74C2" solid="1" blend="0" merge="1" />
+  <tile num="371" name="Pink Slime Block" color="#F97FC8" solid="1" blend="0" merge="1" />
+  <tile num="372" name="Peace Candle" color="#FE95D2" hasExtra="1" letLight="1" />
+  <tile num="373" name="Magic Water Dropper" />
+  <tile num="374" name="Magic Lava Dropper" />
+  <tile num="375" name="Magic Honey Dropper" />
+  <tile num="376" name="Crate" color="#906850" hasExtra="1">
+	<var minu="288" name="Jungle Crate" color="#734144" />
+	<var minu="252" name="Hallowed Crate" color="#8138BF" />
+	<var minu="216" name="Sky Crate" color="#00556F" />
+	<var minu="180" name="Dungeon Crate" color="#454E63" />
+	<var minu="144" name="Crimson Crate" color="#74223C" />
+	<var minu="108" name="Corrupt Crate" color="#726A96" />
+	<var minu="72" name="Gold Crate" color="#FED350" />
+	<var minu="36" name="Metal Crate" color="#7E8192" />
+  </tile>
+  <tile num="377" name="Sharpening Station" color="#6C6257" hasExtra="1" />
+  <tile num="378" name="Target Dummy" color="#DDB487" hasExtra="1" />
+  <tile num="379" name="Bubble" color="#D3D2FF" blend="1" />
+  <tile num="380" name="Planter Boxes" color="#946B50" hasExtra="1">
+	<var v="0" name="Daybloom Planter Box" color="#1CD85E" />
+	<var v="18" name="Moonglow Planter Box" color="#8FD71D" />
+	<var v="36" name="Deathweed Planter Box" color="#8D89DF" />
+	<var v="54" name="Deathweed Planter Box" color="#D05050" />
+	<var v="72" name="Blinkroot Planter Box" color="#BF8F6F" />
+	<var v="90" name="Waterleaf Planter Box" color="#D3C66F" />
+	<var v="108" name="Shiverthorn Planter Box" color="#CDE7EE" />
+	<var v="126" name="Fireblossom Planter Box" color="#655A66" />
+  </tile>
+  <tile num="381" name="?" color="#FE7902" solid="1" blend="1" isGrass="1" />
+  <tile num="382" name="?" color="#1E9648" hasExtra="1" />
+  <tile num="383" name="Living Mahogany" color="#DD8890" solid="1" blend="384" />
+  <tile num="384" name="Rich Mahogany Leaf" color="#476D0B" merge="383" />
+  <tile num="385" name="Crystal Block" color="#0B377F" />
+  <tile num="386" name="Open Trap Door" color="#4F3A2E" hasExtra="1" letLight="1" />
+  <tile num="387" name="Closed Trap Door" color="#6B4F3F" hasExtra="1" />
+  <tile num="388" name="Closed Tall Gate" color="#503B30" hasExtra="1" />
+  <tile num="389" name="Open Tall Gate" color="#2E2119" hasExtra="1" letLight="1" />
+  <tile num="390" name="Lava Lamp" color="#FD2003" hasExtra="1" letLight="1" />
+  <tile num="391" name="Enchanted Nightcrawler Cage" color="#57ADBD" hasExtra="1" />
+  <tile num="392" name="Buggy Cage" color="#57ADBD" hasExtra="1" />
+  <tile num="393" name="Grubby Cage" color="#57ADBD" hasExtra="1" />
+  <tile num="394" name="Sluggy Cage" color="#57ADBD" hasExtra="1" />
+  <tile num="395" name="Item Frame" color="#634732" hasExtra="1" />
+  <tile num="396" name="Sandstone" color="#B36741" isSolid="1" blend="53" />
+  <tile num="397" name="Hardened Sand" color="#D49458" isSolid="1" blend="53" />
+  <tile num="398" name="Corrupt Hardened Sand" color="#604475" />
+  <tile num="399" name="Crimson Hardened Sand" color="#4D4C42" />
+  <tile num="400" name="Corrupt Sandstone" color="#604475" />
+  <tile num="401" name="Crismon Sandstone" color="#573937" />
+  <tile num="402" name="Hallow Hardened Sand" color="#B18ABA" />
+  <tile num="403" name="Hallow Sandstone" color="#9E71A4" />
+  <tile num="404" name="Desert Fossil Block" color="#8C543C" />
+  <tile num="405" name="Fireplace" color="#FD3E03" hasExtra="1" />
+  <tile num="406" name="Chimney" color="#8C8C8C" hasExtra="1" />
+  <tile num="407" name="Fossil Ore" color="#FFE384" blend="404" />
+  <tile num="408" name="Lunar Ore" color="#5EE5A3" blend="1" />
+  <tile num="409" name="Lunar Brick" color="#3A3736" /> 
+  <tile num="410" name="Monoliths" color="#22DD97" hasExtra="1">
+	<var minu="108" name="Solar Monolith" color="#FE7902" />
+	<var minu="72" name="Stardust Monolith" color="#23C8FE" />
+	<var minu="36" name="Nebula Monolith" color="#FE7EE5" />
+	<var minu="0" name="Vortex Monolith" color="#22DD97" />
+  </tile>
+  <tile num="411" name="Detonator" color="#C90303" hasExtra="1" />
+  <tile num="412" name="Lunar Crafting Station" color="#936857" hasExtra="1" />
+  <tile num="413" name="Red Squirrel Cage" color="#57ADBD" hasExtra="1" />
+  <tile num="414" name="Gold Squirrel Cage" color="#CBB349" hasExtra="1" />
+  <tile num="415" name="Solar Fragment Block" color="#FE9E23" blend="0" />
+  <tile num="416" name="Vortex Fragment Block" color="#00A0AA" blend="0" />
+  <tile num="417" name="Nebula Fragment Block" color="#A057EA" blend="0" />
+  <tile num="418" name="Stardust Fragment Block" color="#5057B6" blend="0" />
+  
 
   <wall num="1" name="Stone Wall" color="#343434" />
   <wall num="2" name="Dirt Wall" color="#583D2E" />
@@ -1803,7 +2262,7 @@
   <wall num="57" name="Blue Moss Wall" color="#334452" />
   <wall num="58" name="Purple Moss Wall" color="#432f49" />
   <wall num="59" name="Rocky Dirt Wall" color="583d2e" blend="2" />
-  <wall num="60" name="Shrub Wall" color="#013e17" />
+  <wall num="60" name="Living Leaf Wall" color="#013e17" />
   <wall num="61" name="Rock Wall" color="#362619" />
   <wall num="62" name="Spider Cave Wall" color="#242424" />
   <wall num="63" name="Shrub Wall" color="#235f39" />
@@ -1818,9 +2277,9 @@
   <wall num="72" name="Cactus Wall" color="#34540c" />
   <wall num="73" name="Cloud Wall" color="#e4ecee" />
   <wall num="74" name="Mushroom Wall" color="#313b8c" />
-  <wall num="75" name="Bone Wall" color="#63633c" />
-  <wall num="76" name="Slime Wall" color="#213c79" />
-  <wall num="77" name="Flesh Wall" color="#3d0d10" />
+  <wall num="75" name="Bone Block Wall" color="#63633c" />
+  <wall num="76" name="Slime Block Wall" color="#213c79" />
+  <wall num="77" name="Flesh Block Wall" color="#3d0d10" />
   <wall num="78" name="Living Wood Wall" color="#513426" />
   <wall num="79" name="Cave Wall" color="#332f60" />
   <wall num="80" name="Mushroom Wall" color="#313b8c" />
@@ -1850,11 +2309,11 @@
   <wall num="104" name="Green Slab Wall" color="#445747" />
   <wall num="105" name="Green Tiled Wall" color="#383e47" />
   <wall num="106" name="Wooden Fence" color="#604438" />
-  <wall num="107" name="Metal Fence" color="#3c3c3c" />
+  <wall num="107" name="Lead Fence" color="#3c3c3c" />
   <wall num="108" name="Hive Wall" color="#8c5131" />
   <wall num="109" name="Palladium Column Wall" color="#5e1911" />
-  <wall num="110" name="Bubblegum Wall" color="#994996" />
-  <wall num="111" name="Titanstone Wall" color="#1f1814" />
+  <wall num="110" name="Bubblegum Block Wall" color="#994996" />
+  <wall num="111" name="Titanstone Block Wall" color="#1f1814" />
   <wall num="112" name="Lihzahrd Brick Wall" color="#320F08" />
   <wall num="113" name="Pumpkin Wall" color="#803700" />
   <wall num="114" name="Hay Wall" color="#745E19" />
@@ -1913,8 +2372,62 @@
   <wall num="167" name="Tin Plating Wall" color="#464433" />
   <wall num="168" name="Confetti Wall" color="#0C6A8A" />
   <wall num="169" name="Midnight Confetti Wall" color="#850C77" />
-  <wall num="170" name="Unknown Wall" color="#3B2716" />
-  <wall num="171" name="Unknown Wall" color="#3B2716" />
+  <wall num="170" name="Wall 170" color="#3B2716" />
+  <wall num="171" name="Wall 171" color="#3B2716" />
+  <wall num="172" name="Honeyfall Wall" color="#A36000" />
+  <wall num="173" name="Chlorophyte Brick Wall" color="#082A27" />
+  <wall num="174" name="Crimtane Brick Wall" color="#451D26" />
+  <wall num="175" name="Shroomite Plating Wall" color="#0F0969" />
+  <wall num="176" name="Martian Conduit Wall" color="#2C2934" />
+  <wall num="177" name="Hellstone Brick Wall" color="#5D2B2B" />
+  <wall num="178" name="Marble Wall" color="#868DA0" />
+  <wall num="179" name="Marble Block Wall" color="#9AA2B1" />
+  <wall num="180" name="Granite Wall" color="#0C0A19" />
+  <wall num="181" name="Granite Block Wall" color="#1A1733" />
+  <wall num="182" name="Meteorite Brick Wall" color="#4A4781" />
+  <wall num="183" name="Marble Wall" color="#9AA2B1" />
+  <wall num="184" name="Granite Wall" color="#141D49" />
+  <wall num="185" name="Wall 185" color="#525252" />
+  <wall num="186" name="Crystal Wall" color="#260942" />
+  <wall num="187" name="Sandstone Wall" color="#A8603B" />
+  <wall num="188" name="Wall 188" color="#523F50" />
+  <wall num="189" name="Wall 189" color="#41334D" />
+  <wall num="190" name="Wall 190" color="#3E3A51" />
+  <wall num="191" name="Wall 191" color="#5E4364" />
+  <wall num="192" name="Wall 192" color="#904334" />
+  <wall num="193" name="Wall 193" color="#4F1317" />
+  <wall num="194" name="Wall 194" color="#2F0A0C" />
+  <wall num="195" name="Wall 195" color="#792A2F" />
+  <wall num="196" name="Wall 196" color="#70503E" />
+  <wall num="197" name="Wall 197" color="#7F5E4C" />
+  <wall num="198" name="Wall 198" color="#614333" />
+  <wall num="199" name="Wall 199" color="#70503E" />
+  <wall num="200" name="Wall 200" color="#553952" />
+  <wall num="201" name="Wall 201" color="#7B6474" />
+  <wall num="202" name="Wall 202" color="#A7307E" />
+  <wall num="203" name="Wall 203" color="#96407E" />
+  <wall num="204" name="Wall 204" color="#53311E" />
+  <wall num="205" name="Wall 205" color="#5F7652" />
+  <wall num="206" name="Wall 206" color="#464541" />
+  <wall num="207" name="Wall 207" color="#53311E" />
+  <wall num="208" name="Wall 208" color="#3E3D3C" />
+  <wall num="209" name="Wall 209" color="#554246" />
+  <wall num="210" name="Wall 210" color="#393434" />
+  <wall num="211" name="Wall 211" color="#58433B" />
+  <wall num="212" name="Wall 212" color="#585750" />
+  <wall num="213" name="Wall 213" color="#383735" />
+  <wall num="214" name="Wall 214" color="#4C343C" />
+  <wall num="215" name="Wall 215" color="#524A4D" />
+  <wall num="216" name="Hardened Sand Wall" color="#B97F3B" />
+  <wall num="217" name="Corrupt Hardened Sand Wall" color="#463F5E" />
+  <wall num="218" name="Crimson Hardened Sand Wall" color="#33332D" />
+  <wall num="219" name="Hallow Hardened Sand Wall" color="#72618C" />
+  <wall num="220" name="Corrupt Sandstone Wall" color="#53356A" />
+  <wall num="221" name="Crimson Sandstone Wall" color="#56372F" />
+  <wall num="222" name="Hallow Sandstone Wall" color="#3E4765" />
+  <wall num="223" name="Desert Fossil Wall" color="#572612" />
+  <wall num="224" name="Lunar Brick Wall" color="#262424" />
+  
 
   <prefix num="1" name="Large" />
   <prefix num="2" name="Massive" />
@@ -2048,7 +2561,6 @@
   <item num="-3" name="Gold Shortsword" />
   <item num="-2" name="Gold Broadsword" />
   <item num="-1" name="Gold Pickaxe" />
-  <item num="0" name="" />
   <item num="1" name="Iron Pickaxe" />
   <item num="2" name="Dirt Block" />
   <item num="3" name="Stone Block" />
@@ -2102,7 +2614,7 @@
   <item num="51" name="Jester's Arrow" />
   <item num="52" name="Angel Statue" />
   <item num="53" name="Cloud in a Bottle" />
-  <item num="54" name="Heremes Boots" />
+  <item num="54" name="Hermes Boots" />
   <item num="55" name="Enchanted Boomerang" />
   <item num="56" name="Demonite Ore" />
   <item num="57" name="Demonite Bar" />
@@ -2175,7 +2687,7 @@
   <item num="124" name="Meteor Suit" />
   <item num="125" name="Meteor Leggings" />
   <item num="126" name="Bottled Water" />
-  <item num="127" name="Space Gun" />
+  <item num="126" name="Space Gun" />
   <item num="128" name="Rocket Boots" />
   <item num="129" name="Gray Brick" />
   <item num="130" name="Gray Brick Wall" />
@@ -2225,11 +2737,11 @@
   <item num="174" name="Hellstone" />
   <item num="175" name="Hellstone Bar" />
   <item num="176" name="Mud Block" />
-  <item num="177" name="Amethyst" />
-  <item num="178" name="Topaz" />
-  <item num="179" name="Sapphire" />
-  <item num="180" name="Emerald" />
-  <item num="181" name="Ruby" />
+  <item num="177" name="Sapphire" />
+  <item num="178" name="Ruby" />
+  <item num="179" name="Emerald" />
+  <item num="180" name="Topaz" />
+  <item num="181" name="Amethyst" />
   <item num="182" name="Diamond" />
   <item num="183" name="Glowing Mushroom" />
   <item num="184" name="Star" />
@@ -2303,7 +2815,7 @@
   <item num="252" name="Archaeologist's Jacket" />
   <item num="253" name="Archaeologist's Pants" />
   <item num="254" name="Black Thread" />
-  <item num="255" name="Green Thread" />
+  <item num="254" name="Green Thread" />
   <item num="256" name="Ninja Hood" />
   <item num="257" name="Ninja Shirt" />
   <item num="258" name="Ninja Pants" />
@@ -2462,7 +2974,7 @@
   <item num="411" name="Mining Pants" />
   <item num="412" name="Pearlstone Brick" />
   <item num="413" name="Iridescent Brick" />
-  <item num="414" name="Mudstone Brick" />
+  <item num="414" name="Mudstone Block" />
   <item num="415" name="Cobalt Brick" />
   <item num="416" name="Mythril Brick" />
   <item num="417" name="Pearlstone Brick Wall" />
@@ -2526,7 +3038,7 @@
   <item num="475" name="Sunflower Statue" />
   <item num="476" name="King Statue" />
   <item num="477" name="Queen Statue" />
-  <item num="478" name="Pirahna Statue" />
+  <item num="478" name="Piranha Statue" />
   <item num="479" name="Planked Wall" />
   <item num="480" name="Wooden Beam" />
   <item num="481" name="Adamantite Repeater" />
@@ -2538,8 +3050,8 @@
   <item num="487" name="Crystal Ball" />
   <item num="488" name="Disco Ball" />
   <item num="489" name="Sorcerer Emblem" />
-  <item num="490" name="Ranger Emblem" />
-  <item num="491" name="Warrior Emblem" />
+  <item num="490" name="Warrior Emblem" />
+  <item num="491" name="Ranger Emblem" />
   <item num="492" name="Demon Wings" />
   <item num="493" name="Angel Wings" />
   <item num="494" name="Magical Harp" />
@@ -2583,7 +3095,7 @@
   <item num="532" name="Star Cloak" />
   <item num="533" name="Megashark" />
   <item num="534" name="Shotgun" />
-  <item num="535" name="Philospher's Stone" />
+  <item num="535" name="Philosopher's Stone" />
   <item num="536" name="Titan Glove" />
   <item num="537" name="Cobalt Naginata" />
   <item num="538" name="Switch" />
@@ -2602,12 +3114,12 @@
   <item num="551" name="Hallowed Plate Mail" />
   <item num="552" name="Hallowed Greaves" />
   <item num="553" name="Hallowed Helmet" />
-  <item num="554" name="Hallowed Headgear" />
-  <item num="555" name="Hallowed Mask" />
-  <item num="556" name="Cross Necklace" />
-  <item num="557" name="Mana Flower" />
-  <item num="558" name="Mechanical Worm" />
-  <item num="559" name="Mechanical Skull" />
+  <item num="554" name="Cross Necklace" />
+  <item num="555" name="Mana Flower" />
+  <item num="556" name="Mechanical Worm" />
+  <item num="557" name="Mechanical Skull" />
+  <item num="558" name="Hallowed Headgear" />
+  <item num="559" name="Hallowed Mask" />
   <item num="560" name="Slime Crown" />
   <item num="561" name="Light Disc" />
   <item num="562" name="Music Box (Overworld Day)" />
@@ -2721,12 +3233,12 @@
   <item num="670" name="Ice Boomerang" />
   <item num="671" name="Keybrand" />
   <item num="672" name="Cutlass" />
-  <item num="673" name="Icemourne" />
+  <item num="673" name="Boreal Wood Work Bench" />
   <item num="674" name="True Excalibur" />
   <item num="675" name="True Night's Edge" />
   <item num="676" name="Frostbrand" />
-  <item num="677" name="Scythe" />
-  <item num="678" name="Soul Scythe" />
+  <item num="677" name="Boreal Wood Table" />
+  <item num="678" name="Red Potion" />
   <item num="679" name="Tactical Shotgun" />
   <item num="680" name="Ivy Chest" />
   <item num="681" name="Ice Chest" />
@@ -2773,7 +3285,7 @@
   <item num="722" name="Platinum Brick Wall" />
   <item num="723" name="Beam Sword" />
   <item num="724" name="Ice Blade" />
-  <item num="725" name="Icy Bow" />
+  <item num="725" name="Ice Bow" />
   <item num="726" name="Frost Staff" />
   <item num="727" name="Wood Helmet" />
   <item num="728" name="Wood Breastplate" />
@@ -2845,7 +3357,7 @@
   <item num="794" name="Crimson Greaves" />
   <item num="795" name="Blood Butcherer" />
   <item num="796" name="Tendon Bow" />
-  <item num="797" name="Meat Grinder" />
+  <item num="797" name="Flesh Grinder" />
   <item num="798" name="Deathbringer Pickaxe" />
   <item num="799" name="Blood Lust Cluster" />
   <item num="800" name="The Undertaker" />
@@ -2871,7 +3383,7 @@
   <item num="820" name="Bone Door" />
   <item num="821" name="Flame Wings" />
   <item num="822" name="Frozen Wings" />
-  <item num="823" name="Ghost Wings" />
+  <item num="823" name="Spectre Wings" />
   <item num="824" name="Sunplate Block" />
   <item num="825" name="Disc Wall" />
   <item num="826" name="Skyware Chair" />
@@ -2884,7 +3396,7 @@
   <item num="833" name="Purple Ice Block" />
   <item num="834" name="Pink Ice Block" />
   <item num="835" name="Red Ice Block" />
-  <item num="836" name="Crimstone" />
+  <item num="836" name="Crimstone Block" />
   <item num="837" name="Skyware Door" />
   <item num="838" name="Skyware Chest" />
   <item num="839" name="Steampunk Hat" />
@@ -2904,9 +3416,9 @@
   <item num="853" name="Yellow Pressure Plate" />
   <item num="854" name="Discount Card" />
   <item num="855" name="Lucky Coin" />
-  <item num="856" name="Stick Unicorn" />
+  <item num="856" name="Unicorn on a Stick" />
   <item num="857" name="Sandstorm in a Bottle" />
-  <item num="858" name="bl" />
+  <item num="858" name="Boreal Wood Sofa" />
   <item num="859" name="Beach Ball" />
   <item num="860" name="Charm of Myths" />
   <item num="861" name="Moon Shell" />
@@ -2928,7 +3440,7 @@
   <item num="877" name="Pirate Shirt" />
   <item num="878" name="Pirate Pants" />
   <item num="879" name="Viking Helmet" />
-  <item num="880" name="Crimtane" />
+  <item num="880" name="Crimtane Ore" />
   <item num="881" name="Cactus Sword" />
   <item num="882" name="Cactus Pickaxe" />
   <item num="883" name="Ice Brick" />
@@ -3010,14 +3522,14 @@
   <item num="959" name="Ancient Necro Helmet" />
   <item num="960" name="Ancient Cobalt Helmet" />
   <item num="961" name="Ancient Cobalt Breastplate" />
-  <item num="962" name="Anceint Cobalt Leggings" />
+  <item num="962" name="Ancient Cobalt Leggings" />
   <item num="963" name="Black Belt" />
   <item num="964" name="Boomstick" />
   <item num="965" name="Rope" />
   <item num="966" name="Campfire" />
-  <item num="967" name="Marshmellow" />
-  <item num="968" name="Marshmellow on a Stick" />
-  <item num="969" name="Cooked Marshmellow" />
+  <item num="967" name="Marshmallow" />
+  <item num="968" name="Marshmallow on a Stick" />
+  <item num="969" name="Cooked Marshmallow" />
   <item num="970" name="Red Rocket" />
   <item num="971" name="Green Rocket" />
   <item num="972" name="Blue Rocket" />
@@ -3045,7 +3557,7 @@
   <item num="994" name="Eater's Bone" />
   <item num="995" name="Blend-O-Matic" />
   <item num="996" name="Meat Grinder" />
-  <item num="997" name="Silt Extractinator" />
+  <item num="997" name="Extractinator" />
   <item num="998" name="Solidifier" />
   <item num="999" name="Amber" />
   <item num="1000" name="Confetti Gun" />
@@ -3147,7 +3659,7 @@
   <item num="1096" name="Deep Pink Paint" />
   <item num="1097" name="Black Paint" />
   <item num="1098" name="White Paint" />
-  <item num="1099" name="Grey Paint" />
+  <item num="1099" name="Gray Paint" />
   <item num="1100" name="Paint Scraper" />
   <item num="1101" name="Lihzahrd Brick" />
   <item num="1102" name="Lihzahrd Brick Wall" />
@@ -3169,7 +3681,7 @@
   <item num="1118" name="Purple Mucos" />
   <item num="1119" name="Black Ink" />
   <item num="1120" name="Dye Vat" />
-  <item num="1121" name="Beegun" />
+  <item num="1121" name="Bee Gun" />
   <item num="1122" name="Possessed Hatchet" />
   <item num="1123" name="Bee Keeper" />
   <item num="1124" name="Hive" />
@@ -3268,8 +3780,8 @@
   <item num="1217" name="Titanium Headgear" />
   <item num="1218" name="Titanium Breastplate" />
   <item num="1219" name="Titanium Leggings" />
-  <item num="1220" name="Mythril Anvil" />
-  <item num="1221" name="Orichalcum Forge" />
+  <item num="1220" name="Orichalcum Anvil" />
+  <item num="1221" name="Titanium Forge" />
   <item num="1222" name="Palladium Waraxe" />
   <item num="1223" name="Orichalcum Waraxe" />
   <item num="1224" name="Titanium Waraxe" />
@@ -3339,7 +3851,7 @@
   <item num="1288" name="White Tuxedo Shirt" />
   <item num="1289" name="White Tuxedo Pants" />
   <item num="1290" name="Panic Necklace" />
-  <item num="1291" name="Heart Fruit" />
+  <item num="1291" name="Life Fruit" />
   <item num="1292" name="Lihzahrd Altar" />
   <item num="1293" name="Lihzahrd Power Cell" />
   <item num="1294" name="Picksaw" />
@@ -3359,7 +3871,7 @@
   <item num="1308" name="Poison Staff" />
   <item num="1309" name="Slime Staff" />
   <item num="1310" name="Poison Dart" />
-  <item num="1311" name="Eyespring" />
+  <item num="1311" name="Eye Spring" />
   <item num="1312" name="Toy Sled" />
   <item num="1313" name="Book of Skulls" />
   <item num="1314" name="KO Cannon" />
@@ -3371,12 +3883,12 @@
   <item num="1320" name="Bone Pickaxe" />
   <item num="1321" name="Magic Quiver" />
   <item num="1322" name="Magma Stone" />
-  <item num="1323" name="Lava Rose" />
+  <item num="1323" name="Obsidian Rose" />
   <item num="1324" name="Bananarang" />
   <item num="1325" name="Chain Knife" />
   <item num="1326" name="Rod of Discord" />
   <item num="1327" name="Death Sickle" />
-  <item num="1328" name="Turtle Scale" />
+  <item num="1328" name="Turtle Shell" />
   <item num="1329" name="Tissue Sample" />
   <item num="1330" name="Vertebrae" />
   <item num="1331" name="Bloody Spine" />
@@ -3408,9 +3920,9 @@
   <item num="1357" name="Flask of Nanites" />
   <item num="1358" name="Flask of Party" />
   <item num="1359" name="Flask of Poison" />
-  <item num="1360" name="Eye of Cthulu Trophy" />
+  <item num="1360" name="Eye of Cthulhu Trophy" />
   <item num="1361" name="Eater of Worlds Trophy" />
-  <item num="1362" name="Brain of Cthulu Trophy" />
+  <item num="1362" name="Brain of Cthulhu Trophy" />
   <item num="1363" name="Skeletron Trophy" />
   <item num="1364" name="Queen Bee Trophy" />
   <item num="1365" name="Wall of Flesh Trophy" />
@@ -3442,14 +3954,14 @@
   <item num="1391" name="Caged Lantern" />
   <item num="1392" name="Carriage Lantern" />
   <item num="1393" name="Alchemy Lantern" />
-  <item num="1394" name="Diablost Lamp" />
+  <item num="1394" name="Diabolist Lamp" />
   <item num="1395" name="Oil Rag Sconse" />
   <item num="1396" name="Blue Dungeon Chair" />
   <item num="1397" name="Blue Dungeon Table" />
   <item num="1398" name="Blue Dungeon Work Bench" />
   <item num="1399" name="Green Dungeon Chair" />
   <item num="1400" name="Green Dungeon Table" />
-  <item num="1401" name="Green DUngeon Work Bench" />
+  <item num="1401" name="Green Dungeon Work Bench" />
   <item num="1402" name="Pink Dungeon Chair" />
   <item num="1403" name="Pink Dungeon Table" />
   <item num="1404" name="Pink Dungeon Work Bench" />
@@ -3492,11 +4004,11 @@
   <item num="1441" name="The Guardian's Gaze" />
   <item num="1442" name="Father of Someone" />
   <item num="1443" name="Nurse Lisa" />
-  <item num="1444" name="Shadowgate Staff" />
+  <item num="1444" name="Shadowbeam Staff" />
   <item num="1445" name="Inferno Fork" />
   <item num="1446" name="Spectre Staff" />
   <item num="1447" name="Wooden Fence" />
-  <item num="1448" name="Metal Fence" />
+  <item num="1448" name="Lead Fence" />
   <item num="1449" name="Bubble Machine" />
   <item num="1450" name="Bubble Wand" />
   <item num="1451" name="Marching Bones Banner" />
@@ -3509,7 +4021,7 @@
   <item num="1458" name="Obsidian Door" />
   <item num="1459" name="Obsidian Chair" />
   <item num="1460" name="Obsidian Table" />
-  <item num="1461" name="Obisidan Work Bench" />
+  <item num="1461" name="Obsidian Work Bench" />
   <item num="1462" name="Obsidian Vase" />
   <item num="1463" name="Obsidian Bookcase" />
   <item num="1464" name="Hellbound Banner" />
@@ -3520,7 +4032,7 @@
   <item num="1469" name="Lava Erupts Banner" />
   <item num="1470" name="Blue Dungeon Bed" />
   <item num="1471" name="Green Dungeon Bed" />
-  <item num="1472" name="Red Dungeon Bed" />
+  <item num="1472" name="Pink Dungeon Bed" />
   <item num="1473" name="Obsidian Bed" />
   <item num="1474" name="Waldo" />
   <item num="1475" name="Darkness" />
@@ -3564,7 +4076,7 @@
   <item num="1513" name="Paladin's Hammer" />
   <item num="1514" name="SWAT Helmet" />
   <item num="1515" name="Bee Wings" />
-  <item num="1516" name="Giant Harpey Feather" />
+  <item num="1516" name="Giant Harpy Feather" />
   <item num="1517" name="Bone Feather" />
   <item num="1518" name="Fire Feather" />
   <item num="1519" name="Ice Feather" />
@@ -3663,116 +4175,116 @@
   <item num="1612" name="Ankh Charm" />
   <item num="1613" name="Ankh Shield" />
   <item num="1614" name="Blue Flare" />
-    <item num="1615" name="Angler Fish Banner" />
-    <item num="1616" name="Angry Nimbus Banner" />
-    <item num="1617" name="Anomura Fungus Banner" />
-    <item num="1618" name="Antlion Banner" />
-    <item num="1619" name="Arapaima Banner" />
-    <item num="1620" name="Armored Skeleton Banner" />
-    <item num="1621" name="Bat Banner" />
-    <item num="1622" name="Bird Banner" />
-    <item num="1623" name="Black Recluse Banner" />
-    <item num="1624" name="Blood Feeder Banner" />
-    <item num="1625" name="Blood Jelly Banner" />
-    <item num="1626" name="Blood Crawler Banner" />
-    <item num="1627" name="Bone Serpent Banner" />
-    <item num="1628" name="Bunny Banner" />
-    <item num="1629" name="Chaos Elemental Banner" />
-    <item num="1630" name="Mimic Banner" />
-    <item num="1631" name="Clown Banner" />
-    <item num="1632" name="Corrupt Bunny Banner" />
-    <item num="1633" name="Corrupt Goldfish Banner" />
-    <item num="1634" name="Crab Banner" />
-    <item num="1635" name="Crimera Banner" />
-    <item num="1636" name="Crimson Axe Banner" />
-    <item num="1637" name="Cursed Hammer Banner" />
-    <item num="1638" name="Demon Banner" />
-    <item num="1639" name="Demon Eye Banner" />
-    <item num="1640" name="Derpling Banner" />
-    <item num="1641" name="Eater of Souls Banner" />
-    <item num="1642" name="Enchanted Sword Banner" />
-    <item num="1643" name="Zombie Eskimo Banner" />
-    <item num="1644" name="Face Monster Banner" />
-    <item num="1645" name="Floaty Gross Banner" />
-    <item num="1646" name="Flying Fish Banner" />
-    <item num="1647" name="Flying Snake Banner" />
-    <item num="1648" name="Frankenstein Banner" />
-    <item num="1649" name="Fungi Bulb Banner" />
-    <item num="1650" name="Fungo Fish Banner" />
-    <item num="1651" name="Gastropod Banner" />
-    <item num="1652" name="Goblin Archer Banner" />
-    <item num="1653" name="Goblin Sorcerer Banner" />
-    <item num="1654" name="Goblin Scout Banner" />
-    <item num="1655" name="Goblin Thief Banner" />
-    <item num="1656" name="Goblin Warrior Banner" />
-    <item num="1657" name="Goldfish Banner" />
-    <item num="1658" name="Harpy Banner" />
-    <item num="1659" name="Hellbat Banner" />
-    <item num="1660" name="Herpling Banner" />
-    <item num="1661" name="Hornet Banner" />
-    <item num="1662" name="Ice Elemental Banner" />
-    <item num="1663" name="Icy Merman Banner" />
-    <item num="1664" name="Fire Imp Banner" />
-    <item num="1665" name="Jellyfish Banner" />
-    <item num="1666" name="Jungle Creeper Banner" />
-    <item num="1667" name="Lihzahrd Banner" />
-    <item num="1668" name="Man Eater Banner" />
-    <item num="1669" name="Meteor Head Banner" />
-    <item num="1670" name="Moth Banner" />
-    <item num="1671" name="Mummy Banner" />
-    <item num="1672" name="Mushi Ladybug Banner" />
-    <item num="1673" name="Parrot Banner" />
-    <item num="1674" name="Pigron Banner" />
-    <item num="1675" name="Piranha Banner" />
-    <item num="1676" name="Pirate Banner" />
-    <item num="1677" name="Pixie Banner" />
-    <item num="1678" name="Raincoat Zombie Banner" />
-    <item num="1679" name="Reaper Banner" />
-    <item num="1680" name="Shark Banner" />
-    <item num="1681" name="Skeleton Banner" />
-    <item num="1682" name="Skeleton Mage Banner" />
-    <item num="1683" name="Slime Banner" />
-    <item num="1684" name="Snow Flinx Banner" />
-    <item num="1685" name="Spider Banner" />
-    <item num="1686" name="Spore Zombie Banner" />
-    <item num="1687" name="Swamp Thing Banner" />
-    <item num="1688" name="Tortoise Banner" />
-    <item num="1689" name="Toxic Sludge Banner" />
-    <item num="1690" name="Umbrella Slime Banner" />
-    <item num="1691" name="Unicorn Banner" />
-    <item num="1692" name="Vampire Banner" />
-    <item num="1693" name="Vulture Banner" />
-    <item num="1694" name="Nymph Banner" />
-    <item num="1695" name="Werewolf Banner" />
-    <item num="1696" name="Wolf Banner" />
-    <item num="1697" name="World Feeder Banner" />
-    <item num="1698" name="Worm Banner" />
-    <item num="1699" name="Wraith Banner" />
-    <item num="1700" name="Wyvern Banner" />
-    <item num="1701" name="Zombie Banner" />
-    <item num="1702" name="Glass Platform" />
-    <item num="1703" name="Glass Chair" />
-    <item num="1704" name="Golden Chair" />
-    <item num="1705" name="Golden Toilet" />
-    <item num="1706" name="Bar Stool" />
-    <item num="1707" name="Honey Chair" />
-    <item num="1708" name="Steam Punk Chair" />
-    <item num="1709" name="Glass Door" />
-    <item num="1710" name="Golden Door" />
-    <item num="1711" name="Honey Door" />
-    <item num="1712" name="Steam Punk Door" />
-    <item num="1713" name="Glass Table" />
-    <item num="1714" name="Banquet Table" />
-    <item num="1715" name="Bar" />
-    <item num="1716" name="Golden Table" />
-    <item num="1717" name="Honey Table" />
-    <item num="1718" name="Steam Punk Table" />
-    <item num="1719" name="Glass Bed" />
-    <item num="1720" name="Golden Bed" />
-    <item num="1721" name="Honey Bed" />
-    <item num="1722" name="Steam Punk Bed" />
-    <item num="1723" name="Living Wood Wall" />
-    <item num="1724" name="Fart in a Jar" />
+  <item num="1615" name="Angler Fish Banner" />
+  <item num="1616" name="Angry Nimbus Banner" />
+  <item num="1617" name="Anomura Fungus Banner" />
+  <item num="1618" name="Antlion Banner" />
+  <item num="1619" name="Arapaima Banner" />
+  <item num="1620" name="Armored Skeleton Banner" />
+  <item num="1621" name="Bat Banner" />
+  <item num="1622" name="Bird Banner" />
+  <item num="1623" name="Black Recluse Banner" />
+  <item num="1624" name="Blood Feeder Banner" />
+  <item num="1625" name="Blood Jelly Banner" />
+  <item num="1626" name="Blood Crawler Banner" />
+  <item num="1627" name="Bone Serpent Banner" />
+  <item num="1628" name="Bunny Banner" />
+  <item num="1629" name="Chaos Elemental Banner" />
+  <item num="1630" name="Mimic Banner" />
+  <item num="1631" name="Clown Banner" />
+  <item num="1632" name="Corrupt Bunny Banner" />
+  <item num="1633" name="Corrupt Goldfish Banner" />
+  <item num="1634" name="Crab Banner" />
+  <item num="1635" name="Crimera Banner" />
+  <item num="1636" name="Crimson Axe Banner" />
+  <item num="1637" name="Cursed Hammer Banner" />
+  <item num="1638" name="Demon Banner" />
+  <item num="1639" name="Demon Eye Banner" />
+  <item num="1640" name="Derpling Banner" />
+  <item num="1641" name="Eater of Souls Banner" />
+  <item num="1642" name="Enchanted Sword Banner" />
+  <item num="1643" name="Zombie Eskimo Banner" />
+  <item num="1644" name="Face Monster Banner" />
+  <item num="1645" name="Floaty Gross Banner" />
+  <item num="1646" name="Flying Fish Banner" />
+  <item num="1647" name="Flying Snake Banner" />
+  <item num="1648" name="Frankenstein Banner" />
+  <item num="1649" name="Fungi Bulb Banner" />
+  <item num="1650" name="Fungo Fish Banner" />
+  <item num="1651" name="Gastropod Banner" />
+  <item num="1652" name="Goblin Thief Banner" />
+  <item num="1653" name="Goblin Sorcerer Banner" />
+  <item num="1654" name="Goblin Peon Banner" />
+  <item num="1655" name="Goblin Scout Banner" />
+  <item num="1656" name="Goblin Warrior Banner" />
+  <item num="1657" name="Goldfish Banner" />
+  <item num="1658" name="Harpy Banner" />
+  <item num="1659" name="Hellbat Banner" />
+  <item num="1660" name="Herpling Banner" />
+  <item num="1661" name="Hornet Banner" />
+  <item num="1662" name="Ice Elemental Banner" />
+  <item num="1663" name="Icy Merman Banner" />
+  <item num="1664" name="Fire Imp Banner" />
+  <item num="1665" name="Jellyfish Banner" />
+  <item num="1666" name="Jungle Creeper Banner" />
+  <item num="1667" name="Lihzahrd Banner" />
+  <item num="1668" name="Man Eater Banner" />
+  <item num="1669" name="Meteor Head Banner" />
+  <item num="1670" name="Moth Banner" />
+  <item num="1671" name="Mummy Banner" />
+  <item num="1672" name="Mushi Ladybug Banner" />
+  <item num="1673" name="Parrot Banner" />
+  <item num="1674" name="Pigron Banner" />
+  <item num="1675" name="Piranha Banner" />
+  <item num="1676" name="Pirate Banner" />
+  <item num="1677" name="Pixie Banner" />
+  <item num="1678" name="Raincoat Zombie Banner" />
+  <item num="1679" name="Reaper Banner" />
+  <item num="1680" name="Shark Banner" />
+  <item num="1681" name="Skeleton Banner" />
+  <item num="1682" name="Skeleton Mage Banner" />
+  <item num="1683" name="Blue Slime Banner" />
+  <item num="1684" name="Snow Flinx Banner" />
+  <item num="1685" name="Spider Banner" />
+  <item num="1686" name="Spore Zombie Banner" />
+  <item num="1687" name="Swamp Thing Banner" />
+  <item num="1688" name="Tortoise Banner" />
+  <item num="1689" name="Toxic Sludge Banner" />
+  <item num="1690" name="Umbrella Slime Banner" />
+  <item num="1691" name="Unicorn Banner" />
+  <item num="1692" name="Vampire Banner" />
+  <item num="1693" name="Vulture Banner" />
+  <item num="1694" name="Nymph Banner" />
+  <item num="1695" name="Werewolf Banner" />
+  <item num="1696" name="Wolf Banner" />
+  <item num="1697" name="World Feeder Banner" />
+  <item num="1698" name="Worm Banner" />
+  <item num="1699" name="Wraith Banner" />
+  <item num="1700" name="Wyvern Banner" />
+  <item num="1701" name="Zombie Banner" />
+  <item num="1702" name="Glass Platform" />
+  <item num="1703" name="Glass Chair" />
+  <item num="1704" name="Golden Chair" />
+  <item num="1705" name="Golden Toilet" />
+  <item num="1706" name="Bar Stool" />
+  <item num="1707" name="Honey Chair" />
+  <item num="1708" name="Steampunk Chair" />
+  <item num="1709" name="Glass Door" />
+  <item num="1710" name="Golden Door" />
+  <item num="1711" name="Honey Door" />
+  <item num="1712" name="Steampunk Door" />
+  <item num="1713" name="Glass Table" />
+  <item num="1714" name="Banquet Table" />
+  <item num="1715" name="Bar" />
+  <item num="1716" name="Golden Table" />
+  <item num="1717" name="Honey Table" />
+  <item num="1718" name="Steampunk Table" />
+  <item num="1719" name="Glass Bed" />
+  <item num="1720" name="Golden Bed" />
+  <item num="1721" name="Honey Bed" />
+  <item num="1722" name="Steampunk Bed" />
+  <item num="1723" name="Living Wood Wall" />
+  <item num="1724" name="Fart in a Jar" />
   <item num="1725" name="Pumpkin" />
   <item num="1726" name="Pumpkin Wall" />
   <item num="1727" name="Hay" />
@@ -3790,7 +4302,7 @@
   <item num="1739" name="Wizard's Hat" />
   <item num="1740" name="Guy Fawkes Mask" />
   <item num="1741" name="Dye Trader Robe" />
-  <item num="1742" name="Steam Punk Goggles" />
+  <item num="1742" name="Steampunk Goggles" />
   <item num="1743" name="Cyborg Helmet" />
   <item num="1744" name="Cyborg Shirt" />
   <item num="1745" name="Cyborg Pants" />
@@ -3963,7 +4475,7 @@
   <item num="1912" name="Eggnog" />
   <item num="1913" name="Star Anise" />
   <item num="1914" name="Reindeer Bells" />
-  <item num="1915" name="Candy cane Hook" />
+  <item num="1915" name="Candy Cane Hook" />
   <item num="1916" name="Christmas Hook" />
   <item num="1917" name="Candy Cane Pickaxe" />
   <item num="1918" name="Fruitcake Chakram" />
@@ -3980,9 +4492,9 @@
   <item num="1929" name="Chain Gun" />
   <item num="1930" name="Razorpine" />
   <item num="1931" name="Blizzard Staff" />
-  <item num="1932" name="Mrs. Clause Hat" />
-  <item num="1933" name="Mrs. Clause Shirt" />
-  <item num="1934" name="Mrs. Clause Heels" />
+  <item num="1932" name="Mrs. Claus Hat" />
+  <item num="1933" name="Mrs. Claus Shirt" />
+  <item num="1934" name="Mrs. Claus Heels" />
   <item num="1935" name="Parka Hood" />
   <item num="1936" name="Parka Coat" />
   <item num="1937" name="Parka Pants" />
@@ -4007,7 +4519,7 @@
   <item num="1956" name="Bluegreen Wallpaper" />
   <item num="1957" name="Grinch Finger Wallpaper" />
   <item num="1958" name="Naughty Present" />
-  <item num="1959" name="Baby Grinch Mischief's Whistle" />
+  <item num="1959" name="Baby Grinch's Mischief Whistle" />
   <item num="1960" name="Ice Queen Trophy" />
   <item num="1961" name="Santa-NK1 Trophy" />
   <item num="1962" name="Everscream Trophy" />
@@ -4056,7 +4568,7 @@
   <item num="2005" name="Lightning Bug in a Bottle" />
   <item num="2006" name="Snail" />
   <item num="2007" name="Glowing Snail" />
-  <item num="2008" name="Fancy Grey Wallpaper" />
+  <item num="2008" name="Fancy Gray Wallpaper" />
   <item num="2009" name="Ice Floe Wallpaper" />
   <item num="2010" name="Music Wallpaper" />
   <item num="2011" name="Purple Rain Wallpaper" />
@@ -4152,7 +4664,7 @@
   <item num="2101" name="Lihzahrd Candelabra" />
   <item num="2102" name="Skyware Candelabra" />
   <item num="2103" name="Spooky Candelabra" />
-  <item num="2104" name="Brain of Cthulu Mask" />
+  <item num="2104" name="Brain of Cthulhu Mask" />
   <item num="2105" name="Wall of Flesh Mask" />
   <item num="2106" name="Twin Mask" />
   <item num="2107" name="Skeletron Prime Mask" />
@@ -4160,7 +4672,7 @@
   <item num="2109" name="Plantera Mask" />
   <item num="2110" name="Golem Mask" />
   <item num="2111" name="Eater of Worlds Mask" />
-  <item num="2112" name="Eye of Cthulu Mask" />
+  <item num="2112" name="Eye of Cthulhu Mask" />
   <item num="2113" name="Destroyer Mask" />
   <item num="2114" name="Blacksmith Rack" />
   <item num="2115" name="Carpentry Rack" />
@@ -4285,11 +4797,11 @@
   <item num="2234" name="Dynasty Cup" />
   <item num="2235" name="Dynasty Bowl" />
   <item num="2236" name="Dynasty Candle" />
-  <item num="2237" name="Dynasty Grandfather Clock" />
-  <item num="2238" name="Golden Grandfather Clock" />
-  <item num="2239" name="Glass Grandfather Clock" />
-  <item num="2240" name="Honey Grandfather Clock" />
-  <item num="2241" name="Steampunk Grandfather Clock" />
+  <item num="2237" name="Dynasty Clock" />
+  <item num="2238" name="Golden Clock" />
+  <item num="2239" name="Glass Clock" />
+  <item num="2240" name="Honey Clock" />
+  <item num="2241" name="Steampunk Clock" />
   <item num="2242" name="Fancy Dishes" />
   <item num="2243" name="Glass Bowl" />
   <item num="2244" name="Wine Glass" />
@@ -4454,7 +4966,7 @@
   <item num="2403" name="Green Dungeon Sofa" />
   <item num="2404" name="Pink Dungeon Sofa" />
   <item num="2405" name="Golden Sofa" />
-  <item num="2406" name="Obisidian Sofa" />
+  <item num="2406" name="Obsidian Sofa" />
   <item num="2407" name="Bone Sofa" />
   <item num="2408" name="Cactus Sofa" />
   <item num="2409" name="Spooky Sofa" />
@@ -4643,7 +5155,7 @@
   <item num="2592" name="Cactus Clock" />
   <item num="2593" name="Ebonwood Clock" />
   <item num="2594" name="Frozen Clock" />
-  <item num="2595" name="Lihzhard Clock" />
+  <item num="2595" name="Lihzahrd Clock" />
   <item num="2596" name="Living Wood Clock" />
   <item num="2597" name="Rich Mahogany Clock" />
   <item num="2598" name="Flesh Clock" />
@@ -4654,7 +5166,7 @@
   <item num="2603" name="Pumpkin Clock" />
   <item num="2604" name="Shadewood Clock" />
   <item num="2605" name="Spooky Clock" />
-  <item num="2606" name="Sunplate Clock" />
+  <item num="2606" name="Skyware Clock" />
   <item num="2607" name="Spider Fang" />
   <item num="2608" name="Falcon Blade" />
   <item num="2609" name="Fishron Wings" />
@@ -4669,7 +5181,7 @@
   <item num="2618" name="Obsidian Chest" />
   <item num="2619" name="Pumpkin Chest" />
   <item num="2620" name="Spooky Chest" />
-  <item num="2621" name="Tempest Chest" />
+  <item num="2621" name="Tempest Staff" />
   <item num="2622" name="Razorblade Typhoon" />
   <item num="2623" name="Bubble Gun" />
   <item num="2624" name="Tsunami" />
@@ -4797,6 +5309,856 @@
   <item num="2746" name="Boreal Wood Hammer" />
   <item num="2747" name="Boreal Wood Bow" />
   <item num="2748" name="Glass Chest" />
+  <item num="2749" name="Xeno Staff" />
+  <item num="2750" name="Meteor Staff" />
+  <item num="2751" name="Living Cursed Fire Block" />
+  <item num="2752" name="Living Demon Fire Block" />
+  <item num="2753" name="Living Frost Fire Block" />
+  <item num="2754" name="Living Ichor Block" />
+  <item num="2755" name="Living Ultrabright Fire Block" />
+  <item num="2756" name="Gender Change Potion" />
+  <item num="2757" name="Vortex Helmet" />
+  <item num="2758" name="Vortex Breastplate" />
+  <item num="2759" name="Vortex Leggings" />
+  <item num="2760" name="Nebula Helmet" />
+  <item num="2761" name="Nebula Breastplate" />
+  <item num="2762" name="Nebula Leggings" />
+  <item num="2763" name="Solar Flare Helmet" />
+  <item num="2764" name="Solar Flare Breastplate" />
+  <item num="2765" name="Solar Flare Leggings" />
+  <item num="2766" name="Solar Tablet Fragment" />
+  <item num="2767" name="Solar Tablet" />
+  <item num="2768" name="Drill Containment Unit" />
+  <item num="2769" name="Cosmic Car Key" />
+  <item num="2770" name="Mothron Wings" />
+  <item num="2771" name="Brain Scrambler" />
+  <item num="2772" name="Vortex Axe" />
+  <item num="2773" name="Vortex Chainsaw" />
+  <item num="2774" name="Vortex Drill" />
+  <item num="2775" name="Vortex Hammer" />
+  <item num="2776" name="Vortex Pickaxe" />
+  <item num="2777" name="Nebula Axe" />
+  <item num="2778" name="Nebula Chainsaw" />
+  <item num="2779" name="Nebula Drill" />
+  <item num="2780" name="Nebula Hammer" />
+  <item num="2781" name="Nebula Pickaxe" />
+  <item num="2782" name="Solar Flare Axe" />
+  <item num="2783" name="Solar Flare Chainsaw" />
+  <item num="2784" name="Solar Flare Drill" />
+  <item num="2785" name="Solar Flare Hammer" />
+  <item num="2786" name="Solar Flare Pickaxe" />
+  <item num="2787" name="Honeyfall Block" />
+  <item num="2788" name="Honeyfall Wall" />
+  <item num="2789" name="Chlorophyte Brick Wall" />
+  <item num="2790" name="Crimtane Brick Wall" />
+  <item num="2791" name="Shroomite Plating Wall" />
+  <item num="2792" name="Chlorophyte Brick" />
+  <item num="2793" name="Crimtane Brick" />
+  <item num="2794" name="Shroomite Plating" />
+  <item num="2795" name="Laser Machinegun" />
+  <item num="2796" name="Electrosphere Launcher" />
+  <item num="2797" name="Xenopopper" />
+  <item num="2798" name="Laser Drill" />
+  <item num="2799" name="Mechanical Ruler" />
+  <item num="2800" name="Anti-Gravity Hook" />
+  <item num="2801" name="Moon Mask" />
+  <item num="2802" name="Sun Mask" />
+  <item num="2803" name="Martian Costume Mask" />
+  <item num="2804" name="Martian Costume Shirt" />
+  <item num="2805" name="Martian Costume Pants" />
+  <item num="2806" name="Martian Uniform Helmet" />
+  <item num="2807" name="Martian Uniform Torso" />
+  <item num="2808" name="Martian Uniform Pants" />
+  <item num="2809" name="Martian Astro Clock" />
+  <item num="2810" name="Martian Bathtub" />
+  <item num="2811" name="Martian Bed" />
+  <item num="2812" name="Martian Hover Chair" />
+  <item num="2813" name="Martian Chandelier" />
+  <item num="2814" name="Martian Chest" />
+  <item num="2815" name="Martian Door" />
+  <item num="2816" name="Martian Dresser" />
+  <item num="2817" name="Martian Holobookcase" />
+  <item num="2818" name="Martian Hover Candle" />
+  <item num="2819" name="Martian Lamppost" />
+  <item num="2820" name="Martian Lantern" />
+  <item num="2821" name="Martian Piano" />
+  <item num="2822" name="Martian Platform" />
+  <item num="2823" name="Martian Sofa" />
+  <item num="2824" name="Martian Table" />
+  <item num="2825" name="Martian Table Lamp" />
+  <item num="2826" name="Martian Work Bench" />
+  <item num="2827" name="Wooden Sink" />
+  <item num="2828" name="Ebonwood Sink" />
+  <item num="2829" name="Rich Mahogany Sink" />
+  <item num="2830" name="Pearlwood Sink" />
+  <item num="2831" name="Bone Sink" />
+  <item num="2832" name="Flesh Sink" />
+  <item num="2833" name="Living Wood Sink" />
+  <item num="2834" name="Skyware Sink" />
+  <item num="2835" name="Shadewood Sink" />
+  <item num="2836" name="Lihzahrd Sink" />
+  <item num="2837" name="Blue Dungeon Sink" />
+  <item num="2838" name="Green Dungeon Sink" />
+  <item num="2839" name="Pink Dungeon Sink" />
+  <item num="2840" name="Obsidian Sink" />
+  <item num="2841" name="Metal Sink" />
+  <item num="2842" name="Glass Sink" />
+  <item num="2843" name="Golden Sink" />
+  <item num="2844" name="Honey Sink" />
+  <item num="2845" name="Steampunk Sink" />
+  <item num="2846" name="Pumpkin Sink" />
+  <item num="2847" name="Spooky Sink" />
+  <item num="2848" name="Frozen Sink" />
+  <item num="2849" name="Dynasty Sink" />
+  <item num="2850" name="Palm Wood Sink" />
+  <item num="2851" name="Mushroom Sink" />
+  <item num="2852" name="Boreal Wood Sink" />
+  <item num="2853" name="Slime Sink" />
+  <item num="2854" name="Cactus Sink" />
+  <item num="2855" name="Martian Sink" />
+  <item num="2856" name="Solar Cultist Hood" />
+  <item num="2857" name="Lunar Cultist Hood" />
+  <item num="2858" name="Solar Cultist Robe" />
+  <item num="2859" name="Lunar Cultist Robe" />
+  <item num="2860" name="Martian Conduit Plating" />
+  <item num="2861" name="Martian Conduit Wall" />
+  <item num="2862" name="HiTek Sunglasses" />
+  <item num="2863" name="Martian Hair Dye" />
+  <item num="2864" name="Martian Dye" />
+  <item num="2865" name="Castle Marsberg" />
+  <item num="2866" name="Martia Lisa" />
+  <item num="2867" name="The Truth Is Up There" />
+  <item num="2868" name="Smoke Block" />
+  <item num="2869" name="Living Flame Dye" />
+  <item num="2870" name="Living Rainbow Dye" />
+  <item num="2871" name="Shadow Dye" />
+  <item num="2872" name="Negative Dye" />
+  <item num="2873" name="Living Ocean Dye" />
+  <item num="2874" name="Brown Dye" />
+  <item num="2875" name="Brown and Black Dye" />
+  <item num="2876" name="Bright Brown Dye" />
+  <item num="2877" name="Brown and Silver Dye" />
+  <item num="2878" name="Wisp Dye" />
+  <item num="2879" name="Pixie Dye" />
+  <item num="2880" name="Influx Waver" />
+  <item num="2881" name="Phasic Warp Ejector" />
+  <item num="2882" name="Charged Blaster Cannon" />
+  <item num="2883" name="Chlorophyte Dye" />
+  <item num="2884" name="Unicorn Wisp Dye" />
+  <item num="2885" name="Infernal Wisp Dye" />
+  <item num="2886" name="Vicious Powder" />
+  <item num="2887" name="Vicious Mushroom" />
+  <item num="2888" name="The Bee's Knees" />
+  <item num="2889" name="Gold Bird" />
+  <item num="2890" name="Gold Bunny" />
+  <item num="2891" name="Gold Butterfly" />
+  <item num="2892" name="Gold Frog" />
+  <item num="2893" name="Gold Grasshopper" />
+  <item num="2894" name="Gold Mouse" />
+  <item num="2895" name="Gold Worm" />
+  <item num="2896" name="Sticky Dynamite" />
+  <item num="2897" name="Angry Trapper Banner" />
+  <item num="2898" name="Armored Viking Banner" />
+  <item num="2899" name="Black Slime Banner" />
+  <item num="2900" name="Blue Armored Bones Banner" />
+  <item num="2901" name="Blue Cultist Archer Banner" />
+  <item num="2902" name="Blue Cultist Caster Banner" />
+  <item num="2903" name="Blue Cultist Fighter Banner" />
+  <item num="2904" name="Bone Lee Banner" />
+  <item num="2905" name="Clinger Banner" />
+  <item num="2906" name="Cochineal Beetle Banner" />
+  <item num="2907" name="Corrupt Penguin Banner" />
+  <item num="2908" name="Corrupt Slime Banner" />
+  <item num="2909" name="Corruptor Banner" />
+  <item num="2910" name="Crimslime Banner" />
+  <item num="2911" name="Cursed Skull Banner" />
+  <item num="2912" name="Cyan Beetle Banner" />
+  <item num="2913" name="Devourer Banner" />
+  <item num="2914" name="Diabolist Banner" />
+  <item num="2915" name="Doctor Bones Banner" />
+  <item num="2916" name="Dungeon Slime Banner" />
+  <item num="2917" name="Dungeon Spirit Banner" />
+  <item num="2918" name="Elf Archer Banner" />
+  <item num="2919" name="Elf Copter Banner" />
+  <item num="2920" name="Eyezor Banner" />
+  <item num="2921" name="Flocko Banner" />
+  <item num="2922" name="Ghost Banner" />
+  <item num="2923" name="Giant Bat Banner" />
+  <item num="2924" name="Giant Cursed Skull Banner" />
+  <item num="2925" name="Giant Flying Fox Banner" />
+  <item num="2926" name="Gingerbread Man Banner" />
+  <item num="2927" name="Goblin Archer Banner" />
+  <item num="2928" name="Green Slime Banner" />
+  <item num="2929" name="Headless Horseman Banner" />
+  <item num="2930" name="Hell Armored Bones Banner" />
+  <item num="2931" name="Hellhound Banner" />
+  <item num="2932" name="Hoppin' Jack Banner" />
+  <item num="2933" name="Ice Bat Banner" />
+  <item num="2934" name="Ice Golem Banner" />
+  <item num="2935" name="Ice Slime Banner" />
+  <item num="2936" name="Ichor Sticker Banner" />
+  <item num="2937" name="Illuminant Bat Banner" />
+  <item num="2938" name="Illuminant Slime Banner" />
+  <item num="2939" name="Jungle Bat Banner" />
+  <item num="2940" name="Jungle Slime Banner" />
+  <item num="2941" name="Krampus Banner" />
+  <item num="2942" name="Lac Beetle Banner" />
+  <item num="2943" name="Lava Bat Banner" />
+  <item num="2944" name="Lava Slime Banner" />
+  <item num="2945" name="Martian Brainscrambler Banner" />
+  <item num="2946" name="Martian Drone Banner" />
+  <item num="2947" name="Martian Engineer Banner" />
+  <item num="2948" name="Martian Gigazapper Banner" />
+  <item num="2949" name="Martian Gray Grunt Banner" />
+  <item num="2950" name="Martian Officer Banner" />
+  <item num="2951" name="Martian Raygunner Banner" />
+  <item num="2952" name="Martian Scutlix Gunner Banner" />
+  <item num="2953" name="Martian Tesla Turret Banner" />
+  <item num="2954" name="Mister Stabby Banner" />
+  <item num="2955" name="Mother Slime Banner" />
+  <item num="2956" name="Necromancer Banner" />
+  <item num="2957" name="Nutcracker Banner" />
+  <item num="2958" name="Paladin Banner" />
+  <item num="2959" name="Penguin Banner" />
+  <item num="2960" name="Pinky Banner" />
+  <item num="2961" name="Poltergeist Banner" />
+  <item num="2962" name="Possessed Armor Banner" />
+  <item num="2963" name="Present Mimic Banner" />
+  <item num="2964" name="Purple Slime Banner" />
+  <item num="2965" name="Ragged Caster Banner" />
+  <item num="2966" name="Rainbow Slime Banner" />
+  <item num="2967" name="Raven Banner" />
+  <item num="2968" name="Red Slime Banner" />
+  <item num="2969" name="Rune Wizard Banner" />
+  <item num="2970" name="Rusty Armored Bones Banner" />
+  <item num="2971" name="Scarecrow Banner" />
+  <item num="2972" name="Scutlix Banner" />
+  <item num="2973" name="Skeleton Archer Banner" />
+  <item num="2974" name="Skeleton Commando Banner" />
+  <item num="2975" name="Skeleton Sniper Banner" />
+  <item num="2976" name="Slimer Banner" />
+  <item num="2977" name="Snatcher Banner" />
+  <item num="2978" name="Snow Balla Banner" />
+  <item num="2979" name="Snowman Gangsta Banner" />
+  <item num="2980" name="Spiked Ice Slime Banner" />
+  <item num="2981" name="Spiked Jungle Slime Banner" />
+  <item num="2982" name="Splinterling Banner" />
+  <item num="2983" name="Squid Banner" />
+  <item num="2984" name="Tactical Skeleton Banner" />
+  <item num="2985" name="The Groom Banner" />
+  <item num="2986" name="Tim Banner" />
+  <item num="2987" name="Undead Miner Banner" />
+  <item num="2988" name="Undead Viking Banner" />
+  <item num="2989" name="White Cultist Archer Banner" />
+  <item num="2990" name="White Cultist Caster Banner" />
+  <item num="2991" name="White Cultist Fighter Banner" />
+  <item num="2992" name="Yellow Slime Banner" />
+  <item num="2993" name="Yeti Banner" />
+  <item num="2994" name="Zombie Elf Banner" />
+  <item num="2995" name="Sparky" />
+  <item num="2996" name="Vine Rope" />
+  <item num="2997" name="Wormhole Potion" />
+  <item num="2998" name="Summoner Emblem" />
+  <item num="2999" name="Bewitching Table" />
+  <item num="3000" name="Alchemy Table" />
+  <item num="3001" name="Strange Brew" />
+  <item num="3002" name="Spelunker Glowstick" />
+  <item num="3003" name="Bone Arrow" />
+  <item num="3004" name="Bone Torch" />
+  <item num="3005" name="Vine Rope Coil" />
+  <item num="3006" name="Life Drain" />
+  <item num="3007" name="Dart Pistol" />
+  <item num="3008" name="Dart Rifle" />
+  <item num="3009" name="Crystal Dart" />
+  <item num="3010" name="Cursed Dart" />
+  <item num="3011" name="Ichor Dart" />
+  <item num="3012" name="Chain Guillotines" />
+  <item num="3013" name="Fetid Baghnakhs" />
+  <item num="3014" name="Clinger Staff" />
+  <item num="3015" name="Putrid Scent" />
+  <item num="3016" name="Flesh Knuckles" />
+  <item num="3017" name="Flower Boots" />
+  <item num="3018" name="Seedler" />
+  <item num="3019" name="Hellwing Bow" />
+  <item num="3020" name="Tendon Hook" />
+  <item num="3021" name="Thorn Hook" />
+  <item num="3022" name="Illuminant Hook" />
+  <item num="3023" name="Worm Hook" />
+  <item num="3024" name="Skiphs's Blood" />
+  <item num="3025" name="Purple Ooze Dye" />
+  <item num="3026" name="Reflective Silver Dye" />
+  <item num="3027" name="Reflective Gold Dye" />
+  <item num="3028" name="Blue Acid Dye" />
+  <item num="3029" name="Daedalus Stormbow" />
+  <item num="3030" name="Flying Knife" />
+  <item num="3031" name="Bottomless Water Bucket" />
+  <item num="3032" name="Super Absorbant Sponge" />
+  <item num="3033" name="Gold Ring" />
+  <item num="3034" name="Coin Ring" />
+  <item num="3035" name="Greedy Ring" />
+  <item num="3036" name="Fish Finder" />
+  <item num="3037" name="Weather Radio" />
+  <item num="3038" name="Hades Dye" />
+  <item num="3039" name="Twilight Dye" />
+  <item num="3040" name="Acid Dye" />
+  <item num="3041" name="Glowing Mushroom Dye" />
+  <item num="3042" name="Phase Dye" />
+  <item num="3043" name="Magic Lantern" />
+  <item num="3044" name="Music Box (Lunar Boss)" />
+  <item num="3045" name="Rainbow Torch" />
+  <item num="3046" name="Cursed Campfire" />
+  <item num="3047" name="Demon Campfire" />
+  <item num="3048" name="Frozen Campfire" />
+  <item num="3049" name="Ichor Campfire" />
+  <item num="3050" name="Rainbow Campfire" />
+  <item num="3051" name="Crystal Vile Shard" />
+  <item num="3052" name="Shadowflame Bow" />
+  <item num="3053" name="Shadowflame Hex Doll" />
+  <item num="3054" name="Shadowflame Knife" />
+  <item num="3055" name="Acorns" />
+  <item num="3056" name="Cold Snap" />
+  <item num="3057" name="Cursed Saint" />
+  <item num="3058" name="Snowfellas" />
+  <item num="3059" name="The Season" />
+  <item num="3060" name="Bone Rattle" />
+  <item num="3061" name="Architect Gizmo Pack" />
+  <item num="3062" name="Crimson Heart" />
+  <item num="3063" name="Meowmere" />
+  <item num="3064" name="Enchanted Sundial" />
+  <item num="3065" name="Star Wrath" />
+  <item num="3066" name="Smooth Marble Block" />
+  <item num="3067" name="Hellstone Brick Wall" />
+  <item num="3068" name="Guide to Plant Fiber Cordage" />
+  <item num="3069" name="Wand of Sparking" />
+  <item num="3070" name="Gold Bird Cage" />
+  <item num="3071" name="Gold Bunny Cage" />
+  <item num="3072" name="Gold Butterfly Jar" />
+  <item num="3073" name="Gold Frog Cage" />
+  <item num="3074" name="Gold Grasshopper Cage" />
+  <item num="3075" name="Gold Mouse Cage" />
+  <item num="3076" name="Gold Worm Cage" />
+  <item num="3077" name="Silk Rope" />
+  <item num="3078" name="Web Rope" />
+  <item num="3079" name="Silk Rope Coil" />
+  <item num="3080" name="Web Rope Coil" />
+  <item num="3081" name="Marble Block" />
+  <item num="3082" name="Marble Wall" />
+  <item num="3083" name="Smooth Marble Wall" />
+  <item num="3084" name="Radar" />
+  <item num="3085" name="Golden Lock Box" />
+  <item num="3086" name="Granite Block" />
+  <item num="3087" name="Smooth Granite Block" />
+  <item num="3088" name="Granite Wall" />
+  <item num="3089" name="Smooth Granite Wall" />
+  <item num="3090" name="Royal Gel" />
+  <item num="3091" name="Key of Night" />
+  <item num="3092" name="Key of Light" />
+  <item num="3093" name="Herb Bag" />
+  <item num="3094" name="Javelin" />
+  <item num="3095" name="Tally Counter" />
+  <item num="3096" name="Sextant" />
+  <item num="3097" name="Shield of Cthulhu" />
+  <item num="3098" name="Butcher's Chainsaw" />
+  <item num="3099" name="Stopwatch" />
+  <item num="3100" name="Meteorite Brick" />
+  <item num="3101" name="Meteorite Brick Wall" />
+  <item num="3102" name="Metal Detector" />
+  <item num="3103" name="Endless Quiver" />
+  <item num="3104" name="Endless Musket Pouch" />
+  <item num="3105" name="Toxic Flask" />
+  <item num="3106" name="Psycho Knife" />
+  <item num="3107" name="Nail Gun" />
+  <item num="3108" name="Nail" />
+  <item num="3109" name="Night Vision Helmet" />
+  <item num="3110" name="Celestial Shell" />
+  <item num="3111" name="Pink Gel" />
+  <item num="3112" name="Bouncy Glowstick" />
+  <item num="3113" name="Pink Slime Block" />
+  <item num="3114" name="Pink Torch" />
+  <item num="3115" name="Bouncy Bomb" />
+  <item num="3116" name="Bouncy Grenade" />
+  <item num="3117" name="Peace Candle" />
+  <item num="3118" name="Lifeform Analyzer" />
+  <item num="3119" name="DPS Meter" />
+  <item num="3120" name="Fisherman's Pocket Guide" />
+  <item num="3121" name="Goblin Tech" />
+  <item num="3122" name="R.E.K. 3000" />
+  <item num="3123" name="PDA" />
+  <item num="3124" name="Cell Phone" />
+  <item num="3125" name="Granite Chest" />
+  <item num="3126" name="Meteorite Clock" />
+  <item num="3127" name="Marble Clock" />
+  <item num="3128" name="Granite Clock" />
+  <item num="3129" name="Meteorite Door" />
+  <item num="3130" name="Marble Door" />
+  <item num="3131" name="Granite Door" />
+  <item num="3132" name="Meteorite Dresser" />
+  <item num="3133" name="Marble Dresser" />
+  <item num="3134" name="Granite Dresser" />
+  <item num="3135" name="Meteorite Lamp" />
+  <item num="3136" name="Marble Lamp" />
+  <item num="3137" name="Granite Lamp" />
+  <item num="3138" name="Meteorite Lantern" />
+  <item num="3139" name="Marble Lantern" />
+  <item num="3140" name="Granite Lantern" />
+  <item num="3141" name="Meteorite Piano" />
+  <item num="3142" name="Marble Piano" />
+  <item num="3143" name="Granite Piano" />
+  <item num="3144" name="Meteorite Platform" />
+  <item num="3145" name="Marble Platform" />
+  <item num="3146" name="Granite Platform" />
+  <item num="3147" name="Meteorite Sink" />
+  <item num="3148" name="Marble Sink" />
+  <item num="3149" name="Granite Sink" />
+  <item num="3150" name="Meteorite Sofa" />
+  <item num="3151" name="Marble Sofa" />
+  <item num="3152" name="Granite Sofa" />
+  <item num="3153" name="Meteorite Table" />
+  <item num="3154" name="Marble Table" />
+  <item num="3155" name="Granite Table" />
+  <item num="3156" name="Meteorite Work Bench" />
+  <item num="3157" name="Marble Work Bench" />
+  <item num="3158" name="Granite Work Bench" />
+  <item num="3159" name="Meteorite Bathtub" />
+  <item num="3160" name="Marble Bathtub" />
+  <item num="3161" name="Granite Bathtub" />
+  <item num="3162" name="Meteorite Bed" />
+  <item num="3163" name="Marble Bed" />
+  <item num="3164" name="Granite Bed" />
+  <item num="3165" name="Meteorite Bookcase" />
+  <item num="3166" name="Marble Bookcase" />
+  <item num="3167" name="Granite Bookcase" />
+  <item num="3168" name="Meteorite Candelabra" />
+  <item num="3169" name="Marble Candelabra" />
+  <item num="3170" name="Granite Candelabra" />
+  <item num="3171" name="Meteorite Candle" />
+  <item num="3172" name="Marble Candle" />
+  <item num="3173" name="Granite Candle" />
+  <item num="3174" name="Meteorite Chair" />
+  <item num="3175" name="Marble Chair" />
+  <item num="3176" name="Granite Chair" />
+  <item num="3177" name="Meteorite Chandelier" />
+  <item num="3178" name="Marble Chandelier" />
+  <item num="3179" name="Granite Chandelier" />
+  <item num="3180" name="Meteorite Chest" />
+  <item num="3181" name="Marble Chest" />
+  <item num="3182" name="Magic Water Dropper" />
+  <item num="3183" name="Golden Bug Net" />
+  <item num="3184" name="Magic Lava Dropper" />
+  <item num="3185" name="Magic Honey Dropper" />
+  <item num="3186" name="Empty Dropper" />
+  <item num="3187" name="Gladiator Helmet" />
+  <item num="3188" name="Gladiator Breastplate" />
+  <item num="3189" name="Gladiator Leggings" />
+  <item num="3190" name="Reflective Dye" />
+  <item num="3191" name="Enchanted Nightcrawler" />
+  <item num="3192" name="Grubby" />
+  <item num="3193" name="Sluggy" />
+  <item num="3194" name="Buggy" />
+  <item num="3195" name="Grub Soup" />
+  <item num="3196" name="Bomb Fish" />
+  <item num="3197" name="Frost Daggerfish" />
+  <item num="3198" name="Sharpening Station" />
+  <item num="3199" name="Ice Mirror" />
+  <item num="3200" name="Sailfish Boots" />
+  <item num="3201" name="Tsunami in a Bottle" />
+  <item num="3202" name="Target Dummy" />
+  <item num="3203" name="Corrupt Crate" />
+  <item num="3204" name="Crimson Crate" />
+  <item num="3205" name="Dungeon Crate" />
+  <item num="3206" name="Sky Crate" />
+  <item num="3207" name="Hallowed Crate" />
+  <item num="3208" name="Jungle Crate" />
+  <item num="3209" name="Crystal Serpent" />
+  <item num="3210" name="Toxikarp" />
+  <item num="3211" name="Bladetongue" />
+  <item num="3212" name="Shark Tooth Necklace" />
+  <item num="3213" name="Money Trough" />
+  <item num="3214" name="Bubble" />
+  <item num="3215" name="Daybloom Planter Box" />
+  <item num="3216" name="Moonglow Planter Box" />
+  <item num="3217" name="Deathweed Planter Box" />
+  <item num="3218" name="Deathweed Planter Box" />
+  <item num="3219" name="Blinkroot Planter Box" />
+  <item num="3220" name="Waterleaf Planter Box" />
+  <item num="3221" name="Shiverthorn Planter Box" />
+  <item num="3222" name="Fireblossom Planter Box" />
+  <item num="3223" name="Brain of Confusion" />
+  <item num="3224" name="Worm Scarf" />
+  <item num="3225" name="Balloon Pufferfish" />
+  <item num="3226" name="Lazure's Valkyrie Circlet" />
+  <item num="3227" name="Lazure's Valkyrie Cloak" />
+  <item num="3228" name="Lazure's Barrier Platform" />
+  <item num="3229" name="Golden Cross Grave Marker" />
+  <item num="3230" name="Golden Tombstone" />
+  <item num="3231" name="Golden Grave Marker" />
+  <item num="3232" name="Golden Gravestone" />
+  <item num="3233" name="Golden Headstone" />
+  <item num="3234" name="Crystal Block" />
+  <item num="3235" name="Music Box (Martian Madness)" />
+  <item num="3236" name="Music Box (Pirate Invasion)" />
+  <item num="3237" name="Music Box (Hell)" />
+  <item num="3238" name="Crystal Block Wall" />
+  <item num="3239" name="Trap Door" />
+  <item num="3240" name="Tall Gate" />
+  <item num="3241" name="Sharkron Balloon" />
+  <item num="3242" name="Tax Collector's Hat" />
+  <item num="3243" name="Tax Collector's Suit" />
+  <item num="3244" name="Tax Collector's Pants" />
+  <item num="3245" name="Bone Glove" />
+  <item num="3246" name="Clothier's Jacket" />
+  <item num="3247" name="Clothier's Pants" />
+  <item num="3248" name="Dye Trader's Turban" />
+  <item num="3249" name="Deadly Sphere Staff" />
+  <item num="3250" name="Green Horseshoe Balloon" />
+  <item num="3251" name="Amber Horseshoe Balloon" />
+  <item num="3252" name="Pink Horseshoe Balloon" />
+  <item num="3253" name="Lava Lamp" />
+  <item num="3254" name="Enchanted Nightcrawler Cage" />
+  <item num="3255" name="Buggy Cage" />
+  <item num="3256" name="Grubby Cage" />
+  <item num="3257" name="Sluggy Cage" />
+  <item num="3258" name="Slap Hand" />
+  <item num="3259" name="Twilight Hair Dye" />
+  <item num="3260" name="Blessed Apple" />
+  <item num="3261" name="Spectre Bar" />
+  <item num="3262" name="Code 1" />
+  <item num="3263" name="Buccaneer Bandana" />
+  <item num="3264" name="Buccaneer Tunic" />
+  <item num="3265" name="Buccaneer Pantaloons" />
+  <item num="3266" name="Obsidian Outlaw Hat" />
+  <item num="3267" name="Obsidian Longcoat" />
+  <item num="3268" name="Obsidian Pants" />
+  <item num="3269" name="Medusa Head" />
+  <item num="3270" name="Item Frame" />
+  <item num="3271" name="Sandstone Block" />
+  <item num="3272" name="Hardened Sand Block" />
+  <item num="3273" name="Sandstone Wall" />
+  <item num="3274" name="Hardened Ebonsand Block" />
+  <item num="3275" name="Hardened Crimsand Block" />
+  <item num="3276" name="Ebonsandstone Block" />
+  <item num="3277" name="Crimsandstone Block" />
+  <item num="3278" name="Wooden Yoyo" />
+  <item num="3279" name="Malaise" />
+  <item num="3280" name="Artery" />
+  <item num="3281" name="Amazon" />
+  <item num="3282" name="Cascade" />
+  <item num="3283" name="Chik" />
+  <item num="3284" name="Code 2" />
+  <item num="3285" name="Rally" />
+  <item num="3286" name="Yelets" />
+  <item num="3287" name="Red's Throw" />
+  <item num="3288" name="Valkyrie Yoyo" />
+  <item num="3289" name="Amarok" />
+  <item num="3290" name="Hel-Fire" />
+  <item num="3291" name="Kraken" />
+  <item num="3292" name="The Eye of Cthulhu" />
+  <item num="3293" name="Red String" />
+  <item num="3294" name="Orange String" />
+  <item num="3295" name="Yellow String" />
+  <item num="3296" name="Lime String" />
+  <item num="3297" name="Green String" />
+  <item num="3298" name="Teal String" />
+  <item num="3299" name="Cyan String" />
+  <item num="3300" name="Sky Blue String" />
+  <item num="3301" name="Blue String" />
+  <item num="3302" name="Purple String" />
+  <item num="3303" name="Violet String" />
+  <item num="3304" name="Pink String" />
+  <item num="3305" name="Brown String" />
+  <item num="3306" name="White String" />
+  <item num="3307" name="Rainbow String" />
+  <item num="3308" name="Black String" />
+  <item num="3309" name="Black Counterweight" />
+  <item num="3310" name="Blue Counterweight" />
+  <item num="3311" name="Green Counterweight" />
+  <item num="3312" name="Purple Counterweight" />
+  <item num="3313" name="Red Counterweight" />
+  <item num="3314" name="Yellow Counterweight" />
+  <item num="3315" name="Format:C" />
+  <item num="3316" name="Gradient" />
+  <item num="3317" name="Valor" />
+  <item num="3318" name="Treasure Bag" />
+  <item num="3319" name="Treasure Bag" />
+  <item num="3320" name="Treasure Bag" />
+  <item num="3321" name="Treasure Bag" />
+  <item num="3322" name="Treasure Bag" />
+  <item num="3323" name="Treasure Bag" />
+  <item num="3324" name="Treasure Bag" />
+  <item num="3325" name="Treasure Bag" />
+  <item num="3326" name="Treasure Bag" />
+  <item num="3327" name="Treasure Bag" />
+  <item num="3328" name="Treasure Bag" />
+  <item num="3329" name="Treasure Bag" />
+  <item num="3330" name="Treasure Bag" />
+  <item num="3331" name="Treasure Bag" />
+  <item num="3332" name="Treasure Bag" />
+  <item num="3333" name="Hive Pack" />
+  <item num="3334" name="Yoyo Glove" />
+  <item num="3335" name="Demon Heart" />
+  <item num="3336" name="Spore Sac" />
+  <item num="3337" name="Shiny Stone" />
+  <item num="3338" name="Hardened Pearlsand Block" />
+  <item num="3339" name="Pearlsandstone Block" />
+  <item num="3340" name="Hardened Sand Wall" />
+  <item num="3341" name="Hardened Ebonsand Wall" />
+  <item num="3342" name="Hardened Crimsand Wall" />
+  <item num="3343" name="Hardened Pearlsand Wall" />
+  <item num="3344" name="Ebonsandstone Wall" />
+  <item num="3345" name="Crimsandstone Wall" />
+  <item num="3346" name="Pearlsandstone Wall" />
+  <item num="3347" name="Desert Fossil" />
+  <item num="3348" name="Desert Fossil Wall" />
+  <item num="3349" name="Exotic Scimitar" />
+  <item num="3350" name="Paintball Gun" />
+  <item num="3351" name="Classy Cane" />
+  <item num="3352" name="Stylish Scissors" />
+  <item num="3353" name="Mechanical Cart" />
+  <item num="3354" name="Mechanical Wheel Piece" />
+  <item num="3355" name="Mechanical Wagon Piece" />
+  <item num="3356" name="Mechanical Battery Piece" />
+  <item num="3357" name="Ancient Cultist Trophy" />
+  <item num="3358" name="Martian Saucer Trophy" />
+  <item num="3359" name="Flying Dutchman Trophy" />
+  <item num="3360" name="Living Mahogany Wand" />
+  <item num="3361" name="Rich Mahogany Leaf Wand" />
+  <item num="3362" name="Fallen Tuxedo Shirt" />
+  <item num="3363" name="Fallen Tuxedo Pants" />
+  <item num="3364" name="Fireplace" />
+  <item num="3365" name="Chimney" />
+  <item num="3366" name="Yoyo Bag" />
+  <item num="3367" name="Shrimpy Truffle" />
+  <item num="3368" name="Arkhalis" />
+  <item num="3369" name="Confetti Cannon" />
+  <item num="3370" name="Music Box (The Towers)" />
+  <item num="3371" name="Music Box (Goblin Invasion)" />
+  <item num="3372" name="Ancient Cultist Mask" />
+  <item num="3373" name="Moon Lord Mask" />
+  <item num="3374" name="Fossil Helmet" />
+  <item num="3375" name="Fossil Plate" />
+  <item num="3376" name="Fossil Greaves" />
+  <item num="3377" name="Amber Staff" />
+  <item num="3378" name="Bone Javelin" />
+  <item num="3379" name="Bone Throwing Knife" />
+  <item num="3380" name="Sturdy Fossil" />
+  <item num="3381" name="Stardust Helmet" />
+  <item num="3382" name="Stardust Plate" />
+  <item num="3383" name="Stardust Leggings" />
+  <item num="3384" name="Portal Gun" />
+  <item num="3388" name="Strange Plant" />
+  <item num="3389" name="Terrarian" />
+  <item num="3390" name="Goblin Summoner Banner" />
+  <item num="3391" name="Salamander Banner" />
+  <item num="3392" name="Giant Shelly Banner" />
+  <item num="3393" name="Crawdad Banner" />
+  <item num="3394" name="Fritz Banner" />
+  <item num="3395" name="Creature From The Deep Banner" />
+  <item num="3396" name="Dr. Man Fly Banner" />
+  <item num="3397" name="Mothron Banner" />
+  <item num="3398" name="Severed Hand Banner" />
+  <item num="3399" name="The Possessed Banner" />
+  <item num="3400" name="Butcher Banner" />
+  <item num="3401" name="Psycho Banner" />
+  <item num="3402" name="Deadly Sphere Banner" />
+  <item num="3403" name="Nailhead Banner" />
+  <item num="3404" name="Poisonous Spore Banner" />
+  <item num="3405" name="Medusa Banner" />
+  <item num="3406" name="Hoplite Banner" />
+  <item num="3407" name="Granite Elemental Banner" />
+  <item num="3408" name="Grolem Banner" />
+  <item num="3409" name="Blood Zombie Banner" />
+  <item num="3410" name="Drippler Banner" />
+  <item num="3411" name="Tomb Crawler Banner" />
+  <item num="3412" name="Dune Splicer Banner" />
+  <item num="3413" name="Antlion Swarmer Banner" />
+  <item num="3414" name="Antlion Charger Banner" />
+  <item num="3415" name="Ghoul Banner" />
+  <item num="3416" name="Lamia Banner" />
+  <item num="3417" name="Desert Spirit Banner" />
+  <item num="3418" name="Basilisk Banner" />
+  <item num="3419" name="Ravager Scorpion Banner" />
+  <item num="3420" name="Stardust Soldier Banner" />
+  <item num="3421" name="Milkyway Weaver Banner" />
+  <item num="3422" name="Flow Invader Banner" />
+  <item num="3423" name="Twinkle Popper Banner" />
+  <item num="3424" name="Small Star Cell Banner" />
+  <item num="3425" name="Star Cell Banner" />
+  <item num="3426" name="Corite Banner" />
+  <item num="3427" name="Sroller Banner" />
+  <item num="3428" name="Crawltipede Banner" />
+  <item num="3429" name="Drakomire Rider Banner" />
+  <item num="3430" name="Drakomire Banner" />
+  <item num="3431" name="Solar Solenian Banner" />
+  <item num="3432" name="Nebula Soldier Banner" />
+  <item num="3433" name="Nebula Headcrab Banner" />
+  <item num="3434" name="Nebula Floater Banner" />
+  <item num="3435" name="Nebula Beast Banner" />
+  <item num="3436" name="Alien Larva Banner" />
+  <item num="3437" name="Alien Queen Banner" />
+  <item num="3438" name="Alien Hornet Banner" />
+  <item num="3439" name="Vortex Soldier Banner" />
+  <item num="3440" name="Vortex Rifleman Banner" />
+  <item num="3441" name="Pirate Captain Banner" />
+  <item num="3442" name="Pirate Deadeye Banner" />
+  <item num="3443" name="Pirate Corsair Banner" />
+  <item num="3444" name="Pirate Crossbower Banner" />
+  <item num="3445" name="Martian Walker Banner" />
+  <item num="3446" name="Red Devil Banner" />
+  <item num="3447" name="Pink Jellyfish Banner" />
+  <item num="3448" name="Green Jellyfish Banner" />
+  <item num="3449" name="Dark Mummy Banner" />
+  <item num="3450" name="Light Mummy Banner" />
+  <item num="3451" name="Angry Bones Banner" />
+  <item num="3452" name="Ice Tortoise Banner" />
+  <item num="3453" name="Damage Booster" />
+  <item num="3454" name="Life Booster" />
+  <item num="3455" name="Mana Booster" />
+  <item num="3456" name="Vortex Fragment" />
+  <item num="3457" name="Nebula Fragment" />
+  <item num="3458" name="Solar Fragment" />
+  <item num="3459" name="Stardust Fragment" />
+  <item num="3460" name="Luminite" />
+  <item num="3461" name="Luminite Brick" />
+  <item num="3462" name="Stardust Axe" />
+  <item num="3463" name="Stardust Chainsaw" />
+  <item num="3464" name="Stardust Drill" />
+  <item num="3465" name="Stardust Hammer" />
+  <item num="3466" name="Stardust Pickaxe" />
+  <item num="3467" name="Luminite Bar" />
+  <item num="3468" name="Solar Wings" />
+  <item num="3469" name="Vortex Booster" />
+  <item num="3470" name="Nebula Mantle" />
+  <item num="3471" name="Stardust Wings" />
+  <item num="3472" name="Luminite Brick Wall" />
+  <item num="3473" name="Solar Eruption" />
+  <item num="3474" name="Stardust Cell Staff" />
+  <item num="3475" name="Vortex Beater" />
+  <item num="3476" name="Nebula Arcanum" />
+  <item num="3477" name="Blood Water" />
+  <item num="3478" name="Wedding Veil" />
+  <item num="3479" name="Wedding Dress" />
+  <item num="3480" name="Platinum Bow" />
+  <item num="3481" name="Platinum Hammer" />
+  <item num="3482" name="Platinum Axe" />
+  <item num="3483" name="Platinum Shortsword" />
+  <item num="3484" name="Platinum Broadsword" />
+  <item num="3485" name="Platinum Pickaxe" />
+  <item num="3486" name="Tungsten Bow" />
+  <item num="3487" name="Tungsten Hammer" />
+  <item num="3488" name="Tungsten Axe" />
+  <item num="3489" name="Tungsten Shortsword" />
+  <item num="3490" name="Tungsten Broadsword" />
+  <item num="3491" name="Tungsten Pickaxe" />
+  <item num="3492" name="Lead Bow" />
+  <item num="3493" name="Lead Hammer" />
+  <item num="3494" name="Lead Axe" />
+  <item num="3495" name="Lead Shortsword" />
+  <item num="3496" name="Lead Broadsword" />
+  <item num="3497" name="Lead Pickaxe" />
+  <item num="3498" name="Tin Bow" />
+  <item num="3499" name="Tin Hammer" />
+  <item num="3500" name="Tin Axe" />
+  <item num="3501" name="Tin Shortsword" />
+  <item num="3502" name="Tin Broadsword" />
+  <item num="3503" name="Tin Pickaxe" />
+  <item num="3504" name="Copper Bow" />
+  <item num="3505" name="Copper Hammer" />
+  <item num="3506" name="Copper Axe" />
+  <item num="3507" name="Copper Shortsword" />
+  <item num="3508" name="Copper Broadsword" />
+  <item num="3509" name="Copper Pickaxe" />
+  <item num="3510" name="Silver Bow" />
+  <item num="3511" name="Silver Hammer" />
+  <item num="3512" name="Silver Axe" />
+  <item num="3513" name="Silver Shortsword" />
+  <item num="3514" name="Silver Broadsword" />
+  <item num="3515" name="Silver Pickaxe" />
+  <item num="3516" name="Gold Bow" />
+  <item num="3517" name="Gold Hammer" />
+  <item num="3518" name="Gold Axe" />
+  <item num="3519" name="Gold Shortsword" />
+  <item num="3520" name="Gold Broadsword" />
+  <item num="3521" name="Gold Pickaxe" />
+  <item num="3522" name="Solar Flare Hamaxe" />
+  <item num="3523" name="Vortex Hamaxe" />
+  <item num="3524" name="Nebula Hamaxe" />
+  <item num="3525" name="Stardust Hamaxe" />
+  <item num="3526" name="Solar Dye" />
+  <item num="3527" name="Nebula Dye" />
+  <item num="3528" name="Vortex Dye" />
+  <item num="3529" name="Stardust Dye" />
+  <item num="3530" name="Void Dye" />
+  <item num="3531" name="Stardust Dragon Staff" />
+  <item num="3532" name="Bacon" />
+  <item num="3533" name="Shifting Sands Dye" />
+  <item num="3534" name="Mirage Dye" />
+  <item num="3535" name="Shifting Pearlsands Dye" />
+  <item num="3536" name="Vortex Monolith" />
+  <item num="3537" name="Nebula Monolith" />
+  <item num="3538" name="Stardust Monolith" />
+  <item num="3539" name="Solar Monolith" />
+  <item num="3540" name="Phantasm" />
+  <item num="3541" name="Last Prism" />
+  <item num="3542" name="Nebula Blaze" />
+  <item num="3543" name="Daybreak" />
+  <item num="3544" name="Super Healing Potion" />
+  <item num="3545" name="Detonator" />
+  <item num="3546" name="Celebration" />
+  <item num="3547" name="Bouncy Dynamite" />
+  <item num="3548" name="Happy Grenade" />
+  <item num="3549" name="Ancient Manipulator" />
+  <item num="3550" name="Flame and Silver Dye" />
+  <item num="3551" name="Green Flame and Silver Dye" />
+  <item num="3552" name="Blue Flame and Silver Dye" />
+  <item num="3553" name="Reflective Copper Dye" />
+  <item num="3554" name="Reflective Obsidian Dye" />
+  <item num="3555" name="Reflective Metal Dye" />
+  <item num="3556" name="Midnight Rainbow Dye" />
+  <item num="3557" name="Black and White Dye" />
+  <item num="3558" name="Bright Silver Dye" />
+  <item num="3559" name="Silver and Black Dye" />
+  <item num="3560" name="Red Acid Dye" />
+  <item num="3561" name="Gel Dye" />
+  <item num="3562" name="Pink Gel Dye" />
+  <item num="3563" name="Red Squirrel" />
+  <item num="3564" name="Gold Squirrel" />
+  <item num="3565" name="Red Squirrel Cage" />
+  <item num="3566" name="Gold Squirrel Cage" />
+  <item num="3567" name="Luminite Bullet" />
+  <item num="3568" name="Luminite Arrow" />
+  <item num="3569" name="Lunar Portal Staff" />
+  <item num="3570" name="Lunar Flare" />
+  <item num="3571" name="Rainbow Crystal Staff" />
+  <item num="3572" name="Lunar Hook" />
+  <item num="3573" name="Solar Fragment Block" />
+  <item num="3574" name="Vortex Fragment Block" />
+  <item num="3575" name="Nebula Fragment Block" />
+  <item num="3576" name="Stardust Fragment Block" />
+  <item num="3577" name="Suspicious Looking Tentacle" />
+  <item num="3578" name="Yoraiz0r's Uniform" />
+  <item num="3579" name="Yoraiz0r's Skirt" />
+  <item num="3580" name="Yoraiz0r's Spell" />
+  <item num="3581" name="Yoraiz0r's Scowl" />
+  <item num="3582" name="Jim's Wings" />
+  <item num="3583" name="Yoraiz0r's Recolored Goggles" />
+  <item num="3584" name="Living Leaf Wall" />
+  <item num="3585" name="Skiphs's Mask" />
+  <item num="3586" name="Skiphs's Skin" />
+  <item num="3587" name="Skiphs's Bear Butt" />
+  <item num="3588" name="Skiphs's Paws" />
+  <item num="3589" name="Loki's Helmet" />
+  <item num="3590" name="Loki's Breastplate" />
+  <item num="3591" name="Loki's Greaves" />
+  <item num="3592" name="Loki's Wings" />
+  <item num="3593" name="Sand Slime Banner" />
+  <item num="3594" name="Sea Snail Banner" />
+  <item num="3595" name="Moon Lord Trophy" />
+  <item num="3596" name="Not a Kid, nor a Squid" />
+  <item num="3597" name="Burning Hades Dye" />
+  <item num="3598" name="Grim Dye" />
+  <item num="3599" name="Loki's Dye" />
+  <item num="3600" name="Shadowflame Hades Dye" />
+
   
   <global id="sky" color="#84AAF8" />
   <global id="earth" color="#583D2E" />
