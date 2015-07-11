@@ -46,10 +46,11 @@ using System.Collections;
 using System.Threading;
 using System.Net.Sockets;
 using System.Security.Cryptography;
+using System.ComponentModel;
 
 namespace Terrafirma
 {
-    public class TileInfo
+    public class TileInfo : INotifyPropertyChanged
     {
         public string name;
         public UInt32 color;
@@ -62,7 +63,28 @@ namespace Terrafirma
         public Int16 blend;
         public int u, v, minu, maxu, minv, maxv;
         public bool isHilighting;
+        public bool IsHilighting
+        {
+            get
+            {
+                return isHilighting;
+            }
+            set
+            {
+                isHilighting = value;
+                OnPropertyChanged("IsHilighting");
+            }
+        }
         public List<TileInfo> variants;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
     class TileInfos
     {
@@ -697,19 +719,28 @@ namespace Terrafirma
         }
         private void addVariants(ArrayList quickItems, TileInfo info)
         {
-            foreach (TileInfo v in info.variants)
-            {
-                if (v.name != info.name)
-                {
-                    v.isHilighting = true;
-                    quickItems.Add(new HTile(v.name, v));
-                }
-                addVariants(quickItems, v);
-            }
+            // LOOK_AT_ME: I don't know what that method does, but it was highlighting lots of blocks on start and so making highlight looks ugly
+
+            //foreach (TileInfo v in info.variants)
+            //{
+            //    if (v.name != info.name)
+            //    {
+            //        v.isHilighting = true;
+            //        quickItems.Add(new HTile(v.name,v));
+            //    }
+            //    addVariants(quickItems, v);
+            //}
         }
         class HTile : IComparable
         {
             private string name;
+            public String Name
+            {
+                get
+                {
+                    return this.name;
+                }
+            }
             public TileInfo Info { get; set; }
             public HTile(string name, TileInfo info)
             {
@@ -3353,21 +3384,32 @@ namespace Terrafirma
 
         private void QuickHiliteToggle_Unchecked(object sender, RoutedEventArgs e)
         {
+            foreach(HTile tile in QuickHilite.ItemsSource){
+                tile.Info.IsHilighting = false;
+            }
             isHilight = false;
             RenderMap();
         }
 
         private void QuickHilite_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            foreach (object obj in QuickHilite.Items)
+            if (((ComboBox)sender).SelectedItem is HTile)
             {
-                HTile info = (HTile)obj;
-                info.Info.isHilighting = false;
+                foreach (object obj in QuickHilite.Items)
+                {
+                    HTile info = (HTile)obj;
+                    info.Info.isHilighting = false;
+                }
+                HTile tile = (HTile)QuickHilite.SelectedItem;
+                tile.Info.isHilighting = true;
+                if (loaded)
+                    RenderMap();
+                foreach (object obj in QuickHilite.Items)
+                {
+                    HTile info = (HTile)obj;
+                    info.Info.isHilighting = false;
+                }
             }
-            HTile tile = (HTile)QuickHilite.SelectedItem;
-            tile.Info.isHilighting = true;
-            if (loaded)
-                RenderMap();
         }
 
         private void Lighting_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -3391,6 +3433,23 @@ namespace Terrafirma
                     break;
             }
             Properties.Settings.Default.Lighting = (byte)Lighting.SelectedIndex;
+            if (loaded)
+                RenderMap();
+        }
+        private void HighlightCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            int hilited = 0;
+            foreach(HTile tile in QuickHilite.ItemsSource){
+                if (tile.Info.IsHilighting == true)
+                {
+                    isHilight = true;
+                    hilited++;
+                }
+            }
+
+            if (hilited == 0) isHilight = false;
+
+            QuickHilite.Focus();
             if (loaded)
                 RenderMap();
         }
