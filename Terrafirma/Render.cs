@@ -441,9 +441,12 @@ namespace Terrafirma
                                 if (tile.u == 18) texw = 14;
 
                             //solid tile adjacent to water
-                            if (tileInfos[tile.type].solid && (tiles[sx - 1, sy].liquid > 0 ||
-                                tiles[sx + 1, sy].liquid > 0 || tiles[sx, sy - 1].liquid > 0 ||
-                                tiles[sx, sy + 1].liquid > 0))
+                            if (tileInfos[tile.type].solid && (
+                                (sx > 0 && tiles[sx - 1, sy].liquid > 0) ||
+                                (sx < tilesWide - 1 && tiles[sx + 1, sy].liquid > 0) || 
+                                (sy > 0 && tiles[sx, sy - 1].liquid > 0) ||
+                                (sy < tilesHigh - 1 && tiles[sx, sy + 1].liquid > 0)
+                                ))
                             {
                                 byte waterMask = 0;
                                 double sideLevel = 0.0;
@@ -454,8 +457,8 @@ namespace Terrafirma
                                 double ypad = 0.0;
                                 //lrtb
                                 int mask = 0;
-                                Tile edge;
-                                if ((edge = tiles[sx - 1, sy]).liquid > 0)
+                                Tile edge = null;
+                                if (sx > 0 && (edge = tiles[sx - 1, sy]).liquid > 0)
                                 {
                                     sideLevel = edge.liquid;
                                     mask |= 8; //left
@@ -466,7 +469,7 @@ namespace Terrafirma
                                     else
                                         waterMask |= 1;
                                 }
-                                if ((edge = tiles[sx + 1, sy]).liquid > 0)
+                                if (sx < tilesWide - 1 && (edge = tiles[sx + 1, sy]).liquid > 0)
                                 {
                                     sideLevel = edge.liquid;
                                     mask |= 4; //right
@@ -477,7 +480,7 @@ namespace Terrafirma
                                     else
                                         waterMask |= 1;
                                 }
-                                if ((edge = tiles[sx, sy - 1]).liquid > 0)
+                                if (sy > 0 && (edge = tiles[sx, sy - 1]).liquid > 0)
                                 {
                                     mask |= 2; //top
                                     if (edge.isLava)
@@ -489,7 +492,7 @@ namespace Terrafirma
                                 }
                                 else if (!edge.isActive || !tileInfos[edge.type].solid)
                                     v = 0; // water has a ripple
-                                if ((edge = tiles[sx, sy + 1]).liquid > 0)
+                                if (sy < tilesHigh - 1 && (edge = tiles[sx, sy + 1]).liquid > 0)
                                 {
                                     if (edge.liquid > 240)
                                         mask |= 1; //bottom is high enough

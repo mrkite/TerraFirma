@@ -71,11 +71,14 @@ namespace Terrafirma
         public static readonly RoutedUICommand Disconnect = new RoutedUICommand(
             "Disconnect from Server", "Disconnect", typeof(MapCommands));
         public static readonly RoutedUICommand ShowStats = new RoutedUICommand(
-            "World Information...", "ShowStats", typeof(MapCommands));
+            "World Information...", "ShowStats", typeof(MapCommands),
+            new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.I, ModifierKeys.Control) }));
         public static readonly RoutedUICommand JumpToDungeon = new RoutedUICommand(
-            "Jump to Dungeon", "JumpToDungeon", typeof(MapCommands));
+            "Jump to Dungeon", "JumpToDungeon", typeof(MapCommands),
+            new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F7) }));
         public static readonly RoutedUICommand FindItem = new RoutedUICommand(
-            "Find Item", "FindItem", typeof(MapCommands));
+            "Find Item", "FindItem", typeof(MapCommands),
+            new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F8) }));
         public static readonly RoutedUICommand About = new RoutedUICommand(
             "About Terrafirma...", "About", typeof(MapCommands));
     }
