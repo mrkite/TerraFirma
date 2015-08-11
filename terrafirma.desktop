@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Terrafirma
+Name[en_US]=Terrafirma
+GenericName=Terraria Mapping Tool
+Exec=terrafirma
+Icon=terrafirma
+Terminal=false
+Categories=Utility;Amusement;

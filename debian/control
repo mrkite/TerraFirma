@@ -1,0 +1,13 @@
+Source: terrafirma
+Section: utils
+Priority: extra
+Maintainer: Sean Kasun <sean@seancode.com>
+Build-Depends: debhelper (>= 8), qtbase5-dev, qt5-qmake, qtchooser, zlib1g-dev
+Standards-Version: 3.9.6
+Homepage: http://seancode.com/terrafirma/
+
+Package: terrafirma
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Terraria mapping tool
+ Terrafirma can display and explore your terraria worlds.

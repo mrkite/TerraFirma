@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>terrafirma.png</file>
+        <file>res/globals.json</file>
+        <file>res/header.json</file>
+        <file>res/items.json</file>
+        <file>res/npcs.json</file>
+        <file>res/prefixes.json</file>
+        <file>res/tiles.json</file>
+        <file>res/walls.json</file>
+        <file>res/shaders/tiles_fs.glsl</file>
+        <file>res/shaders/tiles_vs.glsl</file>
+        <file>res/shaders/water_fs.glsl</file>
+        <file>res/shaders/water_vs.glsl</file>
+        <file>res/shaders/fog_fs.glsl</file>
+        <file>res/shaders/fog_vs.glsl</file>
+        <file>res/shaders/flat_fs.glsl</file>
+        <file>res/shaders/flat_vs.glsl</file>
+    </qresource>
+</RCC>
