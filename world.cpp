@@ -322,6 +322,17 @@ void World::loadPlayer() {
   QString path = player.left(player.lastIndexOf("."));
   path += QDir::toNativeSeparators(QString("/%1.map")
                                    .arg(header["worldID"]->toInt()));
+  QDir dir(path);
+
+  if (!dir.exists()) {
+    int offset = 0;
+    for (int y = 0; y < tilesHigh; y++) {
+      for (int x = 0; x < tilesWide; x++, offset++) {
+        tiles[offset].setSeen(true);
+      }
+    }
+    return;
+  }
 
   auto handle = QSharedPointer<Handle>(new Handle(path));
   int version = handle->r32();
