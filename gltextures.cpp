@@ -81,7 +81,7 @@ QSharedPointer<QOpenGLTexture> GLTextures::get(int type, int cropw, int croph) {
         textures[type] = load(QString("Armor_Body_%1").arg(num), cropw, croph);
         break;
       case ArmorFemale:
-        textures[type] = load(QString("Armor_Female_%1").arg(num),
+        textures[type] = load(QString("Female_Body_%1").arg(num),
                               cropw, croph);
         break;
       case ArmorLegs:

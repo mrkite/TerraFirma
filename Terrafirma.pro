@@ -64,7 +64,6 @@ win32:SOURCES += zlib/adler32.c \
     zlib/deflate.c \
     zlib/gzclose.c \
     zlib/gzlib.c \
-    zlib/gzlib.c \
     zlib/gzread.c \
     zlib/gzwrite.c \
     zlib/infback.c \
@@ -79,6 +78,7 @@ win32:SOURCES += zlib/adler32.c \
 unix:QMAKE_CXXFLAGS += -std=c++11
 unix:LIBS += -lz
 macx:ICON = icon.icns
+win32:RC_FILE += winicon.rc
 
 RESOURCES += \
     terrafirma.qrc
