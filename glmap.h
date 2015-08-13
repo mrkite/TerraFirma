@@ -8,15 +8,18 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 #include <QMatrix4x4>
+#include <QThread>
 #include "./render.h"
 #include "./world.h"
 #include "./chestview.h"
 #include "./signview.h"
 
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
+QT_FORWARD_DECLARE_CLASS(StatusThread)
 
 class GLMap : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
+  friend class StatusThread;
 
  public:
   explicit GLMap(QWidget *parent = 0);
@@ -85,6 +88,8 @@ class GLMap : public QOpenGLWidget, public QOpenGLFunctions {
   bool fullReset;
   QPoint lastMouse;
   bool dragging;
+  StatusThread *runningStatusThread;
+  StatusThread *queuedStatusThread;
 
   ChestView *chestView;
   SignView *signView;
@@ -98,6 +103,23 @@ class GLMap : public QOpenGLWidget, public QOpenGLFunctions {
   int flatW, flatH;
   QOpenGLTexture *flat;
   quint8 *flatData;
+  
+private slots:
+  void startQueuedStatusThread();
+};
+
+
+
+class StatusThread : public QThread {
+  Q_OBJECT
+  const GLMap *map;
+  const QMouseEvent *event;
+  void run();
+public:
+  StatusThread(GLMap *parent, const QMouseEvent *e)
+    : QThread(parent), map(parent), event(e) {}
+signals:
+  void status(const QString &s);
 };
 
 #endif  // GLMAP_H_

@@ -44,6 +44,8 @@ GLMap::GLMap(QWidget *parent) : QOpenGLWidget(parent) {
   program = waterProgram = fogProgram = flatProgram = 0;
   chestView = NULL;
   signView = NULL;
+  runningStatusThread = nullptr;
+  queuedStatusThread = nullptr;
 }
 
 GLMap::~GLMap() {
@@ -358,31 +360,48 @@ void GLMap::mousePressEvent(QMouseEvent *event) {
   dragging = true;
 }
 
+void GLMap::startQueuedStatusThread() {
+  if (!queuedStatusThread) return;
+  runningStatusThread = queuedStatusThread;
+  queuedStatusThread = nullptr;
+  connect(runningStatusThread, SIGNAL(status(QString)), this, SIGNAL(status(QString)));
+  connect(runningStatusThread, SIGNAL(finished()), this, SLOT(startQueuedStatusThread()));
+  //connect(runningStatusThread, SIGNAL(finished()), runningStatusThread, SLOT(deleteLater()));
+  runningStatusThread->start();
+}
+
+void StatusThread::run() {
+  QMatrix4x4 m = map->projection.inverted();
+  QVector3D mouse = m.map(QVector3D(
+      static_cast<float>(event->x()) / (map->width / 2.0) - 1.0f,
+      static_cast<float>(map->height - event->y()) / (map->height / 2.0) - 1.0f,
+      0.0f));
+  int x = mouse.x();
+  int y = mouse.y();
+  if (x >= 0 && y >= 0 && x < map->world->tilesWide && y < map->world->tilesHigh) {
+    auto tile = &map->world->tiles[y * map->world->tilesWide + x];
+    if (map->fogOfWarEnabled && !tile->seen()) {
+      emit status(QString("%1,%2 - Murky Blackness").arg(x).arg(y));
+    } else if (tile->active()) {
+      auto info = map->world->info[tile];
+      emit status(QString("%1,%2 - %3 (%4)").arg(x).arg(y)
+                  .arg(info->name).arg(tile->color));
+    } else if (tile->wall > 0) {
+      auto info = map->world->info.walls[tile->wall];
+      emit status(QString("%1,%2 - %3").arg(x).arg(y)
+                  .arg(info->name));
+    } else {
+      emit status(QString("%1,%2").arg(x).arg(y));
+    }
+  }
+}
+
 void GLMap::mouseMoveEvent(QMouseEvent *event) {
   if (!isEnabled()) return;
   if (!dragging) {
-    QMatrix4x4 m = projection.inverted();
-    QVector3D mouse = m.map(QVector3D(
-        static_cast<float>(event->x()) / (width / 2.0) - 1.0f,
-        static_cast<float>(height - event->y()) / (height / 2.0) - 1.0f,
-        0.0f));
-    int x = mouse.x();
-    int y = mouse.y();
-    if (x >= 0 && y >= 0 && x < world->tilesWide && y < world->tilesHigh) {
-      auto tile = &world->tiles[y * world->tilesWide + x];
-      if (fogOfWarEnabled && !tile->seen()) {
-        emit status(QString("%1,%2 - Murky Blackness").arg(x).arg(y));
-      } else if (tile->active()) {
-        auto info = world->info[tile];
-        emit status(QString("%1,%2 - %3 (%4)").arg(x).arg(y)
-                    .arg(info->name).arg(tile->color));
-      } else if (tile->wall > 0) {
-        auto info = world->info.walls[tile->wall];
-        emit status(QString("%1,%2 - %3").arg(x).arg(y)
-                    .arg(info->name));
-      } else {
-        emit status(QString("%1,%2").arg(x).arg(y));
-      }
+    queuedStatusThread = new StatusThread(this, event);
+    if (!runningStatusThread || !runningStatusThread->isRunning()) {
+      startQueuedStatusThread();
     }
     return;
   }
