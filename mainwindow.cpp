@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QDebug>
+#include <QLabel>
 #include "./mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "./handle.h"
@@ -25,8 +26,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     findChests = NULL;
     hilite = NULL;
 
+    QLabel *status = new QLabel();
+    ui->statusBar->addWidget(status, 1);
+
     connect(ui->map, SIGNAL(error(QString)),
             this, SLOT(showError(QString)));
+
+    connect(ui->map, SIGNAL(status(QString)),
+            status, SLOT(setText(QString)), Qt::DirectConnection);
 
     settings = new SettingsDialog(this);
     connect(settings, SIGNAL(accepted()), this, SLOT(resetPaths()));
@@ -45,8 +52,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
     connect(world.data(), SIGNAL(loadError(QString)),
             this, SLOT(showError(QString)));
-    connect(world.data(), SIGNAL(status(QString, int)),
-            ui->statusBar, SLOT(showMessage(QString, int)));
+    connect(world.data(), SIGNAL(status(QString)),
+            status, SLOT(setText(QString)));
     connect(world.data(), SIGNAL(loaded(bool)),
             this, SLOT(setNPCs(bool)));
 

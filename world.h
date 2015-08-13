@@ -106,7 +106,7 @@ class World : public QObject, public QRunnable {
 
  signals:
   void loaded(bool loaded);
-  void status(QString msg, int num);
+  void status(QString msg);
   void loadError(QString reason);
 
  protected:

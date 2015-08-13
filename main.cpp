@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   app.installTranslator(&translator);
 
   app.setApplicationName("Terrafirma");
-  app.setApplicationVersion("3.0.3");
+  app.setApplicationVersion("3.0.4");
   app.setOrganizationName("seancode");
 
   MainWindow w;

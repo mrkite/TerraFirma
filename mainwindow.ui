@@ -40,7 +40,7 @@
      <x>0</x>
      <y>0</y>
      <width>640</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTerrafirma">
@@ -741,22 +741,6 @@
     <hint type="destinationlabel">
      <x>199</x>
      <y>150</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>map</sender>
-   <signal>status(QString)</signal>
-   <receiver>statusBar</receiver>
-   <slot>showMessage(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>199</x>
-     <y>150</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>199</x>
-     <y>289</y>
     </hint>
    </hints>
   </connection>

@@ -370,6 +370,8 @@ void GLMap::mouseMoveEvent(QMouseEvent *event) {
     int y = mouse.y();
     if (x >= 0 && y >= 0 && x < world->tilesWide && y < world->tilesHigh) {
       auto tile = &world->tiles[y * world->tilesWide + x];
+
+
       if (fogOfWarEnabled && !tile->seen()) {
         emit status(QString("%1,%2 - Murky Blackness").arg(x).arg(y));
       } else if (tile->active()) {

@@ -128,7 +128,7 @@ void World::loadTiles(QSharedPointer<Handle> handle, int version,
                       const QList<bool> &extra) {
   for (int x = 0; x < tilesWide; x++) {
     emit status(tr("Reading tiles: %1%").arg(
-        static_cast<int>(x * 100.0f / tilesWide)), 0);
+        static_cast<int>(x * 100.0f / tilesWide)));
     int offset = x;
     for (int y = 0; y < tilesHigh; y++) {
       int rle = tiles[offset].load(handle, version, extra);
@@ -144,7 +144,7 @@ void World::loadTiles(QSharedPointer<Handle> handle, int version,
 
 void World::loadChests(QSharedPointer<Handle> handle, int) {
   chests.clear();
-  emit status("Loading Chests...", 0);
+  emit status("Loading Chests...");
   int numChests = handle->r16();
   int itemsPerChest = handle->r16();
   for (int i = 0; i < numChests; i++) {
@@ -168,7 +168,7 @@ void World::loadChests(QSharedPointer<Handle> handle, int) {
 
 void World::loadSigns(QSharedPointer<Handle> handle, int) {
   signs.clear();
-  emit status("Loading Signs...", 0);
+  emit status("Loading Signs...");
   int numSigns = handle->r16();
   for (int i = 0; i < numSigns; i++) {
     Sign sign;
@@ -181,7 +181,7 @@ void World::loadSigns(QSharedPointer<Handle> handle, int) {
 
 void World::loadNPCs(QSharedPointer<Handle> handle, int version) {
   npcs.clear();
-  emit status("Loading NPCs...", 0);
+  emit status("Loading NPCs...");
   while (handle->r8()) {
     NPC npc;
     npc.title = handle->rs();
