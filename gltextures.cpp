@@ -112,7 +112,7 @@ QSharedPointer<QOpenGLTexture> GLTextures::get(int type, int cropw, int croph) {
       case Wire:
         name = "Wires";
         if (num)
-          name = QString("Wires%1").arg(num);
+          name = QString("Wires%1").arg(num + 1);
         textures[type] = load(name, cropw, croph);
         break;
     }

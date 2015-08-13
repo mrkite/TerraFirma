@@ -1127,8 +1127,22 @@ void GLMap::drawNPCs() {
 }
 
 static quint16 wireuvs[] = {
-  0, 54, 72, 36, 54, 36, 18, 0, 18, 36, 0, 36, 72, 18, 72, 0,
-  36, 36, 36, 18, 54, 18, 0, 18, 0, 0, 36, 0, 54, 0, 18, 18
+  0, 54,  //....
+  72, 36, //...r
+  54, 36, //..l.
+  18, 0,  //..lr
+  18, 36, //.d..
+  0, 36,  //.d.r
+  72, 18, //.dl.
+  72, 0,  //.dlr
+  36, 36, //u...
+  36, 18, //u..r
+  54, 18, //u.l.
+  0, 18,  //u.lr
+  0, 0,   //ud..
+  36, 0,  //ud.r
+  54, 0,  //udl.
+  18, 18  //udlr
 };
 
 void GLMap::drawWires() {
@@ -1140,8 +1154,8 @@ void GLMap::drawWires() {
       if (fogOfWarEnabled && !tile->seen()) continue;
 
       if (tile->actuator()) {
-        render.add(GLTextures::Actuator, x * 16, y * 16, 16, 16, 0, 0, 7.0f,
-                   0, 1.0f, 1.0f, 1.0f);
+        render.add(GLTextures::Actuator, x * 16, y * 16, 16, 16, 0, 0, 7.6f,
+                   0, false);
       }
       if (tile->redWire()) {
         int mask = 0;
@@ -1156,8 +1170,8 @@ void GLMap::drawWires() {
           mask |= 8;
 
         render.add(GLTextures::Wire | 0, x * 16, y * 16, 16, 16,
-                   wireuvs[mask * 2], wireuvs[mask * 2 + 1], 7.1f,
-                   0, 1.0f, 1.0f, 1.0f);
+                   wireuvs[mask * 2], wireuvs[mask * 2 + 1], 7.0f,
+                   0, false);
       }
       if (tile->greenWire()) {
         int mask = 0;
@@ -1173,7 +1187,7 @@ void GLMap::drawWires() {
 
         render.add(GLTextures::Wire | 1,  x * 16, y * 16, 16, 16,
                    wireuvs[mask * 2], wireuvs[mask * 2 + 1], 7.2f,
-                   0, 1.0f, 1.0f, 1.0f);
+                   0, false);
       }
       if (tile->blueWire()) {
         int mask = 0;
@@ -1188,8 +1202,8 @@ void GLMap::drawWires() {
           mask |= 8;
 
         render.add(GLTextures::Wire | 2, x * 16, y * 16, 16, 16,
-                   wireuvs[mask * 2], wireuvs[mask * 2 + 1], 7.3f,
-                   0, 1.0f, 1.0f, 1.0f);
+                   wireuvs[mask * 2], wireuvs[mask * 2 + 1], 7.4f,
+                   0, false);
       }
     }
   }
