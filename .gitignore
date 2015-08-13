@@ -28,3 +28,5 @@ build/
 *.wixobj
 *.wixpdb
 *.msi
+*.zip
+*.exe

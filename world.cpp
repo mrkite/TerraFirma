@@ -322,9 +322,9 @@ void World::loadPlayer() {
   QString path = player.left(player.lastIndexOf("."));
   path += QDir::toNativeSeparators(QString("/%1.map")
                                    .arg(header["worldID"]->toInt()));
-  QDir dir(path);
+  QDir dir;
 
-  if (!dir.exists()) {
+  if (!dir.exists(path)) {
     int offset = 0;
     for (int y = 0; y < tilesHigh; y++) {
       for (int x = 0; x < tilesWide; x++, offset++) {
