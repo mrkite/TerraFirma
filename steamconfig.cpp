@@ -19,9 +19,9 @@ SteamConfig::SteamConfig() {
                      QSettings::NativeFormat);
   QString path = settings.value("SteamPath").toString();
   if (path.isEmpty()) {
-    path =  QStandardPaths::standardLocations(QStandardPaths::HomeLocation)
+    path =  QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation)
         .first();
-    path += QDir::toNativeSeparators("/.local/share/Steam");
+    path += QDir::toNativeSeparators("/Steam");
   }
   path += QDir::toNativeSeparators("/config/config.vdf");
   QFile file(path);

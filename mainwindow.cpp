@@ -210,66 +210,80 @@ void MainWindow::jumpNPC() {
 
 void MainWindow::scanWorlds() {
   ui->menuOpen_World->clear();
-  QDir dir(settings->getWorlds());
-
-  QDirIterator it(dir);
+  bool enabled = false;
   int key = 0;
-  QList<QAction *> actions;
-  while (it.hasNext()) {
-    it.next();
-    if (it.fileName().endsWith(".wld")) {
-      QString name = worldName(it.filePath());
-      if (!name.isNull()) {
-        QAction *w = new QAction(this);
-        w->setText(name);
-        w->setData(it.filePath());
-        if (key < 9) {
-          w->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1 + key++));
-          w->setShortcutContext(Qt::ApplicationShortcut);
+  for (const QString &worldDir : settings->getWorlds()) {
+    QDir dir(worldDir);
+  
+    QDirIterator it(dir);
+    QList<QAction *> actions;
+    while (it.hasNext()) {
+      it.next();
+      if (it.fileName().endsWith(".wld")) {
+        QString name = worldName(it.filePath());
+        if (!name.isNull()) {
+          QAction *w = new QAction(this);
+          w->setText(name);
+          w->setData(it.filePath());
+          if (key < 9) {
+            w->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1 + key++));
+            w->setShortcutContext(Qt::ApplicationShortcut);
+          }
+          connect(w, SIGNAL(triggered()),
+                  this, SLOT(openWorld()));
+          actions.append(w);
         }
-        connect(w, SIGNAL(triggered()),
-                this, SLOT(openWorld()));
-        actions.append(w);
       }
     }
+    if (!actions.isEmpty()) {
+      ui->menuOpen_World->addSection(worldDir);
+      ui->menuOpen_World->addActions(actions);
+      enabled = true;
+    }
   }
-  ui->menuOpen_World->addActions(actions);
-  ui->menuOpen_World->setDisabled(actions.isEmpty());
+  ui->menuOpen_World->setDisabled(!enabled);
 }
 
 void MainWindow::scanPlayers() {
   ui->menuSelect_Player->clear();
-
-  QDir dir(settings->getPlayers());
-
-  QActionGroup *group = new QActionGroup(this);
-
-  bool checked = false;
-  QDirIterator it(dir);
-  QList<QAction *> actions;
-  while (it.hasNext()) {
-    it.next();
-    if (it.fileName().endsWith(".plr")) {
-      QString name = playerName(it.filePath());
-      if (!name.isNull()) {
-        QAction *p = new QAction(this);
-        p->setCheckable(true);
-        p->setActionGroup(group);
-        p->setText(name);
-        p->setData(it.filePath());
-        connect(p, SIGNAL(triggered()),
-                this, SLOT(selectPlayer()));
-        if (!checked) {
-          p->setChecked(true);
-          p->trigger();
+  
+  bool enabled = false;
+  for (const QString &playerDir : settings->getPlayers()) {
+    QDir dir(playerDir);
+  
+    QActionGroup *group = new QActionGroup(this);
+  
+    bool checked = false;
+    QDirIterator it(dir);
+    QList<QAction *> actions;
+    while (it.hasNext()) {
+      it.next();
+      if (it.fileName().endsWith(".plr")) {
+        QString name = playerName(it.filePath());
+        if (!name.isNull()) {
+          QAction *p = new QAction(this);
+          p->setCheckable(true);
+          p->setActionGroup(group);
+          p->setText(name);
+          p->setData(it.filePath());
+          connect(p, SIGNAL(triggered()),
+                  this, SLOT(selectPlayer()));
+          if (!checked) {
+            p->setChecked(true);
+            p->trigger();
+          }
+          checked = true;
+          actions.append(p);
         }
-        checked = true;
-        actions.append(p);
       }
     }
+    if (!actions.isEmpty()) {
+      ui->menuOpen_World->addSection(playerDir);
+      ui->menuSelect_Player->addActions(actions);
+      enabled = true;
+    }
   }
-  ui->menuSelect_Player->addActions(actions);
-  ui->menuSelect_Player->setDisabled(actions.isEmpty());
+  ui->menuSelect_Player->setDisabled(!enabled);
 }
 
 QString MainWindow::worldName(QString path) {
