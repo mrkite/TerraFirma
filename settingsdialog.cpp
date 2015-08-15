@@ -66,7 +66,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
   QStringList steamWorldDirs;
   QDir userDir = QDir(steamDir.absoluteFilePath("userdata"));
   for (const QFileInfo dir : userDir.entryInfoList(QDir::NoDotAndDotDot | QDir::Dirs)) {
-    steamWorldDirs += QDir(dir.absoluteFilePath()).absoluteFilePath("105600/remote/worlds");
+    QString steamWorldDir = QDir(dir.absoluteFilePath()).absoluteFilePath("105600/remote/worlds");
+    if (QDir(steamWorldDir).exists())
+      steamWorldDirs += steamWorldDir;
   }
   
   defaultSaves = QStringList(worldDir.absolutePath()) + steamWorldDirs;
@@ -157,7 +159,8 @@ QStringList SettingsDialog::getPlayers() {
   for (const QString &worldDir : getWorlds()) {
     QDir dir(worldDir);
     dir.cdUp();
-    dir.cd("Players");
+    if (!dir.cd("Players"))
+      dir.cd("players");
     ret += dir.absolutePath();
   }
   return ret;
