@@ -19,58 +19,52 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
   // autodetect paths
 
   SteamConfig steam;
-  
-  //TODO: works?
+
   QDir steamDir = QDir(steam["software/valve/steam/baseinstallfolder_1"]);
-  
-  if (steamDir.relativeFilePath(".") == "." || !steamDir.exists()) {
+  // check if the path is empty before calling anything that acts on it
+  // otherwise qdir complains
+  if (steamDir.path().isEmpty() || !steamDir.exists()) {
     // find the OS's application folder
-    steamDir = QDir(
-          QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation)
-          .first());
-    if (!steamDir.cd("Steam")) steamDir = QDir();
+    steamDir.setPath(QStandardPaths::standardLocations(
+          QStandardPaths::ApplicationsLocation).first());
+    steamDir.setPath(steamDir.absoluteFilePath("Steam"));
   }
-  if (steamDir.relativeFilePath(".") == "." || !steamDir.exists()) {
+  if (!steamDir.exists()) {
     // find the home folder
-    steamDir = QDir(
-          QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation)
-          .first());
-    if (!steamDir.cd("Steam")) steamDir = QDir();
+    steamDir.setPath(QStandardPaths::standardLocations(
+          QStandardPaths::GenericDataLocation).first());
+    steamDir.setPath(steamDir.absoluteFilePath("Steam"));
   }
-  
-  // see if steam has a set install dir for terraria
-  //TODO: works?
+
   QDir terrariaDir = QDir(steam["software/valve/steam/apps/105600/installdir"]);
-  
-  if (terrariaDir.relativeFilePath(".") == "." || !terrariaDir.exists()) {
-    terrariaDir = QDir(steamDir.absoluteFilePath("SteamApps/common/Terraria"));
-  }
-  
+  if (terrariaDir.path().isEmpty() || !terrariaDir.exists())
+    terrariaDir.setPath(steamDir.absoluteFilePath("SteamApps/common/Terraria"));
+
   defaultTextures = "";
   if (terrariaDir.exists())
     defaultTextures = terrariaDir.absoluteFilePath("Content/Images");
-  
+
   QDir worldDir = QDir(
         QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)
         .first());
-  worldDir = QDir(worldDir.absoluteFilePath("My Games/Terraria/Worlds"));
+  worldDir.setPath(worldDir.absoluteFilePath("My Games/Terraria/Worlds"));
   if (!worldDir.exists()) {
     // try linux path
-    worldDir = QDir(
-          QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation)
-          .first());
-    worldDir.cd("Terraria");
-    worldDir.cd("Worlds");
+    worldDir.setPath(QStandardPaths::standardLocations(
+                          QStandardPaths::GenericDataLocation).first());
+    worldDir.setPath(worldDir.absoluteFilePath("Terraria/Worlds"));
   }
-  
+
   QStringList steamWorldDirs;
   QDir userDir = QDir(steamDir.absoluteFilePath("userdata"));
-  for (const QFileInfo dir : userDir.entryInfoList(QDir::NoDotAndDotDot | QDir::Dirs)) {
-    QString steamWorldDir = QDir(dir.absoluteFilePath()).absoluteFilePath("105600/remote/worlds");
+  for (const QFileInfo dir : userDir.entryInfoList(QDir::NoDotAndDotDot |
+                                                   QDir::Dirs)) {
+    QString steamWorldDir = QDir(dir.absoluteFilePath()).
+        absoluteFilePath("105600/remote/worlds");
     if (QDir(steamWorldDir).exists())
       steamWorldDirs += steamWorldDir;
   }
-  
+
   defaultSaves = QStringList(worldDir.absolutePath()) + steamWorldDirs;
 
   QSettings info;
@@ -159,7 +153,7 @@ QStringList SettingsDialog::getPlayers() {
   for (const QString &worldDir : getWorlds()) {
     QDir dir(worldDir);
     dir.cdUp();
-    if (!dir.cd("Players"))
+    if (!dir.cd("Players"))  // case-sensitive linux
       dir.cd("players");
     ret += dir.absolutePath();
   }
