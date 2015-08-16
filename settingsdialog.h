@@ -17,8 +17,8 @@ class SettingsDialog : public QDialog {
   ~SettingsDialog();
 
   QString getTextures();
-  QString getWorlds();
-  QString getPlayers();
+  QStringList getWorlds();
+  QStringList getPlayers();
 
  public slots:
   void show();
@@ -30,7 +30,8 @@ class SettingsDialog : public QDialog {
 
  private:
   Ui::SettingsDialog *ui;
-  QString defaultTextures, defaultSave, customTextures, customSave;
+  QStringList defaultSaves;
+  QString defaultTextures, customTextures, customSave;
   bool useDefTex, useDefSave;
 };
 

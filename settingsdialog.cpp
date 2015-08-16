@@ -19,49 +19,63 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
   // autodetect paths
 
   SteamConfig steam;
-  // see if steam has a set install dir for terraria
-  QString path = steam["software/valve/steam/apps/105600/installdir"];
-
-  QDir dir;
-
-  if (path.isEmpty() || !dir.exists(path)) {
-    // find steam's install dir
-    path = steam["software/valve/steam/baseinstallfolder_1"];
-    path += QDir::toNativeSeparators("/steamapps/common/terraria");
-  }
-  if (path.isEmpty() || !dir.exists(path)) {
+  
+  //TODO: works?
+  QDir steamDir = QDir(steam["software/valve/steam/baseinstallfolder_1"]);
+  
+  if (steamDir.relativeFilePath(".") == "." || !steamDir.exists()) {
     // find the OS's application folder
-    path = QStandardPaths::standardLocations(
-        QStandardPaths::ApplicationsLocation).first();
-    path += QDir::toNativeSeparators("/Steam/steamapps/common/terraria");
+    steamDir = QDir(
+          QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation)
+          .first());
+    if (!steamDir.cd("Steam")) steamDir = QDir();
   }
-  if (path.isEmpty() || !dir.exists(path)) {
+  if (steamDir.relativeFilePath(".") == "." || !steamDir.exists()) {
     // find the home folder
-    path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation)
-        .first();
-    path += QDir::toNativeSeparators(
-        "/.local/share/Steam/SteamApps/common/Terraria");
+    steamDir = QDir(
+          QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation)
+          .first());
+    if (!steamDir.cd("Steam")) steamDir = QDir();
   }
-  if (!path.isEmpty())
-    path += QDir::toNativeSeparators("/Content/Images");
-
-  defaultTextures = path;
-
-  path = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)
-      .first();
-  path += QDir::toNativeSeparators("/My Games/Terraria/Worlds");
-  if (!dir.exists()) {
+  
+  // see if steam has a set install dir for terraria
+  //TODO: works?
+  QDir terrariaDir = QDir(steam["software/valve/steam/apps/105600/installdir"]);
+  
+  if (terrariaDir.relativeFilePath(".") == "." || !terrariaDir.exists()) {
+    terrariaDir = QDir(steamDir.absoluteFilePath("SteamApps/common/Terraria"));
+  }
+  
+  defaultTextures = "";
+  if (terrariaDir.exists())
+    defaultTextures = terrariaDir.absoluteFilePath("Content/Images");
+  
+  QDir worldDir = QDir(
+        QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)
+        .first());
+  worldDir = QDir(worldDir.absoluteFilePath("My Games/Terraria/Worlds"));
+  if (!worldDir.exists()) {
     // try linux path
-
-    path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation)
-        .first();
-    path += QDir::toNativeSeparators("/My Games/Terraria/Worlds");
+    worldDir = QDir(
+          QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation)
+          .first());
+    worldDir.cd("Terraria");
+    worldDir.cd("Worlds");
   }
-  defaultSave = path;
+  
+  QStringList steamWorldDirs;
+  QDir userDir = QDir(steamDir.absoluteFilePath("userdata"));
+  for (const QFileInfo dir : userDir.entryInfoList(QDir::NoDotAndDotDot | QDir::Dirs)) {
+    QString steamWorldDir = QDir(dir.absoluteFilePath()).absoluteFilePath("105600/remote/worlds");
+    if (QDir(steamWorldDir).exists())
+      steamWorldDirs += steamWorldDir;
+  }
+  
+  defaultSaves = QStringList(worldDir.absolutePath()) + steamWorldDirs;
 
   QSettings info;
   useDefSave = info.value("useDefSave", true).toBool();
-  customSave = info.value("customSave", defaultSave).toString();
+  customSave = info.value("customSave", defaultSaves[0]).toString();
   useDefTex = info.value("useDefTex", true).toBool();
   customTextures = info.value("customTextures", defaultTextures).toString();
 }
@@ -73,7 +87,7 @@ SettingsDialog::~SettingsDialog() {
 void SettingsDialog::show() {
   ui->defaultSavePath->setChecked(useDefSave);
   if (useDefSave)
-    ui->savePath->setText(defaultSave);
+    ui->savePath->setText(defaultSaves.join(",\n"));
   else
     ui->savePath->setText(customSave);
   ui->defaultTexturePath->setChecked(useDefTex);
@@ -136,13 +150,18 @@ QString SettingsDialog::getTextures() {
   return useDefTex ? defaultTextures : customTextures;
 }
 
-QString SettingsDialog::getWorlds() {
-  return useDefSave ? defaultSave : customSave;
+QStringList SettingsDialog::getWorlds() {
+  return useDefSave ? defaultSaves : QStringList(customSave);
 }
 
-QString SettingsDialog::getPlayers() {
-  QDir dir(getWorlds());
-  dir.cdUp();
-  dir.cd("Players");
-  return dir.absolutePath();
+QStringList SettingsDialog::getPlayers() {
+  QStringList ret;
+  for (const QString &worldDir : getWorlds()) {
+    QDir dir(worldDir);
+    dir.cdUp();
+    if (!dir.cd("Players"))
+      dir.cd("players");
+    ret += dir.absolutePath();
+  }
+  return ret;
 }
