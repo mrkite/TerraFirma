@@ -8,6 +8,7 @@
 #include <QStandardPaths>
 #include <QFileDialog>
 #include <QSettings>
+#include <QDebug>
 #include "./settingsdialog.h"
 #include "./ui_settingsdialog.h"
 #include "./steamconfig.h"
@@ -20,10 +21,12 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
 
   SteamConfig steam;
 
-  QDir steamDir = QDir(steam["software/valve/steam/baseinstallfolder_1"]);
+  QString baseInstall = steam["software/valve/steam/baseinstallfolder_1"];
+
+  QDir steamDir = QDir(baseInstall);
   // check if the path is empty before calling anything that acts on it
   // otherwise qdir complains
-  if (steamDir.path().isEmpty() || !steamDir.exists()) {
+  if (baseInstall.isEmpty() || !steamDir.exists()) {
     // find the OS's application folder
     steamDir.setPath(QStandardPaths::standardLocations(
           QStandardPaths::ApplicationsLocation).first());
@@ -36,8 +39,9 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
     steamDir.setPath(steamDir.absoluteFilePath("Steam"));
   }
 
-  QDir terrariaDir = QDir(steam["software/valve/steam/apps/105600/installdir"]);
-  if (terrariaDir.path().isEmpty() || !terrariaDir.exists())
+  QString installDir = steam["software/valve/steam/apps/105600/installdir"];
+  QDir terrariaDir = QDir(installDir);
+  if (installDir.isEmpty() || !terrariaDir.exists())
     terrariaDir.setPath(steamDir.absoluteFilePath("SteamApps/common/Terraria"));
 
   defaultTextures = "";
