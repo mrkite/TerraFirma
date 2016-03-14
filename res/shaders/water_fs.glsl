@@ -3,13 +3,13 @@
 in vec2 uv;
 in float alpha;
 
-uniform sampler2D texture;
+uniform sampler2D txtr;
 uniform bool hiliting;
 
 out vec4 color;
 
 void main() {
-  vec4 c = texture2D(texture, uv);
+  vec4 c = texture(txtr, uv);
   c.a = alpha;
   if (c.a < 0.1)
     discard;

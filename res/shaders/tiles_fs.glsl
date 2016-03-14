@@ -4,13 +4,13 @@ in vec2 uv;
 in float hilite;
 in float paint;
 
-uniform sampler2D texture;
+uniform sampler2D txtr;
 uniform bool hiliting;
 
 out vec4 color;
 
 void main() {
-  vec4 c = texture2D(texture, uv);
+  vec4 c = texture(txtr, uv);
 
   int paintgroup = int(paint);
   // only paint grass
