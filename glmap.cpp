@@ -11,6 +11,7 @@
 #include <QMouseEvent>
 #include <QSettings>
 #include <QSurfaceFormat>
+#include <cmath>
 #include "./uvrules.h"
 
 /*
