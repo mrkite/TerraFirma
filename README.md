@@ -62,17 +62,23 @@ $ pbuilder-dist vivid build *.dsc
 Building on OSX:
 ----------------
 
-Make a static compile of Qt by downloading the source and then:
+Make a static compile of Qt 5.5:
 
 ```console
-$ cd qtbase
+$ git clone https://code.qt.io/qt/qt5.git
+$ cd qt5
+$ perl init-repository --module-subset=default,-qtwebkit,-qtwebkit-examples,-qtwebengine
+(wait forever)
+$ git checkout 5.5
 $ ./configure -prefix $PWD -opensource -confirm-license -nomake tests -nomake examples -release -static
 $ make
+(wait forever)
 ```
 
 Then compile Terrafirma:
 
 ```console
-$ qbase/bin/qmake
+$ cd TerraFirma
+$ ~/qt5/qtbase/bin/qmake
 $ make
 ```
