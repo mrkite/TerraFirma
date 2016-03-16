@@ -5,6 +5,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = terrafirma
 TEMPLATE = app
 
+macx:CONFIG += c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -86,9 +87,13 @@ RESOURCES += \
 DISTFILES +=
 
 
-desktopfile.path = /usr/share/applications
+!macx:desktopfile.path = /usr/share/applications
+macx:desktopfile.path = ~/Desktop
 desktopfile.files = terrafirma.desktop
-pixmapfile.path = /usr/share/pixmaps
+!macx:pixmapfile.path = /usr/share/pixmaps
+macx:pixmapfile.path = /usr/local/share/pixmaps
 pixmapfile.files = terrafirma.png
-target.path = /usr/bin
-INSTALLS += desktopfile pixmapfile target
+!macx:target.path = /usr/bin
+macx:target.path = ~/Applications
+!macx:INSTALLS += desktopfile pixmapfile target
+macx:INSTALLS += pixmapfile target
