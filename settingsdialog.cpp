@@ -46,7 +46,12 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
 
   defaultTextures = "";
   if (terrariaDir.exists())
+#if 0
     defaultTextures = terrariaDir.absoluteFilePath("Content/Images");
+#else
+    // For MacOS
+    defaultTextures = terrariaDir.absoluteFilePath("Terraria.app/Contents/MacOS/Content/Images");
+#endif
 
   QDir worldDir = QDir(
         QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)
