@@ -151,7 +151,7 @@ void MainWindow::showAbout() {
                         "&copy; Copyright %3, %4")
                      .arg(qApp->applicationName())
                      .arg(qApp->applicationVersion())
-                     .arg(2015)
+                     .arg(2016)
                      .arg(qApp->organizationName()));
 }
 
