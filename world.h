@@ -23,6 +23,7 @@ class Tile {
   bool redWire() const;
   bool blueWire() const;
   bool greenWire() const;
+  bool yellowWire() const;
   bool half() const;
   bool actuator() const;
   bool inactive() const;

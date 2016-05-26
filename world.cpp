@@ -562,6 +562,8 @@ int Tile::load(QSharedPointer<Handle> handle, int, const QList<bool> &extra) {
     flags |= 0x80;
   if (flags3 & 4)  // inactive
     flags |= 0x100;
+  if (flags3 & 32)  // yellow wire
+    flags |= 0x400;
 
   int rle = 0;
   switch (flags1 >> 6) {
@@ -621,4 +623,8 @@ void Tile::setSeen(bool seen) {
     flags |= 0x200;
   else
     flags &= ~0x200;
+}
+
+bool Tile::yellowWire() const {
+  return flags & 0x400;
 }

@@ -1208,6 +1208,21 @@ void GLMap::drawWires() {
                    wireuvs[mask * 2], wireuvs[mask * 2 + 1], 7.4f,
                    0, false);
       }
+      if (tile->yellowWire()) {
+        int mask = 0;
+        if (x < world->tilesWide - 1 && world->tiles[offset + 1].yellowWire())
+          mask |= 1;
+        if (x > 0 && world->tiles[offset - 1].yellowWire())
+          mask |= 2;
+        if (y < world->tilesHigh - 1 &&
+            world->tiles[offset + stride].yellowWire())
+          mask |= 4;
+        if (y > 0 && world->tiles[offset - stride].yellowWire())
+          mask |= 8;
+        render.add(GLTextures::Wire | 3, x * 16, y * 16, 16, 16,
+                   wireuvs[mask * 2], wireuvs[mask * 2 + 1], 7.6f,
+                   0, false);
+      }
     }
   }
   render.apply();
