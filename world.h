@@ -82,6 +82,11 @@ class World : public QObject, public QRunnable {
     qint16 stack;
   };
 
+  struct LogicSensor : Entity {
+    quint8 type;
+    bool on;
+  };
+
   class InitException {
    public:
     InitException(QString const title, QString const reason)

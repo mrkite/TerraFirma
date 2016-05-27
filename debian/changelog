@@ -1,3 +1,9 @@
+terrafirma (3.0.8) vivid; urgency=medium
+
+  * Fixed logic sensor entity loading
+
+ -- Sean Kasun <sean@seancode.com>  Fri, 27 May 2016 00:38:31 -0700
+
 terrafirma (3.0.7) vivid; urgency=medium
 
   * Updated for 3.1.3

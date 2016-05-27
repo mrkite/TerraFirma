@@ -128,7 +128,7 @@ void World::loadTiles(QSharedPointer<Handle> handle, int version,
                       const QList<bool> &extra) {
   for (int x = 0; x < tilesWide; x++) {
     emit status(tr("Reading tiles: %1%").arg(
-        static_cast<int>(x * 100.0f / tilesWide)));
+                  static_cast<int>(x * 100.0f / tilesWide)));
     int offset = x;
     for (int y = 0; y < tilesHigh; y++) {
       int rle = tiles[offset].load(handle, version, extra);
@@ -229,26 +229,35 @@ void World::loadEntities(QSharedPointer<Handle> handle, int) {
   for (int i = 0; i < numEntities; i++) {
     int type = handle->r8();
     switch (type) {
-      case 0: {
-                TrainingDummy dummy;
-                dummy.id = handle->r32();
-                dummy.x = handle->r16();
-                dummy.y = handle->r16();
-                dummy.npc = handle->r16();
-                entities.append(dummy);
-              }
-              break;
-      case 1: {
-                ItemFrame frame;
-                frame.id = handle->r32();
-                frame.x = handle->r16();
-                frame.y = handle->r16();
-                frame.itemid = handle->r16();
-                frame.prefix = handle->r8();
-                frame.stack = handle->r16();
-                entities.append(frame);
-              }
-              break;
+    case 0: {
+      TrainingDummy dummy;
+      dummy.id = handle->r32();
+      dummy.x = handle->r16();
+      dummy.y = handle->r16();
+      dummy.npc = handle->r16();
+      entities.append(dummy);
+    }
+      break;
+    case 1: {
+      ItemFrame frame;
+      frame.id = handle->r32();
+      frame.x = handle->r16();
+      frame.y = handle->r16();
+      frame.itemid = handle->r16();
+      frame.prefix = handle->r8();
+      frame.stack = handle->r16();
+      entities.append(frame);
+    }
+      break;
+    case 2: {
+      LogicSensor sensor;
+      sensor.id = handle->r32();
+      sensor.x = handle->r16();
+      sensor.y = handle->r16();
+      sensor.type = handle->r8();
+      sensor.on = handle->r8() != 0;
+      entities.append(sensor);
+    }
     }
   }
 }
@@ -476,8 +485,8 @@ void World::loadPlayer2(QSharedPointer<Handle> handle, int version) {
 
       int rle = 0;
       switch ((flags >> 6) & 3) {
-        case 1: rle = handle->r8(); break;
-        case 2: rle = handle->r16(); break;
+      case 1: rle = handle->r8(); break;
+      case 2: rle = handle->r16(); break;
       }
 
       if (tile) {
@@ -567,12 +576,12 @@ int Tile::load(QSharedPointer<Handle> handle, int, const QList<bool> &extra) {
 
   int rle = 0;
   switch (flags1 >> 6) {
-    case 1:
-      rle = handle->r8();
-      break;
-    case 2:
-      rle = handle->r16();
-      break;
+  case 1:
+    rle = handle->r8();
+    break;
+  case 2:
+    rle = handle->r16();
+    break;
   }
   return rle;
 }
