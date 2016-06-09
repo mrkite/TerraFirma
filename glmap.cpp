@@ -1143,7 +1143,10 @@ void GLMap::drawWires() {
       }
       int voffset = 0;
       if (tile->type == 424) {
-          voffset = tile->u / 18 + 1;
+          voffset = (tile->u / 18 + 1) * 72;
+      }
+      if (tile->type == 445) {
+          voffset = 72;
       }
       if (tile->redWire()) {
         int mask = 0;
@@ -1158,23 +1161,7 @@ void GLMap::drawWires() {
           mask |= 8;
 
         render.add(GLTextures::Wire, x * 16, y * 16, 16, 16,
-                   mask * 18, 0 + voffset * 72, 7.0f,
-                   0, false);
-      }
-      if (tile->greenWire()) {
-        int mask = 0;
-        if (y > 0 && world->tiles[offset - stride].greenWire())
-          mask |= 1;
-        if (x < world->tilesWide - 1 && world->tiles[offset + 1].greenWire())
-          mask |= 2;
-        if (y < world->tilesHigh - 1 &&
-            world->tiles[offset + stride].greenWire())
-          mask |= 4;
-        if (x > 0 && world->tiles[offset - 1].greenWire())
-          mask |= 8;
-
-        render.add(GLTextures::Wire,  x * 16, y * 16, 16, 16,
-                   mask * 18, 36 + voffset * 72, 7.2f,
+                   mask * 18, 0 + voffset, 7.0f,
                    0, false);
       }
       if (tile->blueWire()) {
@@ -1190,7 +1177,23 @@ void GLMap::drawWires() {
           mask |= 8;
 
         render.add(GLTextures::Wire, x * 16, y * 16, 16, 16,
-                   mask * 18, 18 + voffset * 72, 7.4f,
+                   mask * 18, 18 + voffset, 7.2f,
+                   0, false);
+      }
+      if (tile->greenWire()) {
+        int mask = 0;
+        if (y > 0 && world->tiles[offset - stride].greenWire())
+          mask |= 1;
+        if (x < world->tilesWide - 1 && world->tiles[offset + 1].greenWire())
+          mask |= 2;
+        if (y < world->tilesHigh - 1 &&
+            world->tiles[offset + stride].greenWire())
+          mask |= 4;
+        if (x > 0 && world->tiles[offset - 1].greenWire())
+          mask |= 8;
+
+        render.add(GLTextures::Wire,  x * 16, y * 16, 16, 16,
+                   mask * 18, 36 + voffset, 7.4f,
                    0, false);
       }
       if (tile->yellowWire()) {
@@ -1205,7 +1208,7 @@ void GLMap::drawWires() {
         if (x > 0 && world->tiles[offset - 1].yellowWire())
           mask |= 8;
         render.add(GLTextures::Wire, x * 16, y * 16, 16, 16,
-                   mask * 18, 54 + voffset * 72, 7.6f,
+                   mask * 18, 54 + voffset, 7.6f,
                    0, false);
       }
     }
