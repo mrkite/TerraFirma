@@ -558,9 +558,9 @@ int Tile::load(QSharedPointer<Handle> handle, int, const QList<bool> &extra) {
   }
   if (flags2 & 2)  // red wire
     flags |= 8;
-  if (flags2 & 4)  // green wire
+  if (flags2 & 4)  // blue wire
     flags |= 0x10;
-  if (flags2 & 8)  // blue wire
+  if (flags2 & 8)  // green wire
     flags |= 0x20;
   int slop = (flags2 >> 4) & 7;
   if (slop == 1)  // half
@@ -603,11 +603,11 @@ bool Tile::redWire() const {
   return flags & 8;
 }
 
-bool Tile::greenWire() const {
+bool Tile::blueWire() const {
   return flags & 0x10;
 }
 
-bool Tile::blueWire() const {
+bool Tile::greenWire() const {
   return flags & 0x20;
 }
 
