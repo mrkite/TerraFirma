@@ -18,6 +18,7 @@ x64/
 build/
 [Bb]in/
 [Oo]bj/
+[Tt]erra[Ff]irma.app/
 
 # Visual Studio profiler
 *.psess
@@ -30,3 +31,10 @@ build/
 *.msi
 *.zip
 *.exe
+
+# Compiler and random
+*.o
+cscope.out
+
+# Qt/Qmake
+.qmake.stash
