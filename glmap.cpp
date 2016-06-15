@@ -828,25 +828,33 @@ void GLMap::drawTiles() {
         // minecart tracks
         if (tile->type == 314) {
           int u = tile->u;
+          int v = tile->v;
           render.add(GLTextures::Tile | tile->type,
                      x * 16, y * 16 + info->toppad, texw, texh,
-                     trackUVs[u * 3] * 18, trackUVs[u * 3 + 1] * 18, 3.0f,
+                     trackUVs[u * 3] * 18, trackUVs[u * 3 + 1] * 18, 3.2f,
                      color, info->isHilighting);
-          if (u >= 0 && u < 36) {
+          if (tile->v >= 0) {
+              render.add(GLTextures::Tile | tile->type,
+                         x * 16, y * 16 + info->toppad, texw, texh,
+                         trackUVs[v * 3] * 18, trackUVs[v * 3 + 1] * 18, 3.0f,
+                         color, info->isHilighting);
+          }
+          if ((u >= 0 && u < 36) || (v >=0 && v < 36)) {
             int mask = trackUVs[u * 3 + 2];
-            if (mask & 8)
+            int mask2 = trackUVs[v * 3 + 2];
+            if (mask & 8 || mask2 & 8)
               render.add(GLTextures::Tile | tile->type,
                          x * 16, (y + 1) * 16 + info->toppad,
                          texw, texh, 0, 108, 3.0f, color, info->isHilighting);
-            if (mask & 4)
+            if (mask & 4 || mask2 & 4)
               render.add(GLTextures::Tile | tile->type,
                          x * 16, (y + 1) * 16 + info->toppad,
                          texw, texh, 18, 108, 3.0f, color, info->isHilighting);
-            if (mask & 2)
+            if (mask & 2 || mask2 & 2)
               render.add(GLTextures::Tile | tile->type,
                          x * 16, (y - 1) * 16 + info->toppad,
                          texw, texh, 18, 126, 3.0f, color, info->isHilighting);
-            if (mask & 1)
+            if (mask & 1 || mask2 & 1)
               render.add(GLTextures::Tile | tile->type,
                          x * 16, (y - 1) * 16 + info->toppad,
                          texw, texh,  0, 126, 3.0f, color, info->isHilighting);
