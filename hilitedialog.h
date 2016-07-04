@@ -5,6 +5,9 @@
 
 #include <QDialog>
 #include <QTreeWidgetItem>
+#include <QStandardItemModel>
+#include <QSortFilterProxyModel>
+
 #include "./world.h"
 
 namespace Ui {
@@ -20,13 +23,16 @@ class HiliteDialog : public QDialog {
 
  public slots:
   void accept() Q_DECL_OVERRIDE;
+  void searchTextChanged(QString newText);
 
  private:
   void addChild(QSharedPointer<TileInfo> tile, QString name,
-                QTreeWidgetItem *parent);
+                QStandardItem *parent);
   void tagChild(QSharedPointer<TileInfo> tile, bool hilite);
   Ui::HiliteDialog *ui;
   QSharedPointer<TileInfo> hiliting;
+  QStandardItemModel model;
+  QSortFilterProxyModel filter;
 };
 
 #endif  // HILITEDIALOG_H_
