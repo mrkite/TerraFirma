@@ -7,6 +7,24 @@
 #include "./findchests.h"
 #include "./ui_findchests.h"
 
+
+class FindChests::ItemsFilterProxyModel : public QSortFilterProxyModel
+{
+  public:
+    explicit ItemsFilterProxyModel(QObject* parent = 0) : QSortFilterProxyModel(parent)
+    {
+    }
+
+  bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+  {
+    if (sourceParent.isValid())
+      return true;
+
+    return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
+  }
+};
+
+
 FindChests::FindChests(const QList<World::Chest> &chests, QWidget *parent)
   : QDialog(parent), ui(new Ui::FindChests) {
   ui->setupUi(this);
@@ -21,27 +39,46 @@ FindChests::FindChests(const QList<World::Chest> &chests, QWidget *parent)
   }
 
   QHashIterator<QString, QList<int>> i(roots);
+  auto root = model.invisibleRootItem();
   while (i.hasNext()) {
     i.next();
-    QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidget);
-    item->setText(0, i.key());
+    auto item = new QStandardItem(i.key());
+    item->setEditable(false);
     for (int num : i.value()) {
-      QTreeWidgetItem *child = new QTreeWidgetItem();
-      child->setText(0, chests[num].name.isEmpty() ?
-                     tr("Chest #%1").arg(num) : chests[num].name);
-      child->setData(0, Qt::UserRole, QPointF(chests[num].x, chests[num].y));
-      item->addChild(child);
+      auto child = new QStandardItem(chests[num].name.isEmpty() ?
+                                     tr("Chest #%1").arg(num) : chests[num].name);
+      child->setEditable(false);
+      child->setData(QPointF(chests[num].x, chests[num].y), Qt::UserRole);
+      item->appendRow(child);
     }
+    root->appendRow(item);
   }
-  ui->treeWidget->sortItems(0, Qt::AscendingOrder);
+
+  model.sort(0, Qt::AscendingOrder);
+
+  filter = new ItemsFilterProxyModel(this);
+  filter->setSourceModel(&model);
+  ui->treeView->setModel(filter);
+
+  connect(ui->treeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
+          this, SLOT(chestSelected(const QModelIndex&, const QModelIndex&)));
 }
 
 FindChests::~FindChests() {
   delete ui;
 }
 
-void FindChests::chestSelected() {
-  auto item = ui->treeWidget->selectedItems().first();
-  if (!item->data(0, Qt::UserRole).isNull())
-    emit jump(item->data(0, Qt::UserRole).toPointF());
+void FindChests::chestSelected(QModelIndex const& current, QModelIndex const& previous) {
+  (void)previous;
+
+  if (current.isValid()) {
+    auto data = current.data(Qt::UserRole);
+    if (!data.isNull())
+      emit jump(data.toPointF());
+  }
+}
+
+void FindChests::searchTextChanged(QString newText) {
+  filter->setFilterRegExp(newText);
+  filter->setFilterCaseSensitivity(Qt::CaseInsensitive);
 }

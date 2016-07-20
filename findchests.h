@@ -4,6 +4,8 @@
 #define FINDCHESTS_H_
 
 #include <QDialog>
+#include <QStandardItemModel>
+#include <QSortFilterProxyModel>
 #include "./world.h"
 
 namespace Ui {
@@ -18,13 +20,19 @@ class FindChests : public QDialog {
   ~FindChests();
 
  public slots:
-  void chestSelected();
+  void chestSelected(const QModelIndex& current, const QModelIndex& previous);
+  void searchTextChanged(QString newText);
 
  signals:
   void jump(QPointF);
 
  private:
+  class ItemsFilterProxyModel;
+
+ private:
   Ui::FindChests *ui;
+  ItemsFilterProxyModel *filter;
+  QStandardItemModel model;
 };
 
 #endif  // FINDCHESTS_H_
