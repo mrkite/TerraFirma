@@ -107,6 +107,10 @@ void World::run() {
     else
       loadEntities(handle, version);
   }
+  if (version >= 170) {
+    handle->seek(sections[6]);
+    loadPressurePlates(handle, version);
+  }
 
   if (!player.isEmpty())
     loadPlayer();
@@ -259,6 +263,14 @@ void World::loadEntities(QSharedPointer<Handle> handle, int) {
       entities.append(sensor);
     }
     }
+  }
+}
+
+void World::loadPressurePlates(QSharedPointer<Handle> handle, int version) {
+  int numPlates = handle->r32();
+  for (int i = 0; i < numPlates; i++) {
+    handle->r32();  //x
+    handle->r32();  //y
   }
 }
 

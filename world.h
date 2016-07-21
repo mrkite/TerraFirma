@@ -35,7 +35,7 @@ class Tile {
 
 class World : public QObject, public QRunnable {
   static const int MinimumVersion = 88;
-  static const int HighestVersion = 169;
+  static const int HighestVersion = 172;
 
   Q_OBJECT
 
@@ -127,6 +127,7 @@ class World : public QObject, public QRunnable {
   void loadNPCs(QSharedPointer<Handle> handle, int version);
   void loadDummies(QSharedPointer<Handle> handle, int version);
   void loadEntities(QSharedPointer<Handle> handle, int version);
+  void loadPressurePlates(QSharedPointer<Handle> handle, int version);
   void spreadLight();
   void loadPlayer();
   void loadPlayer1(QSharedPointer<Handle> handle, int version);

@@ -1,3 +1,11 @@
+terrafirma (3.0.10) vivid; urgency=medium
+
+  * Updated for 1.3.2
+  * Filters on various dialogs
+  * Fixed world reloading bug
+
+ -- Sean Kasun <sean@seancode.com>  Wed, 20 Jul 2016 18:01:37 -0700
+
 terrafirma (3.0.9) vivid; urgency=medium
 
   * Updated for 1.3.1.1

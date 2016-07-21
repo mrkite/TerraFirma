@@ -79,8 +79,13 @@ void MainWindow::openWorld() {
       filename = QFileDialog::getOpenFileName(this, tr("Open World"),
                                               "",
                                               tr("Terraria Worlds (*.wld)"));
-    if (!filename.isEmpty())
+    if (!filename.isEmpty()) {
+      if (findChests != nullptr) {
+        delete findChests;
+        findChests = nullptr;
+      }
       ui->map->load(filename);
+    }
   }
 }
 
