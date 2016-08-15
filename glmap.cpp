@@ -1049,7 +1049,7 @@ void GLMap::drawTiles() {
           while (world->tiles[poff].active() &&
                  world->tiles[poff].type == 323) poff += stride;
           int variant = findPillarStyle(poff);
-          render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad,
+          render.add(GLTextures::Tile | tile->type, x * 16 + tile->v, y * 16 + toppad,
                      texw, texh, tile->u, 22 * variant, 3.0f,
                      color, info->isHilighting);
         } else if (tile->half() && y < world->tilesHigh - 1 &&
