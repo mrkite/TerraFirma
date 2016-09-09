@@ -35,7 +35,7 @@ class Tile {
 
 class World : public QObject, public QRunnable {
   static const int MinimumVersion = 88;
-  static const int HighestVersion = 173;
+  static const int HighestVersion = 175;
 
   Q_OBJECT
 
