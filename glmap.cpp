@@ -667,7 +667,7 @@ void GLMap::drawTiles() {
             toppad = 4;
         }
 
-        if (tile->type >= 373 && tile->type <= 375)  // don't draw water drops
+        if ((tile->type >= 373 && tile->type <= 375) || tile->type == 461)  // don't draw water drops
           continue;
 
         // calculate color
