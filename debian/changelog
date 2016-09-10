@@ -1,3 +1,9 @@
+terrafirma (3.0.12) vivid; urgency=medium
+
+  * Updated for 1.3.3
+
+ -- Sean Kasun <sean@seancode.com>  Fri, 9 Sep 2016 17:46:29 -0700
+
 terrafirma (3.0.11) vivid; urgency=medium
 
   * Updated for 1.3.2.1
