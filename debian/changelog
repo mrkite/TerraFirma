@@ -1,3 +1,15 @@
+terrafirma (3.0.15) vivid; urgency=medium		
+
+* Updated map version
+
+-- Sean Kasun <sean@seancode.com>  Sun, 16 Oct 2016 11:28:42 -0700
+
+terrafirma (3.0.14) vivid; urgency=medium
+
+* Updated for 1.3.3.1
+
+-- Sean Kasun <sean@seancode.com>  Fri, 9 Sep 2016 17:46:29 -0700
+
 terrafirma (3.0.11) vivid; urgency=medium
 
   * Updated for 1.3.2.1
