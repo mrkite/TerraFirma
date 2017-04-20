@@ -71,6 +71,7 @@ class WorldInfo : public QObject {
       QHash<int, QSharedPointer<WallInfo>> walls;
       QHash<quint16, QString> prefixes;
       QHash<quint16, QString> items;
+      QHash<int, QSharedPointer<NPC>> npcsById;
       QHash<int, QSharedPointer<NPC>> npcsByBanner;
       QHash<QString, QSharedPointer<NPC>> npcsByName;
       quint32 sky, earth, rock, hell, water, lava, honey;
