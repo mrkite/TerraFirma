@@ -111,6 +111,10 @@ void World::run() {
     handle->seek(sections[6]);
     loadPressurePlates(handle, version);
   }
+  if (version >= 189) {
+    handle->seek(sections[7]);
+    loadTownManager(handle, version);
+  }
 
   if (!player.isEmpty())
     loadPlayer();
@@ -188,26 +192,47 @@ void World::loadNPCs(QSharedPointer<Handle> handle, int version) {
   emit status("Loading NPCs...");
   while (handle->r8()) {
     NPC npc;
-    npc.title = handle->rs();
+    npc.head = 0;
+    npc.sprite = 0;
+    if (version >=190) {
+        npc.sprite = handle->r32();
+        if (info.npcsById.contains(npc.sprite)) {
+          auto theNPC = info.npcsById[npc.sprite];
+          npc.head = theNPC->head;
+          npc.title = theNPC->title;
+        }
+    } else {
+        npc.title = handle->rs();
+        if (info.npcsByName.contains(npc.title)) {
+          auto theNPC = info.npcsByName[npc.title];
+          npc.head = theNPC->head;
+          npc.sprite = theNPC->id;
+        }
+    }
     npc.name = handle->rs();
     npc.x = handle->rf();
     npc.y = handle->rf();
     npc.homeless = handle->r8();
     npc.homeX = handle->r32();
     npc.homeY = handle->r32();
-    npc.head = 0;
-    npc.sprite = 0;
-    if (info.npcsByName.contains(npc.title)) {
-      auto theNPC = info.npcsByName[npc.title];
-      npc.head = theNPC->head;
-      npc.sprite = theNPC->id;
-    }
     npcs.append(npc);
   }
   if (version >= 140) {
     while (handle->r8()) {
       NPC npc;
-      npc.title = handle->rs();
+      if (version >=190) {
+          npc.sprite = handle->r32();
+          if (info.npcsById.contains(npc.sprite)) {
+            auto theNPC = info.npcsById[npc.sprite];
+            npc.title = theNPC->title;
+          }
+      } else {
+          npc.title = handle->rs();
+          if (info.npcsByName.contains(npc.title)) {
+            auto theNPC = info.npcsByName[npc.title];
+            npc.sprite = theNPC->id;
+          }
+      }
       npc.name = "!!";
       npc.x = handle->rf();
       npc.y = handle->rf();
@@ -266,11 +291,21 @@ void World::loadEntities(QSharedPointer<Handle> handle, int) {
   }
 }
 
-void World::loadPressurePlates(QSharedPointer<Handle> handle, int version) {
+void World::loadPressurePlates(QSharedPointer<Handle> handle, int) {
   int numPlates = handle->r32();
   for (int i = 0; i < numPlates; i++) {
     handle->r32();  //x
     handle->r32();  //y
+  }
+}
+
+void World::loadTownManager(QSharedPointer<Handle> handle, int) {
+  int numRooms = handle->r32();
+  for (int i = 0; i < numRooms; i++) {
+    handle->r32();  //NPC
+    handle->r32();  //X
+    handle->r32();  //Y
+    // I wonder if they will eventually depreciate the 'home' location in the NPC data. This data is for the new feature where NPC's remember which room they were in before they died
   }
 }
 

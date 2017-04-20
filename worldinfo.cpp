@@ -56,6 +56,8 @@ void WorldInfo::init() {
   json = load(":/res/npcs.json");
   for (auto const &item : json) {
     QJsonObject const &obj = item.toObject();
+    quint16 id = obj["id"].toInt();
+    npcsById[id] = QSharedPointer<NPC>(new NPC(obj));
     if (obj.contains("banner"))
       npcsByBanner[obj["banner"].toInt()] = QSharedPointer<NPC>(new NPC(obj));
     else if (!npcsByName.contains(obj["name"].toString()))
