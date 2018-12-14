@@ -21,7 +21,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
 
   SteamConfig steam;
 
-  QString baseInstall = steam["software/valve/steam/baseinstallfolder_1"];
+  QString baseInstall = steam["software/valve/steam/steampath"];
 
   QDir steamDir = QDir(baseInstall);
   // check if the path is empty before calling anything that acts on it

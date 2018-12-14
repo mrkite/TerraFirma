@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
   QSurfaceFormat::setDefaultFormat(format);
 
   QApplication app(argc, argv);
+  app.setAttribute(Qt::AA_UseDesktopOpenGL);
 
   QString locale = QLocale::system().name();
 
