@@ -64,7 +64,7 @@ Building on macOS/OSX:
 
 NEW 2019 Updated Instructions:
 
-Use the Homebrew package manager and install Qt:
+Use the [Homebrew package manager](https://brew.sh) and install Qt:
 
 ```console
 $ brew install qt5
@@ -73,7 +73,7 @@ $ brew install qt5
 Then use qt5 to run qmake and compile:
 
 ```console
-(Note--path may be slightly different, if qt has been updated)
+# (Note--path may be slightly different, if qt has been updated)
 $ /usr/local/Cellar/qt5/5.12.0/bin/qmake
 $ make
 $ open terrafirma.app
