@@ -1,0 +1,14 @@
+ChecksForMerge -> merge flag
+Grass -> grass flag
+Moss -> moss flag
+DrawFlipMode = 1 -> flip flag
+tileSolid -> solid flag
+tileBlockLight -> !transparent flag
+tileBrick -> brick flag
+tileMergeDirt -> dirt flag
+tileStone -> stone flag
+tileLargeFrames -> large flag
+tilePile -> pile flag
+tileLighted
+wallBlend -> blended wall
+wallLargeFrames -> large

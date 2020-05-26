@@ -67,7 +67,7 @@ class WorldHeader {
 
     QString name;
     Type type;
-    int length, minVersion;
+    int length, minVersion, maxVersion;
     QString dynamicLength;
   };
 

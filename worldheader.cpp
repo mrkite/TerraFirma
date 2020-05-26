@@ -38,7 +38,8 @@ void WorldHeader::load(QSharedPointer<Handle> handle, int version) {
   data.clear();
   int num;
   for (auto const &field : fields) {
-    if (version >= field.minVersion) {
+    if (version >= field.minVersion &&
+        (field.maxVersion == 0 || version <= field.maxVersion)) {
       auto header = QSharedPointer<Header>(new Header());
       switch (field.type) {
         case Field::Type::BOOLEAN: header->setData(handle->r8()); break;
@@ -110,7 +111,7 @@ int WorldHeader::treeStyle(int x) const {
 WorldHeader::Field::Field(QJsonObject const &data) {
   name = data["name"].toString();
   QString t = data["type"].toString();
-  if (t.isNull()) type = Type::BOOLEAN;
+  if (t.isNull() || t == "b") type = Type::BOOLEAN;
   else if (t == "s") type = (data.contains("num") || data.contains("relnum")) ?
     Type::ARRAY_STRING : Type::STRING;
   else if (t == "u8") type = (data.contains("num")
@@ -124,10 +125,12 @@ WorldHeader::Field::Field(QJsonObject const &data) {
   else if (t == "f32") type = Type::FLOAT32;
   else if (t == "f64") type = Type::FLOAT64;
   else
-    throw InitException(QString("Invalid header type: %1").arg(type));
+    throw InitException(QString("Invalid header type: %1 on %2")
+                        .arg(t).arg(name));
   length = data["num"].toInt();
   dynamicLength = data["relnum"].toString();
   minVersion = data.contains("min") ? data["min"].toInt() : 88;
+  maxVersion = data.contains("max") ? data["max"].toInt() : 0;
 }
 
 static WorldHeader::Header Null;
