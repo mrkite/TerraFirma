@@ -11,16 +11,18 @@ InfoDialog::InfoDialog(const WorldHeader &header, QWidget *parent)
   : QDialog(parent), ui(new Ui::InfoDialog) {
   ui->setupUi(this);
 
-  model = new QStandardItemModel(39, 2, this);
+  model = new QStandardItemModel(43, 2, this);
   ui->tableView->setModel(model);
 
   curRow = 0;
 
   add("World Type", header.is("crimson") ? "Crimson" : "Corruption");
   add("Eye of Cthulhu", header.is("killedBoss1") ? "Blackened" : "Undefeated");
-  // killedBoss2 should be Brain of Cthulhu in crimson, but isn't
-  if (!header.is("crimson"))
+  if (header.is("crimson")) {
+    add("Brain of Cthulhu", header.is("killedBoss2") ? "Outsmarted" : "Undefeated");
+  } else {
     add("Eater of Worlds", header.is("killedBoss2") ? "Choked" : "Undefeated");
+  }
   add("Skeletron", header.is("killedBoss3") ? "Boned" : "Undefeated");
   add("Wall of Flesh", header.is("hardMode") ? "Flayed" : "Undefeated");
   add("Queen Bee", header.is("killedQueenBee") ? "Swatted" : "Undefeated");
@@ -33,22 +35,25 @@ InfoDialog::InfoDialog(const WorldHeader &header, QWidget *parent)
   add("Golem", header.is("killedGolemBoss") ? "Stoned" : "Undefeated");
   add("Duke Fishron", header.is("downedFishron") ? "Filleted" : "Undefeated");
   add("King Slime", header.is("killedSlimeKing") ? "Ninja'd" : "Undefeated");
+  add("Queen Slime", header.is("killedQueenSlime") ? "Regicided" : "Undefeated");
   add("Goblin Invasion",
       header.is("killedGoblins") ? "Thwarted" : "Undefeated");
-  add("Clown", header.is("killedClown") ? "Eviscerated" : " Undefeated");
+  add("Clown", header.is("killedClown") ? "Eviscerated" : "Undefeated");
   add("Frost Horde", header.is("killedFrost") ? "Thawed" : "Undefeated");
   add("Pirates", header.is("killedPirates") ? "Keelhauled" : "Undefeated");
   add("Pumpking", header.is("downedHalloweenKing") ? "Carved" : "Undefeated");
   add("Mourning Wood",
       header.is("downedHalloweenTree") ? "Whittled" : "Undefeated");
   add("Ice Queen",
-      header.is("downedChristmasIceQueen") ? "Melted" : "Undefeated");
+      header.is("downedIceQueen") ? "Melted" : "Undefeated");
   add("Santa-NK1",
       header.is("downedChristmasSantank") ? "Sleighn" : "Undefeated");
   add("Everscream",
       header.is("downedChristmasTree") ? "Silenced" : "Undefeated");
   add("Martian Invasion",
       header.is("downedMartians") ? "Area 51ed" : "Undefeated");
+  add("Empress of Light",
+      header.is("killedEmpressOfLight") ? "Caesared" : "Undefeated");
   add("Cultists",
       header.is("downedAncientCultist") ? "Indoctrinated" : "Undefeated");
   add("Solar Pillar", header.is("downedSolar") ? "Eclipsed" : "Undefeated");
@@ -71,9 +76,18 @@ InfoDialog::InfoDialog(const WorldHeader &header, QWidget *parent)
   add("Tax Collector", header.is("savedTaxCollector") ?
       "Saved" : header.is("hardMode") ?
       "Tortured" : "Not present yet");
+  add("Bartender", header.is("savedBartender") ? "Saved" : "Trapped");
   add("Game Mode", header.is("lunarApocalypse") ?
       "Lunar" : header.is("hardMode") ? "Hard" : "Normal");
-  add("World Mode", header.is("expert") ? "Expert" : "Normal");
+  const char *modes[] = {
+    "Normal",
+    "Expert",
+    "Master",
+    "Journey",
+  };
+  add("World Mode",  header.is("master") ? "Master" :
+                    header.is("expert") ? "Expert" :
+                    modes[header["gameMode"]->toInt()]);
   add("Orbs left til EoW",
       QString("%1").arg(3 - header["shadowOrbCount"]->toInt()));
   add("Altars Smashed", QString("%1").arg(header["altarsSmashed"]->toInt()));
