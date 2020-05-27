@@ -1,14 +1,13 @@
 /** @Copyright 2015 seancode */
 
-#ifndef HANDLE_H_
-#define HANDLE_H_
+#pragma once
 
 #include <QByteArray>
 
 class Handle {
  public:
-  explicit Handle(QString fileName);
-  explicit Handle(QByteArray array);
+  explicit Handle(const QString &fileName);
+  explicit Handle(const QByteArray &array);
 
   bool exists() const;
   bool eof() const;
@@ -19,6 +18,7 @@ class Handle {
   float rf();
   double rd();
   QString rs();
+  QString rcs();
   QString read(int len);
   const char *readBytes(int len);
   void skip(int len);
@@ -33,5 +33,3 @@ class Handle {
   QByteArray bytearray;
   qint64 pos, len;
 };
-
-#endif  // HANDLE_H_

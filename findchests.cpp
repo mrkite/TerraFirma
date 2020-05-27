@@ -8,15 +8,14 @@
 #include "./ui_findchests.h"
 
 
-class FindChests::ItemsFilterProxyModel : public QSortFilterProxyModel
-{
+class FindChests::ItemsFilterProxyModel : public QSortFilterProxyModel {
   public:
-    explicit ItemsFilterProxyModel(QObject* parent = 0) : QSortFilterProxyModel(parent)
-    {
+    explicit ItemsFilterProxyModel(QObject* parent = nullptr)
+    : QSortFilterProxyModel(parent) {
     }
 
-  bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
-  {
+  bool filterAcceptsRow(int sourceRow,
+                        const QModelIndex &sourceParent) const override {
     if (sourceParent.isValid())
       return true;
 
@@ -60,8 +59,8 @@ FindChests::FindChests(const QList<World::Chest> &chests, QWidget *parent)
   filter->setSourceModel(&model);
   ui->treeView->setModel(filter);
 
-  connect(ui->treeView->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
-          this, SLOT(chestSelected(const QModelIndex&, const QModelIndex&)));
+  connect(ui->treeView->selectionModel(), &QItemSelectionModel::currentChanged,
+          this, &FindChests::chestSelected);
 }
 
 FindChests::~FindChests() {
@@ -78,7 +77,7 @@ void FindChests::chestSelected(QModelIndex const& current, QModelIndex const& pr
   }
 }
 
-void FindChests::searchTextChanged(QString newText) {
+void FindChests::searchTextChanged(const QString &newText) {
   filter->setFilterRegExp(newText);
   filter->setFilterCaseSensitivity(Qt::CaseInsensitive);
 }

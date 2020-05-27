@@ -10,10 +10,11 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QDebug>
+#include <utility>
 
-WorldHeader::WorldHeader() {}
+WorldHeader::WorldHeader() = default;
 
-WorldHeader::~WorldHeader() {}
+WorldHeader::~WorldHeader() = default;
 
 void WorldHeader::init() {
   QFile file(":/res/header.json");
@@ -34,7 +35,7 @@ void WorldHeader::init() {
   }
 }
 
-void WorldHeader::load(QSharedPointer<Handle> handle, int version) {
+void WorldHeader::load(const QSharedPointer<Handle> &handle, int version) {
   data.clear();
   int num;
   for (auto const &field : fields) {
@@ -139,7 +140,7 @@ WorldHeader::Header::Header() {
   ddbl = 0.0;
   dint = 0;
 }
-WorldHeader::Header::~Header() {}
+WorldHeader::Header::~Header() = default;
 int WorldHeader::Header::length() const {
   return arr.count();
 }
@@ -157,11 +158,11 @@ void WorldHeader::Header::setData(quint64 v) {
   ddbl = static_cast<double>(v);
 }
 void WorldHeader::Header::setData(QString s) {
-  dstr = s;
+  dstr = std::move(s);
 }
 void WorldHeader::Header::append(QString s) {
   auto h = QSharedPointer<Header>(new Header());
-  h->setData(s);
+  h->setData(std::move(s));
   arr.append(h);
 }
 void WorldHeader::Header::append(quint64 v) {

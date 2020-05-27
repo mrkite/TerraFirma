@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef GLMAP_H_
-#define GLMAP_H_
+#pragma once
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
@@ -12,6 +11,7 @@
 #include "./world.h"
 #include "./chestview.h"
 #include "./signview.h"
+#include "./l10n.h"
 
 QT_FORWARD_DECLARE_CLASS(QOpenGLShaderProgram)
 
@@ -19,14 +19,15 @@ class GLMap : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
 
  public:
-  explicit GLMap(QWidget *parent = 0);
+  explicit GLMap(QWidget *parent = nullptr);
   ~GLMap();
 
-  QSize minimumSizeHint() const Q_DECL_OVERRIDE;
-  QSize sizeHint() const Q_DECL_OVERRIDE;
+  QSize minimumSizeHint() const override;
+  QSize sizeHint() const override;
 
   void setTexturePath(QString path);
-  void setWorld(QSharedPointer<World> world);
+  void setWorld(const QSharedPointer<World> &world);
+  void setL10n(L10n *l10n);
 
   void load(QString filename);
 
@@ -52,14 +53,14 @@ class GLMap : public QOpenGLWidget, public QOpenGLFunctions {
   void refresh();
 
  protected:
-  void initializeGL() Q_DECL_OVERRIDE;
-  void paintGL() Q_DECL_OVERRIDE;
-  void resizeGL(int w, int h) Q_DECL_OVERRIDE;
-  void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-  void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-  void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-  void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
-  void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+  void initializeGL() override;
+  void paintGL() override;
+  void resizeGL(int w, int h) override;
+  void mousePressEvent(QMouseEvent *event) override;
+  void mouseMoveEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
+  void wheelEvent(QWheelEvent *event) override;
+  void keyPressEvent(QKeyEvent *event) override;
 
  private:
   void calcBounds();
@@ -88,16 +89,15 @@ class GLMap : public QOpenGLWidget, public QOpenGLFunctions {
 
   ChestView *chestView;
   SignView *signView;
+  L10n *l10n;
 
   Render render;
   QOpenGLShaderProgram *program, *waterProgram, *fogProgram, *flatProgram;
   QMatrix4x4 projection;
-  double aspect;
-  int width, height;
-  int startX, startY, endX, endY;
-  int flatW, flatH;
+  double aspect = 0.0;
+  int width = 0, height = 0;
+  int startX = 0, startY = 0, endX = 0, endY = 0;
+  int flatW = 0, flatH = 0;
   QOpenGLTexture *flat;
   quint8 *flatData;
 };
-
-#endif  // GLMAP_H_

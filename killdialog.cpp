@@ -32,7 +32,7 @@ KillDialog::~KillDialog() {
   delete ui;
 }
 
-void KillDialog::add(QString npc, int kills) {
+void KillDialog::add(const QString &npc, int kills) {
   auto first = new QStandardItem(npc);
   auto second = new QStandardItem();
   second->setData(kills, Qt::DisplayRole);

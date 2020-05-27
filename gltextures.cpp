@@ -20,7 +20,7 @@ void GLTextures::destroy() {
   textures.clear();
 }
 
-void GLTextures::setRoot(QString root) {
+void GLTextures::setRoot(const QString &root) {
   QDir dir;
   valid = dir.exists(root);
   this->root = root;
@@ -117,7 +117,7 @@ QSharedPointer<QOpenGLTexture> GLTextures::get(int type, int cropw, int croph) {
   return textures[type];
 }
 
-QSharedPointer<QOpenGLTexture> GLTextures::load(QString name,
+QSharedPointer<QOpenGLTexture> GLTextures::load(const QString &name,
                                                 int cropw, int croph) {
   QDir dir(root);
   Handle handle(dir.absoluteFilePath(QString("%1.xnb").arg(name)));
@@ -142,7 +142,7 @@ QSharedPointer<QOpenGLTexture> GLTextures::load(QString name,
     const char *endp = p + length - 4;
 
     rawdata.resize(decompLength);
-    quint8 *dp = reinterpret_cast<quint8 *>(rawdata.data());
+    auto dp = reinterpret_cast<quint8 *>(rawdata.data());
 
     struct LZXstate *lzx = LZXinit(16);
     while (p < endp) {
@@ -194,7 +194,7 @@ QSharedPointer<QOpenGLTexture> GLTextures::load(QString name,
 
   tex.r32();  // mipmap
   tex.r32();  // image length
-  QOpenGLTexture *texture = new QOpenGLTexture(QOpenGLTexture::Target2D);
+  auto texture = new QOpenGLTexture(QOpenGLTexture::Target2D);
   if (cropw != 0)
     texture->setSize(cropw, croph);
   else
@@ -208,8 +208,8 @@ QSharedPointer<QOpenGLTexture> GLTextures::load(QString name,
   switch (format) {
     case 0:  // bgra32
       if (cropw != 0) {
-        quint8 *data = new quint8[cropw * croph * 4];
-        quint8 *p = data;
+        auto data = new quint8[cropw * croph * 4];
+        auto p = data;
         for (int y = 0; y < croph; y++) {
           memcpy(p, tex.readBytes(width * 4), cropw * 4);
           p += cropw * 4;

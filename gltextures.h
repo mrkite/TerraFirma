@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef GLTEXTURES_H_
-#define GLTEXTURES_H_
+#pragma once
 
 #include <QOpenGLTexture>
 #include <QSharedPointer>
@@ -43,17 +42,15 @@ class GLTextures {
 
   GLTextures();
   void destroy();
-  void setRoot(QString root);
+  void setRoot(const QString &root);
 
   bool valid;
 
   QSharedPointer<QOpenGLTexture> get(int type, int cropw = 0, int croph = 0);
 
  private:
-  QSharedPointer<QOpenGLTexture> load(QString name,
+  QSharedPointer<QOpenGLTexture> load(const QString &name,
                                       int cropw = 0, int croph = 0);
   QString root;
   QHash<int, QSharedPointer<QOpenGLTexture>> textures;
 };
-
-#endif  // GLTEXTURES_H_

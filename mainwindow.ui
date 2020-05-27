@@ -40,7 +40,7 @@
      <x>0</x>
      <y>0</y>
      <width>640</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTerrafirma">
@@ -78,6 +78,7 @@
     <addaction name="separator"/>
     <addaction name="actionWorld_Information"/>
     <addaction name="actionWorld_Kill_Counts"/>
+    <addaction name="actionBeastiary"/>
    </widget>
    <widget class="QMenu" name="menu_Navigate">
     <property name="title">
@@ -295,6 +296,11 @@
     <string>Settings...</string>
    </property>
   </action>
+  <action name="actionBeastiary">
+   <property name="text">
+    <string>Beastiary...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -305,6 +311,7 @@
    <container>1</container>
    <slots>
     <signal>status(QString)</signal>
+    <signal>loaded(bool)</signal>
    </slots>
   </customwidget>
  </customwidgets>
@@ -760,6 +767,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>map</sender>
+   <signal>loaded(bool)</signal>
+   <receiver>actionBeastiary</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>319</x>
+     <y>239</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionBeastiary</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showBeastiary()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>239</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showAbout()</slot>
@@ -770,5 +809,6 @@
   <slot>worldKills()</slot>
   <slot>save()</slot>
   <slot>showSettings()</slot>
+  <slot>showBeastiary()</slot>
  </slots>
 </ui>

@@ -12,6 +12,7 @@
 #include <QSettings>
 #include <QSurfaceFormat>
 #include <cmath>
+#include <utility>
 #include "./uvrules.h"
 
 /*
@@ -33,8 +34,8 @@ GLMap::GLMap(QWidget *parent) : QOpenGLWidget(parent) {
   scale = 1.0;
   zoom = 32.0;
   flatW = flatH = 0;
-  flat = NULL;
-  flatData = NULL;
+  flat = nullptr;
+  flatData = nullptr;
   useTexture = false;
   hilite = false;
   fogOfWarEnabled = false;
@@ -42,9 +43,10 @@ GLMap::GLMap(QWidget *parent) : QOpenGLWidget(parent) {
   wires = false;
   fullReset = false;
   dragging = false;
-  program = waterProgram = fogProgram = flatProgram = 0;
-  chestView = NULL;
-  signView = NULL;
+  program = waterProgram = fogProgram = flatProgram = nullptr;
+  chestView = nullptr;
+  signView = nullptr;
+  l10n = nullptr;
 }
 
 GLMap::~GLMap() {
@@ -54,46 +56,44 @@ GLMap::~GLMap() {
   delete waterProgram;
   delete fogProgram;
   delete flatProgram;
-  if (flatData != NULL)
-    delete [] flatData;
-  if (flat != NULL)
+  delete [] flatData;
+  if (flat != nullptr)
     flat->destroy();
   doneCurrent();
-  if (chestView != NULL)
-    delete chestView;
-  if (signView != NULL)
-    delete signView;
+  delete chestView;
+  delete signView;
 }
 
 QSize GLMap::minimumSizeHint() const {
-  return QSize(50, 50);
+  return {50, 50};
 }
 
 QSize GLMap::sizeHint() const {
-  return QSize(200, 200);
+  return {200, 200};
 }
 
 void GLMap::setTexturePath(QString path) {
-  render.setTexturePath(path);
+  render.setTexturePath(std::move(path));
   emit texturesAvailable(render.texturesValid());
 }
 
-void GLMap::setWorld(QSharedPointer<World> world) {
+void GLMap::setWorld(const QSharedPointer<World> &world) {
   this->world = world;
-  connect(world.data(), SIGNAL(loaded(bool)),
-          this, SLOT(setEnabled(bool)));
-  connect(world.data(), SIGNAL(loaded(bool)),
-          this, SLOT(resetValues(bool)));
-  connect(world.data(), SIGNAL(loaded(bool)),
-          this, SIGNAL(loaded(bool)));
+  connect(world.data(), &World::loaded, this, &GLMap::setEnabled);
+  connect(world.data(), &World::loaded, this, &GLMap::resetValues);
+  connect(world.data(), &World::loaded, this, &GLMap::loaded);
   emit loaded(false);
   emit texturesAvailable(render.texturesValid());
   emit texturesUsed(false);
   emit hilighting(false);
 }
 
+void GLMap::setL10n(L10n *l10n) {
+  this->l10n = l10n;
+}
+
 void GLMap::load(QString filename) {
-  world->setFilename(filename);
+  world->setFilename(std::move(filename));
 
   fullReset = true;
   QThreadPool::globalInstance()->start(world.data());
@@ -103,38 +103,38 @@ void GLMap::refresh() {
   QThreadPool::globalInstance()->start(world.data());
 }
 
-void GLMap::resetValues(bool val) {
-  if (!fullReset || !val)
+void GLMap::resetValues(bool loaded) {
+  if (!fullReset || !loaded)
     return;
   fullReset = false;
 
   jumpToSpawn();
 }
 
-void GLMap::fogOfWar(bool val) {
-  fogOfWarEnabled = val;
+void GLMap::fogOfWar(bool use) {
+  fogOfWarEnabled = use;
   QSettings info;
   info.setValue("fogOfWar", fogOfWarEnabled);
   update();
 }
 
-void GLMap::useTextures(bool val) {
+void GLMap::useTextures(bool use) {
   QSettings info;
-  info.setValue("textures", val);
-  useTexture = val && render.texturesValid();
+  info.setValue("textures", use);
+  useTexture = use && render.texturesValid();
   emit texturesUsed(useTexture);
   update();
 }
 
-void GLMap::showHouses(bool val) {
-  houses = val;
+void GLMap::showHouses(bool show) {
+  houses = show;
   QSettings info;
   info.setValue("houses", houses);
   update();
 }
 
-void GLMap::showWires(bool val) {
-  wires = val;
+void GLMap::showWires(bool show) {
+  wires = show;
   QSettings info;
   info.setValue("wires", wires);
   update();
@@ -314,9 +314,8 @@ void GLMap::paintGL() {
       int newH = endY - startY;
 
       if (newW != flatW || newH != flatH) {
-        if (flatData == NULL || newW > flatW || newH > flatH) {
-          if (flatData != NULL)
-            delete [] flatData;
+        if (flatData == nullptr || newW > flatW || newH > flatH) {
+          delete [] flatData;
           flatData = new quint8[newW * newH * 4];
         }
         flatW = newW;
@@ -337,7 +336,7 @@ void GLMap::paintGL() {
       flatProgram->disableAttributeArray(1);
       flatProgram->disableAttributeArray(0);
     }
-  } catch (TextureException e) {
+  } catch (TextureException &e) {
     setEnabled(false);  // prevent future errors...
     emit error(e.reason);
   }
@@ -364,8 +363,8 @@ void GLMap::mouseMoveEvent(QMouseEvent *event) {
   if (!dragging) {
     QMatrix4x4 m = projection.inverted();
     QVector3D mouse = m.map(QVector3D(
-        static_cast<float>(event->x()) / (width / 2.0) - 1.0f,
-        static_cast<float>(height - event->y()) / (height / 2.0) - 1.0f,
+        static_cast<float>(event->x()) / (width / 2.0f) - 1.0f,
+        static_cast<float>(height - event->y()) / (height / 2.0f) - 1.0f,
         0.0f));
     int x = mouse.x();
     int y = mouse.y();
@@ -426,8 +425,7 @@ void GLMap::mouseReleaseEvent(QMouseEvent *event) {
         if (name.isEmpty())
           name = world->info[&world->tiles[y * world->tilesWide + x]]->name;
 
-        if (chestView != NULL)
-          delete chestView;
+        delete chestView;
         chestView = new ChestView(name, items, this);
         chestView->move(QCursor::pos());
         chestView->show();
@@ -436,8 +434,7 @@ void GLMap::mouseReleaseEvent(QMouseEvent *event) {
     for (auto const &sign : world->signs) {
       if ((sign.x == x || sign.x + 1 == x) &&
           (sign.y == y || sign.y + 1 == y)) {
-        if (signView != NULL)
-          delete signView;
+        delete signView;
         signView = new SignView(sign.text, this);
         signView->move(QCursor::pos());
         signView->show();

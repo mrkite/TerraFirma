@@ -214,7 +214,7 @@ static const int walluvs[][8] = {
   {396,   0, 396,  36, 396,  72, 396, 180}
 };
 
-void UVRules::fixWall(QSharedPointer<World> world, int x, int y) {
+void UVRules::fixWall(const QSharedPointer<World> &world, int x, int y) {
   int stride = world->tilesWide;
   int offset = y * stride + x;
   int mask = 0;
@@ -261,7 +261,7 @@ void UVRules::fixWall(QSharedPointer<World> world, int x, int y) {
   tile->wallv = walluvs[mask][set + 1];
 }
 
-quint8 UVRules::fixTile(QSharedPointer<World> world, int x, int y) {
+quint8 UVRules::fixTile(const QSharedPointer<World> &world, int x, int y) {
   int t = -1, l = -1, r = -1, b = -1;
   int tl = -1, tr = -1, bl = -1, br = -1;
 
@@ -547,7 +547,7 @@ quint8 UVRules::fixTile(QSharedPointer<World> world, int x, int y) {
   return blend;
 }
 
-void UVRules::fixCactus(QSharedPointer<World> world, int x, int y) {
+void UVRules::fixCactus(const QSharedPointer<World> &world, int x, int y) {
   int stride = world->tilesWide;
   int offset =  y * stride + x;
   // find base of cactus

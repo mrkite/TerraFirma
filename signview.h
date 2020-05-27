@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef SIGNVIEW_H_
-#define SIGNVIEW_H_
+#pragma once
 
 #include <QWidget>
 
@@ -13,11 +12,9 @@ class SignView : public QWidget {
   Q_OBJECT
 
  public:
-  explicit SignView(QString text, QWidget *parent = 0);
+  explicit SignView(const QString &text, QWidget *parent = nullptr);
   ~SignView();
 
  private:
   Ui::SignView *ui;
 };
-
-#endif  // SIGNVIEW_H_

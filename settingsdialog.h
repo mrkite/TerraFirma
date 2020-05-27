@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef SETTINGSDIALOG_H_
-#define SETTINGSDIALOG_H_
+#pragma once
 
 #include <QDialog>
 
@@ -13,26 +12,27 @@ class SettingsDialog : public QDialog {
   Q_OBJECT
 
  public:
-  explicit SettingsDialog(QWidget *parent = 0);
+  explicit SettingsDialog(QWidget *parent = nullptr);
   ~SettingsDialog();
 
   QString getTextures();
+  QString getExe();
   QStringList getWorlds();
   QStringList getPlayers();
 
  public slots:
   void show();
-  void accept() Q_DECL_OVERRIDE;
+  void accept() override;
   void browseTextures();
   void browseWorlds();
+  void browseExes();
   void toggleTextures(bool on);
   void toggleWorlds(bool on);
+  void toggleExes(bool on);
 
  private:
   Ui::SettingsDialog *ui;
   QStringList defaultSaves;
-  QString defaultTextures, customTextures, customSave;
-  bool useDefTex, useDefSave;
+  QString defaultTextures, customTextures, customSave, defaultExes, customExes;
+  bool useDefTex, useDefSave, useDefExe;
 };
-
-#endif  // SETTINGSDIALOG_H_

@@ -14,7 +14,7 @@
 #include <QDir>
 
 SteamConfig::SteamConfig() {
-  root = NULL;
+  root = nullptr;
   QSettings settings("HKEY_CURRENT_USER\\Software\\Valve\\Steam",
                      QSettings::NativeFormat);
   QString path = settings.value("SteamPath").toString();
@@ -29,13 +29,13 @@ SteamConfig::SteamConfig() {
     parse(path);
 }
 
-QString SteamConfig::operator[](QString path) const {
-  if (root == NULL)
+QString SteamConfig::operator[](const QString &path) const {
+  if (root == nullptr)
     return QString();
   return root->find(path);
 }
 
-void SteamConfig::parse(QString filename) {
+void SteamConfig::parse(const QString &filename) {
   QFile file(filename);
 
   if (file.open(QIODevice::ReadOnly)) {
@@ -48,7 +48,7 @@ void SteamConfig::parse(QString filename) {
   }
 }
 
-SteamConfig::Element::Element() {}
+SteamConfig::Element::Element() = default;
 
 SteamConfig::Element::Element(QList<QString> *lines) {
   QString line;
@@ -85,7 +85,7 @@ SteamConfig::Element::Element(QList<QString> *lines) {
   }
 }
 
-QString SteamConfig::Element::find(QString path) {
+QString SteamConfig::Element::find(const QString &path) {
   int ofs = path.indexOf("/");
   if (ofs == -1)
     return children[path].value;

@@ -7,7 +7,7 @@
 #include "./handle.h"
 #include <QFile>
 
-Handle::Handle(QString filename) {
+Handle::Handle(const QString &filename) {
   QFile f(filename);
   if (f.exists() && f.open(QIODevice::ReadOnly)) {
     pos = 0;
@@ -15,10 +15,10 @@ Handle::Handle(QString filename) {
     bytearray = f.read(len);
     data = (const quint8 *)bytearray.constData();
   } else {
-    data = NULL;
+    data = nullptr;
   }
 }
-Handle::Handle(QByteArray array) {
+Handle::Handle(const QByteArray &array) {
   bytearray = array;
   data = (const quint8 *)bytearray.constData();
   pos = 0;
@@ -26,7 +26,7 @@ Handle::Handle(QByteArray array) {
 }
 
 bool Handle::exists() const {
-  return data != NULL;
+  return data != nullptr;
 }
 
 bool Handle::eof() const {
@@ -85,6 +85,18 @@ QString Handle::rs() {
     shift += 7;
   } while (u7 & 0x80);
   return read(len);
+}
+
+QString Handle::rcs() {
+  QString r;
+  quint8 ch = 0;
+  do {
+    ch = data[pos++];
+    if (ch) {
+      r += QChar(ch);
+    }
+  } while (ch);
+  return r;
 }
 
 

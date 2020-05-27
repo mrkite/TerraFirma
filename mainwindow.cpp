@@ -20,23 +20,22 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   ui(new Ui::MainWindow) {
     ui->setupUi(this);
+    l10n = new L10n();
 
-    info = NULL;
-    kills = NULL;
-    findChests = NULL;
-    hilite = NULL;
+    info = nullptr;
+    kills = nullptr;
+    findChests = nullptr;
+    hilite = nullptr;
 
     QLabel *status = new QLabel();
     ui->statusBar->addWidget(status, 1);
 
-    connect(ui->map, SIGNAL(error(QString)),
-            this, SLOT(showError(QString)));
-
-    connect(ui->map, SIGNAL(status(QString)),
-            status, SLOT(setText(QString)), Qt::DirectConnection);
+    connect(ui->map, &GLMap::error, this, &MainWindow::showError);
+    connect(ui->map, &GLMap::status, status, &QLabel::setText,
+            Qt::DirectConnection);
 
     settings = new SettingsDialog(this);
-    connect(settings, SIGNAL(accepted()), this, SLOT(resetPaths()));
+    connect(settings, &SettingsDialog::accepted, this, &MainWindow::resetPaths);
 
     world = QSharedPointer<World>(new World(this));
     try {
@@ -49,13 +48,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     }
     ui->map->setTexturePath(settings->getTextures());
     ui->map->setWorld(world);
+    ui->map->setL10n(l10n);
 
-    connect(world.data(), SIGNAL(loadError(QString)),
-            this, SLOT(showError(QString)));
-    connect(world.data(), SIGNAL(status(QString)),
-            status, SLOT(setText(QString)));
-    connect(world.data(), SIGNAL(loaded(bool)),
-            this, SLOT(setNPCs(bool)));
+    connect(world.data(), &World::loadError, this, &MainWindow::showError);
+    connect(world.data(), &World::status, status, &QLabel::setText);
+    connect(world.data(), &World::loaded, this, &MainWindow::setNPCs);
 
     QSettings info;
     ui->actionFog_of_War->setChecked(info.value("fogOfWar", true).toBool());
@@ -63,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->actionShow_Wires->setChecked(info.value("wires", false).toBool());
     ui->actionUse_Textures->setChecked(info.value("textures", true).toBool());
 
+    l10n->load(settings->getExe());
     scanWorlds();
     scanPlayers();
   }
@@ -72,7 +70,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::openWorld() {
-  QAction *action = qobject_cast<QAction*>(sender());
+  auto action = qobject_cast<QAction*>(sender());
   if (action) {
     QString filename = action->data().toString();
     if (filename.isEmpty())
@@ -90,9 +88,7 @@ void MainWindow::openWorld() {
 }
 
 void MainWindow::save() {
-  QFileDialog fileDialog(this);
-  fileDialog.setDefaultSuffix("png");
-  QString filename = fileDialog.getSaveFileName(this, tr("Save PNG"),
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save PNG"),
                                                 "", "*.png");
   if (!filename.isEmpty()) {
     ui->map->update();
@@ -105,35 +101,33 @@ void MainWindow::save() {
 }
 
 void MainWindow::selectPlayer() {
-  QAction *action = qobject_cast<QAction*>(sender());
+  auto action = qobject_cast<QAction*>(sender());
   if (action)
     world->setPlayer(action->data().toString());
 }
 
 void MainWindow::findItem() {
-  if (findChests != NULL) {
+  if (findChests != nullptr) {
     findChests->show();
   } else {
     findChests = new FindChests(world->chests, this);
     findChests->show();
-    connect(findChests, SIGNAL(jump(QPointF)),
-            ui->map, SLOT(jumpToLocation(QPointF)));
+    connect(findChests, &FindChests::jump, ui->map, &GLMap::jumpToLocation);
   }
 }
 
 void MainWindow::hiliteBlock() {
-  if (hilite != NULL) {
+  if (hilite != nullptr) {
     hilite->show();
   } else {
     hilite = new HiliteDialog(world, this);
     hilite->show();
-    connect(hilite, SIGNAL(accepted()),
-            ui->map, SLOT(startHilighting()));
+    connect(hilite, &HiliteDialog::accepted, ui->map, &GLMap::startHilighting);
   }
 }
 
 void MainWindow::worldInfo() {
-  if (info != NULL) {
+  if (info != nullptr) {
     info->close();
     delete info;
   }
@@ -142,12 +136,21 @@ void MainWindow::worldInfo() {
 }
 
 void MainWindow::worldKills() {
-  if (kills != NULL) {
+  if (kills != nullptr) {
     kills->close();
     delete kills;
   }
   kills = new KillDialog(world->header, world->info, this);
   kills->show();
+}
+
+void MainWindow::showBeastiary() {
+  if (beastiary != nullptr) {
+    beastiary->close();
+    delete beastiary;
+  }
+  beastiary = new BeastiaryDialog(world->kills, world->seen, world->chats, this);
+  beastiary->show();
 }
 
 void MainWindow::showAbout() {
@@ -156,7 +159,7 @@ void MainWindow::showAbout() {
                         "&copy; Copyright %3, %4")
                      .arg(qApp->applicationName())
                      .arg(qApp->applicationVersion())
-                     .arg(2016)
+                     .arg(2020)
                      .arg(qApp->organizationName()));
 }
 
@@ -165,12 +168,13 @@ void MainWindow::showSettings() {
 }
 
 void MainWindow::resetPaths() {
+  l10n->load(settings->getExe());
   scanWorlds();
   scanPlayers();
   ui->map->setTexturePath(settings->getTextures());
 }
 
-void MainWindow::showError(QString msg) {
+void MainWindow::showError(const QString &msg) {
   QMessageBox::warning(this,
                        "Error",
                        msg,
@@ -184,7 +188,7 @@ void MainWindow::setNPCs(bool loaded) {
   QList<QAction *> actions;
 
   for (auto const &npc : world->npcs) {
-    QAction *n = new QAction(this);
+    auto n = new QAction(this);
     QString name;
     if (npc.name.isEmpty())
       name = npc.title;
@@ -197,8 +201,7 @@ void MainWindow::setNPCs(bool loaded) {
       n->setText(tr("Jump to %1's Home").arg(name));
       n->setData(QPointF(npc.homeX, npc.homeY));
     }
-    connect(n, SIGNAL(triggered()),
-            this, SLOT(jumpNPC()));
+    connect(n, &QAction::triggered, this, &MainWindow::jumpNPC);
     actions.append(n);
   }
   ui->menuNPCs->addActions(actions);
@@ -206,7 +209,7 @@ void MainWindow::setNPCs(bool loaded) {
 }
 
 void MainWindow::jumpNPC() {
-  QAction *action = qobject_cast<QAction*>(sender());
+  auto action = qobject_cast<QAction*>(sender());
   if (action) {
     QPointF point = action->data().toPointF();
     ui->map->jumpToLocation(point);
@@ -227,15 +230,14 @@ void MainWindow::scanWorlds() {
       if (it.fileName().endsWith(".wld")) {
         QString name = worldName(it.filePath());
         if (!name.isNull()) {
-          QAction *w = new QAction(this);
+          auto w = new QAction(this);
           w->setText(name);
           w->setData(it.filePath());
           if (key < 9) {
             w->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1 + key++));
             w->setShortcutContext(Qt::ApplicationShortcut);
           }
-          connect(w, SIGNAL(triggered()),
-                  this, SLOT(openWorld()));
+          connect(w, &QAction::triggered, this, &MainWindow::openWorld);
           actions.append(w);
         }
       }
@@ -256,7 +258,7 @@ void MainWindow::scanPlayers() {
   for (const QString &playerDir : settings->getPlayers()) {
     QDir dir(playerDir);
   
-    QActionGroup *group = new QActionGroup(this);
+    auto group = new QActionGroup(this);
   
     bool checked = false;
     QDirIterator it(dir);
@@ -266,13 +268,12 @@ void MainWindow::scanPlayers() {
       if (it.fileName().endsWith(".plr")) {
         QString name = playerName(it.filePath());
         if (!name.isNull()) {
-          QAction *p = new QAction(this);
+          auto p = new QAction(this);
           p->setCheckable(true);
           p->setActionGroup(group);
           p->setText(name);
           p->setData(it.filePath());
-          connect(p, SIGNAL(triggered()),
-                  this, SLOT(selectPlayer()));
+          connect(p, &QAction::triggered, this, &MainWindow::selectPlayer);
           if (!checked) {
             p->setChecked(true);
             p->trigger();
@@ -291,7 +292,7 @@ void MainWindow::scanPlayers() {
   ui->menuSelect_Player->setDisabled(!enabled);
 }
 
-QString MainWindow::worldName(QString path) {
+QString MainWindow::worldName(const QString &path) {
   QFile file(path);
   if (!file.open(QIODevice::ReadOnly))
     return QString();
@@ -315,7 +316,7 @@ QString MainWindow::worldName(QString path) {
   return handle.rs();
 }
 
-QString MainWindow::playerName(QString path) {
+QString MainWindow::playerName(const QString &path) {
   QFile file(path);
   if (!file.open(QIODevice::ReadOnly))
     return QString();

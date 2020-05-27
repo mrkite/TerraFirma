@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef STEAMCONFIG_H_
-#define STEAMCONFIG_H_
+#pragma once
 
 #include <QHash>
 #include <QString>
@@ -15,16 +14,14 @@ class SteamConfig {
     QString name, value;
     Element();
     explicit Element(QList<QString> *lines);
-    QString find(QString path);
+    QString find(const QString &path);
   };
 
  public:
   SteamConfig();
-  QString operator[](QString path) const;
+  QString operator[](const QString &path) const;
 
  private:
-  void parse(QString filename);
+  void parse(const QString &filename);
   Element *root;
 };
-
-#endif  // STEAMCONFIG_H_

@@ -22,14 +22,14 @@ int main(int argc, char *argv[]) {
 
   QTranslator translator;
   translator.load(QString("terrafirma_")+locale);
-  app.installTranslator(&translator);
+  QApplication::installTranslator(&translator);
 
-  app.setApplicationName("Terrafirma");
-  app.setApplicationVersion("3.0.19");
-  app.setOrganizationName("seancode");
+  QApplication::setApplicationName("Terrafirma");
+  QApplication::setApplicationVersion("3.0.19");
+  QApplication::setOrganizationName("seancode");
 
   MainWindow w;
   w.show();
 
-  return app.exec();
+  return QApplication::exec();
 }

@@ -15,9 +15,9 @@ WorldInfo::WorldInfo(QObject *parent) : QObject(parent) {
 
 static quint32 readColor(QString const &s) {
   quint32 color = 0;
-  for (int i = 0; i < s.length(); i++) {
+  for (auto ch : s) {
     color <<= 4;
-    char c = s.at(i).unicode();
+    char c = ch.unicode();
     if (c >= '0' && c <= '9')
       color |= c - '0';
     else if (c >= 'a' && c <= 'f')
@@ -29,29 +29,30 @@ static quint32 readColor(QString const &s) {
 }
 
 void WorldInfo::init() {
-  QJsonArray json = load(":/res/tiles.json");
-  for (int i = 0; i < json.size(); i++) {
-    QJsonObject const &obj = json[i].toObject();
+  // must load items first
+  QJsonArray json = load(":/res/items.json");
+  for (auto const &item : json) {
+    QJsonObject const &obj = item.toObject();
     quint16 id = obj["id"].toInt();
-    tiles[id] = QSharedPointer<TileInfo>(new TileInfo(obj));
+    items[id] = obj["name"].toString();
+  }
+  json = load(":/res/tiles.json");
+  for (const auto &i : json) {
+    QJsonObject const &obj = i.toObject();
+    quint16 id = obj["id"].toInt();
+    tiles[id] = QSharedPointer<TileInfo>(new TileInfo(items, obj));
   }
   json = load(":/res/walls.json");
   for (auto const &item : json) {
     QJsonObject const &obj = item.toObject();
     quint16 id = obj["id"].toInt();
-    walls[id] = QSharedPointer<WallInfo>(new WallInfo(id, obj));
+    walls[id] = QSharedPointer<WallInfo>(new WallInfo(items, id, obj));
   }
   json = load(":/res/prefixes.json");
   for (auto const &item : json) {
     QJsonObject const &obj = item.toObject();
     quint16 id = obj["id"].toInt();
     prefixes[id] = obj["name"].toString();
-  }
-  json = load(":/res/items.json");
-  for (auto const &item : json) {
-    QJsonObject const &obj = item.toObject();
-    quint16 id = obj["id"].toInt();
-    items[id] = obj["name"].toString();
   }
   json = load(":/res/npcs.json");
   for (auto const &item : json) {
@@ -85,7 +86,7 @@ void WorldInfo::init() {
   }
 }
 
-const QJsonArray WorldInfo::load(QString filename) {
+QJsonArray WorldInfo::load(const QString &filename) {
   QFile file(filename);
   if (!file.open(QIODevice::ReadOnly))
     throw InitException(tr("%1 is missing!").arg(filename));
@@ -122,7 +123,7 @@ QSharedPointer<TileInfo> WorldInfo::find(QSharedPointer<TileInfo> tile,
   return tile;  // no further subvariants found
 }
 
-static TileInfo::MergeBlend parseMB(QString tag, bool blend, int *offset) {
+static TileInfo::MergeBlend parseMB(const QString &tag, bool blend, int *offset) {
   QString group = "";
   TileInfo::MergeBlend mb;
   mb.hasTile = false;
@@ -168,8 +169,13 @@ static TileInfo::MergeBlend parseMB(QString tag, bool blend, int *offset) {
   return mb;
 }
 
-TileInfo::TileInfo(const QJsonObject &json) {
-  name = json["name"].toString();
+TileInfo::TileInfo(const QHash<quint16, QString> &items,
+                   const QJsonObject &json) {
+  if (json.contains("ref")) {
+    name = items[json["ref"].toInt(0)];
+  } else {
+    name = json["name"].toString();
+  }
   color = json.contains("color") ? readColor(json["color"].toString()) : 0;
   lightR = json.contains("r") ? json["r"].toDouble(0.0) : 0.0;
   lightG = json.contains("g") ? json["g"].toDouble(0.0) : 0.0;
@@ -187,6 +193,7 @@ TileInfo::TileInfo(const QJsonObject &json) {
   merge = mask & 512;
   large = mask & 1024;
   isHilighting = false;
+  u = v = minu = maxu = minv = maxv = 0;
 
   QString b = json["blend"].toString();
   int offset = 0;
@@ -205,12 +212,18 @@ TileInfo::TileInfo(const QJsonObject &json) {
   if (json.contains("var")) {
     for (auto const &item : json["var"].toArray()) {
       QJsonObject const &obj = item.toObject();
-      variants.append(QSharedPointer<TileInfo>(new TileInfo(obj, *this)));
+      variants.append(QSharedPointer<TileInfo>(new TileInfo(items, obj,
+                                                            *this)));
     }
   }
 }
-TileInfo::TileInfo(const QJsonObject &json, const TileInfo &parent) {
-  name = json["name"].toString(parent.name);
+TileInfo::TileInfo(const QHash<quint16, QString> &items,
+                   const QJsonObject &json, const TileInfo &parent) {
+  if (json.contains("ref")) {
+    name = items[json["ref"].toInt(0)];
+  } else {
+    name = json["name"].toString(parent.name);
+  }
   color = json.contains("color") ? readColor(json["color"].toString())
       : parent.color;
   lightR = json["r"].toDouble(parent.lightR);
@@ -245,13 +258,19 @@ TileInfo::TileInfo(const QJsonObject &json, const TileInfo &parent) {
     QJsonArray const &arr = json["var"].toArray();
     for (auto const &item : arr) {
       QJsonObject const &obj = item.toObject();
-      variants.append(QSharedPointer<TileInfo>(new TileInfo(obj, *this)));
+      variants.append(QSharedPointer<TileInfo>(new TileInfo(items, obj,
+                                                            *this)));
     }
   }
 }
 
-WorldInfo::WallInfo::WallInfo(quint16 id, const QJsonObject &json) {
-  name = json["name"].toString();
+WorldInfo::WallInfo::WallInfo(const QHash<quint16, QString> &items, quint16 id,
+                              const QJsonObject &json) {
+  if (json.contains("ref")) {
+    name = items[json["ref"].toInt(0)];
+  } else {
+    name = json["name"].toString();
+  }
   color = json.contains("color") ? readColor(json["color"].toString()) : 0;
   blend = json["blend"].toInt(id);
 }

@@ -94,7 +94,7 @@ static quint8 M(quint8 x, quint8 y) {
 
 
 
-QByteArray AES128::decrypt(QByteArray input, QByteArray key, QByteArray iv) {
+QByteArray AES128::decrypt(const QByteArray &input, QByteArray key, QByteArray iv) {
   quint8 roundKey[176];
   for (int i = 0; i < 16; i++)
     roundKey[i] = key[i];

@@ -7,19 +7,19 @@
 #include <QFile>
 #include <QDir>
 #include <QDebug>
+#include <utility>
 #include "./world.h"
 #include "./worldinfo.h"
 #include "zlib/zlib.h"
 
 World::World(QObject *parent) : QObject(parent) {
   setAutoDelete(false);  // please don't kill me!
-  tiles = NULL;
+  tiles = nullptr;
   tilesWide = tilesHigh = 0;
 }
 
 World::~World() {
-  if (tiles != NULL)
-    delete [] tiles;
+  delete [] tiles;
 }
 
 void World::init() {
@@ -37,11 +37,11 @@ void World::init() {
 }
 
 void World::setFilename(QString filename) {
-  this->filename = filename;
+  this->filename = std::move(filename);
 }
 
 void World::setPlayer(QString filename) {
-  this->player = filename;
+  this->player = std::move(filename);
   if (!this->filename.isEmpty())
     loadPlayer();
 }
@@ -115,6 +115,14 @@ void World::run() {
     handle->seek(sections[7]);
     loadTownManager(handle, version);
   }
+  if (version >= 210) {
+    handle->seek(sections[8]);
+    loadBestiary(handle, version);
+  }
+  if (version >= 220) {
+    handle->seek(sections[9]);
+    loadCreativePowers(handle, version);
+  }
 
   if (!player.isEmpty())
     loadPlayer();
@@ -124,7 +132,7 @@ void World::run() {
 }
 
 void World::loadHeader(QSharedPointer<Handle> handle, int version) {
-  header.load(handle, version);
+  header.load(std::move(handle), version);
 
   tilesHigh = header["tilesHigh"]->toInt();
   tilesWide = header["tilesWide"]->toInt();
@@ -132,7 +140,7 @@ void World::loadHeader(QSharedPointer<Handle> handle, int version) {
   tiles = new Tile[tilesWide * tilesHigh];
 }
 
-void World::loadTiles(QSharedPointer<Handle> handle, int version,
+void World::loadTiles(const QSharedPointer<Handle> &handle, int version,
                       const QList<bool> &extra) {
   for (int x = 0; x < tilesWide; x++) {
     emit status(tr("Reading tiles: %1%").arg(
@@ -150,7 +158,7 @@ void World::loadTiles(QSharedPointer<Handle> handle, int version,
   }
 }
 
-void World::loadChests(QSharedPointer<Handle> handle, int) {
+void World::loadChests(const QSharedPointer<Handle> &handle, int) {
   chests.clear();
   emit status("Loading Chests...");
   int numChests = handle->r16();
@@ -174,7 +182,7 @@ void World::loadChests(QSharedPointer<Handle> handle, int) {
   }
 }
 
-void World::loadSigns(QSharedPointer<Handle> handle, int) {
+void World::loadSigns(const QSharedPointer<Handle> &handle, int) {
   signs.clear();
   emit status("Loading Signs...");
   int numSigns = handle->r16();
@@ -187,7 +195,7 @@ void World::loadSigns(QSharedPointer<Handle> handle, int) {
   }
 }
 
-void World::loadNPCs(QSharedPointer<Handle> handle, int version) {
+void World::loadNPCs(const QSharedPointer<Handle> &handle, int version) {
   npcs.clear();
   emit status("Loading NPCs...");
   while (handle->r8()) {
@@ -215,6 +223,9 @@ void World::loadNPCs(QSharedPointer<Handle> handle, int version) {
     npc.homeless = handle->r8();
     npc.homeX = handle->r32();
     npc.homeY = handle->r32();
+    if (version >= 213 && handle->r8()) {
+      npc.townVariation = handle->r32();
+    }
     npcs.append(npc);
   }
   if (version >= 140) {
@@ -242,7 +253,7 @@ void World::loadNPCs(QSharedPointer<Handle> handle, int version) {
   }
 }
 
-void World::loadDummies(QSharedPointer<Handle> handle, int) {
+void World::loadDummies(const QSharedPointer<Handle> &handle, int) {
   int numDummies = handle->r32();
   for (int i = 0; i < numDummies; i++) {
     handle->r16();  // x
@@ -252,7 +263,7 @@ void World::loadDummies(QSharedPointer<Handle> handle, int) {
   }
 }
 
-void World::loadEntities(QSharedPointer<Handle> handle, int) {
+void World::loadEntities(const QSharedPointer<Handle> &handle, int) {
   entities.clear();
   int numEntities = handle->r32();
   for (int i = 0; i < numEntities; i++) {
@@ -291,7 +302,7 @@ void World::loadEntities(QSharedPointer<Handle> handle, int) {
   }
 }
 
-void World::loadPressurePlates(QSharedPointer<Handle> handle, int) {
+void World::loadPressurePlates(const QSharedPointer<Handle> &handle, int) {
   int numPlates = handle->r32();
   for (int i = 0; i < numPlates; i++) {
     handle->r32();  //x
@@ -299,14 +310,36 @@ void World::loadPressurePlates(QSharedPointer<Handle> handle, int) {
   }
 }
 
-void World::loadTownManager(QSharedPointer<Handle> handle, int) {
+void World::loadTownManager(const QSharedPointer<Handle> &handle, int) {
   int numRooms = handle->r32();
   for (int i = 0; i < numRooms; i++) {
     handle->r32();  //NPC
     handle->r32();  //X
     handle->r32();  //Y
-    // I wonder if they will eventually depreciate the 'home' location in the NPC data. This data is for the new feature where NPC's remember which room they were in before they died
+    // I wonder if they will eventually depreciate the 'home' location in the NPC data.
+    // This data is for the new feature where NPC's remember which room they were in before they died
   }
+}
+
+void World::loadBestiary(const QSharedPointer<Handle> &handle, int) {
+  int numKills = handle->r32();
+  for (int i = 0; i < numKills; i++) {
+    auto npc = handle->rs();
+    kills[npc] = handle->r32();
+  }
+  int numSights = handle->r32();
+  for (int i = 0; i < numSights; i++) {
+    seen.append(handle->rs());
+  }
+  int numChat = handle->r32();
+  for (int i = 0; i < numChat; i++) {
+    chats.append(handle->rs());
+  }
+}
+
+void World::loadCreativePowers(const QSharedPointer<Handle> &, int) {
+  // do we care if biome spread is disabled and stuff?
+  // let's ignore this for now.
 }
 
 void World::spreadLight() {
@@ -562,7 +595,7 @@ void World::loadPlayer2(QSharedPointer<Handle> handle, int version) {
 }
 
 
-int Tile::load(QSharedPointer<Handle> handle, int, const QList<bool> &extra) {
+int Tile::load(const QSharedPointer<Handle> &handle, int, const QList<bool> &extra) {
   quint8 flags1 = handle->r8(), flags2 = 0, flags3 = 0;
   if (flags1 & 1) {  // has flags2
     flags2 = handle->r8();
@@ -620,6 +653,8 @@ int Tile::load(QSharedPointer<Handle> handle, int, const QList<bool> &extra) {
     flags |= 0x100;
   if (flags3 & 32)  // yellow wire
     flags |= 0x400;
+  if (flags3 & 64)  // wall is word
+    wall |= handle->r8() << 8;
 
   int rle = 0;
   switch (flags1 >> 6) {

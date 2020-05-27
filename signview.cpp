@@ -7,7 +7,7 @@
 #include "./signview.h"
 #include "./ui_signview.h"
 
-SignView::SignView(QString text, QWidget *parent) : QWidget(parent),
+SignView::SignView(const QString &text, QWidget *parent) : QWidget(parent),
   ui(new Ui::SignView) {
   setWindowFlags(Qt::Popup);
 

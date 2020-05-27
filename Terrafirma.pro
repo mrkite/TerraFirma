@@ -8,6 +8,8 @@ TEMPLATE = app
 macx:CONFIG += c++11
 
 SOURCES += main.cpp\
+  beastiarydialog.cpp \
+  l10n.cpp \
         mainwindow.cpp \
     worldinfo.cpp \
     world.cpp \
@@ -29,6 +31,8 @@ SOURCES += main.cpp\
     hilitedialog.cpp
 
 HEADERS  += mainwindow.h \
+    beastiarydialog.h \
+    l10n.h \
     worldinfo.h \
     world.h \
     worldheader.h \
@@ -51,6 +55,7 @@ HEADERS  += mainwindow.h \
     hilitedialog.h
 
 FORMS    += mainwindow.ui \
+    beastiarydialog.ui \
     settingsdialog.ui \
     infodialog.ui \
     killdialog.ui \

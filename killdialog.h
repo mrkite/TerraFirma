@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef KILLDIALOG_H_
-#define KILLDIALOG_H_
+#pragma once
 
 #include <QDialog>
 #include <QStandardItemModel>
@@ -17,13 +16,11 @@ class KillDialog : public QDialog {
 
  public:
   explicit KillDialog(const WorldHeader &header, const WorldInfo &info,
-                      QWidget *parent = 0);
+                      QWidget *parent = nullptr);
   ~KillDialog();
 
  private:
-  void add(QString npc, int kills);
+  void add(const QString &npc, int kills);
   Ui::KillDialog *ui;
   QStandardItemModel *model;
 };
-
-#endif  // KILLDIALOG_H_

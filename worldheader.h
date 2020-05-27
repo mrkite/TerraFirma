@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef WORLDHEADER_H_
-#define WORLDHEADER_H_
+#pragma once
 
 #include <QString>
 #include <QHash>
@@ -34,7 +33,7 @@ class WorldHeader {
   WorldHeader();
   virtual ~WorldHeader();
   void init();
-  void load(QSharedPointer<Handle> reader, int version);
+  void load(const QSharedPointer<Handle> &handle, int version);
   QSharedPointer<Header> operator[](QString const &key) const;
   bool is(QString const &key) const;
   int treeStyle(int x) const;
@@ -73,5 +72,3 @@ class WorldHeader {
 
   QList<Field> fields;
 };
-
-#endif  // WORLDHEADER_H_

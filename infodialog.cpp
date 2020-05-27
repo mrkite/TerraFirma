@@ -83,7 +83,7 @@ InfoDialog::~InfoDialog() {
   delete ui;
 }
 
-void InfoDialog::add(QString key, QString val) {
+void InfoDialog::add(const QString &key, const QString &val) {
   model->setData(model->index(curRow, 0), key, Qt::DisplayRole);
   model->setData(model->index(curRow++, 1), val, Qt::DisplayRole);
 }

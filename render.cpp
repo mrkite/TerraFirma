@@ -10,7 +10,7 @@
 Render::Render() : ibo(QOpenGLBuffer::IndexBuffer) {
 }
 
-void Render::setTexturePath(QString path) {
+void Render::setTexturePath(const QString &path) {
   textures.setRoot(path);
 }
 
@@ -204,7 +204,7 @@ void Render::drawBG(int type, int cropw, int croph, GLfloat sx, GLfloat sy,
   vbo.allocate(buffer.constData(), buffer.count() * sizeof(GLfloat));
   ibo.bind();
   ibo.allocate(index.constData(), index.count() * sizeof(unsigned int));
-  gl->glDrawElements(GL_TRIANGLES, index.count(), GL_UNSIGNED_INT, 0);
+  gl->glDrawElements(GL_TRIANGLES, index.count(), GL_UNSIGNED_INT, nullptr);
   buffer.clear();
   index.clear();
 }
@@ -228,7 +228,7 @@ void Render::drawFlat(int x, int y, int x2, int y2) {
   vbo.allocate(buffer.constData(), buffer.count() * sizeof(GLfloat));
   ibo.bind();
   ibo.allocate(index.constData(), index.count() * sizeof(unsigned int));
-  gl->glDrawElements(GL_TRIANGLES, index.count(), GL_UNSIGNED_INT, 0);
+  gl->glDrawElements(GL_TRIANGLES, index.count(), GL_UNSIGNED_INT, nullptr);
   buffer.clear();
   index.clear();
 }
@@ -245,7 +245,7 @@ void Render::apply() {
     auto j = indices[i.key()];
     ibo.bind();
     ibo.allocate(j.constData(), j.count() * sizeof(unsigned int));
-    gl->glDrawElements(GL_TRIANGLES, j.count(), GL_UNSIGNED_INT, 0);
+    gl->glDrawElements(GL_TRIANGLES, j.count(), GL_UNSIGNED_INT, nullptr);
   }
   buffers.clear();
   indices.clear();
@@ -261,7 +261,7 @@ void Render::applyLiquid() {
     auto j = indices[i.key()];
     ibo.bind();
     ibo.allocate(j.constData(), j.count() * sizeof(unsigned int));
-    gl->glDrawElements(GL_TRIANGLES, j.count(), GL_UNSIGNED_INT, 0);
+    gl->glDrawElements(GL_TRIANGLES, j.count(), GL_UNSIGNED_INT, nullptr);
   }
   buffers.clear();
   indices.clear();
@@ -272,7 +272,7 @@ void Render::applyFog() {
   vbo.allocate(buffer.constData(), buffer.count() * sizeof(GLfloat));
   ibo.bind();
   ibo.allocate(index.constData(), index.count() * sizeof(unsigned int));
-  gl->glDrawElements(GL_TRIANGLES, index.count(), GL_UNSIGNED_INT, 0);
+  gl->glDrawElements(GL_TRIANGLES, index.count(), GL_UNSIGNED_INT, nullptr);
   buffer.clear();
   index.clear();
 }

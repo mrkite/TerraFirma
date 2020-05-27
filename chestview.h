@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef CHESTVIEW_H_
-#define CHESTVIEW_H_
+#pragma once
 
 #include <QWidget>
 #include <QStringListModel>
@@ -14,13 +13,11 @@ class ChestView : public QWidget {
   Q_OBJECT
 
  public:
-  explicit ChestView(QString name, const QList<QString> &items,
-                     QWidget *parent = 0);
+  explicit ChestView(const QString &name, const QList<QString> &items,
+                     QWidget *parent = nullptr);
   ~ChestView();
 
  private:
   Ui::ChestView *ui;
   QStringListModel *model;
 };
-
-#endif  // CHESTVIEW_H_

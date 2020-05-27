@@ -7,7 +7,7 @@
 #include "./hilitedialog.h"
 #include "./ui_hilitedialog.h"
 
-HiliteDialog::HiliteDialog(QSharedPointer<World> world, QWidget *parent)
+HiliteDialog::HiliteDialog(const QSharedPointer<World> &world, QWidget *parent)
   : QDialog(parent), ui(new Ui::HiliteDialog) {
   ui->setupUi(this);
 
@@ -19,7 +19,7 @@ HiliteDialog::HiliteDialog(QSharedPointer<World> world, QWidget *parent)
     item->setEditable(false);
     item->setData(QVariant::fromValue(i.value()), Qt::UserRole);
 
-    for (auto child : i.value()->variants) {
+    for (const auto &child : i.value()->variants) {
       addChild(child, i.value()->name, item);
     }
     root->appendRow(item);
@@ -48,27 +48,27 @@ void HiliteDialog::accept() {
   QDialog::accept();
 }
 
-void HiliteDialog::addChild(QSharedPointer<TileInfo> tile, QString name,
-                            QStandardItem *parent) {
+void HiliteDialog::addChild(const QSharedPointer<TileInfo> &tile,
+                            const QString &name, QStandardItem *parent) {
   if (tile->name != name) {
     auto child = new QStandardItem(tile->name);
     child->setData(QVariant::fromValue(tile), Qt::UserRole);
     child->setEditable(false);
     parent->appendRow(child);
   }
-  for (auto child : tile->variants) {
+  for (const auto &child : tile->variants) {
     addChild(child, name, parent);
   }
 }
 
-void HiliteDialog::searchTextChanged(QString newText) {
+void HiliteDialog::searchTextChanged(const QString &newText) {
   filter.setFilterRegExp(newText);
   filter.setFilterCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
 }
 
-void HiliteDialog::tagChild(QSharedPointer<TileInfo> tile, bool hilite) {
+void HiliteDialog::tagChild(const QSharedPointer<TileInfo> &tile, bool hilite) {
   tile->isHilighting = hilite;
-  for (auto child : tile->variants) {
+  for (const auto &child : tile->variants) {
     tagChild(child, hilite);
   }
 }

@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef RENDER_H_
-#define RENDER_H_
+#pragma once
 
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
@@ -15,7 +14,7 @@ class Render {
   void init(QOpenGLFunctions *gl);
   void destroy();
 
-  void setTexturePath(QString path);
+  void setTexturePath(const QString &path);
   bool texturesValid() const;
 
   QSharedPointer<QOpenGLTexture> get(int type);
@@ -46,7 +45,5 @@ class Render {
 
   QOpenGLVertexArrayObject vao;
   QOpenGLBuffer vbo, ibo;
-  QOpenGLFunctions *gl;
+  QOpenGLFunctions *gl = nullptr;
 };
-
-#endif  // RENDER_H_

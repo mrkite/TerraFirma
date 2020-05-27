@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef MAINWINDOW_H_
-#define MAINWINDOW_H_
+#pragma once
 
 #include <QMainWindow>
 #include <QSharedPointer>
@@ -12,6 +11,8 @@
 #include "./killdialog.h"
 #include "./findchests.h"
 #include "./hilitedialog.h"
+#include "./beastiarydialog.h"
+#include "./l10n.h"
 
 namespace Ui {
 class MainWindow;
@@ -21,7 +22,7 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
  public:
-  explicit MainWindow(QWidget *parent = 0);
+  explicit MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
  private slots:
@@ -33,17 +34,18 @@ class MainWindow : public QMainWindow {
   void hiliteBlock();
   void worldInfo();
   void worldKills();
+  void showBeastiary();
   void showSettings();
   void resetPaths();
   void setNPCs(bool loaded);
   void jumpNPC();
-  void showError(QString msg);
+  void showError(const QString &msg);
 
  private:
   void scanWorlds();
   void scanPlayers();
-  QString worldName(QString path);
-  QString playerName(QString path);
+  QString worldName(const QString &path);
+  QString playerName(const QString &path);
 
   Ui::MainWindow *ui;
   QSharedPointer<World>world;
@@ -52,6 +54,6 @@ class MainWindow : public QMainWindow {
   KillDialog *kills;
   FindChests *findChests;
   HiliteDialog *hilite;
+  BeastiaryDialog *beastiary;
+  L10n *l10n;
 };
-
-#endif  // MAINWINDOW_H_

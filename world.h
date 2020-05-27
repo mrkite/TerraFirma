@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef WORLD_H_
-#define WORLD_H_
+#pragma once
 
 #include <QObject>
 #include <QRunnable>
@@ -11,9 +10,9 @@
 
 class Tile {
  public:
-  qint16 u, v, wallu, wallv, type;
-  quint8 wall, liquid, color, wallColor, slope;
-  int load(QSharedPointer<Handle> handle, int version,
+  qint16 u, v, wallu, wallv, type, wall;
+  quint8 liquid, color, wallColor, slope;
+  int load(const QSharedPointer<Handle> &handle, int version,
            const QList<bool> &extra);
   bool active() const;
   bool lava() const;
@@ -63,6 +62,7 @@ class World : public QObject, public QRunnable {
     float x, y;
     bool homeless;
     qint32 homeX, homeY;
+    qint32 townVariation;
     qint16 sprite;
     qint16 head;
     qint16 order;
@@ -95,7 +95,7 @@ class World : public QObject, public QRunnable {
     QString title, reason;
   };
 
-  explicit World(QObject *parent = 0);
+  explicit World(QObject *parent = nullptr);
   virtual ~World();
   void init();
   void setFilename(QString filename);
@@ -106,6 +106,9 @@ class World : public QObject, public QRunnable {
   QList<Sign> signs;
   QList<NPC> npcs;
   QList<Entity> entities;
+  QMap<QString, qint32> kills;
+  QList<QString> seen;
+  QList<QString> chats;
 
   int tilesWide, tilesHigh;
   WorldHeader header;
@@ -121,15 +124,17 @@ class World : public QObject, public QRunnable {
 
  private:
   void loadHeader(QSharedPointer<Handle> handle, int version);
-  void loadTiles(QSharedPointer<Handle> handle, int version,
+  void loadTiles(const QSharedPointer<Handle> &handle, int version,
                  const QList<bool> &extra);
-  void loadChests(QSharedPointer<Handle> handle, int version);
-  void loadSigns(QSharedPointer<Handle> handle, int version);
-  void loadNPCs(QSharedPointer<Handle> handle, int version);
-  void loadDummies(QSharedPointer<Handle> handle, int version);
-  void loadEntities(QSharedPointer<Handle> handle, int version);
-  void loadPressurePlates(QSharedPointer<Handle> handle, int version);
-  void loadTownManager(QSharedPointer<Handle> handle, int version);
+  void loadChests(const QSharedPointer<Handle> &handle, int version);
+  void loadSigns(const QSharedPointer<Handle> &handle, int version);
+  void loadNPCs(const QSharedPointer<Handle> &handle, int version);
+  void loadDummies(const QSharedPointer<Handle> &handle, int version);
+  void loadEntities(const QSharedPointer<Handle> &handle, int version);
+  void loadPressurePlates(const QSharedPointer<Handle> &handle, int version);
+  void loadTownManager(const QSharedPointer<Handle> &handle, int version);
+  void loadBestiary(const QSharedPointer<Handle> &handle, int version);
+  void loadCreativePowers(const QSharedPointer<Handle> &handle, int version);
   void spreadLight();
   void loadPlayer();
   void loadPlayer1(QSharedPointer<Handle> handle, int version);
@@ -138,5 +143,3 @@ class World : public QObject, public QRunnable {
   QString filename;
   QString player;
 };
-
-#endif  // WORLD_H_

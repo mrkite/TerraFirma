@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef INFODIALOG_H_
-#define INFODIALOG_H_
+#pragma once
 
 #include <QDialog>
 #include <QStandardItemModel>
@@ -15,14 +14,12 @@ class InfoDialog : public QDialog {
   Q_OBJECT
 
  public:
-  explicit InfoDialog(const WorldHeader &header, QWidget *parent = 0);
+  explicit InfoDialog(const WorldHeader &header, QWidget *parent = nullptr);
   ~InfoDialog();
 
  private:
-  void add(QString key, QString val);
+  void add(const QString &key, const QString &val);
   Ui::InfoDialog *ui;
   QStandardItemModel *model;
   int curRow;
 };
-
-#endif  // INFODIALOG_H_

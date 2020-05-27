@@ -1,7 +1,6 @@
 /** @Copyright 2015 seancode */
 
-#ifndef WORLDINFO_H_
-#define WORLDINFO_H_
+#pragma once
 
 #include <QObject>
 #include <QHash>
@@ -22,8 +21,10 @@ class TileInfo : public QObject {
     quint8 direction;
   };
 
-  explicit TileInfo(QJsonObject const &json);
-  TileInfo(QJsonObject const &json, TileInfo const &parent);
+  explicit TileInfo(const QHash<quint16, QString> &items,
+                    QJsonObject const &json);
+  TileInfo(const QHash<quint16, QString> &items, QJsonObject const &json,
+           TileInfo const &parent);
   QString name;
   quint32 color;
   double lightR, lightG, lightB;
@@ -41,45 +42,44 @@ Q_DECLARE_METATYPE(QSharedPointer<TileInfo>)
 class WorldInfo : public QObject {
   Q_OBJECT
 
- public:
-      class InitException {
-       public:
-        explicit InitException(QString const reason) : reason(reason) {}
-        QString reason;
-      };
+public:
+  class InitException {
+  public:
+    explicit InitException(QString const reason) : reason(reason) {}
+    QString reason;
+  };
 
-      struct WallInfo {
-        WallInfo(quint16 id, QJsonObject const &json);
-        QString name;
-        quint32 color;
-        quint16 blend;
-        quint8 large;
-      };
-      struct NPC {
-        explicit NPC(QJsonObject const &json);
-        QString title;
-        quint16 head;
-        qint16 id;
-      };
+  struct WallInfo {
+    WallInfo(const QHash<quint16, QString> &items, quint16 id,
+             QJsonObject const &json);
+    QString name;
+    quint32 color;
+    quint16 blend;
+    quint8 large = 0;
+  };
+  struct NPC {
+    explicit NPC(QJsonObject const &json);
+    QString title;
+    quint16 head;
+    qint16 id;
+  };
 
-      explicit WorldInfo(QObject *parent = 0);
-      void init();
-      QSharedPointer<TileInfo> operator[](int i) const;
-      QSharedPointer<TileInfo> operator[](class Tile const *tile) const;
+  explicit WorldInfo(QObject *parent = nullptr);
+  void init();
+  QSharedPointer<TileInfo> operator[](int type) const;
+  QSharedPointer<TileInfo> operator[](class Tile const *tile) const;
 
-      QHash<int, QSharedPointer<TileInfo>> tiles;
-      QHash<int, QSharedPointer<WallInfo>> walls;
-      QHash<quint16, QString> prefixes;
-      QHash<quint16, QString> items;
-      QHash<int, QSharedPointer<NPC>> npcsById;
-      QHash<int, QSharedPointer<NPC>> npcsByBanner;
-      QHash<QString, QSharedPointer<NPC>> npcsByName;
-      quint32 sky, earth, rock, hell, water, lava, honey;
+  QHash<int, QSharedPointer<TileInfo>> tiles;
+  QHash<int, QSharedPointer<WallInfo>> walls;
+  QHash<quint16, QString> prefixes;
+  QHash<quint16, QString> items;
+  QHash<int, QSharedPointer<NPC>> npcsById;
+  QHash<int, QSharedPointer<NPC>> npcsByBanner;
+  QHash<QString, QSharedPointer<NPC>> npcsByName;
+  quint32 sky = 0, earth = 0, rock = 0, hell = 0, water = 0, lava = 0, honey = 0;
 
- private:
-          const QJsonArray load(QString const filename);
-          QSharedPointer<TileInfo> find(QSharedPointer<TileInfo> info,
-                                        quint16 u, quint16 v) const;
+private:
+  QJsonArray load(const QString &filename);
+  QSharedPointer<TileInfo> find(QSharedPointer<TileInfo> tile,
+                                quint16 u, quint16 v) const;
 };
-
-#endif  // WORLDINFO_H_

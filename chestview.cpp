@@ -7,7 +7,7 @@
 #include "./chestview.h"
 #include "./ui_chestview.h"
 
-ChestView::ChestView(QString name, const QList<QString> &items,
+ChestView::ChestView(const QString &name, const QList<QString> &items,
                      QWidget *parent)
   : QWidget(parent), ui(new Ui::ChestView) {
   ui->setupUi(this);
