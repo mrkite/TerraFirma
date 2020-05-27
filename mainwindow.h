@@ -47,13 +47,13 @@ class MainWindow : public QMainWindow {
   QString worldName(const QString &path);
   QString playerName(const QString &path);
 
-  Ui::MainWindow *ui;
+  Ui::MainWindow *ui = nullptr;
   QSharedPointer<World>world;
-  SettingsDialog *settings;
-  InfoDialog *info;
-  KillDialog *kills;
+  SettingsDialog *settings = nullptr;
+  InfoDialog *info = nullptr;
+  KillDialog *kills = nullptr;
   FindChests *findChests;
-  HiliteDialog *hilite;
-  BeastiaryDialog *beastiary;
-  L10n *l10n;
+  HiliteDialog *hilite = nullptr;
+  BeastiaryDialog *beastiary = nullptr;
+  L10n *l10n = nullptr;
 };
