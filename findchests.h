@@ -6,6 +6,7 @@
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 #include "./world.h"
+#include "./l10n.h"
 
 namespace Ui {
 class FindChests;
@@ -15,7 +16,7 @@ class FindChests : public QDialog {
   Q_OBJECT
 
  public:
-  explicit FindChests(const QList<World::Chest> &chests,
+  explicit FindChests(const QList<World::Chest> &chests, L10n *l10n,
                       QWidget *parent = nullptr);
   ~FindChests();
 

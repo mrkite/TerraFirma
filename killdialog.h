@@ -6,6 +6,7 @@
 #include <QStandardItemModel>
 #include "./worldheader.h"
 #include "./worldinfo.h"
+#include "./l10n.h"
 
 namespace Ui {
 class KillDialog;
@@ -16,11 +17,12 @@ class KillDialog : public QDialog {
 
  public:
   explicit KillDialog(const WorldHeader &header, const WorldInfo &info,
-                      QWidget *parent = nullptr);
+                      L10n *l10n, QWidget *parent = nullptr);
   ~KillDialog();
 
  private:
   void add(const QString &npc, int kills);
   Ui::KillDialog *ui;
   QStandardItemModel *model;
+  L10n *l10n;
 };

@@ -376,12 +376,12 @@ void GLMap::mouseMoveEvent(QMouseEvent *event) {
         emit status(QString("%1,%2 - Murky Blackness").arg(x).arg(y));
       } else if (tile->active()) {
         auto info = world->info[tile];
-        emit status(QString("%1,%2 - %3 (%4)").arg(x).arg(y)
-                    .arg(info->name).arg(tile->color));
+        emit status(QString("%1,%2 - %3").arg(x).arg(y)
+                    .arg(l10n->xlateItem(info->name)));
       } else if (tile->wall > 0) {
         auto info = world->info.walls[tile->wall];
         emit status(QString("%1,%2 - %3").arg(x).arg(y)
-                    .arg(info->name));
+                    .arg(l10n->xlateItem(info->name)));
       } else {
         emit status(QString("%1,%2").arg(x).arg(y));
       }
@@ -414,16 +414,18 @@ void GLMap::mouseReleaseEvent(QMouseEvent *event) {
         for (auto const &item : chest.items) {
           if (item.stack > 0) {
             if (item.prefix == "")
-              items.append(QString("%1 %2").arg(item.stack).arg(item.name));
+              items.append(QString("%1 %2").arg(item.stack)
+                           .arg(l10n->xlateItem(item.name)));
             else
               items.append(QString("%1 %2 %3").arg(item.stack)
-                           .arg(item.prefix).arg(item.name));
+                           .arg(item.prefix)
+                           .arg(l10n->xlateItem(item.name)));
           }
         }
 
         QString name = chest.name;
         if (name.isEmpty())
-          name = world->info[&world->tiles[y * world->tilesWide + x]]->name;
+          name = l10n->xlateItem(world->info[&world->tiles[y * world->tilesWide + x]]->name);
 
         delete chestView;
         chestView = new ChestView(name, items, this);

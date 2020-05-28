@@ -3,7 +3,7 @@
 #pragma once
 
 #include <QDialog>
-#include <QStandardItemModel>
+#include "./l10n.h"
 
 namespace Ui {
 class BeastiaryDialog;
@@ -16,10 +16,11 @@ public:
   explicit BeastiaryDialog(const QMap<QString, qint32> &kills,
                            const QList<QString> &seen,
                            const QList<QString> &chats,
-                           QWidget *parent = nullptr);
+                           L10n *l10n, QWidget *parent = nullptr);
   ~BeastiaryDialog();
 
 private:
   void addKill(int row, const QString &npc, qint32 kills);
   Ui::BeastiaryDialog *ui;
+  L10n *l10n;
 };

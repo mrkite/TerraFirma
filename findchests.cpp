@@ -24,7 +24,7 @@ class FindChests::ItemsFilterProxyModel : public QSortFilterProxyModel {
 };
 
 
-FindChests::FindChests(const QList<World::Chest> &chests, QWidget *parent)
+FindChests::FindChests(const QList<World::Chest> &chests, L10n *l10n, QWidget *parent)
   : QDialog(parent), ui(new Ui::FindChests) {
   ui->setupUi(this);
 
@@ -32,8 +32,8 @@ FindChests::FindChests(const QList<World::Chest> &chests, QWidget *parent)
 
   for (int i = 0; i < chests.length(); i++) {
     for (auto const &item : chests[i].items) {
-      if (!roots[item.name].contains(i))
-        roots[item.name].append(i);
+      if (!roots[l10n->xlateItem(item.name)].contains(i))
+        roots[l10n->xlateItem(item.name)].append(i);
     }
   }
 

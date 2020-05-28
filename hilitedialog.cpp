@@ -7,15 +7,16 @@
 #include "./hilitedialog.h"
 #include "./ui_hilitedialog.h"
 
-HiliteDialog::HiliteDialog(const QSharedPointer<World> &world, QWidget *parent)
-  : QDialog(parent), ui(new Ui::HiliteDialog) {
+HiliteDialog::HiliteDialog(const QSharedPointer<World> &world,
+                           L10n *l10n, QWidget *parent)
+  : QDialog(parent), ui(new Ui::HiliteDialog), l10n(l10n) {
   ui->setupUi(this);
 
   auto root = model.invisibleRootItem();
   QHashIterator<int, QSharedPointer<TileInfo>> i(world->info.tiles);
   while (i.hasNext()) {
     i.next();
-    auto item = new QStandardItem(i.value()->name);
+    auto item = new QStandardItem(l10n->xlateItem(i.value()->name));
     item->setEditable(false);
     item->setData(QVariant::fromValue(i.value()), Qt::UserRole);
 
@@ -51,7 +52,7 @@ void HiliteDialog::accept() {
 void HiliteDialog::addChild(const QSharedPointer<TileInfo> &tile,
                             const QString &name, QStandardItem *parent) {
   if (tile->name != name) {
-    auto child = new QStandardItem(tile->name);
+    auto child = new QStandardItem(l10n->xlateItem(tile->name));
     child->setData(QVariant::fromValue(tile), Qt::UserRole);
     child->setEditable(false);
     parent->appendRow(child);

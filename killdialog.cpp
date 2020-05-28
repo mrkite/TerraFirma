@@ -8,8 +8,8 @@
 #include "./ui_killdialog.h"
 
 KillDialog::KillDialog(const WorldHeader &header, const WorldInfo &info,
-                       QWidget *parent)
-  : QDialog(parent), ui(new Ui::KillDialog) {
+                       L10n *l10n, QWidget *parent)
+  : QDialog(parent), ui(new Ui::KillDialog), l10n(l10n) {
   ui->setupUi(this);
 
   model = new QStandardItemModel(0, 2, this);
@@ -24,7 +24,7 @@ KillDialog::KillDialog(const WorldHeader &header, const WorldInfo &info,
 
   for (int i = 0; i < list->length(); i++) {
     if (info.npcsByBanner.contains(i))
-      add(info.npcsByBanner[i]->title, list->at(i)->toInt());
+      add(l10n->xlateNPC(info.npcsByBanner[i]->title), list->at(i)->toInt());
   }
 }
 

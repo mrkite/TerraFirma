@@ -7,6 +7,8 @@
  */
 
 #include <QSharedPointer>
+#include <QRegularExpression>
+#include <QJsonDocument>
 #include "l10n.h"
 #include "handle.h"
 
@@ -37,13 +39,8 @@ static quint32 fits3(quint32 a, quint32 b, quint32 c = 0, quint32 d = 0,
                      quint32 e = 0) {
   return qMax(qMax(qMax(qMax(a, b), c), d), e) > 8192 ? 4 : 2;
 }
-static quint32 fits5(QList<quint32> list) {
-  for (const auto &i : list) {
-    if (i > 2047) {
-      return 4;
-    }
-  }
-  return 2;
+static quint32 fits5(quint32 a) {
+  return a > 2047 ? 4 : 2;
 }
 
 L10n::L10n() {
@@ -65,7 +62,7 @@ void L10n::load(QString exe) {
   }
   handle->skip(2);
   auto numSections = handle->r16();
-  handle->skip(10);
+  handle->skip(12);
   auto headerLen = handle->r16();
   handle->skip(headerLen + 2);
   bool found = false;
@@ -125,6 +122,7 @@ void L10n::load(QString exe) {
   int guidWidth = (indexWidths & 2) ? 4 : 2;
   int blobWidth = (indexWidths & 4) ? 4 : 2;
   auto tables = handle->r64();
+  handle->skip(8);
   quint32 rows[64];
   for (int i = 0; i < 64; i++) {
     if (tables & 1) {
@@ -132,11 +130,20 @@ void L10n::load(QString exe) {
     } else {
       rows[i] = 0;
     }
+    tables >>= 1;
   }
 
   const int TypeDefOrRef = fits2(rows[1], rows[2], rows[27]);
   const int MethodDefOrRef = fits1(rows[6], rows[10]);
-
+  quint32 CustomAttr = rows[0];
+  int customRows[] = {
+    1, 2, 4, 6, 8, 9, 10, 17, 20, 23, 26, 27, 32, 35, 38, 39, 40
+  };
+  for (quint16 i = 0; i < sizeof(customRows) / sizeof(customRows[0]); i++) {
+    if (rows[customRows[i]] > CustomAttr) {
+      CustomAttr = rows[customRows[i]];
+    }
+  }
   /*
    * Ugh, in order to seek into the stream, you need to handle all the types
    * in order.  Since we want resources, which is type 40, we need to
@@ -162,11 +169,7 @@ void L10n::load(QString exe) {
       // Constant
       rows[11] * (2 + fits2(rows[4], rows[8], rows[23]) + blobWidth) +
       // CustomAttribute
-      rows[12] * (fits5({rows[0], rows[1], rows[2], rows[4], rows[6],
-                         rows[8], rows[9], rows[10], rows[17], rows[20],
-                         rows[23], rows[26], rows[27], rows[32],
-                         rows[35], rows[38], rows[40]}) +
-                  fits3(rows[6], rows[10])) +
+      rows[12] * (fits5(CustomAttr) + fits3(rows[6], rows[10]) + blobWidth) +
       // FieldMarshal
       rows[13] * (fits1(rows[4], rows[8]) + blobWidth) +
       // DeclSecurity
@@ -224,11 +227,60 @@ void L10n::load(QString exe) {
     resources.append(QSharedPointer<Resource>(new Resource(name, ofs)));
   }
   handle->seek(metaRVA + streams[STRINGS].offset + offset - base);
+  QRegularExpression re("Terraria\\.Localization\\.Content\\.([^.]+)\\.([^.]+)\\.json");
   for (const auto &r : resources) {
     handle->seek(metaRVA + streams[STRINGS].offset + offset - base + r->name);
     auto name = handle->rcs();
-    handle->seek(r->offset + resourceRVA + offset - base);
-    auto len = handle->r32();
-    this->resources[name] = handle->readBytes(len);
+    auto match = re.match(name);
+    if (match.hasMatch()) {
+      auto lang = match.captured(1);
+
+      handle->seek(r->offset + resourceRVA + offset - base);
+      auto len = handle->r32();
+
+      QString raw = QString::fromUtf8(handle->readBytes(len), len);
+      QRegularExpression comma(",\\s*}");
+      raw.replace(comma, "}");  // remove trailing commas
+      QJsonParseError error;
+      QJsonDocument doc = QJsonDocument::fromJson(raw.toUtf8(), &error);
+      if (!doc.isNull() && doc.isObject()) {
+        auto root = doc.object();
+        languages.insert(lang);
+        if (match.captured(2) == "Items") {
+          items[lang] = root.value("ItemName").toObject();
+        } else if (match.captured(2) == "NPCs") {
+          npcs[lang] = root.value("NPCName").toObject();
+        }
+      }
+    }
   }
 }
+
+void L10n::setLanguage(QString lang) {
+  currentLanguage = lang;
+}
+
+QList<QString> L10n::getLanguages() {
+  return languages.toList();
+}
+
+QString L10n::xlateItem(const QString &key) {
+  auto str = items[currentLanguage].value(key).toString(key);
+  QRegularExpression re("{\\$ItemName\\.(.+?)}");
+  auto match = re.match(str);
+  if (match.hasMatch()) {
+    str.replace(re, xlateItem(match.captured(1)));
+  }
+  return str;
+}
+
+QString L10n::xlateNPC(const QString &key) {
+  auto str = npcs[currentLanguage].value(key).toString(key);
+  QRegularExpression re("{\\$NPCName\\.(.+?)}");
+  auto match = re.match(str);
+  if (match.hasMatch()) {
+    str.replace(re, xlateNPC(match.captured(1)));
+  }
+  return str;
+}
+

@@ -8,6 +8,7 @@
 #include <QSortFilterProxyModel>
 
 #include "./world.h"
+#include "./l10n.h"
 
 namespace Ui {
 class HiliteDialog;
@@ -18,7 +19,7 @@ class HiliteDialog : public QDialog {
 
  public:
   explicit HiliteDialog(const QSharedPointer<World> &world,
-                        QWidget *parent = nullptr);
+                        L10n *l10n,  QWidget *parent = nullptr);
   ~HiliteDialog();
 
  public slots:
@@ -33,4 +34,5 @@ class HiliteDialog : public QDialog {
   QSharedPointer<TileInfo> hiliting;
   QStandardItemModel model;
   QSortFilterProxyModel filter;
+  L10n *l10n;
 };

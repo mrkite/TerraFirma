@@ -6,8 +6,8 @@
 BeastiaryDialog::BeastiaryDialog(const QMap<QString, qint32> &kills,
                                  const QList<QString> &seen,
                                  const QList<QString> &chats,
-                                 QWidget *parent)
-  : QDialog(parent), ui(new Ui::BeastiaryDialog) {
+                                 L10n *l10n, QWidget *parent)
+  : QDialog(parent), ui(new Ui::BeastiaryDialog), l10n(l10n) {
   ui->setupUi(this);
 
   ui->killsTable->setColumnCount(2);
@@ -22,12 +22,20 @@ BeastiaryDialog::BeastiaryDialog(const QMap<QString, qint32> &kills,
 
   int row = 0;
   for (const auto &key : kills.keys()) {
-    addKill(row, key, kills.value(key));
+    addKill(row, l10n->xlateNPC(key), kills.value(key));
     row++;
   }
+  ui->killsTable->sortItems(1, Qt::DescendingOrder);
 
-  ui->seenList->addItems(seen);
-  ui->chatList->addItems(chats);
+  for (const auto &key : seen) {
+    ui->seenList->addItem(l10n->xlateNPC(key));
+  }
+  ui->seenList->sortItems();
+
+  for (const auto &key : chats) {
+    ui->chatList->addItem(l10n->xlateNPC(key));
+  }
+  ui->chatList->sortItems();
 }
 
 BeastiaryDialog::~BeastiaryDialog() {

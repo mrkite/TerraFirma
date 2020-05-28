@@ -110,7 +110,7 @@ void MainWindow::findItem() {
   if (findChests != nullptr) {
     findChests->show();
   } else {
-    findChests = new FindChests(world->chests, this);
+    findChests = new FindChests(world->chests, l10n, this);
     findChests->show();
     connect(findChests, &FindChests::jump, ui->map, &GLMap::jumpToLocation);
   }
@@ -120,7 +120,7 @@ void MainWindow::hiliteBlock() {
   if (hilite != nullptr) {
     hilite->show();
   } else {
-    hilite = new HiliteDialog(world, this);
+    hilite = new HiliteDialog(world, l10n, this);
     hilite->show();
     connect(hilite, &HiliteDialog::accepted, ui->map, &GLMap::startHilighting);
   }
@@ -140,7 +140,7 @@ void MainWindow::worldKills() {
     kills->close();
     delete kills;
   }
-  kills = new KillDialog(world->header, world->info, this);
+  kills = new KillDialog(world->header, world->info, l10n, this);
   kills->show();
 }
 
@@ -149,7 +149,7 @@ void MainWindow::showBeastiary() {
     beastiary->close();
     delete beastiary;
   }
-  beastiary = new BeastiaryDialog(world->kills, world->seen, world->chats, this);
+  beastiary = new BeastiaryDialog(world->kills, world->seen, world->chats, l10n, this);
   beastiary->show();
 }
 
@@ -191,9 +191,9 @@ void MainWindow::setNPCs(bool loaded) {
     auto n = new QAction(this);
     QString name;
     if (npc.name.isEmpty())
-      name = npc.title;
+      name = l10n->xlateNPC(npc.title);
     else
-      name = tr("%1 the %2").arg(npc.name).arg(npc.title);
+      name = tr("%1 the %2").arg(npc.name).arg(l10n->xlateNPC(npc.title));
     if (npc.homeless) {
       n->setText(tr("Jump to %1's Location").arg(name));
       n->setData(QPointF(npc.x, npc.y));
