@@ -20,8 +20,10 @@ class SteamConfig {
  public:
   SteamConfig();
   QString operator[](const QString &path) const;
+  QString getBase() const;
 
  private:
   void parse(const QString &filename);
+  QString steamBase;
   Element *root;
 };

@@ -23,6 +23,7 @@ SteamConfig::SteamConfig() {
         .first();
     path += QDir::toNativeSeparators("/Steam");
   }
+  steamBase = path;
   path += QDir::toNativeSeparators("/config/config.vdf");
   QFile file(path);
   if (file.exists())
@@ -33,6 +34,10 @@ QString SteamConfig::operator[](const QString &path) const {
   if (root == nullptr)
     return QString();
   return root->find(path);
+}
+
+QString SteamConfig::getBase() const {
+  return steamBase;
 }
 
 void SteamConfig::parse(const QString &filename) {
