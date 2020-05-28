@@ -408,10 +408,42 @@ void World::spreadLight() {
 }
 
 void World::loadPlayer() {
-  QString path = player.left(player.lastIndexOf("."));
-  path += QDir::toNativeSeparators(QString("/%1.map")
-                                   .arg(header["worldID"]->toInt()));
   QDir dir;
+
+    // try guid first
+  QString path = player.left(player.lastIndexOf("."));
+  auto g = header["guid"];
+  quint32 u1 = g->at(0)->toInt() |
+      (g->at(1)->toInt() << 8) |
+      (g->at(2)->toInt() << 16) |
+      (g->at(3)->toInt() << 24);
+  quint16 u2 = g->at(4)->toInt() |
+      (g->at(5)->toInt() << 8);
+  quint16 u3 = g->at(6)->toInt() |
+      (g->at(7)->toInt() << 8);
+  quint16 u4 = (g->at(8)->toInt() << 8) |
+      g->at(9)->toInt();
+  quint16 u5 = (g->at(10)->toInt() << 8) |
+      g->at(11)->toInt();
+  quint32 u6 = (g->at(12)->toInt() << 24) |
+      (g->at(13)->toInt() << 16) |
+      (g->at(14)->toInt() << 8) |
+      g->at(15)->toInt();
+
+  path += QDir::toNativeSeparators(
+        QString("/%1-%2-%3-%4-%5%6.map")
+        .arg(u1, 8, 16, QChar('0'))
+        .arg(u2, 4, 16, QChar('0'))
+        .arg(u3, 4, 16, QChar('0'))
+        .arg(u4, 4, 16, QChar('0'))
+        .arg(u5, 4, 16, QChar('0'))
+        .arg(u6, 8, 16, QChar('0')));
+  if (!dir.exists(path)) {
+    // try old way of worldID
+    path = player.left(player.lastIndexOf("."));
+    path += QDir::toNativeSeparators(QString("/%1.map")
+                                     .arg(header["worldID"]->toInt()));
+  }
 
   if (!dir.exists(path)) {
     int offset = 0;
