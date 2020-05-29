@@ -1,10 +1,13 @@
 Cross-platform mapping for Terraria
 
-COMPILING:
-----------
+== New Features
 
-All Platforms:
-Use QtCreator and open terrafirma.pro
+* Updated to work with Terraria 1.4
+* Reworked everything to use Terraria's language files
+* Added support for showing the Beastiary
+
+*Note:* Because I'm using Terraria's localization, Terrafirma now needs to know
+the location of your Terraria.exe.  It will use Steam by default to help locate it.  If it cannot find it, it will list all items and blocks using their `tag` instead of a translated name.  You can manually specify the location of Terraria.exe if you wish the names used in Terrafirma to match the ones used in Terraria.
 
 
 How to do a static compile on Windows:
@@ -62,15 +65,15 @@ $ pbuilder-dist vivid build *.dsc
 Building on OSX:
 ----------------
 
-Make a static compile of Qt 5.5:
+Make a static compile of Qt 5.12:
 
 ```console
-$ git clone https://code.qt.io/qt/qt5.git
+$ git clone https://gitub.com/qt5.git
 $ cd qt5
-$ perl init-repository --module-subset=default,-qtwebkit,-qtwebkit-examples,-qtwebengine
+$ perl init-repository --module-subset=default,-qtwebkit,-qtwebkit-examples,-qtwebengine,-qtquick3d
 (wait forever)
-$ git checkout 5.5
-$ ./configure -prefix $PWD -opensource -confirm-license -nomake tests -nomake examples -release -static
+$ ./configure -prefix $PWD/qtbase -opensource -confirm-license -nomake tests -nomake examples -hostprefix $PWD/qtbase -release -static
+$ ln -s qtbase/include .
 $ make
 (wait forever)
 ```

@@ -248,6 +248,7 @@ void L10n::load(QString exe) {
         languages.insert(lang);
         if (match.captured(2) == "Items") {
           items[lang] = root.value("ItemName").toObject();
+          prefixes[lang] = root.value("Prefix").toObject();
         } else if (match.captured(2) == "NPCs") {
           npcs[lang] = root.value("NPCName").toObject();
         }
@@ -272,6 +273,10 @@ QString L10n::xlateItem(const QString &key) {
     str.replace(re, xlateItem(match.captured(1)));
   }
   return str;
+}
+
+QString L10n::xlatePrefix(const QString &key) {
+  return prefixes[currentLanguage].value(key).toString(key);
 }
 
 QString L10n::xlateNPC(const QString &key) {

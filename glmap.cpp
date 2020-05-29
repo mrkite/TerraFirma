@@ -418,7 +418,7 @@ void GLMap::mouseReleaseEvent(QMouseEvent *event) {
                            .arg(l10n->xlateItem(item.name)));
             else
               items.append(QString("%1 %2 %3").arg(item.stack)
-                           .arg(item.prefix)
+                           .arg(l10n->xlatePrefix(item.prefix))
                            .arg(l10n->xlateItem(item.name)));
           }
         }

@@ -61,6 +61,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui->actionUse_Textures->setChecked(info.value("textures", true).toBool());
 
     l10n->load(settings->getExe());
+    settings->setLanguages(l10n->getLanguages());
+    l10n->setLanguage(settings->getLanguage());
     scanWorlds();
     scanPlayers();
   }
@@ -169,6 +171,8 @@ void MainWindow::showSettings() {
 
 void MainWindow::resetPaths() {
   l10n->load(settings->getExe());
+  settings->setLanguages(l10n->getLanguages());
+  l10n->setLanguage(settings->getLanguage());
   scanWorlds();
   scanPlayers();
   ui->map->setTexturePath(settings->getTextures());

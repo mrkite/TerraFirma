@@ -36,6 +36,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
 
   defaultExes = "";
   defaultTextures = "";
+  currentLanguage = "en-US";  // default for first start
   if (terrariaDir.exists()) {
 #ifdef Q_OS_DARWIN
     // Darwin-based OS such as OS X and iOS, including any open source
@@ -78,10 +79,21 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
   customTextures = info.value("customTextures", defaultTextures).toString();
   useDefExe = info.value("useDefExe", true).toBool();
   customExes = info.value("customExes", defaultExes).toString();
+  currentLanguage = info.value("language", "").toString();
 }
 
 SettingsDialog::~SettingsDialog() {
   delete ui;
+}
+
+void SettingsDialog::setLanguages(QStringList l) {
+  ui->languages->clear();
+  ui->languages->addItems(l);
+  ui->languages->setCurrentText(currentLanguage);
+}
+
+QString SettingsDialog::getLanguage() {
+  return currentLanguage;
 }
 
 void SettingsDialog::show() {
@@ -119,6 +131,7 @@ void SettingsDialog::accept() {
   customTextures = ui->texturePath->text();
   useDefExe = ui->defaultExePath->isChecked();
   customExes = ui->exePath->text();
+  currentLanguage = ui->languages->currentText();
 
   QSettings info;
   info.setValue("useDefSave", useDefSave);
@@ -127,6 +140,7 @@ void SettingsDialog::accept() {
   info.setValue("customTextures", customTextures);
   info.setValue("useDefExe", useDefExe);
   info.setValue("customExes", customExes);
+  info.setValue("language", currentLanguage);
   QDialog::accept();
 }
 

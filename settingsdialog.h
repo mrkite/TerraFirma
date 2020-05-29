@@ -19,6 +19,8 @@ class SettingsDialog : public QDialog {
   QString getExe();
   QStringList getWorlds();
   QStringList getPlayers();
+  QString getLanguage();
+  void setLanguages(QStringList l);
 
  public slots:
   void show();
@@ -35,4 +37,5 @@ class SettingsDialog : public QDialog {
   QStringList defaultSaves;
   QString defaultTextures, customTextures, customSave, defaultExes, customExes;
   bool useDefTex, useDefSave, useDefExe;
+  QString currentLanguage;
 };
