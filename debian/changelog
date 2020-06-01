@@ -3,7 +3,7 @@ terrafirma (3.1.0) bionic; urgency=medium
   * Updated for 1.4
   * Added localization support
 
- -- Sean <sean@seancode.com>  Mon, 1 Jun 2020 09:30:49 -0700
+ -- Sean Kasun <sean@seancode.com>  Mon, 1 Jun 2020 09:30:49 -0700
 
 terrafirma (3.0.19) vivid; urgency=medium
 

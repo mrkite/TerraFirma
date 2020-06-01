@@ -2,8 +2,8 @@ Source: terrafirma
 Section: utils
 Priority: extra
 Maintainer: Sean Kasun <sean@seancode.com>
-Build-Depends: debhelper (>= 8), qtbase5-dev, qt5-qmake, qtchooser, zlib1g-dev
-Standards-Version: 3.9.6
+Build-Depends: debhelper (>= 11), qtbase5-dev, qt5-qmake, qtchooser, zlib1g-dev
+Standards-Version: 4.1.4
 Homepage: http://seancode.com/terrafirma/
 
 Package: terrafirma
