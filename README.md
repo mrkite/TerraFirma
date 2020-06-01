@@ -1,6 +1,7 @@
 Cross-platform mapping for Terraria
 
-== New Features
+New Features
+------------
 
 * Updated to work with Terraria 1.4
 * Reworked everything to use Terraria's language files
@@ -22,8 +23,9 @@ You also must install, git, activeperl, and python before compiling.
 Open your 64-bit developer prompt:
 
 ```bat
-> git clone https://gitub.com/qt5.git
+> git clone https://gitub.com/qt/qt5.git
 > cd qt5
+> git checkout 5.12
 > perl init-repository --module-subset=default,-qtwebkit,-qtwebkit-examples,-qtwebengine,-qtquick3d,-qtquick
 (wait forever)
 > mkdir qt_static
@@ -34,7 +36,7 @@ and rmeove `embed_manifest_dll` and `embed_manifest_exe` from that line.
 Next find `QMAKE_CFLAGS_*` and change `-MD` to `-MT` and `MDd` to `-MTd`.
 
 ```bat
-> configure -prefix %CD%\qt_static -opensource -confirm-license -platform win32-msvc -nomake tests -nomake examples -opengl angle -release -static
+> configure -prefix %CD%\qt_static -opensource -confirm-license -platform win32-msvc -nomake tests -nomake examples -opengl desktop -release -static
 > nmake
 (wait forever)
 > nmake install
@@ -42,7 +44,7 @@ Next find `QMAKE_CFLAGS_*` and change `-MD` to `-MT` and `MDd` to `-MTd`.
 
 This should make a static Qt5. Now in QtCreator go to Tools → Options and
 select Qt Versions from Build & Run.  Add a new Qt Version and locate the
-`qmake.exe` inside `qt_static`.  Then create a new Kit that uses the Qt
+`qmake.exe` inside `qt_static\bin`.  Then create a new Kit that uses the Qt
 Version you just created.
 
 Building for Linux:
@@ -59,10 +61,10 @@ $ debuild
 To make a package for another distrubtion
 
 ```console
-$ pbuilder-dist vivid create  # generate the environment
+$ pbuilder-dist bionic create  # generate the environment
 $ debuild -S -us -uc
 $ cd ..
-$ pbuilder-dist vivid build *.dsc
+$ pbuilder-dist bionic build *.dsc
 ```
 
 Building on OSX:
@@ -71,8 +73,9 @@ Building on OSX:
 Make a static compile of Qt 5.12:
 
 ```console
-$ git clone https://gitub.com/qt5.git
+$ git clone https://gitub.com/qt/qt5.git
 $ cd qt5
+$ git checkout 5.12
 $ perl init-repository --module-subset=default,-qtwebkit,-qtwebkit-examples,-qtwebengine,-qtquick3d,-qtquick
 (wait forever)
 $ mkdir qt_static
@@ -85,6 +88,6 @@ Then compile Terrafirma:
 
 ```console
 $ cd TerraFirma
-$ ~/qt5/qtbase/bin/qmake
+$ ~/qt5/qt_static/bin/qmake
 $ make
 ```
