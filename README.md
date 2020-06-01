@@ -13,34 +13,37 @@ the location of your Terraria.exe.  It will use Steam by default to help locate 
 How to do a static compile on Windows:
 -------------------------------------
 
-Download the qt5.5 sourcecode.
+Note, qt5 contains a lot of nested files, so it would be best to checkout the
+repository somewhere close to root, like C:\qt5 to prevent path-length errors.
 
-Unzip it whereever you wish, it's a large file and contains a lot of nested
-subdirectories, so you'll probably want to put it in <samp>C:\Qt5\src</samp> or something
-similar since you could end up running into Windows' path-length limitations
-otherwise.
+You also must install, git, activeperl, and python before compiling.
+(python may be optional since we're now excluding qtquick).
 
-Now edit <samp>qtbase\mkspecs\common\msvc-desktop.conf</samp>
-
-Find the CONFIG line and remove embed_manifest_dll and embed_manifest_exe
-from that line.
-
-Next find `QMAKE_CFLAGS_*` and change `-MD` to `-MT` and `-MDd` to `-MTd`.
-
-Open your developer command prompt, cd into the qtbase folder and run:
+Open your 64-bit developer prompt:
 
 ```bat
->configure -prefix %CD% -debug-and-release -opensource -confirm-license -platform win32-msvc2013 -nomake tests -nomake examples -opengl desktop -static
->nmake
+> git clone https://gitub.com/qt5.git
+> cd qt5
+> perl init-repository --module-subset=default,-qtwebkit,-qtwebkit-examples,-qtwebengine,-qtquick3d,-qtquick
+(wait forever)
+> mkdir qt_static
 ```
 
-If nmake complains about python or perl, install ActivePerl and ActivePython and
-try again.  This compile will take forever.
+Now edit `qtbase\mkspecs\common\msvc-desktop.conf`.  Find the CONFIG line
+and rmeove `embed_manifest_dll` and `embed_manifest_exe` from that line.
+Next find `QMAKE_CFLAGS_*` and change `-MD` to `-MT` and `MDd` to `-MTd`.
 
-This should make a static Qt5 with both debug and release libraries.  Now in
-QtCreator go to Tools → Options and select Qt Versions from Build & Run.
-Add a new Qt Version and locate the `qmake.exe` inside <samp>qtbase\bin</samp>.  Then
-create a new Kit that uses the Qt Version you just created.
+```bat
+> configure -prefix %CD%\qt_static -opensource -confirm-license -platform win32-msvc -nomake tests -nomake examples -opengl angle -release -static
+> nmake
+(wait forever)
+> nmake install
+```
+
+This should make a static Qt5. Now in QtCreator go to Tools → Options and
+select Qt Versions from Build & Run.  Add a new Qt Version and locate the
+`qmake.exe` inside `qt_static`.  Then create a new Kit that uses the Qt
+Version you just created.
 
 Building for Linux:
 -------------------
@@ -70,10 +73,10 @@ Make a static compile of Qt 5.12:
 ```console
 $ git clone https://gitub.com/qt5.git
 $ cd qt5
-$ perl init-repository --module-subset=default,-qtwebkit,-qtwebkit-examples,-qtwebengine,-qtquick3d
+$ perl init-repository --module-subset=default,-qtwebkit,-qtwebkit-examples,-qtwebengine,-qtquick3d,-qtquick
 (wait forever)
-$ ./configure -prefix $PWD/qtbase -opensource -confirm-license -nomake tests -nomake examples -hostprefix $PWD/qtbase -release -static
-$ ln -s qtbase/include .
+$ mkdir qt_static
+$ ./configure -prefix $PWD/qt_static -opensource -confirm-license -nomake tests -nomake examples -release -static
 $ make
 (wait forever)
 ```
