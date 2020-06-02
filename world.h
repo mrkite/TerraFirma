@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QRunnable>
+#include <QMap>
 #include "./worldinfo.h"
 #include "./worldheader.h"
 #include "./handle.h"
