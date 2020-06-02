@@ -34,6 +34,7 @@ class WorldHeader {
   virtual ~WorldHeader();
   void init();
   void load(const QSharedPointer<Handle> &handle, int version);
+  bool has(QString const &key) const;
   QSharedPointer<Header> operator[](QString const &key) const;
   bool is(QString const &key) const;
   int treeStyle(int x) const;

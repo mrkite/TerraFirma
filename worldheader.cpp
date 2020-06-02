@@ -85,6 +85,10 @@ QSharedPointer<WorldHeader::Header> WorldHeader::operator[](
   return data[key];
 }
 
+bool WorldHeader::has(const QString &key) const {
+  return data.contains(key);
+}
+
 bool WorldHeader::is(const QString &key) const {
   if (!data.contains(key))
     return false;
