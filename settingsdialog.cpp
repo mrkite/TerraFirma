@@ -41,8 +41,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
 #ifdef Q_OS_DARWIN
     // Darwin-based OS such as OS X and iOS, including any open source
     // version(s) of Darwin.
-    defaultTextures = terrariaDir.absoluteFilePath("Terraria.app/Contents/MacOS/Content/Images");
-    defaultExes = terrariaDir.absoluteFilePath("Terraria.app/Contents/MacOS/Terraria.exe");
+    defaultTextures = terrariaDir.absoluteFilePath("Terraria.app/Contents/Resources/Content/Images");
+    defaultExes = terrariaDir.absoluteFilePath("Terraria.app/Contents/MacOS/Terraria.bin.osx");
 #else
     defaultTextures = terrariaDir.absoluteFilePath("Content/Images");
     defaultExes = terrariaDir.absoluteFilePath("Terraria.exe");
