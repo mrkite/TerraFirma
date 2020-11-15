@@ -1,3 +1,9 @@
+terrafirma (3.1.2) bionic; urgency=medium
+
+  * Updated for 1.4.1
+
+ -- Sean Kasun <sean@seancode.com>  Sat, 14 Nov 2020 19:01:07 -0700
+
 terrafirma (3.1.1) bionic; urgency=medium
 
   * Updated for 1.4.0.5
