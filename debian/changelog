@@ -1,3 +1,9 @@
+terrafirma (3.1.3) bionic; urgency=medium
+
+  * Fixed steam config bug
+
+ -- Sean Kasun <sean@seancode.com>  Tue, 05 Jan 2021 13:22:50 -0700
+
 terrafirma (3.1.2) bionic; urgency=medium
 
   * Updated for 1.4.1

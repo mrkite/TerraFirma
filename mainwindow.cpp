@@ -161,7 +161,7 @@ void MainWindow::showAbout() {
                         "&copy; Copyright %3, %4")
                      .arg(qApp->applicationName())
                      .arg(qApp->applicationVersion())
-                     .arg(2020)
+                     .arg(2021)
                      .arg(qApp->organizationName()));
 }
 

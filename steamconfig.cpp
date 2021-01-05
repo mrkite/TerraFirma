@@ -78,7 +78,7 @@ SteamConfig::Element::Element(QList<QString> *lines) {
   line = lines->front();
   if (line.contains("{")) {
     lines->pop_front();
-    while (true) {
+    while (!lines->isEmpty()) {
       line = lines->front();
       if (line.contains("}")) {  // empty
         lines->pop_front();
