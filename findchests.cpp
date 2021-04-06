@@ -78,6 +78,6 @@ void FindChests::chestSelected(QModelIndex const& current, QModelIndex const& pr
 }
 
 void FindChests::searchTextChanged(const QString &newText) {
-  filter->setFilterRegExp(newText);
+  filter->setFilterRegularExpression(newText);
   filter->setFilterCaseSensitivity(Qt::CaseInsensitive);
 }
