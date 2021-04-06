@@ -5,6 +5,7 @@
  */
 
 #include <QDebug>
+#include <QRandomGenerator>
 #include "./uvrules.h"
 #include "./world.h"
 
@@ -250,7 +251,8 @@ void UVRules::fixWall(const QSharedPointer<World> &world, int x, int y) {
       set = (lazureTiles[x % 2][y % 2] - 1) * 2;
       break;
     default:
-      set = (qrand() % 3) * 2;
+      QRandomGenerator *rp = QRandomGenerator::system();
+      set = (rp->generate() % 3 ) * 2;
       break;
   }
 
@@ -494,7 +496,8 @@ quint8 UVRules::fixTile(const QSharedPointer<World> &world, int x, int y) {
   mask |= (bl == c) ? 0x0c00 : (bl == -2) ? 0x0800 : 0;
   mask |= (br == c) ? 0x0300 : (br == -2) ? 0x0200 : 0;
 
-  int set = (qrand() % 3) * 2;
+  QRandomGenerator *rp = QRandomGenerator::system();
+  int set = (rp->generate() % 3) * 2;
   if (world->info[c]->large)
     set = (phlebasTiles[y % 4][x % 3] - 1) * 2;
 

@@ -4,6 +4,7 @@
  * The main window for terrafirma
  */
 
+#include <QActionGroup>
 #include <QMessageBox>
 #include <QStandardPaths>
 #include <QDir>
@@ -238,7 +239,7 @@ void MainWindow::scanWorlds() {
           w->setText(name);
           w->setData(it.filePath());
           if (key < 9) {
-            w->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1 + key++));
+            w->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1 + key++));
             w->setShortcutContext(Qt::ApplicationShortcut);
           }
           connect(w, &QAction::triggered, this, &MainWindow::openWorld);
@@ -328,7 +329,7 @@ QString MainWindow::playerName(const QString &path) {
 
   QByteArray key;
   for (int i = 0; i < 8; i++) {
-    key.append(keystr.at(i));
+    key.append(keystr.at(i).unicode());
     key.append(static_cast<char>(0));
   }
 

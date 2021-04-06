@@ -63,7 +63,7 @@ void HiliteDialog::addChild(const QSharedPointer<TileInfo> &tile,
 }
 
 void HiliteDialog::searchTextChanged(const QString &newText) {
-  filter.setFilterRegExp(newText);
+  filter.setFilterRegularExpression(newText);
   filter.setFilterCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
 }
 
