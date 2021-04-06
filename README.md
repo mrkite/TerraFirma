@@ -49,24 +49,12 @@ $ pbuilder-dist bionic build *.dsc
 Building on OSX:
 ----------------
 
-Make a static compile of Qt 5.12:
+Then compile a release version of Terrafirma from Qt Creator.
+Copy the resulting terrafirma.app into `packages/com.seancode.terrafirma/data`
 
-```console
-$ git clone https://gitub.com/qt/qt5.git
-$ cd qt5
-$ git checkout 5.12
-$ perl init-repository --module-subset=default,-qtwebkit,-qtwebkit-examples,-qtwebengine,-qtquick3d,-qtquick
-(wait forever)
-$ mkdir qt_static
-$ ./configure -prefix $PWD/qt_static -opensource -confirm-license -nomake tests -nomake examples -release -static
-$ make
-(wait forever)
-```
+From within that folder, run `~/Qt/5.12.6/clang_64/bin/macdeployqt terrafirma.app`
+or whichever path matches your environment.
 
-Then compile Terrafirma:
-
-```console
-$ cd TerraFirma
-$ ~/qt5/qt_static/bin/qmake
-$ make
-```
+Finally change back into the main TerraFirma directory and run
+`~/Qt/QtIFW-4.0.1/bin/binarycreator -c config/config.xml -p packages
+terrafirmaMacOS`
