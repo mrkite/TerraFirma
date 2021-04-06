@@ -447,7 +447,7 @@ void GLMap::mouseReleaseEvent(QMouseEvent *event) {
 }
 
 void GLMap::wheelEvent(QWheelEvent *event) {
-  zoom += event->delta() / 90.0;
+  zoom += event->angleDelta().y() / 90.0;
   if (zoom > 32.0) zoom = 32.0;
   else if (zoom < 2.0) zoom = 2.0;
 
