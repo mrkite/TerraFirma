@@ -11,41 +11,20 @@ New Features
 the location of your Terraria.exe.  It will use Steam by default to help locate it.  If it cannot find it, it will list all items and blocks using their `tag` instead of a translated name.  You can manually specify the location of Terraria.exe if you wish the names used in Terrafirma to match the ones used in Terraria.
 
 
-How to do a static compile on Windows:
+How to do a Windows release:
 -------------------------------------
 
-Note, qt5 contains a lot of nested files, so it would be best to checkout the
-repository somewhere close to root, like C:\qt5 to prevent path-length errors.
+Compile a release version using Qt Creator.  Copy the executable into
+`packages/com.seancode.terrafirma/data`.  Also, open that folder in the
+developer command prompt and run `c:\Qt\5.13.0\msvc2017_64\bin\qtenv2.bat` or
+whichever environment applies to your setup.
 
-You also must install, git, activeperl, and python before compiling.
-(python may be optional since we're now excluding qtquick).
+Next run `windeployqt terrafirma.exe` which will copy all of the necessary
+dlls into that folder.
 
-Open your 64-bit developer prompt:
+Finally change back into the main TerraFirma directory and run:
+`c:\Qt\QtIFW-4.0.1\bin\binarycreator.exe -c config\config.xml -p packages terrafirmaInstall.exe`
 
-```bat
-> git clone https://gitub.com/qt/qt5.git
-> cd qt5
-> git checkout 5.12
-> perl init-repository --module-subset=default,-qtwebkit,-qtwebkit-examples,-qtwebengine,-qtquick3d,-qtquick
-(wait forever)
-> mkdir qt_static
-```
-
-Now edit `qtbase\mkspecs\common\msvc-desktop.conf`.  Find the CONFIG line
-and rmeove `embed_manifest_dll` and `embed_manifest_exe` from that line.
-Next find `QMAKE_CFLAGS_*` and change `-MD` to `-MT` and `MDd` to `-MTd`.
-
-```bat
-> configure -prefix %CD%\qt_static -opensource -confirm-license -platform win32-msvc -nomake tests -nomake examples -opengl desktop -release -static
-> nmake
-(wait forever)
-> nmake install
-```
-
-This should make a static Qt5. Now in QtCreator go to Tools → Options and
-select Qt Versions from Build & Run.  Add a new Qt Version and locate the
-`qmake.exe` inside `qt_static\bin`.  Then create a new Kit that uses the Qt
-Version you just created.
 
 Building for Linux:
 -------------------
