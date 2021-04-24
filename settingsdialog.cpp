@@ -53,21 +53,34 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
         QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)
         .first());
   worldDir.setPath(worldDir.absoluteFilePath("My Games/Terraria/Worlds"));
-  if (!worldDir.exists()) {
-    // try linux path
-    worldDir.setPath(QStandardPaths::standardLocations(
-                          QStandardPaths::GenericDataLocation).first());
-    worldDir.setPath(worldDir.absoluteFilePath("Terraria/Worlds"));
+
+  QStringList dataDirs = QStandardPaths::standardLocations(
+              QStandardPaths::GenericDataLocation);
+  for (const auto &dataDir : dataDirs) {
+      if (!worldDir.exists()) {
+        // try linux path
+        worldDir.setPath(dataDir);
+        worldDir.setPath(worldDir.absoluteFilePath("Terraria/Worlds"));
+      }
+  }
+
+  QList<QDir> userDirs({ QDir(steamDir.absoluteFilePath("userdata")) });
+  for (const auto &dataDir : dataDirs) {
+      QDir userDir = QDir(dataDir).absoluteFilePath("Steam/userdata");
+      if (userDir.exists()) {
+          userDirs += userDir;
+      }
   }
 
   QStringList steamWorldDirs;
-  QDir userDir = QDir(steamDir.absoluteFilePath("userdata"));
-  for (const auto &dir : userDir.entryInfoList(QDir::NoDotAndDotDot |
-                                                   QDir::Dirs)) {
+  for (const auto &userDir : userDirs) {
+    for (const auto &dir : userDir.entryInfoList(QDir::NoDotAndDotDot |
+                                                 QDir::Dirs)) {
     QString steamWorldDir = QDir(dir.absoluteFilePath()).
-        absoluteFilePath("105600/remote/worlds");
+      absoluteFilePath("105600/remote/worlds");
     if (QDir(steamWorldDir).exists())
       steamWorldDirs += steamWorldDir;
+    }
   }
 
   defaultSaves = QStringList(worldDir.absolutePath()) + steamWorldDirs;
