@@ -76,10 +76,10 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
   for (const auto &userDir : userDirs) {
     for (const auto &dir : userDir.entryInfoList(QDir::NoDotAndDotDot |
                                                  QDir::Dirs)) {
-    QString steamWorldDir = QDir(dir.absoluteFilePath()).
-      absoluteFilePath("105600/remote/worlds");
-    if (QDir(steamWorldDir).exists())
-      steamWorldDirs += steamWorldDir;
+      QString steamWorldDir = QDir(dir.absoluteFilePath()).
+          absoluteFilePath("105600/remote/worlds");
+      if (QDir(steamWorldDir).exists())
+        steamWorldDirs += steamWorldDir;
     }
   }
 
