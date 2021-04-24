@@ -56,12 +56,11 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
 
   QStringList dataDirs = QStandardPaths::standardLocations(
               QStandardPaths::GenericDataLocation);
+  // try linux paths
   for (const auto &dataDir : dataDirs) {
-      if (!worldDir.exists()) {
-        // try linux path
-        worldDir.setPath(dataDir);
-        worldDir.setPath(worldDir.absoluteFilePath("Terraria/Worlds"));
-      }
+    if (worldDir.exists()) break;
+    worldDir.setPath(dataDir);
+    worldDir.setPath(worldDir.absoluteFilePath("Terraria/Worlds"));
   }
 
   QList<QDir> userDirs({ QDir(steamDir.absoluteFilePath("userdata")) });
