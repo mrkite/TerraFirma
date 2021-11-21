@@ -262,8 +262,7 @@ void L10n::setLanguage(QString lang) {
 }
 
 QList<QString> L10n::getLanguages() {
-  QList<QString> qList(languages.begin(), languages.end());
-  return qList;
+  return QList<QString>::fromSet(languages);
 }
 
 QString L10n::xlateItem(const QString &key) {

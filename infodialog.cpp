@@ -46,6 +46,8 @@ InfoDialog::InfoDialog(const WorldHeader &header, QWidget *parent)
       header.is("downedHalloweenTree") ? "Whittled" : "Undefeated");
   add("Ice Queen",
       header.is("downedIceQueen") ? "Melted" : "Undefeated");
+  add("Deerclops",
+      header.is("killedDeerClops") ? "Hooved" : "Undefeated");
   add("Santa-NK1",
       header.is("downedChristmasSantank") ? "Sleighn" : "Undefeated");
   add("Everscream",

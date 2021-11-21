@@ -1,3 +1,9 @@
+terrafirma (3.1.7) focal; urgency=medium
+
+  * Updated for 1.4.3
+
+ -- Sean Kasun <sean@seancode.com>  Sun, 21 Nov 2021 12:44:59 -0700
+
 terrafirma (3.1.6) bionic; urgency=medium
 
   * Updated for 1.4.2.3
