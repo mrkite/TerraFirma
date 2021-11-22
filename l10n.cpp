@@ -262,7 +262,12 @@ void L10n::setLanguage(QString lang) {
 }
 
 QList<QString> L10n::getLanguages() {
+#if QT_VERSION < 0x060000
   return QList<QString>::fromSet(languages);
+#else
+  QList<QString> qList(languages.begin(), languages.end());
+  return qList;
+#endif
 }
 
 QString L10n::xlateItem(const QString &key) {
