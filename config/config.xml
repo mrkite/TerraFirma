@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
   <Name>Terrafirma</Name>
-  <Version>3.1.7</Version>
+  <Version>3.1.8</Version>
   <Title>Terrafirma Installer</Title>
   <Publisher>Sean Kasun</Publisher>
   <StartMenuDir>Terrafirma</StartMenuDir>
