@@ -1,8 +1,14 @@
+Terrafirma (3.1.9) focal; urgency=medium
+
+  * Updated for 1.4.3.6
+
+ -- Sean Kasun <sean@seancode.com>  Fri, 18 Mar 2022 15:06:45 -0700
+
 terrafirma (3.1.8) focal; urgency=medium
 
   * UPdated for 1.4.3.2
 
- -- Sean Kasun <sean@seancode.com>  Thu, 25 Mov 2021 10:36:19 -0700
+ -- Sean Kasun <sean@seancode.com>  Thu, 25 Nov 2021 10:36:19 -0700
 
 terrafirma (3.1.7) focal; urgency=medium
 
