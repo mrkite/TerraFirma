@@ -31,8 +31,13 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent),
   }
   QString installDir = steam["software/valve/steam/apps/105600/installdir"];
   QDir terrariaDir = QDir(installDir);
-  if (installDir.isEmpty() || !terrariaDir.exists())
+  if (installDir.isEmpty() || !terrariaDir.exists()) {
     terrariaDir.setPath(steamDir.absoluteFilePath("SteamApps/common/Terraria"));
+
+    // On Linux the SteamApps directory is lower case
+    if (!terrariaDir.exists())
+      terrariaDir.setPath(steamDir.absoluteFilePath("steamapps/common/Terraria"));
+  }
 
   defaultExes = "";
   defaultTextures = "";
