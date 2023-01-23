@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   QApplication::installTranslator(&translator);
 
   QApplication::setApplicationName("Terrafirma");
-  QApplication::setApplicationVersion("3.1.9");
+  QApplication::setApplicationVersion("3.1.10");
   QApplication::setOrganizationName("seancode");
 
   MainWindow w;

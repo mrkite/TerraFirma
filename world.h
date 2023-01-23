@@ -18,6 +18,7 @@ class Tile {
   bool active() const;
   bool lava() const;
   bool honey() const;
+  bool shimmer() const;
   bool seen() const;
   void setSeen(bool seen);
   bool redWire() const;
@@ -35,7 +36,7 @@ class Tile {
 
 class World : public QObject, public QRunnable {
   static const int MinimumVersion = 88;
-  static const int HighestVersion = 248;
+  static const int HighestVersion = 279;
 
 
   Q_OBJECT

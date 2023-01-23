@@ -83,6 +83,8 @@ void WorldInfo::init() {
       lava = color;
     else if (kind == "honey")
       honey = color;
+    else if (kind == "shimmer")
+      shimmer = color;
   }
 }
 

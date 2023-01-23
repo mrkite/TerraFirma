@@ -667,6 +667,9 @@ int Tile::load(const QSharedPointer<Handle> &handle, int, const QList<bool> &ext
       flags |= 2;
     if ((flags1 & 0x18) == 0x18)  // honey
       flags |= 4;
+    if (flags3 & 0x80) {  // shimmer
+      flags |= 0x800;
+    }
   } else {
     liquid = 0;
   }
@@ -713,6 +716,10 @@ bool Tile::lava() const {
 
 bool Tile::honey() const {
   return flags & 4;
+}
+
+bool Tile::shimmer() const {
+  return flags & 0x800;
 }
 
 bool Tile::redWire() const {

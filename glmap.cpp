@@ -1252,6 +1252,7 @@ void GLMap::drawLiquids() {
           mask |= 8;
           if (left->lava()) waterMask |= 2;
           else if (left->honey()) waterMask |= 4;
+          else if (left->shimmer()) waterMask |= 8;
           else
             waterMask |= 1;
         }
@@ -1260,6 +1261,7 @@ void GLMap::drawLiquids() {
           mask |= 4;
           if (right->lava()) waterMask |= 2;
           else if (right->honey()) waterMask |= 4;
+          else if (right->shimmer()) waterMask |= 8;
           else
             waterMask |= 1;
         }
@@ -1267,6 +1269,7 @@ void GLMap::drawLiquids() {
           mask |= 2;
           if (up->lava()) waterMask |= 2;
           else if (up->honey()) waterMask |= 4;
+          else if (up->shimmer()) waterMask |= 8;
           else
             waterMask |= 1;
         } else if (!up->active() || !world->info[up->type]->solid ||
@@ -1279,6 +1282,7 @@ void GLMap::drawLiquids() {
             mask |= 1;
           if (down->lava()) waterMask |= 2;
           else if (down->honey()) waterMask |= 4;
+          else if (down->shimmer()) waterMask |= 8;
           else
             waterMask |= 1;
         }
@@ -1286,6 +1290,7 @@ void GLMap::drawLiquids() {
           int variant = 0;
           if (waterMask & 2) variant = 1;
           if (waterMask & 4) variant = 11;
+          if (waterMask & 8) variant = 14;
 
           if ((mask & 0xc) && (mask & 1))  // down + any side = both sides
             mask |= 0xc;
@@ -1314,8 +1319,9 @@ void GLMap::drawLiquids() {
           }
 
           double alpha = 0.5;
-          if (variant == 1) alpha = 1.0;
+          if (variant == 1) alpha = 0.9;
           else if (variant == 11) alpha = 0.85;
+          else if (variant == 14) alpha = 0.85;
 
           // 2.9 means put it behind the tiles that have been drawn...
           // not a problem since this only applies to solid tiles next to water
@@ -1330,9 +1336,11 @@ void GLMap::drawLiquids() {
         int variant = 0;
         if (tile->lava()) variant = 1;
         if (tile->honey()) variant = 11;
+        if (tile->shimmer()) variant = 14;
         double alpha = 0.5;
-        if (variant == 1) alpha = 1.0;
+        if (variant == 1) alpha = 0.9;
         else if (variant == 11) alpha = 0.85;
+        else if (variant == 14) alpha = 0.85;
         int v = 0;
         // ripple?
         if (world->tiles[offset - stride].liquid > 32 ||
@@ -1395,12 +1403,16 @@ void GLMap::drawFlat() {
           quint32 lc = world->info.water;
           double alpha = 0.5;
           if (tile->lava()) {
-            alpha = 1.0;
+            alpha = 0.9;
             lc = world->info.lava;
           }
           if (tile->honey()) {
             alpha = 0.85;
             lc = world->info.honey;
+          }
+          if (tile->shimmer()) {
+            alpha = 0.85;
+            lc = world->info.shimmer;
           }
           float r = (color >> 16) / 255.0f;
           float g = ((color >> 8) & 0xff) / 255.0f;

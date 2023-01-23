@@ -76,7 +76,7 @@ public:
   QHash<int, QSharedPointer<NPC>> npcsById;
   QHash<int, QSharedPointer<NPC>> npcsByBanner;
   QHash<QString, QSharedPointer<NPC>> npcsByName;
-  quint32 sky = 0, earth = 0, rock = 0, hell = 0, water = 0, lava = 0, honey = 0;
+  quint32 sky = 0, earth = 0, rock = 0, hell = 0, water = 0, lava = 0, honey = 0, shimmer = 0;
 
 private:
   QJsonArray load(const QString &filename);

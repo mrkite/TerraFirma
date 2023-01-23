@@ -1,0 +1,43 @@
+This is the editor for terrafirma config files.
+
+Here are the terraria class points of interest:
+
+Terraria.IO.WorldFile.LoadWorld_Version2
+
+Terraria.ID.ItemID
+
+Terraria.ID.NPCID
+Terraria.ID.NPCHeadID
+
+Terraria.Terraria.Item
+  this.createTile = 137;
+  this.DefaultToPlaceableTile(629, 0);
+
+Terraria.ID.TileID
+  for missing tile id names
+
+Terraria.ID.WallID
+  for missing wall id names
+
+Terraria.ID.TileID.Sets
+  DrawFlipMode - flip flag
+  ChecksForMerge - merge flag
+  Grass - grass flag
+
+Terraria.ID.WallID.Sets
+  BlendType - blend
+
+Terraria.Terraria.Main
+  Main.tileSolid - solid flag
+  Main.tileStone - stone flag
+  Main.tilePile - pile flag
+  Main.tileMergeDirt - dirt flag
+  Main.tileBrick - brick flag
+  Main.tileMoss - moss flag
+  Main.tileLargeFrames - large flag
+  Main.tileBlockLight - !trans flag
+  Main.wallLargeFrames - Large number
+  BannerToItem() - NPC Banner
+
+Terraria.Graphics.Light
+  TileLightScanner.ApplyTileLight() - light

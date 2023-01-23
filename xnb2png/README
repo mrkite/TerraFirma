@@ -1,0 +1,9 @@
+Compiling:
+
+gcc -o xnb2png texture.c lzx.c -lpng
+
+Usage:
+Pass it a directory of xnbs, and it will convert those files into pngs.  Pass
+it an output directory to dump all the pngs.
+
+xnb2png path/to/xnbs path/to/pngs

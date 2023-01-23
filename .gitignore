@@ -19,6 +19,7 @@ build/
 [Bb]in/
 [Oo]bj/
 [Tt]erra[Ff]irma.app/
+build-*
 
 # Visual Studio profiler
 *.psess
