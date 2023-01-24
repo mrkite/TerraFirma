@@ -201,7 +201,7 @@ void MainWindow::setNPCs(bool loaded) {
       name = tr("%1 the %2").arg(npc.name).arg(l10n->xlateNPC(npc.title));
     if (npc.homeless) {
       n->setText(tr("Jump to %1's Location").arg(name));
-      n->setData(QPointF(npc.x, npc.y));
+      n->setData(QPointF(npc.x / 16.0, npc.y / 16.0));
     } else {
       n->setText(tr("Jump to %1's Home").arg(name));
       n->setData(QPointF(npc.homeX, npc.homeY));

@@ -1100,7 +1100,7 @@ void GLMap::drawNPCs() {
                    0, 56, 0, 0, 5.5f, 0, false);
       }
     }
-    if (houses && npc.head != 0) {
+    if (houses && npc.head != 0 && !npc.homeless) {
       int hx = npc.homeX;
       int hy = npc.homeY - 1;
       int offset = hy * stride + hx;

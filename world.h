@@ -107,6 +107,7 @@ class World : public QObject, public QRunnable {
   QList<Chest> chests;
   QList<Sign> signs;
   QList<NPC> npcs;
+  QMap<qint32, bool> shimmered;
   QList<Entity> entities;
   QMap<QString, qint32> kills;
   QList<QString> seen;

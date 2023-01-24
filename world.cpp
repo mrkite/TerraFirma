@@ -198,6 +198,12 @@ void World::loadSigns(const QSharedPointer<Handle> &handle, int) {
 void World::loadNPCs(const QSharedPointer<Handle> &handle, int version) {
   npcs.clear();
   emit status("Loading NPCs...");
+  if (version >= 268) {
+    int num = handle->r32();
+    for (int i = 0; i < num; i++) {
+      shimmered[handle->r32()] = true;
+    }
+  }
   while (handle->r8()) {
     NPC npc;
     npc.head = 0;
@@ -244,7 +250,7 @@ void World::loadNPCs(const QSharedPointer<Handle> &handle, int version) {
             npc.sprite = theNPC->id;
           }
       }
-      npc.name = "!!";
+      npc.name = "";
       npc.x = handle->rf();
       npc.y = handle->rf();
       npc.homeless = true;
