@@ -83,7 +83,7 @@ void Render::addSlope(int type, int slope, int x, int y, int texw, int texh,
 
   int start = buffers[type].count() / 7;
 
-  GLfloat px[3], py[3], texu[3], texv[3];
+  GLfloat px[3] = {0}, py[3] = {0}, texu[3] = {0}, texv[3] = {0};
 
   switch (slope) {
   case 1:

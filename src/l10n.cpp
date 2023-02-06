@@ -227,7 +227,7 @@ void L10n::load(QString exe) {
     resources.append(QSharedPointer<Resource>(new Resource(name, ofs)));
   }
   handle->seek(metaRVA + streams[STRINGS].offset + offset - base);
-  QRegularExpression re("Terraria\\.Localization\\.Content\\.([^.]+)\\.([^.]+)\\.json");
+  static QRegularExpression re("Terraria\\.Localization\\.Content\\.([^.]+)\\.([^.]+)\\.json");
   for (const auto &r : resources) {
     handle->seek(metaRVA + streams[STRINGS].offset + offset - base + r->name);
     auto name = handle->rcs();
@@ -239,7 +239,7 @@ void L10n::load(QString exe) {
       auto len = handle->r32();
 
       QString raw = QString::fromUtf8(handle->readBytes(len), len);
-      QRegularExpression comma(",\\s*}");
+      static QRegularExpression comma(",\\s*}");
       raw.replace(comma, "}");  // remove trailing commas
       QJsonParseError error;
       QJsonDocument doc = QJsonDocument::fromJson(raw.toUtf8(), &error);
@@ -272,7 +272,7 @@ QList<QString> L10n::getLanguages() {
 
 QString L10n::xlateItem(const QString &key) {
   auto str = items[currentLanguage].value(key).toString(key);
-  QRegularExpression re("{\\$ItemName\\.(.+?)}");
+  static QRegularExpression re("{\\$ItemName\\.(.+?)}");
   auto match = re.match(str);
   if (match.hasMatch()) {
     str.replace(re, xlateItem(match.captured(1)));
@@ -286,7 +286,7 @@ QString L10n::xlatePrefix(const QString &key) {
 
 QString L10n::xlateNPC(const QString &key) {
   auto str = npcs[currentLanguage].value(key).toString(key);
-  QRegularExpression re("{\\$NPCName\\.(.+?)}");
+  static QRegularExpression re("{\\$NPCName\\.(.+?)}");
   auto match = re.match(str);
   if (match.hasMatch()) {
     str.replace(re, xlateNPC(match.captured(1)));

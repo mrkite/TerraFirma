@@ -5,7 +5,7 @@
  * keys, only supports decoding.  That's all we need to read terraria
  * player files.
  */
-#include "./aes128.h"
+#include "aes128.h"
 
 static const quint8 sbox[256] = {
   0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,

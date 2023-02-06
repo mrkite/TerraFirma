@@ -7,10 +7,9 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QDebug>
-#include "./gltextures.h"
-#include "./steamconfig.h"
-#include "./handle.h"
-#include "./lzx.h"
+#include "gltextures.h"
+#include "handle.h"
+#include "lzx.h"
 
 GLTextures::GLTextures() {
   valid = false;

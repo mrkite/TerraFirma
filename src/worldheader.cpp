@@ -29,7 +29,8 @@ void WorldHeader::init() {
   if (!doc.isArray())
     throw InitException("header.json isn't an array");
 
-  for (auto const &field : doc.array()) {
+  const auto &arr = doc.array();
+  for (auto const &field : arr) {
     QJsonObject const &obj = field.toObject();
     fields.append(Field(obj));
   }
@@ -131,14 +132,12 @@ WorldHeader::Field::Field(QJsonObject const &data) {
   else if (t == "f64") type = Type::FLOAT64;
   else
     throw InitException(QString("Invalid header type: %1 on %2")
-                        .arg(t).arg(name));
+                        .arg(t, name));
   length = data["num"].toInt();
   dynamicLength = data["relnum"].toString();
   minVersion = data.contains("min") ? data["min"].toInt() : 88;
   maxVersion = data.contains("max") ? data["max"].toInt() : 0;
 }
-
-static WorldHeader::Header Null;
 
 WorldHeader::Header::Header() {
   ddbl = 0.0;

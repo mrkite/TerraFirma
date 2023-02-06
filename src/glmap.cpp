@@ -5,7 +5,6 @@
  */
 
 
-#include "./glmap.h"
 #include <QThreadPool>
 #include <QOpenGLShader>
 #include <QMouseEvent>
@@ -13,7 +12,8 @@
 #include <QSurfaceFormat>
 #include <cmath>
 #include <utility>
-#include "./uvrules.h"
+#include "glmap.h"
+#include "uvrules.h"
 
 /*
  * Drawing order:
@@ -57,8 +57,9 @@ GLMap::~GLMap() {
   delete fogProgram;
   delete flatProgram;
   delete [] flatData;
-  if (flat != nullptr)
+  if (flat != nullptr) {
     flat->destroy();
+  }
   doneCurrent();
   delete chestView;
   delete signView;
@@ -104,8 +105,9 @@ void GLMap::refresh() {
 }
 
 void GLMap::resetValues(bool loaded) {
-  if (!fullReset || !loaded)
+  if (!fullReset || !loaded) {
     return;
+  }
   fullReset = false;
 
   jumpToSpawn();
@@ -226,8 +228,9 @@ void GLMap::paintGL() {
   glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  if (!isEnabled())
+  if (!isEnabled()) {
     return;
+  }
 
   try {
     if (this->useTexture && zoom >= 8.0) {
@@ -251,20 +254,18 @@ void GLMap::paintGL() {
       const int stride = 7 * sizeof(GLfloat);
 
       program->setAttributeBuffer(0, GL_FLOAT, 0, 3, stride);
-      program->setAttributeBuffer(1, GL_FLOAT, 3 * sizeof(GLfloat),
-                                  2, stride);
-      program->setAttributeBuffer(2, GL_FLOAT, 5 * sizeof(GLfloat),
-                                  1, stride);
-      program->setAttributeBuffer(3, GL_FLOAT, 6 * sizeof(GLfloat),
-                                  1, stride);
+      program->setAttributeBuffer(1, GL_FLOAT, 3 * sizeof(GLfloat), 2, stride);
+      program->setAttributeBuffer(2, GL_FLOAT, 5 * sizeof(GLfloat), 1, stride);
+      program->setAttributeBuffer(3, GL_FLOAT, 6 * sizeof(GLfloat), 1, stride);
       program->enableAttributeArray(0);
       program->enableAttributeArray(1);
       program->enableAttributeArray(2);
       program->enableAttributeArray(3);
 
       // reverse order so gl does less work
-      if (wires)
+      if (wires) {
         drawWires();
+      }
       drawNPCs();
       drawTiles();
       drawWalls();
@@ -305,8 +306,7 @@ void GLMap::paintGL() {
 
       const int stride = 5 * sizeof(GLfloat);
       flatProgram->setAttributeBuffer(0, GL_FLOAT, 0, 3, stride);
-      flatProgram->setAttributeBuffer(1, GL_FLOAT, 3 * sizeof(GLfloat),
-                                       2, stride);
+      flatProgram->setAttributeBuffer(1, GL_FLOAT, 3 * sizeof(GLfloat), 2, stride);
       flatProgram->enableAttributeArray(0);
       flatProgram->enableAttributeArray(1);
 
@@ -353,35 +353,36 @@ void GLMap::resizeGL(int w, int h) {
 }
 
 void GLMap::mousePressEvent(QMouseEvent *event) {
-  if (!isEnabled()) return;
+  if (!isEnabled()) {
+    return;
+  }
   lastMouse = event->pos();
   dragging = true;
 }
 
 void GLMap::mouseMoveEvent(QMouseEvent *event) {
-  if (!isEnabled()) return;
+  if (!isEnabled()) {
+    return;
+  }
   if (!dragging) {
     QMatrix4x4 m = projection.inverted();
     QVector3D mouse = m.map(QVector3D(
-        static_cast<float>(event->x()) / (width / 2.0f) - 1.0f,
-        static_cast<float>(height - event->y()) / (height / 2.0f) - 1.0f,
-        0.0f));
+                              static_cast<float>(event->pos().x()) / (width / 2.0f) - 1.0f,
+                              static_cast<float>(height - event->pos().y()) / (height / 2.0f) - 1.0f,
+                              0.0f));
     int x = mouse.x();
     int y = mouse.y();
     if (x >= 0 && y >= 0 && x < world->tilesWide && y < world->tilesHigh) {
       auto tile = &world->tiles[y * world->tilesWide + x];
 
-
       if (fogOfWarEnabled && !tile->seen()) {
         emit status(QString("%1,%2 - Murky Blackness").arg(x).arg(y));
       } else if (tile->active()) {
         auto info = world->info[tile];
-        emit status(QString("%1,%2 - %3").arg(x).arg(y)
-                    .arg(l10n->xlateItem(info->name)));
+        emit status(QString("%1,%2 - %3").arg(x).arg(y).arg(l10n->xlateItem(info->name)));
       } else if (tile->wall > 0) {
         auto info = world->info.walls[tile->wall];
-        emit status(QString("%1,%2 - %3").arg(x).arg(y)
-                    .arg(l10n->xlateItem(info->name)));
+        emit status(QString("%1,%2 - %3").arg(x).arg(y).arg(l10n->xlateItem(info->name)));
       } else {
         emit status(QString("%1,%2").arg(x).arg(y));
       }
@@ -389,8 +390,8 @@ void GLMap::mouseMoveEvent(QMouseEvent *event) {
     return;
   }
 
-  centerX += (lastMouse.x() - event->x()) / (zoom / 2.0);
-  centerY += (lastMouse.y() - event->y()) / (zoom / 2.0);
+  centerX += (lastMouse.x() - event->pos().x()) / (zoom / 2.0);
+  centerY += (lastMouse.y() - event->pos().y()) / (zoom / 2.0);
   centerX = qMax(0.0, qMin(centerX, world->tilesWide - 1.0));
   centerY = qMax(0.0, qMin(centerY, world->tilesHigh - 1.0));
   lastMouse = event->pos();
@@ -402,9 +403,9 @@ void GLMap::mouseReleaseEvent(QMouseEvent *event) {
   if (event->button() == Qt::RightButton) {
     QMatrix4x4 m = projection.inverted();
     QVector3D mouse = m.map(QVector3D(
-        static_cast<float>(event->x()) / (width / 2.0) - 1.0f,
-        static_cast<float>(height - event->y()) / (height / 2.0) - 1.0f,
-        0.0f));
+                              static_cast<float>(event->pos().x()) / (width / 2.0) - 1.0f,
+                              static_cast<float>(height - event->pos().y()) / (height / 2.0) - 1.0f,
+                              0.0f));
     int x = mouse.x();
     int y = mouse.y();
     for (auto const &chest : world->chests) {
@@ -413,19 +414,18 @@ void GLMap::mouseReleaseEvent(QMouseEvent *event) {
         QList<QString> items;
         for (auto const &item : chest.items) {
           if (item.stack > 0) {
-            if (item.prefix == "")
-              items.append(QString("%1 %2").arg(item.stack)
-                           .arg(l10n->xlateItem(item.name)));
-            else
-              items.append(QString("%1 %2 %3").arg(item.stack)
-                           .arg(l10n->xlatePrefix(item.prefix))
-                           .arg(l10n->xlateItem(item.name)));
+            if (item.prefix == "") {
+              items.append(QString("%1 %2").arg(item.stack).arg(l10n->xlateItem(item.name)));
+            } else {
+              items.append(QString("%1 %2 %3").arg(item.stack).arg(l10n->xlatePrefix(item.prefix), l10n->xlateItem(item.name)));
+            }
           }
         }
 
         QString name = chest.name;
-        if (name.isEmpty())
+        if (name.isEmpty()) {
           name = l10n->xlateItem(world->info[&world->tiles[y * world->tilesWide + x]]->name);
+        }
 
         delete chestView;
         chestView = new ChestView(name, items, this);
@@ -434,8 +434,7 @@ void GLMap::mouseReleaseEvent(QMouseEvent *event) {
       }
     }
     for (auto const &sign : world->signs) {
-      if ((sign.x == x || sign.x + 1 == x) &&
-          (sign.y == y || sign.y + 1 == y)) {
+      if ((sign.x == x || sign.x + 1 == x) && (sign.y == y || sign.y + 1 == y)) {
         delete signView;
         signView = new SignView(sign.text, this);
         signView->move(QCursor::pos());
@@ -448,8 +447,11 @@ void GLMap::mouseReleaseEvent(QMouseEvent *event) {
 
 void GLMap::wheelEvent(QWheelEvent *event) {
   zoom += event->angleDelta().y() / 90.0;
-  if (zoom > 32.0) zoom = 32.0;
-  else if (zoom < 2.0) zoom = 2.0;
+  if (zoom > 32.0) {
+    zoom = 32.0;
+  } else if (zoom < 2.0) {
+    zoom = 2.0;
+  }
 
   scale = qMin(width, height) / floor(zoom);
   calcBounds();
@@ -458,42 +460,56 @@ void GLMap::wheelEvent(QWheelEvent *event) {
 
 void GLMap::keyPressEvent(QKeyEvent *event) {
   double speed = 10.0;
-  if (event->modifiers() & Qt::ShiftModifier)
+  if (event->modifiers() & Qt::ShiftModifier) {
     speed *= 2.0;
-  if (event->modifiers() & Qt::ControlModifier)
+  }
+  if (event->modifiers() & Qt::ControlModifier) {
     speed *= 10.0;
+  }
 
   switch (event->key()) {
     case Qt::Key_Up:
     case Qt::Key_W:
       centerY -= speed;
-      if (centerY < 0) centerY = 0;
+      if (centerY < 0) {
+        centerY = 0;
+      }
       break;
     case Qt::Key_Down:
     case Qt::Key_S:
       centerY += speed;
-      if (centerY > world->tilesHigh) centerY = world->tilesHigh;
+      if (centerY > world->tilesHigh) {
+        centerY = world->tilesHigh;
+      }
       break;
     case Qt::Key_Left:
     case Qt::Key_A:
       centerX -= speed;
-      if (centerX < 0) centerX = 0;
+      if (centerX < 0) {
+        centerX = 0;
+      }
       break;
     case Qt::Key_Right:
     case Qt::Key_D:
       centerX += speed;
-      if (centerX > world->tilesWide) centerX = world->tilesWide;
+      if (centerX > world->tilesWide) {
+        centerX = world->tilesWide;
+      }
       break;
     case Qt::Key_PageUp:
     case Qt::Key_E:
       zoom++;
-      if (zoom > 32) zoom = 32.0;
+      if (zoom > 32) {
+        zoom = 32.0;
+      }
       scale = qMin(width, height) / floor(zoom);
       break;
     case Qt::Key_PageDown:
     case Qt::Key_Q:
       zoom--;
-      if (zoom < 2.0) zoom = 2.0;
+      if (zoom < 2.0) {
+        zoom = 2.0;
+      }
       scale = qMin(width, height) / floor(zoom);
       break;
   }
@@ -538,37 +554,24 @@ void GLMap::drawBackground() {
 
   int hellStyle = world->header["hellBackStyle"]->toInt();
 
-
-  render.drawBG(GLTextures::Background | 0, 0, 0, 0, 0,
-                world->tilesWide, groundLevel);
+  render.drawBG(GLTextures::Background | 0, 0, 0, 0, 0, world->tilesWide, groundLevel);
 
   int lastX = 0;
   int style;
   for (int i = 0; i <= 3; i++) {
     style = world->header["caveBackStyle"]->at(i)->toInt() * 7;
-    int nextX = i == 3 ? world->tilesWide :
-        world->header["caveBackX"]->at(i)->toInt();
-    render.drawBG(GLTextures::Background | backStyles[style], 128, 16,
-                  lastX, groundLevel - 1, nextX - lastX, 1);
-    render.drawBG(GLTextures::Background | backStyles[style + 1], 128, 96,
-                  lastX, groundLevel, nextX - lastX, rockLevel - groundLevel);
-    render.drawBG(GLTextures::Background | backStyles[style + 2], 128, 16,
-                  lastX, rockLevel, nextX - lastX, 1);
-    render.drawBG(GLTextures::Background | backStyles[style + 3], 128, 96,
-                  lastX, rockLevel + 1,
-                  nextX - lastX, hellLevel - (rockLevel + 1));
-    render.drawBG(GLTextures::Background | (backStyles[style + 4] + hellStyle),
-                  128, 16, lastX, hellLevel, nextX - lastX, 1);
-    render.drawBG(GLTextures::Background | (backStyles[style + 5] + hellStyle),
-                  128, 96, lastX, hellLevel + 1,
-                  nextX - lastX, hellBottom - (hellLevel + 1));
-    render.drawBG(GLTextures::Background | (backStyles[style + 6] + hellStyle),
-                  128, 16, lastX, hellBottom, nextX - lastX, 1);
+    int nextX = i == 3 ? world->tilesWide : world->header["caveBackX"]->at(i)->toInt();
+    render.drawBG(GLTextures::Background | backStyles[style], 128, 16, lastX, groundLevel - 1, nextX - lastX, 1);
+    render.drawBG(GLTextures::Background | backStyles[style + 1], 128, 96, lastX, groundLevel, nextX - lastX, rockLevel - groundLevel);
+    render.drawBG(GLTextures::Background | backStyles[style + 2], 128, 16, lastX, rockLevel, nextX - lastX, 1);
+    render.drawBG(GLTextures::Background | backStyles[style + 3], 128, 96, lastX, rockLevel + 1, nextX - lastX, hellLevel - (rockLevel + 1));
+    render.drawBG(GLTextures::Background | (backStyles[style + 4] + hellStyle), 128, 16, lastX, hellLevel, nextX - lastX, 1);
+    render.drawBG(GLTextures::Background | (backStyles[style + 5] + hellStyle), 128, 96, lastX, hellLevel + 1, nextX - lastX, hellBottom - (hellLevel + 1));
+    render.drawBG(GLTextures::Background | (backStyles[style + 6] + hellStyle), 128, 16, lastX, hellBottom, nextX - lastX, 1);
     lastX = nextX;
   }
 
-  render.drawBG(GLTextures::Underworld | 4, 0, 0,
-                0, hellBottom, world->tilesWide, world->tilesHigh - hellBottom);
+  render.drawBG(GLTextures::Underworld | 4, 0, 0, 0, hellBottom, world->tilesWide, world->tilesHigh - hellBottom);
 }
 
 
@@ -579,40 +582,36 @@ void GLMap::drawWalls() {
     int offset = y * stride + startX;
     for (int x = startX; x < endX; x++, offset++) {
       auto tile = &world->tiles[offset];
-      if (fogOfWarEnabled && !tile->seen()) continue;
+      if (fogOfWarEnabled && !tile->seen()) {
+        continue;
+      }
       if (tile->wall > 0) {
         auto info = world->info.walls[tile->wall];
-        if (tile->wallu < 0)
+        if (tile->wallu < 0) {
           UVRules::fixWall(world, x, y);
+        }
 
         int color = tile->wallColor;
-        if (color == 30)
+        if (color == 30) {
           color = 43;
-        else if (color >= 28)
+        } else if (color >= 28) {
           color = 40 + color - 28;
+        }
 
-        render.add(GLTextures::Wall | tile->wall, x * 16 - 8, y * 16 - 8,
-                   32, 32, tile->wallu, tile->wallv, 1.0f,
-                   color, false);
+        render.add(GLTextures::Wall | tile->wall, x * 16 - 8, y * 16 - 8, 32, 32, tile->wallu, tile->wallv, 1.0f, color, false);
         int blend = info->blend;
-        if (x > 0 && (wall = world->tiles[offset - 1].wall) > 0 &&
-            world->info.walls[wall]->blend != blend)
-          render.add(GLTextures::WallOutline, x * 16, y * 16,
-                     2, 16, 0, 0, 1.5f, 0, false);
-        if (x < world->tilesWide - 2 &&
-            (wall = world->tiles[offset + 1].wall) > 0 &&
-            world->info.walls[wall]->blend != blend)
-          render.add(GLTextures::WallOutline, x * 16 + 14, y * 16,
-                     2, 16, 14, 0, 1.5, 0, false);
-        if (y > 0 && (wall = world->tiles[offset - stride].wall) > 0 &&
-            world->info.walls[wall]->blend != blend)
-          render.add(GLTextures::WallOutline, x * 16, y * 16,
-                     16, 2, 0, 0, 1.5f, 0, false);
-        if (y < world->tilesHigh - 2 &&
-            (wall = world->tiles[offset + stride].wall) > 0 &&
-            world->info.walls[wall]->blend != blend)
-          render.add(GLTextures::WallOutline, x * 16, y * 16 + 14,
-                     16, 2, 0, 14, 1.5f, 0, false);
+        if (x > 0 && (wall = world->tiles[offset - 1].wall) > 0 && world->info.walls[wall]->blend != blend) {
+          render.add(GLTextures::WallOutline, x * 16, y * 16, 2, 16, 0, 0, 1.5f, 0, false);
+        }
+        if (x < world->tilesWide - 2 && (wall = world->tiles[offset + 1].wall) > 0 && world->info.walls[wall]->blend != blend) {
+          render.add(GLTextures::WallOutline, x * 16 + 14, y * 16, 2, 16, 14, 0, 1.5, 0, false);
+        }
+        if (y > 0 && (wall = world->tiles[offset - stride].wall) > 0 && world->info.walls[wall]->blend != blend) {
+          render.add(GLTextures::WallOutline, x * 16, y * 16, 16, 2, 0, 0, 1.5f, 0, false);
+        }
+        if (y < world->tilesHigh - 2 && (wall = world->tiles[offset + stride].wall) > 0 && world->info.walls[wall]->blend != blend) {
+          render.add(GLTextures::WallOutline, x * 16, y * 16 + 14, 16, 2, 0, 14, 1.5f, 0, false);
+        }
       }
     }
   }
@@ -690,26 +689,23 @@ void GLMap::drawTiles() {
           fliph = (tile->u % 100) < 36;
           switch (piece) {
             case 0:
-              render.add(GLTextures::ArmorHead | armor,
-                         x * 16 - 4, y * 16 - 12, 40, 36, 0, 0, 4.0f,
-                         color, info->isHilighting, fliph);
+              render.add(GLTextures::ArmorHead | armor, x * 16 - 4, y * 16 - 12, 40, 36, 0, 0, 4.0f, color, info->isHilighting, fliph);
               break;
             case 1:
-              if (tile->type == 269)
-                render.add(GLTextures::ArmorFemale | armor,
-                           x * 16 - 4, y * 16 - 28, 40, 54, 0, 0, 4.0f,
-                           color, info->isHilighting, fliph);
-              else
-                render.add(GLTextures::ArmorBody | armor,
-                           x * 16 - 4, y * 16 - 28, 40, 54, 0, 0, 4.0f,
-                           color, info->isHilighting, fliph);
+              if (tile->type == 269) {
+                render.add(GLTextures::ArmorFemale | armor, x * 16 - 4, y * 16 - 28, 40, 54, 0, 0, 4.0f, color, info->isHilighting, fliph);
+              } else {
+                render.add(GLTextures::ArmorBody | armor, x * 16 - 4, y * 16 - 28, 40, 54, 0, 0, 4.0f, color, info->isHilighting, fliph);
+              }
               break;
             case 2:
-              if (armor == 83 && tile->type == 128) armor = 117;
-              if (armor == 84 && tile->type == 128) armor = 120;
-              render.add(GLTextures::ArmorLegs | armor,
-                         x * 16 - 4, y * 16 - 44, 40, 54, 0, 0, 4.0f,
-                         color, info->isHilighting, fliph);
+              if (armor == 83 && tile->type == 128) {
+                armor = 117;
+              }
+              if (armor == 84 && tile->type == 128) {
+                armor = 120;
+              }
+              render.add(GLTextures::ArmorLegs | armor, x * 16 - 4, y * 16 - 44, 40, 54, 0, 0, 4.0f, color, info->isHilighting, fliph);
               break;
           }
         }
@@ -736,40 +732,35 @@ void GLMap::drawTiles() {
                 break;
               case 3:  // hallowed trees
                 texh = 140;
-                if (x % 3 == 1)
+                if (x % 3 == 1) {
                   variant += 3;
-                else if (x % 3 == 2)
+                } else if (x % 3 == 2) {
                   variant += 6;
+                }
                 break;
             }
 
-            render.add(GLTextures::TreeTops | style,
-                       x * 16 - padx, (y + 1) * 16 - texh, texw, texh,
-                       variant * (texw + 2), 0, 4.0f,
-                       color, info->isHilighting);
+            render.add(GLTextures::TreeTops | style, x * 16 - padx, (y + 1) * 16 - texh, texw, texh, variant * (texw + 2), 0, 4.0f, color, info->isHilighting);
           } else if (tile->u == 44) {  // left branch
             int style = findBranchStyle(x + 1, y);
             if (style == 3) {  // hallowed trees
-              if (x % 3 == 1)
+              if (x % 3 == 1) {
                 variant += 3;
-              else if (x % 3 == 2)
+              } else if (x % 3 == 2) {
                 variant += 6;
+              }
             }
-            render.add(GLTextures::TreeBranches | style,
-                       x * 16 - 24, y * 16 - 12, 40, 40,
-                       0, variant * 42, 4.0f,
-                       color, info->isHilighting);
+            render.add(GLTextures::TreeBranches | style, x * 16 - 24, y * 16 - 12, 40, 40, 0, variant * 42, 4.0f, color, info->isHilighting);
           } else if (tile->u == 66) {  // right branch
             int style = findBranchStyle(x - 1, y);
             if (style == 3) {  // hallowed trees
-              if (x % 3 == 1)
+              if (x % 3 == 1) {
                 variant += 3;
-              else if (x % 3 == 2)
+              } else if (x % 3 == 2) {
                 variant += 6;
+              }
             }
-            render.add(GLTextures::TreeBranches | style,
-                       x * 16, y * 16 - 12, 40, 40,
-                       42, variant * 42, 4.0f, color, info->isHilighting);
+            render.add(GLTextures::TreeBranches | style, x * 16, y * 16 - 12, 40, 40, 42, variant * 42, 4.0f, color, info->isHilighting);
           }
         }
 
@@ -782,9 +773,7 @@ void GLMap::drawTiles() {
             default: variant = 0; break;
           }
           int style = findPillarStyle(offset);
-          render.add(GLTextures::TreeTops | 15,
-                     x * 16 - 32 + tile->v, y * 16 - 80 + 16, 80, 80,
-                     variant * 82, style * 82, 4.0f, color, info->isHilighting);
+          render.add(GLTextures::TreeTops | 15, x * 16 - 32 + tile->v, y * 16 - 80 + 16, 80, 80, variant * 82, style * 82, 4.0f, color, info->isHilighting);
         }
 
         int texw = info->width - 2;
@@ -792,17 +781,13 @@ void GLMap::drawTiles() {
 
         // lunar crafting station
         if (tile->type == 412 && tile->u == 0 && tile->v == 0) {
-          render.add(GLTextures::Tile | tile->type,
-                     x * 16, y * 16 + info->toppad, texw, texh,
-                     tile->u, tile->v, 4.0f, color, info->isHilighting);
+          render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + info->toppad, texw, texh, tile->u, tile->v, 4.0f, color, info->isHilighting);
           continue;
         }
 
         // lihzhard altar
         if (tile->type == 237 && tile->u == 0 && tile->v == 0) {
-          render.add(GLTextures::Tile | tile->type,
-                     x * 16, y * 16 + info->toppad, texw, texh,
-                     tile->u, tile->v, 4.0f, color, info->isHilighting);
+          render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + info->toppad, texw, texh, tile->u, tile->v, 4.0f, color, info->isHilighting);
           continue;
         }
 
@@ -819,8 +804,7 @@ void GLMap::drawTiles() {
             case 36: variant = 2; break;
             default: variant = 0; break;
           }
-          render.add(GLTextures::Shroom, x * 16 - 22, y * 16 - 26, 60, 42,
-                     variant * 62, 0, 4.0f, color, info->isHilighting);
+          render.add(GLTextures::Shroom, x * 16 - 22, y * 16 - 26, 60, 42, variant * 62, 0, 4.0f, color, info->isHilighting);
         }
 
 
@@ -828,35 +812,27 @@ void GLMap::drawTiles() {
         if (tile->type == 314) {
           int u = tile->u;
           int v = tile->v;
-          render.add(GLTextures::Tile | tile->type,
-                     x * 16, y * 16 + info->toppad, texw, texh,
-                     trackUVs[u * 3] * 18, trackUVs[u * 3 + 1] * 18, 3.2f,
-                     color, info->isHilighting);
+          render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + info->toppad, texw, texh, trackUVs[u * 3] * 18, trackUVs[u * 3 + 1] * 18, 3.2f,
+              color, info->isHilighting);
           if (tile->v >= 0) {
-              render.add(GLTextures::Tile | tile->type,
-                         x * 16, y * 16 + info->toppad, texw, texh,
-                         trackUVs[v * 3] * 18, trackUVs[v * 3 + 1] * 18, 3.0f,
-                         color, info->isHilighting);
+              render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + info->toppad, texw, texh, trackUVs[v * 3] * 18, trackUVs[v * 3 + 1] * 18, 3.0f,
+                  color, info->isHilighting);
           }
           if ((u >= 0 && u < 36) || (v >=0 && v < 36)) {
             int mask = trackUVs[u * 3 + 2];
             int mask2 = trackUVs[v * 3 + 2];
-            if (mask & 8 || mask2 & 8)
-              render.add(GLTextures::Tile | tile->type,
-                         x * 16, (y + 1) * 16 + info->toppad,
-                         texw, texh, 0, 108, 3.0f, color, info->isHilighting);
-            if (mask & 4 || mask2 & 4)
-              render.add(GLTextures::Tile | tile->type,
-                         x * 16, (y + 1) * 16 + info->toppad,
-                         texw, texh, 18, 108, 3.0f, color, info->isHilighting);
-            if (mask & 2 || mask2 & 2)
-              render.add(GLTextures::Tile | tile->type,
-                         x * 16, (y - 1) * 16 + info->toppad,
-                         texw, texh, 18, 126, 3.0f, color, info->isHilighting);
-            if (mask & 1 || mask2 & 1)
-              render.add(GLTextures::Tile | tile->type,
-                         x * 16, (y - 1) * 16 + info->toppad,
-                         texw, texh,  0, 126, 3.0f, color, info->isHilighting);
+            if (mask & 8 || mask2 & 8) {
+              render.add(GLTextures::Tile | tile->type, x * 16, (y + 1) * 16 + info->toppad, texw, texh, 0, 108, 3.0f, color, info->isHilighting);
+            }
+            if (mask & 4 || mask2 & 4) {
+              render.add(GLTextures::Tile | tile->type, x * 16, (y + 1) * 16 + info->toppad, texw, texh, 18, 108, 3.0f, color, info->isHilighting);
+            }
+            if (mask & 2 || mask2 & 2) {
+              render.add(GLTextures::Tile | tile->type, x * 16, (y - 1) * 16 + info->toppad, texw, texh, 18, 126, 3.0f, color, info->isHilighting);
+            }
+            if (mask & 1 || mask2 & 1) {
+              render.add(GLTextures::Tile | tile->type, x * 16, (y - 1) * 16 + info->toppad, texw, texh,  0, 126, 3.0f, color, info->isHilighting);
+            }
           }
         } else if (tile->type == 171) {  // xmas tree
           if (tile->u >= 10) {
@@ -865,58 +841,40 @@ void GLMap::drawTiles() {
             int ornaments = (tile->v >> 6) & 0xf;
             int lights = (tile->v >> 10) & 0xf;
 
-            render.add(GLTextures::Xmas | 0, x * 16, y * 16 + toppad,
-                       64, 128, 0, 0, 3.0f, color, info->isHilighting);
-            if (topper > 0)
-              render.add(GLTextures::Xmas | 3, x * 16, y * 16 + toppad,
-                         64, 128, 66 * (topper - 1), 0, 4.0f,
-                         color, info->isHilighting);
-            if (garland > 0)
-              render.add(GLTextures::Xmas | 1, x * 16, y * 16 + toppad,
-                         64, 128, 66 * (garland - 1), 0, 4.0f,
-                         color, info->isHilighting);
-            if (ornaments > 0)
-              render.add(GLTextures::Xmas | 2, x * 16, y * 16 + toppad,
-                         64, 128, 66 * (ornaments - 1), 0, 4.0f,
-                         color, info->isHilighting);
-            if (lights > 0)
-              render.add(GLTextures::Xmas | 4, x * 16, y * 16 + toppad,
-                         64, 128, 66 * (lights - 1), 0, 4.0f,
-                         color, info->isHilighting);
+            render.add(GLTextures::Xmas | 0, x * 16, y * 16 + toppad, 64, 128, 0, 0, 3.0f, color, info->isHilighting);
+            if (topper > 0) {
+              render.add(GLTextures::Xmas | 3, x * 16, y * 16 + toppad, 64, 128, 66 * (topper - 1), 0, 4.0f, color, info->isHilighting);
+            }
+            if (garland > 0) {
+              render.add(GLTextures::Xmas | 1, x * 16, y * 16 + toppad, 64, 128, 66 * (garland - 1), 0, 4.0f, color, info->isHilighting);
+            }
+            if (ornaments > 0) {
+              render.add(GLTextures::Xmas | 2, x * 16, y * 16 + toppad, 64, 128, 66 * (ornaments - 1), 0, 4.0f, color, info->isHilighting);
+            }
+            if (lights > 0) {
+              render.add(GLTextures::Xmas | 4, x * 16, y * 16 + toppad, 64, 128, 66 * (lights - 1), 0, 4.0f, color, info->isHilighting);
+            }
           }
         } else if (tile->slope > 0) {  // sloped tile
           if (tile->type == 19) {  // stairs
-            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad,
-                       texw, texh, tile->u, tile->v, 3.0f,
-                       color, info->isHilighting);
+            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad, texw, texh, tile->u, tile->v, 3.0f, color, info->isHilighting);
             auto br = &world->tiles[offset + stride + 1];
             auto bl = &world->tiles[offset + stride - 1];
-            if (tile->slope == 1 && br->active() &&
-                br->slope != 2 && !br->half() && br->type != 386 &&
-                br->type != 387 && br->type !=54) {
+            if (tile->slope == 1 && br->active() && br->slope != 2 && !br->half() && br->type != 386 && br->type != 387 && br->type !=54) {
               int u = 198;
-              if (br->type == 19 && br->slope == 0)
+              if (br->type == 19 && br->slope == 0) {
                 u = 324;
-              render.add(GLTextures::Tile | tile->type,
-                         x * 16, (y + 1) * 16 + toppad,
-                         16, 16, u, tile->v, 3.0f,
-                         color, info->isHilighting);
-            } else if (tile->slope == 2 && bl->active() &&
-                       bl->slope != 1 && !bl->half() && bl->type != 386 &&
-                       bl->type != 387 && bl->type !=54) {
+              }
+              render.add(GLTextures::Tile | tile->type, x * 16, (y + 1) * 16 + toppad, 16, 16, u, tile->v, 3.0f, color, info->isHilighting);
+            } else if (tile->slope == 2 && bl->active() && bl->slope != 1 && !bl->half() && bl->type != 386 && bl->type != 387 && bl->type !=54) {
               int u = 162;
-              if (bl->type == 19 && bl->slope == 0)
+              if (bl->type == 19 && bl->slope == 0) {
                 u = 306;
-              render.add(GLTextures::Tile | tile->type,
-                         x * 16, (y + 1) * 16 + toppad,
-                         16, 16, u, tile->v, 3.0f,
-                         color, info->isHilighting);
+              }
+              render.add(GLTextures::Tile | tile->type, x * 16, (y + 1) * 16 + toppad, 16, 16, u, tile->v, 3.0f, color, info->isHilighting);
             }
           } else {
-            render.addSlope(GLTextures::Tile | tile->type, tile->slope,
-                            x * 16, y * 16 + toppad, texw, texh,
-                            tile->u, tile->v, 3.0f,
-                            color, info->isHilighting);
+            render.addSlope(GLTextures::Tile | tile->type, tile->slope, x * 16, y * 16 + toppad, texw, texh, tile->u, tile->v, 3.0f, color, info->isHilighting);
           }
         } else if (tile->type == 80) {  // cactus
           int cactus = -1;
@@ -924,14 +882,14 @@ void GLMap::drawTiles() {
           if (tile->u == 36) coff--;
           if (tile->u == 54) coff++;
           if (tile->u == 108) {
-            if (tile->v == 18)
+            if (tile->v == 18) {
               coff--;
-            else
+            } else {
               coff++;
+            }
           }
           auto ctile = &world->tiles[coff];
-          while (!ctile->active() || ctile->type == 80 ||
-                 !world->info[ctile->type]->solid) {
+          while (!ctile->active() || ctile->type == 80 || !world->info[ctile->type]->solid) {
             coff += stride;
             ctile = &world->tiles[coff];
           }
@@ -948,137 +906,93 @@ void GLMap::drawTiles() {
                 break;
             }
           }
-          if (cactus == -1)
-            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad,
-                       texw, texh, tile->u, tile->v, 4.0f,
-                       color, info->isHilighting);
-          else
-            render.add(GLTextures::Cactus | cactus, x * 16, y * 16 + toppad,
-                       texw, texh, tile->u, tile->v, 4.0f,
-                       color, info->isHilighting);
-        } else if (tile->type == 272 && !tile->half() && x > 0 &&
-                   !world->tiles[offset - 1].half() &&
-                   x < world->tilesWide - 1 &&
+          if (cactus == -1) {
+            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad, texw, texh, tile->u, tile->v, 4.0f, color, info->isHilighting);
+          } else {
+            render.add(GLTextures::Cactus | cactus, x * 16, y * 16 + toppad, texw, texh, tile->u, tile->v, 4.0f, color, info->isHilighting);
+          }
+        } else if (tile->type == 272 && !tile->half() && x > 0 && !world->tiles[offset - 1].half() && x < world->tilesWide - 1 &&
                    !world->tiles[offset + 1].half()) {
           // iron plating
           int variant = (x & 1) + (y & 1) + (x % 3) + (y % 3);
-          while (variant > 1) variant -= 2;
-          render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad,
-                     texw, texh, tile->u, tile->v + variant * 90, 3.0f,
-                     color, info->isHilighting);
-        } else if (tile->type != 19 && tile->type != 380 &&
-                   info->solid && !tile->half() &&
-                   ((x > 0 && world->tiles[offset - 1].half()) ||
-                    ((x < world->tilesWide - 1 &&
-                      world->tiles[offset + 1].half())))) {
+          while (variant > 1) {
+            variant -= 2;
+          }
+          render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad, texw, texh, tile->u, tile->v + variant * 90, 3.0f, color, info->isHilighting);
+        } else if (tile->type != 19 && tile->type != 380 && info->solid && !tile->half() && ((x > 0 && world->tiles[offset - 1].half()) ||
+                                                                                             ((x < world->tilesWide - 1 && world->tiles[offset + 1].half())))) {
           // adjacent to half block
-          if (world->tiles[offset - 1].half() &&
-              world->tiles[offset + 1].half()) {
+          if (world->tiles[offset - 1].half() && world->tiles[offset + 1].half()) {
             // both sides are half
-            render.add(GLTextures::Tile | tile->type,
-                       x * 16, y * 16 + toppad + 8, texw, 8,
-                       tile->u, tile->v + 8, 3.0f,
-                       color, info->isHilighting);
-            if (world->tiles[offset - stride].slope < 3 &&
-                world->tiles[offset - stride].type == tile->type)
-              render.add(GLTextures::Tile | tile->type,
-                         x * 16, y * 16 + toppad, 16, 8, 90, 0, 3.0f,
-                         color, info->isHilighting);
-            else
-              render.add(GLTextures::Tile | tile->type,
-                         x * 16, y * 16 + toppad, 16, 8, 126, 0, 3.0f,
-                         color, info->isHilighting);
+            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad + 8, texw, 8, tile->u, tile->v + 8, 3.0f, color, info->isHilighting);
+            if (world->tiles[offset - stride].slope < 3 && world->tiles[offset - stride].type == tile->type) {
+              render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad, 16, 8, 90, 0, 3.0f, color, info->isHilighting);
+            } else {
+              render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad, 16, 8, 126, 0, 3.0f, color, info->isHilighting);
+            }
           } else if (world->tiles[offset - 1].half()) {
             // just left side
-            render.add(GLTextures::Tile | tile->type,
-                       x * 16, y * 16 + toppad + 8, texw, 8,
-                       tile->u, tile->v + 8, 3.0f,
-                       color, info->isHilighting);
-            render.add(GLTextures::Tile | tile->type,
-                       x * 16 + 4, y * 16 + toppad, texw - 4, texh,
-                       tile->u + 4, tile->v, 3.0f,
-                       color, info->isHilighting);
-            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad,
-                       4, 8, 126, 0, 3.0f,
-                       color, info->isHilighting);
+            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad + 8, texw, 8, tile->u, tile->v + 8, 3.0f, color, info->isHilighting);
+            render.add(GLTextures::Tile | tile->type, x * 16 + 4, y * 16 + toppad, texw - 4, texh, tile->u + 4, tile->v, 3.0f, color, info->isHilighting);
+            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad, 4, 8, 126, 0, 3.0f, color, info->isHilighting);
           } else {
             // just right side
-            render.add(GLTextures::Tile | tile->type,
-                       x * 16, y * 16 + toppad + 8, texw, 8,
-                       tile->u, tile->v + 8, 3.0f,
-                       color, info->isHilighting);
-            render.add(GLTextures::Tile | tile->type,
-                       x * 16, y * 16 + toppad, texw - 4, 8,
-                       tile->u, tile->v, 3.0f,
-                       color, info->isHilighting);
-            render.add(GLTextures::Tile | tile->type,
-                       x * 16 + 12, y * 16 + toppad, 4, 8, 138, 0, 3.0f,
-                       color, info->isHilighting);
+            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad + 8, texw, 8, tile->u, tile->v + 8, 3.0f, color, info->isHilighting);
+            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad, texw - 4, 8, tile->u, tile->v, 3.0f, color, info->isHilighting);
+            render.add(GLTextures::Tile | tile->type, x * 16 + 12, y * 16 + toppad, 4, 8, 138, 0, 3.0f, color, info->isHilighting);
           }
         } else if (tile->type == 128 || tile->type == 269) {
           // mannequin
-          render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad,
-                     texw, texh, tile->u % 100, tile->v, 3.0f,
-                     color, info->isHilighting);
+          render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad, texw, texh, tile->u % 100, tile->v, 3.0f, color, info->isHilighting);
         } else if (tile->type == 334) {
           // weapon rack
-          render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad,
-                     texw, texh, ((tile->u / 5000) - 1) * 18, tile->v, 3.0f,
-                     color, info->isHilighting);
+          render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad, texw, texh, ((tile->u / 5000) - 1) * 18, tile->v, 3.0f, color, info->isHilighting);
         } else if (tile->type == 5) {
           // tree
           int toff = offset;
-          if (tile->u == 66 && tile->v <= 45) toff++;
-          if (tile->u == 88 && tile->v >= 66 && tile->v <= 110) toff--;
-          if (tile->u == 22 && tile->v >= 132) toff--;
-          if (tile->u == 44 && tile->v >= 132) toff++;
-          while (world->tiles[toff].active() &&
-                 world->tiles[toff].type == 5) toff += stride;
+          if (tile->u == 66 && tile->v <= 45) {
+            toff++;
+          }
+          if (tile->u == 88 && tile->v >= 66 && tile->v <= 110) {
+            toff--;
+          }
+          if (tile->u == 22 && tile->v >= 132) {
+            toff--;
+          }
+          if (tile->u == 44 && tile->v >= 132) {
+            toff++;
+          }
+          while (world->tiles[toff].active() && world->tiles[toff].type == 5) {
+            toff += stride;
+          }
           int variant = getTreeVariant(toff);
-          if (variant == -1)
-            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad,
-                       texw, texh, tile->u, tile->v, 3.0f,
-                       color, info->isHilighting);
-          else
-            render.add(GLTextures::Wood | variant, x * 16, y * 16 + toppad,
-                       texw, texh, tile->u, tile->v, 3.0f,
-                       color, info->isHilighting);
+          if (variant == -1) {
+            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad, texw, texh, tile->u, tile->v, 3.0f, color, info->isHilighting);
+          } else {
+            render.add(GLTextures::Wood | variant, x * 16, y * 16 + toppad, texw, texh, tile->u, tile->v, 3.0f, color, info->isHilighting);
+          }
         } else if (tile->type == 323) {
           int poff = offset;
-          while (world->tiles[poff].active() &&
-                 world->tiles[poff].type == 323) poff += stride;
+          while (world->tiles[poff].active() && world->tiles[poff].type == 323) {
+            poff += stride;
+          }
           int variant = findPillarStyle(poff);
-          render.add(GLTextures::Tile | tile->type, x * 16 + tile->v, y * 16 + toppad,
-                     texw, texh, tile->u, 22 * variant, 3.0f,
-                     color, info->isHilighting);
-        } else if (tile->half() && y < world->tilesHigh - 1 &&
-                   (!world->tiles[offset + stride].active() ||
-                    !world->info[world->tiles[offset + stride].type]->solid ||
-                    world->tiles[offset + stride].half())) {
+          render.add(GLTextures::Tile | tile->type, x * 16 + tile->v, y * 16 + toppad, texw, texh, tile->u, 22 * variant, 3.0f, color, info->isHilighting);
+        } else if (tile->half() && y < world->tilesHigh - 1 && (!world->tiles[offset + stride].active() ||
+                                                                !world->info[world->tiles[offset + stride].type]->solid ||
+                                                                world->tiles[offset + stride].half())) {
           if (tile->type == 19) {
             // just draw platform lower
-            render.add(GLTextures::Tile | tile->type,
-                       x * 16, y * 16 + toppad + 8, texw, texh,
-                       tile->u, tile->v, 3.0f,
-                       color, info->isHilighting);
+            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad + 8, texw, texh, tile->u, tile->v, 3.0f, color, info->isHilighting);
           } else {
             // floating half block
-            render.add(GLTextures::Tile | tile->type,
-                       x * 16, y * 16 + toppad + 8, texw, texh - 12,
-                       tile->u, tile->v, 3.0f,
-                       color, info->isHilighting);
-            render.add(GLTextures::Tile | tile->type,
-                       x * 16, y * 16 + toppad + 12, texw, 4, 144, 66, 3.0f,
-                       color, info->isHilighting);
+            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad + 8, texw, texh - 12, tile->u, tile->v, 3.0f, color, info->isHilighting);
+            render.add(GLTextures::Tile | tile->type, x * 16, y * 16 + toppad + 12, texw, 4, 144, 66, 3.0f, color, info->isHilighting);
           }
         } else {
           // normal tile..
-          render.add(GLTextures::Tile | tile->type,
-                     x * 16 - (texw - 16) / 2,
-                     y * 16 + info->toppad + (tile->half() ? 8 : 0),
-                     texw, texh - (tile->half() ? 8 : 0),
-                     tile->u, tile->v, 3.0f,
-                     color, info->isHilighting, fliph, flipv);
+          render.add(GLTextures::Tile | tile->type, x * 16 - (texw - 16) / 2, y * 16 + info->toppad + (tile->half() ? 8 : 0),
+                     texw, texh - (tile->half() ? 8 : 0), tile->u, tile->v, 3.0f, color, info->isHilighting, fliph, flipv);
         }
       }
     }
@@ -1090,43 +1004,35 @@ void GLMap::drawNPCs() {
   int stride = world->tilesWide;
 
   for (auto const &npc : world->npcs) {
-    if (npc.sprite != 0 &&
-        (npc.x + 32) / 16 >= startX && npc.x / 16 < endX &&
-        (npc.y + 56) / 16 >= startY && npc.y / 16 < endY) {
-      int offset = static_cast<int>(npc.y / 16) * stride +
-          static_cast<int>(npc.x / 16);
+    if (npc.sprite != 0 && (npc.x + 32) / 16 >= startX && npc.x / 16 < endX && (npc.y + 56) / 16 >= startY && npc.y / 16 < endY) {
+      int offset = static_cast<int>(npc.y / 16) * stride + static_cast<int>(npc.x / 16);
       if (!fogOfWarEnabled || world->tiles[offset].seen()) {
-        render.add(GLTextures::NPC | npc.sprite, npc.x, npc.y - 16,
-                   0, 56, 0, 0, 5.5f, 0, false);
+        render.add(GLTextures::NPC | npc.sprite, npc.x, npc.y - 16, 0, 56, 0, 0, 5.5f, 0, false);
       }
     }
     if (houses && npc.head != 0 && !npc.homeless) {
       int hx = npc.homeX;
       int hy = npc.homeY - 1;
       int offset = hy * stride + hx;
-      while (!world->tiles[offset].active() ||
-             !world->info[world->tiles[offset].type]->solid) {
+      while (!world->tiles[offset].active() || !world->info[world->tiles[offset].type]->solid) {
         hy--;
         offset -= stride;
-        if (hy < 10) break;
+        if (hy < 10) {
+          break;
+        }
       }
       hy++;
       offset += stride;
       if (hx >= startX && hx < endX && hy >= startY && hy < endY) {
         if (!fogOfWarEnabled || world->tiles[offset].seen()) {
           int dy = 18;
-          if (world->tiles[offset - stride].type == 19)  // platform
+          if (world->tiles[offset - stride].type == 19) {  // platform
             dy -= 8;
+          }
           auto tex = render.get(GLTextures::Banner);  // house banner
-          render.add(GLTextures::Banner,
-                     hx * 16 - tex->width() / 2,
-                     hy * 16 + dy - tex->height() / 2,
-                     32, 40, 0, 0, 5.0f, 0, false);
+          render.add(GLTextures::Banner, hx * 16 - tex->width() / 2, hy * 16 + dy - tex->height() / 2, 32, 40, 0, 0, 5.0f, 0, false);
           tex = render.get(GLTextures::NPCHead | npc.head);
-          render.add(GLTextures::NPCHead | npc.head,
-                     hx * 16 - tex->width() / 2,
-                     hy * 16 + dy - tex->height() / 2,
-                     tex->width(), tex->height(), 0, 0, 5.2f,
+          render.add(GLTextures::NPCHead | npc.head, hx * 16 - tex->width() / 2, hy * 16 + dy - tex->height() / 2, tex->width(), tex->height(), 0, 0, 5.2f,
                      0, false);
         }
       }

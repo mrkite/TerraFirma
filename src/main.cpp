@@ -7,7 +7,7 @@
 #include <QApplication>
 #include <QTranslator>
 #include <QSurfaceFormat>
-#include "./mainwindow.h"
+#include "mainwindow.h"
 
 int main(int argc, char *argv[]) {
   QSurfaceFormat format = QSurfaceFormat::defaultFormat();
@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
   QApplication::setApplicationName("Terrafirma");
   QApplication::setApplicationVersion("3.1.11");
   QApplication::setOrganizationName("seancode");
+  QApplication::setWindowIcon(QIcon(":/res/terrafirma.png"));
 
   MainWindow w;
   w.show();

@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Terrafirma</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="terrafirma.qrc">
-    <normaloff>:/terrafirma.png</normaloff>:/terrafirma.png</iconset>
-  </property>
   <widget class="GLMap" name="map">
    <property name="enabled">
     <bool>false</bool>
@@ -40,7 +36,7 @@
      <x>0</x>
      <y>0</y>
      <width>960</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuTerrafirma">
@@ -307,7 +303,7 @@
   <customwidget>
    <class>GLMap</class>
    <extends>QWidget</extends>
-   <header>glmap.h</header>
+   <header location="global">glmap.h</header>
    <container>1</container>
    <slots>
     <signal>status(QString)</signal>
@@ -315,9 +311,7 @@
    </slots>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="terrafirma.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>actionAbout_Terrafirma</sender>

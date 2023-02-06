@@ -20,7 +20,7 @@ SteamConfig::SteamConfig() {
   QString path = settings.value("SteamPath").toString();
   if (path.isEmpty()) {
     path =  QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation)
-        .first();
+        .constFirst();
     path += QDir::toNativeSeparators("/Steam");
   }
   steamBase = path;
@@ -57,7 +57,7 @@ SteamConfig::Element::Element() = default;
 
 SteamConfig::Element::Element(QList<QString> *lines) {
   QString line;
-  QRegularExpression re("\"([^\"]*)\"");
+  static QRegularExpression re("\"([^\"]*)\"");
   QRegularExpressionMatchIterator i;
   while (lines->length() > 0) {
     line = lines->front();

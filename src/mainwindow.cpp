@@ -13,10 +13,10 @@
 #include <QSettings>
 #include <QDebug>
 #include <QLabel>
-#include "./mainwindow.h"
-#include "./ui_mainwindow.h"
-#include "./handle.h"
-#include "./aes128.h"
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include "handle.h"
+#include "aes128.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   ui(new Ui::MainWindow) {
@@ -160,8 +160,7 @@ void MainWindow::showAbout() {
   QMessageBox::about(this, tr("About %1").arg(qApp->applicationName()),
                      tr("<b>%1</b> v%2<br/>\n"
                         "&copy; Copyright %3, %4")
-                     .arg(qApp->applicationName())
-                     .arg(qApp->applicationVersion())
+                     .arg(qApp->applicationName(), qApp->applicationVersion())
                      .arg(2023)
                      .arg(qApp->organizationName()));
 }
@@ -198,7 +197,7 @@ void MainWindow::setNPCs(bool loaded) {
     if (npc.name.isEmpty())
       name = l10n->xlateNPC(npc.title);
     else
-      name = tr("%1 the %2").arg(npc.name).arg(l10n->xlateNPC(npc.title));
+      name = tr("%1 the %2").arg(npc.name, l10n->xlateNPC(npc.title));
     if (npc.homeless) {
       n->setText(tr("Jump to %1's Location").arg(name));
       n->setData(QPointF(npc.x / 16.0, npc.y / 16.0));
@@ -262,8 +261,8 @@ void MainWindow::scanPlayers() {
   bool enabled = false;
   for (const QString &playerDir : settings->getPlayers()) {
     QDir dir(playerDir);
-  
-    auto group = new QActionGroup(this);
+
+    QActionGroup *group = nullptr;
   
     bool checked = false;
     QDirIterator it(dir);
@@ -275,6 +274,9 @@ void MainWindow::scanPlayers() {
         if (!name.isNull()) {
           auto p = new QAction(this);
           p->setCheckable(true);
+          if (group == nullptr) {
+            group = new QActionGroup(this);
+          }
           p->setActionGroup(group);
           p->setText(name);
           p->setData(it.filePath());

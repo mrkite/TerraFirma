@@ -30,32 +30,32 @@ static quint32 readColor(QString const &s) {
 
 void WorldInfo::init() {
   // must load items first
-  QJsonArray json = load(":/res/items.json");
-  for (auto const &item : json) {
+  const auto jitems = load(":/res/items.json");
+  for (auto const &item : jitems) {
     QJsonObject const &obj = item.toObject();
     quint16 id = obj["id"].toInt();
     items[id] = obj["name"].toString();
   }
-  json = load(":/res/tiles.json");
-  for (const auto &i : json) {
+  const auto jtiles = load(":/res/tiles.json");
+  for (const auto &i : jtiles) {
     QJsonObject const &obj = i.toObject();
     quint16 id = obj["id"].toInt();
     tiles[id] = QSharedPointer<TileInfo>(new TileInfo(items, obj));
   }
-  json = load(":/res/walls.json");
-  for (auto const &item : json) {
+  const auto jwalls = load(":/res/walls.json");
+  for (auto const &item : jwalls) {
     QJsonObject const &obj = item.toObject();
     quint16 id = obj["id"].toInt();
     walls[id] = QSharedPointer<WallInfo>(new WallInfo(items, id, obj));
   }
-  json = load(":/res/prefixes.json");
-  for (auto const &item : json) {
+  const auto jprefixes = load(":/res/prefixes.json");
+  for (auto const &item : jprefixes) {
     QJsonObject const &obj = item.toObject();
     quint16 id = obj["id"].toInt();
     prefixes[id] = obj["name"].toString();
   }
-  json = load(":/res/npcs.json");
-  for (auto const &item : json) {
+  const auto jnpcs = load(":/res/npcs.json");
+  for (auto const &item : jnpcs) {
     QJsonObject const &obj = item.toObject();
     quint16 id = obj["id"].toInt();
     npcsById[id] = QSharedPointer<NPC>(new NPC(obj));
@@ -64,8 +64,8 @@ void WorldInfo::init() {
     else if (!npcsByName.contains(obj["name"].toString()))
       npcsByName[obj["name"].toString()] = QSharedPointer<NPC>(new NPC(obj));
   }
-  json = load(":/res/globals.json");
-  for (auto const &item : json) {
+  const auto jglobals = load(":/res/globals.json");
+  for (auto const &item : jglobals) {
     QJsonObject const &obj = item.toObject();
     QString kind = obj["id"].toString();
     quint32 color = readColor(obj["color"].toString());
@@ -212,7 +212,8 @@ TileInfo::TileInfo(const QHash<quint16, QString> &items,
   skipy = json["skipy"].toInt(0);
   toppad = json["toppad"].toInt(0);
   if (json.contains("var")) {
-    for (auto const &item : json["var"].toArray()) {
+    const auto &vars = json["var"].toArray();
+    for (auto const &item : vars) {
       QJsonObject const &obj = item.toObject();
       variants.append(QSharedPointer<TileInfo>(new TileInfo(items, obj,
                                                             *this)));

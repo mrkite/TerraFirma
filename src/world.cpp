@@ -8,9 +8,9 @@
 #include <QDir>
 #include <QDebug>
 #include <utility>
-#include "./world.h"
-#include "./worldinfo.h"
-#include "zlib/zlib.h"
+#include <zlib.h>
+#include "world.h"
+#include "worldinfo.h"
 
 World::World(QObject *parent) : QObject(parent) {
   setAutoDelete(false);  // please don't kill me!
@@ -619,7 +619,7 @@ void World::loadPlayer2(QSharedPointer<Handle> handle, int version) {
         } else {
           while (rle-- > 0) {
             x++;
-            light = handle->r8();
+            handle->r8();  // light
             tiles[++offset].setSeen(true);
           }
         }
