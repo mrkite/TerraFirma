@@ -19,4 +19,11 @@ elseif(APPLE)
     set(MACOSX_BUNDLE_ICON_FILE icon.icns)
     set(app_icon "${CMAKE_CURRENT_SOURCE_DIR}/icon.icns")
 endif()
+
 add_subdirectory(src)
+
+if(UNIX AND NOT APPLE)
+install(FILES terrafirma.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/applications/)
+install(FILES res/terrafirma.png DESTINATION ${CMAKE_INSTALL_PREFIX}/pixmaps/)
+install(TARGETS terrafirma RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/)
+endif()
