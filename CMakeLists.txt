@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGL OpenGLWidgets)
-if(!WIN32)
+if(NOT WIN32)
 find_package(ZLIB 1.1.2 REQUIRED)
 endif()
 qt_standard_project_setup()
