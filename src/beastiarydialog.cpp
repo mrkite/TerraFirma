@@ -3,6 +3,14 @@
 #include "beastiarydialog.h"
 #include "ui_beastiarydialog.h"
 
+class Kill: public QTableWidgetItem {
+public:
+  Kill(QString val) : QTableWidgetItem(val) {}
+  bool operator<(const QTableWidgetItem &other) const {
+    return (this->data(Qt::UserRole).toInt() < other.data(Qt::UserRole).toInt());
+  }
+};
+
 BeastiaryDialog::BeastiaryDialog(const QMap<QString, qint32> &kills,
                                  const QList<QString> &seen,
                                  const QList<QString> &chats,
@@ -46,7 +54,7 @@ BeastiaryDialog::~BeastiaryDialog() {
 void BeastiaryDialog::addKill(int row, const QString &npc, qint32 kills) {
   auto name = new QTableWidgetItem(npc);
   ui->killsTable->setItem(row, 0, name);
-  auto val = new QTableWidgetItem(tr("%1").arg(kills));
+  auto val = new Kill(tr("%1").arg(kills));
   val->setData(Qt::UserRole, kills);
   ui->killsTable->setItem(row, 1, val);
 }

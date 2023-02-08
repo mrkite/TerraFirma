@@ -1,5 +1,4 @@
-qt_add_executable(terrafirma
-  MACOSX_BUNDLE
+add_executable(terrafirma
   aes128.cpp
   beastiarydialog.ui
   beastiarydialog.cpp
@@ -31,7 +30,7 @@ qt_add_executable(terrafirma
   world.cpp
   worldheader.cpp
   worldinfo.cpp
-  ${app_icon_macos}
+  ${app_icon}
 )
 
 qt_add_resources(terrafirma "data"
@@ -59,7 +58,12 @@ qt_add_resources(terrafirma "data"
 set_source_files_properties(${app_icon_macos} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 
 target_include_directories(terrafirma PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(terrafirma PRIVATE Qt6::Widgets Qt6::OpenGL Qt6::OpenGLWidgets ZLIB::ZLIB)
+target_link_libraries(terrafirma PRIVATE Qt6::Widgets Qt6::OpenGL Qt6::OpenGLWidgets)
+if(!WIN32)
+    target_link_libraries(terrafirma PRIVATE ZLIB::ZLIB)
+else()
+    target_link_libraries(terrafirma PRIVATE zlib)
+endif()
 set_target_properties(terrafirma PROPERTIES
   WIN32_EXECUTABLE ON
   MACOSX_BUNDLE ON
