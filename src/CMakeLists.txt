@@ -55,7 +55,7 @@ qt_add_resources(terrafirma "data"
   ../res/shaders/water_vs.glsl
 )
 
-set_source_files_properties(${app_icon_macos} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+set_source_files_properties(${app_icon} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 
 target_include_directories(terrafirma PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(terrafirma PRIVATE Qt6::Widgets Qt6::OpenGL Qt6::OpenGLWidgets)
