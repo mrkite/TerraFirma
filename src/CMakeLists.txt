@@ -59,10 +59,10 @@ set_source_files_properties(${app_icon} PROPERTIES MACOSX_PACKAGE_LOCATION "Reso
 
 target_include_directories(terrafirma PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(terrafirma PRIVATE Qt6::Widgets Qt6::OpenGL Qt6::OpenGLWidgets)
-if(!WIN32)
-    target_link_libraries(terrafirma PRIVATE ZLIB::ZLIB)
-else()
+if(WIN32)
     target_link_libraries(terrafirma PRIVATE zlib)
+else()
+    target_link_libraries(terrafirma PRIVATE ZLIB::ZLIB)
 endif()
 set_target_properties(terrafirma PROPERTIES
   WIN32_EXECUTABLE ON
