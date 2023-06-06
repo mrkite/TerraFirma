@@ -1,3 +1,9 @@
+terrafirma (3.1.12) focal; urgency=medium
+
+  * Fixed bad id in tiles
+
+ -- Sean Kasun <sean@seancode.com>  Tue, 6 Jun 2023 09:36:28 -0700
+
 terrafirma (3.1.11) focal; urgency=medium
 
   * Fixed crash in 1.4.4.9

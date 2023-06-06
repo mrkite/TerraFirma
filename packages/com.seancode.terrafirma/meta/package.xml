@@ -2,8 +2,8 @@
 <Package>
   <DisplayName>Terrafirma</DisplayName>
   <Description>Terraria mapping software</Description>
-  <Version>3.1.11</Version>
-  <ReleaseDate>2023-01-23</ReleaseDate>
+  <Version>3.1.12</Version>
+  <ReleaseDate>2023-06-06</ReleaseDate>
   <Default>true</Default>
   <Required>true</Required>
   <Script>installscript.qs</Script>

@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   QApplication::installTranslator(&translator);
 
   QApplication::setApplicationName("Terrafirma");
-  QApplication::setApplicationVersion("3.1.11");
+  QApplication::setApplicationVersion("3.1.12");
   QApplication::setOrganizationName("seancode");
   QApplication::setWindowIcon(QIcon(":/res/terrafirma.png"));
 
