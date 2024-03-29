@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(terrafirma VERSION 3.1.12 LANGUAGES C CXX)
+project(terrafirma VERSION 3.1.13 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

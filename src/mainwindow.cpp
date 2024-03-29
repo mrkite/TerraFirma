@@ -161,7 +161,7 @@ void MainWindow::showAbout() {
                      tr("<b>%1</b> v%2<br/>\n"
                         "&copy; Copyright %3, %4")
                      .arg(qApp->applicationName(), qApp->applicationVersion())
-                     .arg(2023)
+                     .arg(2024)
                      .arg(qApp->organizationName()));
 }
 

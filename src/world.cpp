@@ -639,8 +639,12 @@ int Tile::load(const QSharedPointer<Handle> &handle, int, const QList<bool> &ext
   quint8 flags1 = handle->r8(), flags2 = 0, flags3 = 0;
   if (flags1 & 1) {  // has flags2
     flags2 = handle->r8();
-    if (flags2 & 1)  // has flags3
+    if (flags2 & 1) {  // has flags3
       flags3 = handle->r8();
+      if (flags3 & 1) {  // has unknown
+        handle->r8();
+      }
+    }
   }
   bool active = flags1 & 2;
   flags = active ? 1 : 0;
