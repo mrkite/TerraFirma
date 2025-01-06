@@ -1,0 +1,59 @@
+name: MacOS Qt CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  project: 'terrafirma'
+
+jobs:
+  build:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [macos-6.4]
+        include:
+          - name: macos-6.4
+            os: macos-latest
+            qt: '6.4.3'
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: ${{ matrix.qt }}
+        target: 'desktop'
+        cache: 'true'
+        cache-key-prefix: ${{ runner.os }}-QtCache-${{ matrix.qt }}
+
+    - name: Create BUILD folder
+      run: |
+        mkdir ../build
+
+    - name: Configure cmake
+      working-directory: ../build
+      env:
+        CMAKE_PREFIX_PATH: ${{env.Qt6_Dir}}
+      run: cmake ${{ github.workspace }}
+
+    - name: Build (MacOS)
+      working-directory: ../build
+      run: make
+
+    - name: Deploy Qt (macOS)
+      working-directory: ../build
+      run: |
+        macdeployqt src/${{ env.project }}.app -codesign=- -dmg
+
+    - name: Archive build result
+      uses: actions/upload-artifact@v4
+      with:
+        name: Binary ${{ matrix.name }}
+        path: ${{ runner.workspace }}/build/src/${{ env.project }}.dmg
