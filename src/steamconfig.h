@@ -1,7 +1,7 @@
 /** @copyright 2025 Sean Kasun */
 
 #pragma once
-#include <unordered_map>
+#include <map>
 #include <string>
 #include <filesystem>
 #include <memory>
@@ -26,7 +26,7 @@ class SteamConfig {
       explicit Element(Tokenizer *t);
       std::string find(const std::string &path) const;
     
-      std::unordered_map<std::string, struct Element> children;
+      std::map<std::string, struct Element> children;
       std::string name, value;
     };
 
