@@ -51,7 +51,7 @@ glm::vec2 FindChests::pickChest() {
   ImGui::InputText("Search", &search);
   ImGui::BeginChild("##chests", ImVec2(400, 400));
   for (const auto &item : items) {
-    if (!search.empty() && !contains(item.name, search)) {
+    if (item.name.empty() || (!search.empty() && !contains(item.name, search))) {
       continue;
     }
     if (ImGui::TreeNodeEx(item.name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
