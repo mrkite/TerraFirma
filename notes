@@ -1,0 +1,20 @@
+Terraria.IO -> WorldFile -> map versions
+
+Terraria.ID -> ItemID, NPCID, PrefixID
+Terraria -> Item
+	search for DefaultToPlaceableTile
+
+Terraria -> Main
+	ChecksForMrege -> merge flag
+	Grass -> grass flga
+	Moss -> moss flag
+	DrawFlipMode = 1 -> flip flag
+	tileSolid -> solid flag
+	tileBlockLight -> !transparent flag
+	tileBrick -> brick flag
+	tileMergeDirt -> dirt flag
+	tileStone -> stone flag
+	tileLargeFrames -> large flag
+	tilePile -> Pile flag
+	wallBlend -> blended wall
+	wallLargeFrames -> large wall
