@@ -1,9 +1,9 @@
-/** @copyright 2025 Sean Kasun */
+/** @copyright 2026 Sean Kasun */
 
 #pragma once
 
 const int MinVersion = 88;
-const int MaxVersion = 325;
+const int MaxVersion = 326;
 
 #include "handle.h"
 #include "json.h"

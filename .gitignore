@@ -41,3 +41,5 @@ cscope.out
 .qmake.stash
 .DS_Store
 .cache
+
+imgui.ini

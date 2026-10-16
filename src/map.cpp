@@ -354,10 +354,11 @@ void Map::drawTiles(SDL_GPUDevice *gpu, SDL_GPUCopyPass *copy) {
           int variant = tile.u / 54;
           renderer.addTile(copy, Textures::Extra | 181, x * 16 + 10, y * 16 + 2, ItemLayer, 28, 44, (variant + 3) * 30, tile.v, 0, false);
         }
+        /*
         if (tile.type == TileMasterTrophies) {
           int variant = tile.u / 54;
           renderer.addTile(copy, Textures::Extra | 198, x * 16 + 10, y * 16 + 2, ItemLayer, 28, 44, 0, variant * 46, 0, false);
-        }
+        }*/
         /*
         if (tile.type == TileMannequin && tile.v == 0) {
           for (const auto &doll : world.dolls) {
